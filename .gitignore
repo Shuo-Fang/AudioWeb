@@ -41,3 +41,7 @@ nbdist/
 !*/build/*.java
 !*/build/*.html
 !*/build/*.xml
+bin/clean.bat
+bin/
+sql/
+doc/
