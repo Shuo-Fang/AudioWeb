@@ -243,7 +243,12 @@ $(function() {
         });
         // 选项卡菜单不存在
         if (flag) {
-            var str = '<a href="javascript:;" class="active menuTab" data-id="' + dataUrl + '" id="'+menuId+'">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+        	var str;
+        	if(menuId){
+        		str = '<a href="javascript:;" class="active menuTab" data-id="' + dataUrl + '" id="'+menuId+'">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+        	}else{
+        		str = '<a href="javascript:;" class="active menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+        	}
             $('.menuTab').removeClass('active');
 
             // 添加选项卡对应的iframe
@@ -260,9 +265,6 @@ $(function() {
             $('.menuTabs .page-tabs-content').append(str);
             scrollToTab($('.menuTab.active'));
         }
-    	console.log($('.menuTab'));
-    	console.log($(this));
-    	console.log(this.id);
         return false;
     }
     
