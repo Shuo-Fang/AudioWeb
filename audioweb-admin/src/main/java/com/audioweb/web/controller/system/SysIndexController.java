@@ -1,5 +1,7 @@
 package com.audioweb.web.controller.system;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,7 +29,8 @@ public class SysIndexController extends BaseController
     @GetMapping("/index")
     public String index(ModelMap mmap)
     {
-        // 取身份信息
+    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		// 取身份信息
         SysUser user = ShiroUtils.getSysUser();
         // 根据用户id取出菜单
         List<SysMenu> menus = menuService.selectMenusByUser(user);
@@ -35,6 +38,7 @@ public class SysIndexController extends BaseController
         mmap.put("user", user);
         mmap.put("copyrightYear", Global.getCopyrightYear());
         mmap.put("demoEnabled", Global.isDemoEnabled());
+        mmap.put("systemtime",df.format(new Date()));
         return "index";
     }
 

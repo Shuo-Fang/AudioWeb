@@ -183,6 +183,11 @@
                     	<i class="fa fa-bars"></i>
                     </a>
                 </div>
+                <div class="navbar-header">
+                    <li class="minimalize-styl-2" style="width: 300px; color:#FFF;" title="系统时间">
+						<font  color="yellow" id = "datetime" >[[${systemtime}]]</font>
+                    </li>
+                </div>
                 <ul class="nav navbar-top-links navbar-right welcome-message">
                     <!-- <li><a title="视频教程" href="http://doc.ruoyi.vip/ruoyi/document/spjc.html" target="_blank"><i class="fa fa-video-camera"></i> 视频教程</a></li>
                     --> <li><a title="开发文档" href="http://doc.ruoyi.vip" target="_blank"><i class="fa fa-question-circle"></i> 开发文档</a></li>
@@ -315,5 +320,37 @@ $(function() {
 	}
 });
 </script>
+<script type="text/javascript">
+			
+				var systemtime = new Date(Date.parse(document.getElementById('systemtime').value.replace(/-/g,"/"))).getTime(),
+					startTime = new Date().getTime(),
+					count = 0;
+				function fixed() {
+					if(startTime != null && startTime != ""){
+					    count++;
+					    var offset = new Date().getTime() - (startTime + count * 1000);
+					    var nextTime = 1000 - offset;
+					    if (nextTime < 0) nextTime = 0;
+				    	setTimeout(fixed, nextTime);
+				    	document.getElementById('datetime').innerHTML = fortime(systemtime + count * 1000);
+				    	//console.log(new Date().getTime() - (startTime + count * 1000));
+					}
+				}
+				setTimeout("fixed()");
+
+				//将时间戳转为普通格式
+				function fortime(time){
+				    var itime = new Date(time);
+				    var y = itime.getFullYear();
+				    var m = itime.getMonth()+1;
+				    var d = itime.getDate();
+				    var h = itime.getHours();
+				    var mm = itime.getMinutes();
+				    var s = itime.getSeconds();
+				    return y+'-'+add(m)+'-'+add(d)+' '+add(h)+':'+add(mm)+':'+add(s);
+				}
+				//如果小于10 则返回'0'+m
+				function add(m){return m<10?'0'+m:m}
+		    </script>
 </body>
 </html>
