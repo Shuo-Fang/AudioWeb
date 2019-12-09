@@ -3,6 +3,9 @@ package com.audioweb;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import com.audioweb.framework.websocket.MessageSocket;
 
 /**
  * 启动程序
@@ -14,9 +17,12 @@ public class RuoYiApplication
 {
     public static void main(String[] args)
     {
-        // System.setProperty("spring.devtools.restart.enabled", "false");
-        SpringApplication.run(RuoYiApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  若依启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
+        // System.setProperty("spring.devtools.restart.enabled", "false");//禁用热部署
+	   //SpringApplication.run(RuoYiApplication.class, args);
+	   SpringApplication springApplication = new SpringApplication(RuoYiApplication.class);
+	   ConfigurableApplicationContext configurableApplicationContext = springApplication.run(args);
+	   MessageSocket.setApplicationContext(configurableApplicationContext);//解决WebSocket不能注入的问题
+       System.out.println("(♥◠‿◠)ﾉﾞ  若依启动成功   ლ(´ڡ`ლ)ﾞ  \n" +
                 " .-------.       ____     __        \n" +
                 " |  _ _   \\      \\   \\   /  /    \n" +
                 " | ( ' )  |       \\  _. /  '       \n" +

@@ -17,18 +17,17 @@
 	
     <dependencies>
     
-    	 <!-- Mysql驱动包 -->
-        <dependency>
+    	<!-- Mysql驱动包 -->
+        <!-- <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+        </dependency> -->
     
         <!-- 通用工具-->
         <dependency>
             <groupId>com.audioweb</groupId>
             <artifactId>audioweb-common</artifactId>
         </dependency>
-        
     </dependencies>
 	
 </project>

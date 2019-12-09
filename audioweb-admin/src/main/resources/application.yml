@@ -12,7 +12,10 @@ ruoyi:
   profile: D:/ruoyi/uploadPath
   # 获取ip地址开关
   addressEnabled: true
-
+  # 终端通信线程池中的线程的名称前缀
+  ioprefix: client-
+  # 组播线程线程池中的线程的名称前缀
+  mulprefix: multicast-
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80

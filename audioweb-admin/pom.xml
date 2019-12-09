@@ -73,6 +73,11 @@
             <artifactId>audioweb-generator</artifactId>
         </dependency>
         
+        <!-- 终端管理-->
+        <dependency>
+            <groupId>com.audioweb</groupId>
+            <artifactId>audioweb-clientserver</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

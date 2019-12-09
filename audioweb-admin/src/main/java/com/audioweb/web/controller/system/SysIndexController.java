@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.audioweb.common.config.Global;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.serverPool.service.IClientService;
 import com.audioweb.system.domain.SysMenu;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.ISysMenuService;
@@ -25,6 +26,9 @@ public class SysIndexController extends BaseController
     @Autowired
     private ISysMenuService menuService;
 
+    @Autowired
+    private IClientService clientService;
+    
     // 系统首页
     @GetMapping("/index")
     public String index(ModelMap mmap)
@@ -39,6 +43,23 @@ public class SysIndexController extends BaseController
         mmap.put("copyrightYear", Global.getCopyrightYear());
         mmap.put("demoEnabled", Global.isDemoEnabled());
         mmap.put("systemtime",df.format(new Date()));
+        
+        clientService.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					while(true) {
+						clientService.executeAsync();
+						Thread.sleep(1000);
+					}
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
         return "index";
     }
 

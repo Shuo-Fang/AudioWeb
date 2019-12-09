@@ -1307,6 +1307,15 @@ var table = {
         	        return row[_column];
         	    }).join();
         	},
+        	// 判断是否选择节点选择
+        	notAllowSelect: function(_tree) {
+    		    var nodes = _tree.getSelectedNodes();
+    		    if(nodes.length == 0){
+                    $.modal.msgError("请选择节点后提交");
+                    return false;
+				}
+        		return true;
+        	},
         	// 不允许根父节点选择
         	notAllowParents: function(_tree) {
     		    var nodes = _tree.getSelectedNodes();

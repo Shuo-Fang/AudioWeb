@@ -157,6 +157,16 @@ public class SysDeptController extends BaseController
     }
 
     /**
+     * 多选择部门树
+     */
+    @GetMapping("/selectDeptTrees/{deptId}")
+    public String selectDeptTrees(@PathVariable("deptId") Long deptId, ModelMap mmap)
+    {
+        mmap.put("dept", deptService.selectDeptById(deptId));
+        return prefix + "/checktree";
+    }
+
+    /**
      * 加载部门列表树
      */
     @GetMapping("/treeData")

@@ -185,7 +185,7 @@
                 </div>
                 <div class="navbar-header">
                     <li class="minimalize-styl-2" style="width: 300px; color:#FFF;" title="系统时间">
-						<font  color="yellow" id = "datetime" >[[${systemtime}]]</font>
+						<font  color="yellow" id = "datetime" > </font>
                     </li>
                 </div>
                 <ul class="nav navbar-top-links navbar-right welcome-message">
@@ -321,36 +321,69 @@ $(function() {
 });
 </script>
 <script type="text/javascript">
-			
-				var systemtime = new Date(Date.parse(document.getElementById('systemtime').value.replace(/-/g,"/"))).getTime(),
-					startTime = new Date().getTime(),
-					count = 0;
-				function fixed() {
-					if(startTime != null && startTime != ""){
-					    count++;
-					    var offset = new Date().getTime() - (startTime + count * 1000);
-					    var nextTime = 1000 - offset;
-					    if (nextTime < 0) nextTime = 0;
-				    	setTimeout(fixed, nextTime);
-				    	document.getElementById('datetime').innerHTML = fortime(systemtime + count * 1000);
-				    	//console.log(new Date().getTime() - (startTime + count * 1000));
-					}
-				}
-				setTimeout("fixed()");
+window.websocket = null;
+var websocket = window.websocket;
+$(function(){
+ 
+    //获取当前地址
+    var host=window.document.location.host;
+    
+    //判断当前浏览器是否支持WebSocket
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://"+host+"/websocket/message");
+    }
+    else {
+        alert('Not support websocket')
+    }
+ 
+    //连接发生错误的回调方法
+    websocket.onerror = function () {
+        setMessageInnerHTML("error");
+    };
+ 
+    //连接成功建立的回调方法
+    websocket.onopen = function (event) {
+        setMessageInnerHTML("open");
+    }
+ 
+    //接收到消息的回调方法
+    websocket.onmessage = function (event) {
+        onmessage(event);
+    }
+ 
+    //连接关闭的回调方法
+    websocket.onclose = function () {
+        setMessageInnerHTML("close");
+    }
+ 
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function () {
+        websocket.close();
+    }
+ 
+    //发送消息
+    setInterval("websocket.send('');",1000);
+});
+ 
+//将消息显示在网页上
+function setMessageInnerHTML(innerHTML) {
+    console.log(innerHTML);
+}
+ 
+//手动关闭连接
+function closeWebSocket() {
+    websocket.close();
+}
+ 
+//接收消息的回调方法
+function onmessage(event) {
+    //console.log(event.data);
+    //var data=event.data.split(',');
+ 
+    $("#datetime").empty();
+    $("#datetime").text(event.data);
+}	
 
-				//将时间戳转为普通格式
-				function fortime(time){
-				    var itime = new Date(time);
-				    var y = itime.getFullYear();
-				    var m = itime.getMonth()+1;
-				    var d = itime.getDate();
-				    var h = itime.getHours();
-				    var mm = itime.getMinutes();
-				    var s = itime.getSeconds();
-				    return y+'-'+add(m)+'-'+add(d)+' '+add(h)+':'+add(mm)+':'+add(s);
-				}
-				//如果小于10 则返回'0'+m
-				function add(m){return m<10?'0'+m:m}
-		    </script>
+</script>
 </body>
 </html>

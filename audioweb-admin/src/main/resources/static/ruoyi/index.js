@@ -211,7 +211,7 @@ $(function() {
         }
     });
 
-    function menuItem() {debugger
+    function menuItem() {
         // 获取标识数据
         var dataUrl = $(this).attr('href'),
         dataIndex = $(this).data('index'),
