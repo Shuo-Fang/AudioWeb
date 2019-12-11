@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改终端')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-terminal-edit" th:object="${workTerminal}">
+            <input name="terminalId" th:field="*{terminalId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">终端名称：</label>
+                <div class="col-sm-8">
+                    <input name="terminalName" th:field="*{terminalName}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">终端IP地址：</label>
+                <div class="col-sm-8">
+                    <input name="terminalIp" th:field="*{terminalIp}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">自动是否允许寻呼话筒：</label>
+                <div class="col-sm-8">
+                    <select name="iscmic" class="form-control m-b" th:with="type=${@dict.getType('sys_yes_no')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{iscmic}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">终端是否允许自动采播：</label>
+                <div class="col-sm-8">
+                    <select name="isautocast" class="form-control m-b" th:with="type=${@dict.getType('sys_yes_no')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{isautocast}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">所在分区ID：</label>
+                <div class="col-sm-8">
+                    <input name="domainId" th:field="*{domainId}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">终端状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
+                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:field="*{status}">
+                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">终端管理分区：</label>
+                <div class="col-sm-8">
+                    <select name="precinct" class="form-control m-b">
+                        <option value="">所有</option>
+                    </select>
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "clientserver/terminal";
+        $("#form-terminal-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-terminal-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>
