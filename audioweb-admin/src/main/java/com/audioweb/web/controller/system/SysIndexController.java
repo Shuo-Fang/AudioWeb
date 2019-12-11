@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.audioweb.common.config.Global;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.framework.web.domain.Server;
 import com.audioweb.serverPool.service.IClientService;
 import com.audioweb.system.domain.SysMenu;
 import com.audioweb.system.domain.SysUser;
@@ -44,7 +45,7 @@ public class SysIndexController extends BaseController
         mmap.put("demoEnabled", Global.isDemoEnabled());
         mmap.put("systemtime",df.format(new Date()));
         
-        clientService.execute(new Runnable() {
+        /*clientService.execute(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -59,7 +60,7 @@ public class SysIndexController extends BaseController
 					e.printStackTrace();
 				}
 			}
-		});
+		});*/
         return "index";
     }
 
@@ -74,6 +75,14 @@ public class SysIndexController extends BaseController
     @GetMapping("/system/main")
     public String main(ModelMap mmap)
     {
+        Server server = new Server();
+        try {
+			server.copyTo();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        mmap.put("server", server);
         mmap.put("version", Global.getVersion());
         return "main";
     }
