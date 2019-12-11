@@ -29,30 +29,7 @@ public class Global
 
     /** 获取地址开关 */
     private static boolean addressEnabled;
-    
-    /** 获取地址开关 */
-    private static String ioprefix;
-    
-    /** 获取地址开关 */
-    private static String mulprefix;
-    
-
-	public static String getIoprefix() {
-		return ioprefix;
-	}
-
-	public static void setIoprefix(String ioprefix) {
-		Global.ioprefix = ioprefix;
-	}
-
-	public static String getMulprefix() {
-		return mulprefix;
-	}
-
-	public static void setMulprefix(String mulprefix) {
-		Global.mulprefix = mulprefix;
-	}
-    
+   
     public static String getName()
     {
         return name;

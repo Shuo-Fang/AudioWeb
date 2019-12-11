@@ -15,7 +15,7 @@ public class ClientServiceImpl implements IClientService {
 	
 	@Override
 	//@Scheduled(cron = " */1 * * * * ? ")
-	@Async("IOServiceExecutor")
+	@Async("ServerServiceExecutor")
 	public void executeAsync() {
 		log.info("start executeAsync");
         System.out.println("异步线程执行批量插入等耗时任务");
@@ -23,7 +23,7 @@ public class ClientServiceImpl implements IClientService {
 	}
 	
 	@Override
-	@Async("IOServiceExecutor")
+	@Async("ServerServiceExecutor")
 	public void execute(Runnable task) {
 		// TODO Auto-generated method stub
 		task.run();
