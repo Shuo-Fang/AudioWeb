@@ -21,11 +21,11 @@ public class SysUser extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 用户ID */
-    @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
+    //@Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
     /** 分区ID */
-    @Excel(name = "分区编号", type = Type.IMPORT)
+    @Excel(name = "分区编号", type = Type.ALL)
     private Long domainId;
 
     /** 分区父ID */
@@ -64,7 +64,7 @@ public class SysUser extends BaseEntity
     private String salt;
 
     /** 帐号状态（0正常 1停用） */
-    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
+    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用" ,type = Type.EXPORT)
     private String status;
 
     /** 删除标志（0代表存在 2代表删除） */
