@@ -160,7 +160,7 @@ public interface ISysUserService
      * @param userId 用户ID
      * @return 结果
      */
-    public String selectUserPostGroup(Long userId);
+/*    public String selectUserPostGroup(Long userId);*/
 
     /**
      * 导入用户数据

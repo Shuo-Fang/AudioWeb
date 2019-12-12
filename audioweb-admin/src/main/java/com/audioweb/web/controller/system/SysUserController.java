@@ -22,7 +22,6 @@ import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.shiro.service.SysPasswordService;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysUser;
-import com.audioweb.system.service.ISysPostService;
 import com.audioweb.system.service.ISysRoleService;
 import com.audioweb.system.service.ISysUserService;
 
@@ -42,9 +41,6 @@ public class SysUserController extends BaseController
 
     @Autowired
     private ISysRoleService roleService;
-
-    @Autowired
-    private ISysPostService postService;
 
     @Autowired
     private SysPasswordService passwordService;
@@ -106,7 +102,7 @@ public class SysUserController extends BaseController
     public String add(ModelMap mmap)
     {
         mmap.put("roles", roleService.selectRoleAll());
-        mmap.put("posts", postService.selectPostAll());
+        //mmap.put("posts", postService.selectPostAll());
         return prefix + "/add";
     }
 
@@ -145,7 +141,7 @@ public class SysUserController extends BaseController
     {
         mmap.put("user", userService.selectUserById(userId));
         mmap.put("roles", roleService.selectRolesByUserId(userId));
-        mmap.put("posts", postService.selectPostsByUserId(userId));
+        //mmap.put("posts", postService.selectPostsByUserId(userId));
         return prefix + "/edit";
     }
 

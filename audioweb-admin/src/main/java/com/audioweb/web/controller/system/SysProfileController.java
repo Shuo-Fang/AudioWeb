@@ -51,7 +51,7 @@ public class SysProfileController extends BaseController
         SysUser user = ShiroUtils.getSysUser();
         mmap.put("user", user);
         mmap.put("roleGroup", userService.selectUserRoleGroup(user.getUserId()));
-        mmap.put("postGroup", userService.selectUserPostGroup(user.getUserId()));
+        //mmap.put("postGroup", userService.selectUserPostGroup(user.getUserId()));
         return prefix + "/profile";
     }
 

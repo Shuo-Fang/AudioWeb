@@ -71,7 +71,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-6">
+<!--                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-sm-4 control-label">岗位：</label>
                         <div class="col-sm-8">
@@ -80,7 +80,9 @@
 							</select>
                         </div>
                     </div>
-                </div>
+                </div> -->
+            </div>
+            <div class="row">
                 <div class="col-sm-6">
                     <div class="form-group">
                         <label class="col-sm-4 control-label">用户性别：</label>
@@ -91,13 +93,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-            	<div class="col-sm-12">
+            	<div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-xs-2 control-label">角色：</label>
-                        <div class="col-xs-10">
-                            <label th:each="role:${roles}" class="check-box">
+                        <label class="col-sm-4 control-label">角色：</label>
+                        <div class="col-sm-8">
+                             <label th:each="role:${roles}" class="check-box">
 								<input name="role" type="checkbox" th:value="${role.roleId}" th:text="${role.roleName}" th:checked="${role.flag}" th:disabled="${role.status == '1'}">
 							</label>
                         </div>

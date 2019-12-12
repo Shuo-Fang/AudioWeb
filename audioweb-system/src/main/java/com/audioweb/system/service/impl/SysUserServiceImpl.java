@@ -13,15 +13,11 @@ import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.exception.BusinessException;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.security.Md5Utils;
-import com.audioweb.system.domain.SysPost;
 import com.audioweb.system.domain.SysRole;
 import com.audioweb.system.domain.SysUser;
-import com.audioweb.system.domain.SysUserPost;
 import com.audioweb.system.domain.SysUserRole;
-import com.audioweb.system.mapper.SysPostMapper;
 import com.audioweb.system.mapper.SysRoleMapper;
 import com.audioweb.system.mapper.SysUserMapper;
-import com.audioweb.system.mapper.SysUserPostMapper;
 import com.audioweb.system.mapper.SysUserRoleMapper;
 import com.audioweb.system.service.ISysConfigService;
 import com.audioweb.system.service.ISysUserService;
@@ -41,12 +37,6 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     private SysRoleMapper roleMapper;
-
-    @Autowired
-    private SysPostMapper postMapper;
-
-    @Autowired
-    private SysUserPostMapper userPostMapper;
 
     @Autowired
     private SysUserRoleMapper userRoleMapper;
@@ -151,7 +141,7 @@ public class SysUserServiceImpl implements ISysUserService
         // 删除用户与角色关联
         userRoleMapper.deleteUserRoleByUserId(userId);
         // 删除用户与岗位表
-        userPostMapper.deleteUserPostByUserId(userId);
+        //userPostMapper.deleteUserPostByUserId(userId);
         return userMapper.deleteUserById(userId);
     }
 
@@ -185,7 +175,7 @@ public class SysUserServiceImpl implements ISysUserService
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
-        insertUserPost(user);
+        //insertUserPost(user);
         // 新增用户与角色管理
         insertUserRole(user);
         return rows;
@@ -207,9 +197,9 @@ public class SysUserServiceImpl implements ISysUserService
         // 新增用户与角色管理
         insertUserRole(user);
         // 删除用户与岗位关联
-        userPostMapper.deleteUserPostByUserId(userId);
+        //userPostMapper.deleteUserPostByUserId(userId);
         // 新增用户与岗位管理
-        insertUserPost(user);
+        //insertUserPost(user);
         return userMapper.updateUser(user);
     }
 
@@ -268,7 +258,7 @@ public class SysUserServiceImpl implements ISysUserService
      * 
      * @param user 用户对象
      */
-    public void insertUserPost(SysUser user)
+/*    public void insertUserPost(SysUser user)
     {
         Long[] posts = user.getPostIds();
         if (StringUtils.isNotNull(posts))
@@ -287,7 +277,7 @@ public class SysUserServiceImpl implements ISysUserService
                 userPostMapper.batchUserPost(list);
             }
         }
-    }
+    }*/
 
     /**
      * 校验登录名称是否唯一
@@ -383,7 +373,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @param userId 用户ID
      * @return 结果
      */
-    @Override
+/*    @Override
     public String selectUserPostGroup(Long userId)
     {
         List<SysPost> list = postMapper.selectPostsByUserId(userId);
@@ -397,7 +387,7 @@ public class SysUserServiceImpl implements ISysUserService
             return idsStr.substring(0, idsStr.length() - 1);
         }
         return idsStr.toString();
-    }
+    }*/
 
     /**
      * 导入用户数据

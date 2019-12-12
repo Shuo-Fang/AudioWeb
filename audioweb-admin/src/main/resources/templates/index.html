@@ -265,6 +265,8 @@ var ctx = [[@{/}]];
 var skin = storage.get("skin");
 // history（表示去掉地址的#）否则地址以"#"形式展示
 var mode = "history";
+//存储当前登录用户ID
+var userId = [[${user.userId}]];
 // 历史访问路径缓存
 var historyPath = storage.get("historyPath");
 // 排除非左侧菜单链接
@@ -324,7 +326,7 @@ $(function() {
 window.websocket = null;
 var websocket = window.websocket;
 $(function(){
- 
+ 	
     //获取当前地址
     var host=window.document.location.host;
     
