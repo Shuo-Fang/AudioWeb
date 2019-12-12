@@ -90,10 +90,10 @@ public class LogAspect
             if (currentUser != null)
             {
                 operLog.setOperName(currentUser.getLoginName());
-                if (StringUtils.isNotNull(currentUser.getDept())
-                        && StringUtils.isNotEmpty(currentUser.getDept().getDeptName()))
+                if (StringUtils.isNotNull(currentUser.getDomain())
+                        && StringUtils.isNotEmpty(currentUser.getDomain().getDomainName()))
                 {
-                    operLog.setDeptName(currentUser.getDept().getDeptName());
+                    operLog.setDomainName(currentUser.getDomain().getDomainName());
                 }
             }
 

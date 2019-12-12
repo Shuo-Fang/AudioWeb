@@ -18,8 +18,8 @@ public class OnlineSession extends SimpleSession
     /** 用户名称 */
     private String loginName;
 
-    /** 部门名称 */
-    private String deptName;
+    /** 分区名称 */
+    private String domainName;
 	
 	/** 用户头像 */
 	private String avatar;
@@ -91,17 +91,15 @@ public class OnlineSession extends SimpleSession
         this.loginName = loginName;
     }
 
-    public String getDeptName()
-    {
-        return deptName;
-    }
+    public String getDomainName() {
+		return domainName;
+	}
 
-    public void setDeptName(String deptName)
-    {
-        this.deptName = deptName;
-    }
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 
-    public OnlineStatus getStatus()
+	public OnlineStatus getStatus()
     {
         return status;
     }

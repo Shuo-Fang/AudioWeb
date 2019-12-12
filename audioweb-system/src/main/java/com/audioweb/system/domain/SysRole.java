@@ -32,8 +32,8 @@ public class SysRole extends BaseEntity
     @Excel(name = "角色排序", cellType = ColumnType.NUMERIC)
     private String roleSort;
 
-    /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本部门数据权限；4：本部门及以下数据权限） */
-    @Excel(name = "数据范围", readConverterExp = "1=所有数据权限,2=自定义数据权限,3=本部门数据权限,4=本部门及以下数据权限")
+    /** 数据范围（1：所有数据权限；2：自定义数据权限；3：本分区数据权限；4：本分区及以下数据权限） */
+    @Excel(name = "数据范围", readConverterExp = "1=所有数据权限,2=自定义数据权限,3=本分区数据权限,4=本分区及以下数据权限")
     private String dataScope;
 
     /** 角色状态（0正常 1停用） */
@@ -49,8 +49,8 @@ public class SysRole extends BaseEntity
     /** 菜单组 */
     private Long[] menuIds;
 
-    /** 部门组（数据权限） */
-    private Long[] deptIds;
+    /** 分区组（数据权限） */
+    private Long[] domainIds;
 
     public SysRole()
     {
@@ -167,17 +167,15 @@ public class SysRole extends BaseEntity
         this.menuIds = menuIds;
     }
 
-    public Long[] getDeptIds()
-    {
-        return deptIds;
-    }
+    public Long[] getDomainIds() {
+		return domainIds;
+	}
 
-    public void setDeptIds(Long[] deptIds)
-    {
-        this.deptIds = deptIds;
-    }
+	public void setDomainIds(Long[] domainIds) {
+		this.domainIds = domainIds;
+	}
 
-    public String toString() {
+	public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("roleId", getRoleId())
             .append("roleName", getRoleName())

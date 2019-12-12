@@ -51,7 +51,7 @@ public class SysShiroService
             onlineSession.setHost(userOnline.getIpaddr());
             onlineSession.setBrowser(userOnline.getBrowser());
             onlineSession.setOs(userOnline.getOs());
-            onlineSession.setDeptName(userOnline.getDeptName());
+            onlineSession.setDomainName(userOnline.getDomainName());
             onlineSession.setLoginName(userOnline.getLoginName());
             onlineSession.setStartTimestamp(userOnline.getStartTimestamp());
             onlineSession.setLastAccessTime(userOnline.getLastAccessTime());

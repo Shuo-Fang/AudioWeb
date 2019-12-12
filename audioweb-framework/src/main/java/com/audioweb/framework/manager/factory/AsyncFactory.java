@@ -43,7 +43,7 @@ public class AsyncFactory
             {
                 SysUserOnline online = new SysUserOnline();
                 online.setSessionId(String.valueOf(session.getId()));
-                online.setDeptName(session.getDeptName());
+                online.setDomainName(session.getDomainName());
                 online.setLoginName(session.getLoginName());
                 online.setStartTimestamp(session.getStartTimestamp());
                 online.setLastAccessTime(session.getLastAccessTime());

@@ -18,10 +18,10 @@
     <dependencies>
     
     	 <!-- Mysql驱动包 -->
-        <dependency>
+<!--         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+        </dependency> -->
     
         <!-- 通用工具-->
         <dependency>

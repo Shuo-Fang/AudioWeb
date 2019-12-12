@@ -18,8 +18,8 @@ public class SysUserOnline extends BaseEntity
     /** 用户会话id */
     private String sessionId;
 
-    /** 部门名称 */
-    private String deptName;
+    /** 分区名称 */
+    private String domainName;
 
     /** 登录名称 */
     private String loginName;
@@ -58,17 +58,15 @@ public class SysUserOnline extends BaseEntity
         this.sessionId = sessionId;
     }
 
-    public String getDeptName()
-    {
-        return deptName;
-    }
+    public String getDomainName() {
+		return domainName;
+	}
 
-    public void setDeptName(String deptName)
-    {
-        this.deptName = deptName;
-    }
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 
-    public String getLoginName()
+	public String getLoginName()
     {
         return loginName;
     }
@@ -163,7 +161,7 @@ public class SysUserOnline extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("sessionId", getSessionId())
             .append("loginName", getLoginName())
-            .append("deptName", getDeptName())
+            .append("domainName", getDomainName())
             .append("ipaddr", getIpaddr())
             .append("loginLocation", getLoginLocation())
             .append("browser", getBrowser())

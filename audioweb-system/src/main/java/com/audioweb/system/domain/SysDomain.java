@@ -6,25 +6,25 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.core.domain.BaseEntity;
 
 /**
- * 部门表 sys_dept
+ * 分区表 sys_domain
  * 
- * @author ruoyi
+ * @author shuofang
  */
-public class SysDept extends BaseEntity
+public class SysDomain extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 部门ID */
-    private Long deptId;
+    /** 分区ID */
+    private Long domainId;
 
-    /** 父部门ID */
+    /** 父分区ID */
     private Long parentId;
 
     /** 祖级列表 */
     private String ancestors;
 
-    /** 部门名称 */
-    private String deptName;
+    /** 分区名称 */
+    private String domainName;
 
     /** 显示顺序 */
     private String orderNum;
@@ -38,26 +38,26 @@ public class SysDept extends BaseEntity
     /** 邮箱 */
     private String email;
 
-    /** 部门状态:0正常,1停用 */
+    /** 分区状态:0正常,1停用 */
     private String status;
 
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
 
-    /** 父部门名称 */
+    /** 父分区名称 */
     private String parentName;
 
-    public Long getDeptId()
-    {
-        return deptId;
-    }
+    
+    
+    public Long getDomainId() {
+		return domainId;
+	}
 
-    public void setDeptId(Long deptId)
-    {
-        this.deptId = deptId;
-    }
+	public void setDomainId(Long domainId) {
+		this.domainId = domainId;
+	}
 
-    public Long getParentId()
+	public Long getParentId()
     {
         return parentId;
     }
@@ -77,25 +77,24 @@ public class SysDept extends BaseEntity
         this.ancestors = ancestors;
     }
 
-    @NotBlank(message = "部门名称不能为空")
-    @Size(min = 0, max = 30, message = "部门名称长度不能超过30个字符")
-    public String getDeptName()
-    {
-        return deptName;
-    }
+    @NotBlank(message = "分区名称不能为空")
+    @Size(min = 0, max = 30, message = "分区名称长度不能超过30个字符")
+    public String getDomainName() {
+		return domainName;
+	}
 
-    public void setDeptName(String deptName)
-    {
-        this.deptName = deptName;
-    }
+	public void setDomainName(String domainName) {
+		this.domainName = domainName;
+	}
 
     @NotBlank(message = "显示顺序不能为空")
     public String getOrderNum()
     {
         return orderNum;
     }
+    
 
-    public void setOrderNum(String orderNum)
+	public void setOrderNum(String orderNum)
     {
         this.orderNum = orderNum;
     }
@@ -166,10 +165,10 @@ public class SysDept extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("deptId", getDeptId())
+            .append("domainId", getDomainId())
             .append("parentId", getParentId())
             .append("ancestors", getAncestors())
-            .append("deptName", getDeptName())
+            .append("domainName", getDomainName())
             .append("orderNum", getOrderNum())
             .append("leader", getLeader())
             .append("phone", getPhone())

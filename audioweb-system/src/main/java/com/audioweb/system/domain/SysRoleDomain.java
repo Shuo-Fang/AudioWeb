@@ -4,17 +4,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 角色和部门关联 sys_role_dept
+ * 角色和分区关联 sys_role_domain
  * 
  * @author ruoyi
  */
-public class SysRoleDept
+public class SysRoleDomain
 {
     /** 角色ID */
     private Long roleId;
     
-    /** 部门ID */
-    private Long deptId;
+    /** 分区ID */
+    private Long domainId;
 
     public Long getRoleId()
     {
@@ -25,22 +25,20 @@ public class SysRoleDept
     {
         this.roleId = roleId;
     }
+    
+    public Long getDomainId() {
+		return domainId;
+	}
 
-    public Long getDeptId()
-    {
-        return deptId;
-    }
+	public void setDomainId(Long domainId) {
+		this.domainId = domainId;
+	}
 
-    public void setDeptId(Long deptId)
-    {
-        this.deptId = deptId;
-    }
-
-    @Override
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("roleId", getRoleId())
-            .append("deptId", getDeptId())
+            .append("domainId", getDomainId())
             .toString();
     }
 }

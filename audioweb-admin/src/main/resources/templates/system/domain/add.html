@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-	<th:block th:include="include :: header('新增部门')" />
+	<th:block th:include="include :: header('新增分区')" />
 </head>
 <body class="white-bg">
 	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
-		<form class="form-horizontal m" id="form-dept-add">
-			<input id="treeId" name="parentId" type="hidden" th:value="${dept.deptId}"   />
+		<form class="form-horizontal m" id="form-domain-add">
+			<input id="treeId" name="parentId" type="hidden" th:value="${domain.domainId}"   />
 			<div class="form-group">
-				<label class="col-sm-3 control-label ">上级部门：</label>
+				<label class="col-sm-3 control-label ">上级分区：</label>
 				<div class="col-sm-8">
 				    <div class="input-group">
-						<input class="form-control" type="text" onclick="selectDeptTree()" id="treeName" readonly="true" th:value="${dept.deptName}">
+						<input class="form-control" type="text" onclick="selectDomainTree()" id="treeName" readonly="true" th:value="${domain.domainName}">
 					    <span class="input-group-addon"><i class="fa fa-search"></i></span>
 				    </div>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label">部门名称：</label>
+				<label class="col-sm-3 control-label">分区名称：</label>
 				<div class="col-sm-8">
-					<input class="form-control" type="text" name="deptName" id="deptName" required>
+					<input class="form-control" type="text" name="domainName" id="domainName" required>
 				</div>
 			</div>
 			<div class="form-group">
@@ -47,7 +47,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label">部门状态：</label>
+				<label class="col-sm-3 control-label">分区状态：</label>
 				<div class="col-sm-8">
 				    <div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
 						<input type="radio" th:id="${dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${dict.default}">
@@ -59,22 +59,22 @@
 	</div>
 	<th:block th:include="include :: footer" />
 	<script type="text/javascript">
-		var prefix = ctx + "system/dept";
+		var prefix = ctx + "system/domain";
 		
-		$("#form-dept-add").validate({
+		$("#form-domain-add").validate({
 			onkeyup: false,
 			rules:{
-				deptName:{
+				domainName:{
 					remote: {
-		                url: prefix + "/checkDeptNameUnique",
+		                url: prefix + "/checkDomainNameUnique",
 		                type: "post",
 		                dataType: "json",
 		                data: {
 		                	"parentId": function() {
 		                		return $("input[name='parentId']").val();
 		                    },
-		                	"deptName" : function() {
-		                        return $.common.trim($("#deptName").val());
+		                	"domainName" : function() {
+		                        return $.common.trim($("#domainName").val());
 		                    }
 		                },
 		                dataFilter: function(data, type) {
@@ -93,8 +93,8 @@
         		},
 			},
 			messages: {
-		        "deptName": {
-		            remote: "部门已经存在"
+		        "domainName": {
+		            remote: "分区已经存在"
 		        }
 		    },
 		    focusCleanup: true
@@ -102,16 +102,16 @@
 		
 		function submitHandler() {
 	        if ($.validate.form()) {
-	        	$.operate.save(prefix + "/add", $('#form-dept-add').serialize());
+	        	$.operate.save(prefix + "/add", $('#form-domain-add').serialize());
 	        }
 	    }
 	
-		/*部门管理-新增-选择父部门树*/
-		function selectDeptTree() {
+		/*分区管理-新增-选择父分区树*/
+		function selectDomainTree() {
 			var options = {
-				title: '部门选择',
+				title: '分区选择',
 				width: "380",
-				url: prefix + "/selectDeptTree/" + $("#treeId").val(),
+				url: prefix + "/selectDomainTree/" + $("#treeId").val(),
 				callBack: doSubmit
 			};
 			$.modal.openOptions(options);

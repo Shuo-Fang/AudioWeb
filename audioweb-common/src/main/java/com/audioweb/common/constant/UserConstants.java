@@ -24,8 +24,8 @@ public class UserConstants
     /** 角色封禁状态 */
     public static final String ROLE_BLOCKED = "1";
 
-    /** 部门正常状态 */
-    public static final String DEPT_NORMAL = "0";
+    /** 分区正常状态 */
+    public static final String DOMAIN_NORMAL = "0";
 
     /** 字典正常状态 */
     public static final String DICT_NORMAL = "0";
@@ -51,9 +51,9 @@ public class UserConstants
     public final static String USER_EMAIL_UNIQUE = "0";
     public final static String USER_EMAIL_NOT_UNIQUE = "1";
 
-    /** 部门名称是否唯一的返回结果码 */
-    public final static String DEPT_NAME_UNIQUE = "0";
-    public final static String DEPT_NAME_NOT_UNIQUE = "1";
+    /** 分区名称是否唯一的返回结果码 */
+    public final static String DOMAIN_NAME_UNIQUE = "0";
+    public final static String DOMAIN_NAME_NOT_UNIQUE = "1";
 
     /** 角色名称是否唯一的返回结果码 */
     public final static String ROLE_NAME_UNIQUE = "0";

@@ -24,11 +24,11 @@ public class SysUser extends BaseEntity
     @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
-    /** 部门ID */
-    @Excel(name = "部门编号", type = Type.IMPORT)
-    private Long deptId;
+    /** 分区ID */
+    @Excel(name = "分区编号", type = Type.IMPORT)
+    private Long domainId;
 
-    /** 部门父ID */
+    /** 分区父ID */
     private Long parentId;
 
     /** 角色ID */
@@ -78,12 +78,12 @@ public class SysUser extends BaseEntity
     @Excel(name = "最后登陆时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
     private Date loginDate;
 
-    /** 部门对象 */
+    /** 分区对象 */
     @Excels({
-        @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
-        @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
+        @Excel(name = "分区名称", targetAttr = "domainName", type = Type.EXPORT),
+        @Excel(name = "分区负责人", targetAttr = "leader", type = Type.EXPORT)
     })
-    private SysDept dept;
+    private SysDomain domain;
 
     private List<SysRole> roles;
 
@@ -123,17 +123,17 @@ public class SysUser extends BaseEntity
         return userId != null && 1L == userId;
     }
 
-    public Long getDeptId()
-    {
-        return deptId;
-    }
+    
+    
+    public Long getDomainId() {
+		return domainId;
+	}
 
-    public void setDeptId(Long deptId)
-    {
-        this.deptId = deptId;
-    }
+	public void setDomainId(Long domainId) {
+		this.domainId = domainId;
+	}
 
-    public Long getParentId()
+	public Long getParentId()
     {
         return parentId;
     }
@@ -279,19 +279,19 @@ public class SysUser extends BaseEntity
         this.loginDate = loginDate;
     }
 
-    public SysDept getDept()
-    {
-        if (dept == null)
+    
+    
+    public SysDomain getDomain() {
+    	if (domain == null)
         {
-            dept = new SysDept();
+            domain = new SysDomain();
         }
-        return dept;
-    }
+        return domain;
+	}
 
-    public void setDept(SysDept dept)
-    {
-        this.dept = dept;
-    }
+	public void setDomain(SysDomain domain) {
+		this.domain = domain;
+	}
 
     public List<SysRole> getRoles()
     {
@@ -327,7 +327,7 @@ public class SysUser extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("userId", getUserId())
-            .append("deptId", getDeptId())
+            .append("domainId", getDomainId())
             .append("loginName", getLoginName())
             .append("userName", getUserName())
             .append("email", getEmail())
@@ -345,7 +345,7 @@ public class SysUser extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
-            .append("dept", getDept())
+            .append("domain", getDomain())
             .toString();
     }
 }

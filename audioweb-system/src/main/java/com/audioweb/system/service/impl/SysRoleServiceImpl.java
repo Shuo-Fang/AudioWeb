@@ -15,10 +15,10 @@ import com.audioweb.common.exception.BusinessException;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysRole;
-import com.audioweb.system.domain.SysRoleDept;
+import com.audioweb.system.domain.SysRoleDomain;
 import com.audioweb.system.domain.SysRoleMenu;
 import com.audioweb.system.domain.SysUserRole;
-import com.audioweb.system.mapper.SysRoleDeptMapper;
+import com.audioweb.system.mapper.SysRoleDomainMapper;
 import com.audioweb.system.mapper.SysRoleMapper;
 import com.audioweb.system.mapper.SysRoleMenuMapper;
 import com.audioweb.system.mapper.SysUserRoleMapper;
@@ -42,7 +42,7 @@ public class SysRoleServiceImpl implements ISysRoleService
     private SysUserRoleMapper userRoleMapper;
 
     @Autowired
-    private SysRoleDeptMapper roleDeptMapper;
+    private SysRoleDomainMapper roleDomainMapper;
 
     /**
      * 根据条件分页查询角色数据
@@ -51,7 +51,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @return 角色数据集合信息
      */
     @Override
-    @DataScope(deptAlias = "d")
+    @DataScope(domainAlias = "d")
     public List<SysRole> selectRoleList(SysRole role)
     {
         return roleMapper.selectRoleList(role);
@@ -204,10 +204,10 @@ public class SysRoleServiceImpl implements ISysRoleService
     {
         // 修改角色信息
         roleMapper.updateRole(role);
-        // 删除角色与部门关联
-        roleDeptMapper.deleteRoleDeptByRoleId(role.getRoleId());
-        // 新增角色和部门信息（数据权限）
-        return insertRoleDept(role);
+        // 删除角色与分区关联
+        roleDomainMapper.deleteRoleDomainByRoleId(role.getRoleId());
+        // 新增角色和分区信息（数据权限）
+        return insertRoleDomain(role);
     }
 
     /**
@@ -235,25 +235,25 @@ public class SysRoleServiceImpl implements ISysRoleService
     }
 
     /**
-     * 新增角色部门信息(数据权限)
+     * 新增角色分区信息(数据权限)
      *
      * @param role 角色对象
      */
-    public int insertRoleDept(SysRole role)
+    public int insertRoleDomain(SysRole role)
     {
         int rows = 1;
-        // 新增角色与部门（数据权限）管理
-        List<SysRoleDept> list = new ArrayList<SysRoleDept>();
-        for (Long deptId : role.getDeptIds())
+        // 新增角色与分区（数据权限）管理
+        List<SysRoleDomain> list = new ArrayList<SysRoleDomain>();
+        for (Long domainId : role.getDomainIds())
         {
-            SysRoleDept rd = new SysRoleDept();
+            SysRoleDomain rd = new SysRoleDomain();
             rd.setRoleId(role.getRoleId());
-            rd.setDeptId(deptId);
+            rd.setDomainId(domainId);
             list.add(rd);
         }
         if (list.size() > 0)
         {
-            rows = roleDeptMapper.batchRoleDept(list);
+            rows = roleDomainMapper.batchRoleDomain(list);
         }
         return rows;
     }

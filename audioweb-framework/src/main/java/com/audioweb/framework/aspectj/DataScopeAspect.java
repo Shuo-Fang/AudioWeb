@@ -35,14 +35,14 @@ public class DataScopeAspect
     public static final String DATA_SCOPE_CUSTOM = "2";
 
     /**
-     * 部门数据权限
+     * 分区数据权限
      */
-    public static final String DATA_SCOPE_DEPT = "3";
+    public static final String DATA_SCOPE_DOMAIN = "3";
 
     /**
-     * 部门及以下数据权限
+     * 分区及以下数据权限
      */
-    public static final String DATA_SCOPE_DEPT_AND_CHILD = "4";
+    public static final String DATA_SCOPE_DOMAIN_AND_CHILD = "4";
 
     /**
      * 仅本人数据权限
@@ -81,7 +81,7 @@ public class DataScopeAspect
             // 如果是超级管理员，则不过滤数据
             if (!currentUser.isAdmin())
             {
-                dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
+                dataScopeFilter(joinPoint, currentUser, controllerDataScope.domainAlias(),
                         controllerDataScope.userAlias());
             }
         }
@@ -94,7 +94,7 @@ public class DataScopeAspect
      * @param user 用户
      * @param alias 别名
      */
-    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias)
+    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String domainAlias, String userAlias)
     {
         StringBuilder sqlString = new StringBuilder();
 
@@ -109,18 +109,18 @@ public class DataScopeAspect
             else if (DATA_SCOPE_CUSTOM.equals(dataScope))
             {
                 sqlString.append(StringUtils.format(
-                        " OR {}.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {} ) ", deptAlias,
+                        " OR {}.domain_id IN ( SELECT domain_id FROM sys_role_domain WHERE role_id = {} ) ", domainAlias,
                         role.getRoleId()));
             }
-            else if (DATA_SCOPE_DEPT.equals(dataScope))
+            else if (DATA_SCOPE_DOMAIN.equals(dataScope))
             {
-                sqlString.append(StringUtils.format(" OR {}.dept_id = {} ", deptAlias, user.getDeptId()));
+                sqlString.append(StringUtils.format(" OR {}.domain_id = {} ", domainAlias, user.getDomainId()));
             }
-            else if (DATA_SCOPE_DEPT_AND_CHILD.equals(dataScope))
+            else if (DATA_SCOPE_DOMAIN_AND_CHILD.equals(dataScope))
             {
                 sqlString.append(StringUtils.format(
-                        " OR {}.dept_id IN ( SELECT dept_id FROM sys_dept WHERE dept_id = {} or find_in_set( {} , ancestors ) )",
-                        deptAlias, user.getDeptId(), user.getDeptId()));
+                        " OR {}.domain_id IN ( SELECT domain_id FROM sys_domain WHERE domain_id = {} or find_in_set( {} , ancestors ) )",
+                        domainAlias, user.getDomainId(), user.getDomainId()));
             }
             else if (DATA_SCOPE_SELF.equals(dataScope))
             {

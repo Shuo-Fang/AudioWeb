@@ -7,7 +7,7 @@
 <body>
     <div class="main-content">
         <form id="form-user-add" class="form-horizontal">
-            <input name="deptId" type="hidden" id="treeId"/>
+            <input name="domainId" type="hidden" id="treeId"/>
             <h4 class="form-header h4">基本信息</h4>
             <div class="row">
             	<div class="col-sm-6">
@@ -20,10 +20,10 @@
                 </div>
                 <div class="col-sm-6">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>归属部门：</label>
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>所属分区：</label>
                         <div class="col-sm-8">
                             <div class="input-group">
-                            	<input name="deptName" onclick="selectDeptTree()" id="treeName" type="text" placeholder="请选择归属部门" class="form-control" required>
+                            	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" required>
                                 <span class="input-group-addon"><i class="fa fa-search"></i></span>
                             </div>
                         </div>
@@ -222,13 +222,13 @@
 	        }
 	    }
          
-        /*用户管理-新增-选择部门树*/
-        function selectDeptTree() {
+        /*用户管理-新增-选择分区树*/
+        function selectDomainTree() {
         	var treeId = $("#treeId").val();
-        	var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
-        	var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        	var domainId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        	var url = ctx + "system/domain/selectDomainTree/" + domainId;
 			var options = {
-				title: '选择部门',
+				title: '选择分区',
 				width: "380",
 				url: url,
 				callBack: doSubmit
