@@ -1,7 +1,6 @@
 package com.audioweb.framework.websocket;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -14,8 +13,8 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.BinaryMessage;
 
+import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 
@@ -28,9 +27,8 @@ import com.audioweb.system.service.impl.SysUserServiceImpl;
  */
 @ServerEndpoint(value = "/websocket/realtime", configurator = WebSocketConfig.class)
 @Component
+//war部署时此注解@Component需要注释掉
 public class BlobSocket {
-
-	private static ApplicationContext applicationContext;
 	private static int onlineCount = 0;
 	private static CopyOnWriteArraySet<BlobSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
@@ -42,7 +40,7 @@ public class BlobSocket {
 	public void onOpen(Session session) {
 		this.session = session;
 		// 注入userService
-		this.userService = applicationContext.getBean(SysUserServiceImpl.class);
+		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -129,9 +127,5 @@ public class BlobSocket {
 
 	public static synchronized void subOnlineCount() {
 		BlobSocket.onlineCount--;
-	}
-
-	public static void setApplicationContext(ApplicationContext applicationContext) {
-		BlobSocket.applicationContext = applicationContext;
 	}
 }

@@ -4,6 +4,7 @@ import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
@@ -16,9 +17,11 @@ import com.audioweb.framework.util.ShiroUtils;
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
  * @date 2019年12月9日 上午11:22:58
  */
+//war部署时此注解需要注释掉
 @Configuration
 public class WebSocketConfig  extends ServerEndpointConfig.Configurator{
-    
+	
+	//war部署时此方法需要注释掉
 	@Bean
     public ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();

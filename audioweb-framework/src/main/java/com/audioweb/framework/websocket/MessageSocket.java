@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 
 import com.audioweb.common.json.JSONObject;
+import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 
@@ -31,9 +32,8 @@ import com.audioweb.system.service.impl.SysUserServiceImpl;
  */
 @ServerEndpoint(value = "/websocket/message", configurator = WebSocketConfig.class)
 @Component
+//war部署时此注解@Component需要注释掉
 public class MessageSocket {
-
-	private static ApplicationContext applicationContext;
 	private static int onlineCount = 0;
 	private static CopyOnWriteArraySet<MessageSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
@@ -45,7 +45,7 @@ public class MessageSocket {
 	public void onOpen(Session session) {
 		this.session = session;
 		// 注入userService
-		this.userService = applicationContext.getBean(SysUserServiceImpl.class);
+		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -97,7 +97,7 @@ public class MessageSocket {
 	 * @date 2019年12月9日 下午1:15:07
 	 * @throws
 	 */
-	@OnMessage
+/*	@OnMessage
     public void onMessage(byte[] messages, Session session) {
         try {
             System.out.println("接收到消息:"+new String(messages,"utf-8"));
@@ -113,7 +113,7 @@ public class MessageSocket {
             e.printStackTrace();
         }
 
-    }
+    }*/
 	/*@OnBinary
 	public void onMessagedata(BinaryMessage data, Session session) throws IOException {
 		// TODO
@@ -148,9 +148,5 @@ public class MessageSocket {
 
 	public static synchronized void subOnlineCount() {
 		MessageSocket.onlineCount--;
-	}
-
-	public static void setApplicationContext(ApplicationContext applicationContext) {
-		MessageSocket.applicationContext = applicationContext;
 	}
 }
