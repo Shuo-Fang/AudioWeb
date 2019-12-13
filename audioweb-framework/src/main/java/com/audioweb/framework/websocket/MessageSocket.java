@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.websocket.OnClose;
@@ -16,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 
+import com.audioweb.common.json.JSONObject;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 
@@ -71,8 +74,17 @@ public class MessageSocket {
 	@OnMessage
 	public void onMessage(String message, Session session) throws IOException {
 		// TODO
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		sendMessage(df.format(new Date()));
+		JSONObject jsonObject = new JSONObject();
+		if(message != null && message.equals("time")) {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			jsonObject.put("type", message);
+			jsonObject.put("data", df.format(new Date()));
+			sendMessage(jsonObject.toCompactString());
+		}else {
+			jsonObject.put("type", message);
+			jsonObject.put("data", "100");
+			sendInfo(jsonObject.toCompactString());
+		}
 	}
 	/**
 	 * 
@@ -110,7 +122,6 @@ public class MessageSocket {
 	}*/
 	
 	public void sendMessage(String message) throws IOException {
-		// String m = "1,2,3,4,5";
 		this.session.getBasicRemote().sendText(message);
 	}
 
