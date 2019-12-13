@@ -330,18 +330,25 @@ $(function(){debugger
     //发送消息
     var time;
     var gltime;
- 	
-    //获取当前地址
-    var host=window.document.location.host;
-    
+
     //判断当前浏览器是否支持WebSocket
-    if ('WebSocket' in window) {
-        websocket = new WebSocket("ws://"+host+"/websocket/message");
+	if ('WebSocket' in window || 'MozWebSocket' in window) {
+		//获取当前地址
+	    var host=window.document.location.host,target = "ws://";
+	    if (window.location.protocol == 'http:') {
+	        target = "ws://"
+	    } else {
+	        target = "wss://"
+	    }
+	    if ('WebSocket' in window) {
+	        websocket = new WebSocket(target+host+"/websocket/message");
+	    }else {
+	        alert('Not support websocket')
+	    }
+    } else {
+        alert("此浏览器不支持WebSocket!请更换浏览器重试");
+		return;
     }
-    else {
-        alert('Not support websocket')
-    }
- 
     //连接发生错误的回调方法
     websocket.onerror = function () {
         clearInterval(time);//停止
