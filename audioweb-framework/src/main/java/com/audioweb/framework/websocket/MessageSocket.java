@@ -76,9 +76,9 @@ public class MessageSocket {
 		// TODO
 		JSONObject jsonObject = new JSONObject();
 		if(message != null && message.equals("time")) {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			jsonObject.put("type", message);
-			jsonObject.put("data", df.format(new Date()));
+			jsonObject.put("data", System.currentTimeMillis());
 			sendMessage(jsonObject.toCompactString());
 		}else {
 			jsonObject.put("type", message);
