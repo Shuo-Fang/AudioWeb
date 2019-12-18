@@ -231,11 +231,16 @@ public class IpUtils
     	Long LongIp = -1L;
     	IP = judgeIP(IP);
     	if(IP !=null) {
-    		LongIp = 0L;
-    		String[] ipStrings = IP.split("\\.");
-    	    for (int i = 0;i<ipStrings.length;i++){
-    	    	LongIp =  Long.parseLong(ipStrings[i]) << 8*(ipStrings.length-1-i) | LongIp;
-    		}
+    		try {
+        		LongIp = 0L;
+        		String[] ipStrings = IP.split("\\.");
+        	    for (int i = 0;i<ipStrings.length;i++){
+        	    	LongIp =  Long.parseLong(ipStrings[i]) << 8*(ipStrings.length-1-i) | LongIp;
+        		}
+			} catch (Exception e) {
+				// TODO: handle exception
+				return -1L;
+			}
     	}
 	    return LongIp;
 	}
@@ -309,12 +314,17 @@ public class IpUtils
      */
     public static long bytes2Long(byte[] bytes) {
     	long ip = -1L;
-        if(bytes.length > 0 && bytes.length < 5) {
-        	ip = 0;
-        	for(int i = 0;i<bytes.length;i++) {
-        		ip = ip << 8 | (bytes[i] & 0xFF);
-        	}
-        }
+    	try {
+            if(bytes.length > 0 && bytes.length < 5) {
+            	ip = 0;
+            	for(int i = 0;i<bytes.length;i++) {
+            		ip = ip << 8 | (bytes[i] & 0xFF);
+            	}
+            }
+		} catch (Exception e) {
+			// TODO: handle exception
+			return -1L;
+		}
         return ip;
     }
     public static void main(String[] args) {
