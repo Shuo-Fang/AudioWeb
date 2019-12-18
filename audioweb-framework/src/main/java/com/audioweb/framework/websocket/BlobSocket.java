@@ -64,7 +64,6 @@ public class BlobSocket {
 	 * @return void 返回类型 
 	 * @author ShuoFang 
 	 * @date 2019年12月9日 下午1:14:40
-	 * @throws
 	 */
 	@OnMessage
 	public void onMessage(String message, Session session) throws IOException {
@@ -81,7 +80,6 @@ public class BlobSocket {
 	 * @return void 返回类型 
 	 * @author ShuoFang 
 	 * @date 2019年12月9日 下午1:15:07
-	 * @throws
 	 */
 	@OnMessage
     public void onMessage(byte[] messages, Session session) {

@@ -7,10 +7,19 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * 获取IP方法
  * 
- * @author ruoyi
+ * @author ruoyi,shuofang
  */
 public class IpUtils
 {
+	/**
+	 * 
+	 * @Title: getIpAddr 
+	 * @Description: TODO(通过连接获取客户端IP) 
+	 * @param @param request
+	 * @return String 返回类型 
+	 * @author ShuoFang 
+	 * @date 2019年12月18日 上午9:01:24
+	 */
     public static String getIpAddr(HttpServletRequest request)
     {
         if (request == null)
@@ -42,7 +51,15 @@ public class IpUtils
 
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
     }
-
+    /**
+     * 
+     * @Title: internalIp 
+     * @Description: TODO(判断IP地址是否为内网地址) 
+     * @param @param ip
+     * @return boolean 返回类型 
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午9:02:10
+     */
     public static boolean internalIp(String ip)
     {
         byte[] addr = textToNumericFormatV4(ip);
@@ -89,7 +106,7 @@ public class IpUtils
     /**
      * 将IPv4地址转换成字节
      * 
-     * @param text IPv4地址
+     * @param text IPv4地址字符串或者IP地址转long
      * @return byte 字节
      */
     public static byte[] textToNumericFormatV4(String text)
@@ -161,7 +178,15 @@ public class IpUtils
         }
         return bytes;
     }
-
+    /**
+     * 获取本地地址IP
+     * @Title: getHostIp 
+     * @Description: TODO(获取本地地址IP) 
+     * @return String 返回类型 
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午9:08:12
+     * @throws UnknownHostException 无法确定主机的IP地址
+     */
     public static String getHostIp()
     {
         try
@@ -173,7 +198,15 @@ public class IpUtils
         }
         return "127.0.0.1";
     }
-
+    /**
+     * 获取本机地址名字
+     * @Title: getHostName 
+     * @Description: TODO(获取本机地址名字) 
+     * @return String 返回类型 
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午9:08:30
+     * @throws UnknownHostException 无法确定主机的IP地址
+     */
     public static String getHostName()
     {
         try
@@ -185,4 +218,106 @@ public class IpUtils
         }
         return "未知";
     }
+    /**
+     * 将IP转为long数字存储
+     * @Title: ip2Long 
+     * @Description: TODO(将IP转为long数字存储) 
+     * @param IP IP地址
+     * @return Long 返回类型 -1为转换出错
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午9:08:49
+     */
+    public static Long ip2Long(String IP) {
+    	Long LongIp = -1L;
+    	IP = judgeIP(IP);
+    	if(IP !=null) {
+    		LongIp = 0L;
+    		String[] ipStrings = IP.split("\\.");
+    	    for (int i = 0;i<ipStrings.length;i++){
+    	    	LongIp =  Long.parseLong(ipStrings[i]) << 8*(ipStrings.length-1-i) | LongIp;
+    		}
+    	}
+	    return LongIp;
+	}
+    /**
+     * 验证IP地址是否正确
+     * @Title: judgeIP 
+     * @Description: TODO(验证IP地址是否正确) 
+     * @param @param ip
+     * @param @return   
+     * @return String 返回类型  null为出错
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午9:09:16
+     * @throws UnknownHostException 无法确定主机的IP地址
+     */
+    public static String judgeIP(String ip) {
+    	if(ip != null) {
+    		String[] ipStrings = ip.split("\\.");
+    		if(ipStrings.length == 4) {
+    			try {
+					return InetAddress.getByName(ip).getHostAddress();
+				} catch (UnknownHostException e) {
+					// TODO: handle exception
+				}
+    		}
+    	}
+		return null;
+	}
+    /**
+     * 将long数据转为对应IP地址
+     * @Title: long2IP 
+     * @Description: TODO(将long数据转为对应IP地址) 
+     * @param @param lip
+     * @param @return   
+     * @return String 返回类型 null为转换出错
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午9:09:32
+     * @throws Exception 转换出错
+     */
+    public static String long2IP(Long lip) {
+		if(lip >= 0) {
+			try {
+				StringBuffer sb = new StringBuffer("");
+				// 直接右移24位
+				sb.append(String.valueOf((lip >> 24)));
+				sb.append(".");
+				// 将高8位置0，然后右移16位
+				sb.append(String.valueOf((lip & 0x00FFFFFF) >> 16));
+				sb.append(".");
+				// 将高16位置0，然后右移8位
+				sb.append(String.valueOf((lip & 0x0000FFFF) >> 8));
+				sb.append(".");
+				// 将高24位置0
+				sb.append(String.valueOf((lip & 0x000000FF)));
+				return sb.toString();
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+    /**
+     * byte[]数组转long型IP
+     * @Title: bytes2Long 
+     * @Description: TODO(byte[]数组转long型IP) 
+     * @param bytes IP数组
+     * @return long 返回类型  IP地址 -1为转换出错
+     * @author ShuoFang 
+     * @date 2019年12月18日 上午10:14:11
+     */
+    public static long bytes2Long(byte[] bytes) {
+    	long ip = -1L;
+        if(bytes.length > 0 && bytes.length < 5) {
+        	ip = 0;
+        	for(int i = 0;i<bytes.length;i++) {
+        		ip = ip << 8 | (bytes[i] & 0xFF);
+        	}
+        }
+        return ip;
+    }
+    public static void main(String[] args) {
+		System.out.println(long2IP(bytes2Long(textToNumericFormatV4(String.valueOf(ip2Long("0.0.0.0"))))));
+	}
 }

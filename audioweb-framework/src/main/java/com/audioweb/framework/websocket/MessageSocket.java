@@ -69,7 +69,7 @@ public class MessageSocket {
 	 * @return void 返回类型 
 	 * @author ShuoFang 
 	 * @date 2019年12月9日 下午1:14:40
-	 * @throws
+	 * @throws IOException
 	 */
 	@OnMessage
 	public void onMessage(String message, Session session) throws IOException {
