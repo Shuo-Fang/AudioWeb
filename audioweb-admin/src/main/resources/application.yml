@@ -12,6 +12,18 @@ ruoyi:
   profile: D:/ruoyi/uploadPath
   # 获取ip地址开关
   addressEnabled: true
+# 通信线程池配置
+netty:
+  #绑定IP地址
+  serverIp: 127.0.0.1
+  #终端登录端口
+  loginPort: 1000
+  #终端通信端口
+  serverPort: 6970
+  #qt端通信端口
+  qtClientPort: 6977
+  #是否为linux端
+  islinux: 0
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80

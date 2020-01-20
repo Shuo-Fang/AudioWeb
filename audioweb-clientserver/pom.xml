@@ -28,6 +28,12 @@
             <groupId>com.audioweb</groupId>
             <artifactId>audioweb-common</artifactId>
         </dependency>
+        <!-- netty依赖库 -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.45.Final</version>
+		</dependency>
     </dependencies>
 	
 </project>
