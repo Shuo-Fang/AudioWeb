@@ -1,5 +1,7 @@
 package com.audioweb.framework.shiro.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -40,9 +42,14 @@ public class SysLoginService
      */
     public SysUser login(String username, String password)
     {
-        // 验证码校验
-        if (!StringUtils.isEmpty(ServletUtils.getRequest().getAttribute(ShiroConstants.CURRENT_CAPTCHA)))
+    	HttpServletRequest re = ServletUtils.getRequest();
+    	re.getHeader("Authorization");
+    	//App端校验
+    	if(!StringUtils.isEmpty(re.getHeader("Authorization"))) {
+    		//APP端登陆，无需验证码
+    	}else if (!StringUtils.isEmpty(re.getAttribute(ShiroConstants.CURRENT_CAPTCHA)))
         {
+            // 验证码校验
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error")));
             throw new CaptchaException();
         }

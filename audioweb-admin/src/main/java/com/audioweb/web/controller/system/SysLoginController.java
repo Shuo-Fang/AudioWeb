@@ -29,7 +29,7 @@ public class SysLoginController extends BaseController
         // 如果是Ajax请求，返回Json字符串。
         if (ServletUtils.isAjaxRequest(request))
         {
-            return ServletUtils.renderString(response, "{\"code\":\"1\",\"msg\":\"未登录或登录超时。请重新登录\"}");
+            return ServletUtils.renderString(response, "{\"code\":\"401\",\"msg\":\"未登录或登录超时。请重新登录\"}");
         }
 
         return "login";
@@ -39,7 +39,10 @@ public class SysLoginController extends BaseController
     @ResponseBody
     public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe)
     {
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+    	if(rememberMe == null) {
+    		rememberMe = false;
+    	}
+    	UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
         Subject subject = SecurityUtils.getSubject();
         try
         {

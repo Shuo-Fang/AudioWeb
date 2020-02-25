@@ -1,6 +1,16 @@
+/**   
+ * @Title: AppSocket.java 
+ * @Package com.audioweb.framework.websocket 
+ * @Description: TODO(用一句话描述该文件做什么) 
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @date 2020年2月25日 上午10:25:23 
+ * @version V1.0   
+ */ 
 package com.audioweb.framework.websocket;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.websocket.OnClose;
@@ -10,24 +20,24 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Component;
+
 import com.audioweb.common.json.JSONObject;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 
-/**
- * 总信息管理的socket处理
- * @ClassName: MessageSocket 
- * @Description: TODO(总信息管理的socket处理) 
+/** 
+ * @ClassName: AppSocket 
+ * @Description: App端socket连接
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
- * @date 2019年12月9日 上午11:22:41
+ * @date 2020年2月25日 上午10:25:23  
  */
-@ServerEndpoint(value = "/websocket/message", configurator = WebSocketConfig.class)
+@ServerEndpoint(value = "/websocket/app", configurator = WebSocketConfig.class)
 @Component
 //war部署时此注解@Component需要注释掉
-public class MessageSocket {
+public class AppSocket {
 	private static int onlineCount = 0;
-	private static CopyOnWriteArraySet<MessageSocket> webSocketSet = new CopyOnWriteArraySet<>();
+	private static CopyOnWriteArraySet<AppSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
 	private SysUserServiceImpl userService;
 	// todo 这里需要一个变量来接收shiro中登录的人信息
@@ -121,7 +131,7 @@ public class MessageSocket {
 	 * 群发自定义消息
 	 */
 	public void sendInfo(String text) throws IOException {
-		for (MessageSocket item : webSocketSet) {
+		for (AppSocket item : webSocketSet) {
 			try {
 				item.sendMessage(text);
 			} catch (IOException e) {
@@ -131,14 +141,14 @@ public class MessageSocket {
 	}
 
 	public static synchronized int getOnlineCount() {
-		return MessageSocket.onlineCount;
+		return AppSocket.onlineCount;
 	}
 
 	public static synchronized void addOnlineCount() {
-		MessageSocket.onlineCount++;
+		AppSocket.onlineCount++;
 	}
 
 	public static synchronized void subOnlineCount() {
-		MessageSocket.onlineCount--;
+		AppSocket.onlineCount--;
 	}
 }
