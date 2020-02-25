@@ -30,9 +30,9 @@ public class OnlineSessionFactory implements SessionFactory
             {
                 UserAgent userAgent = UserAgent.parseUserAgentString(ServletUtils.getRequest().getHeader("User-Agent"));
                 // 获取客户端操作系统
-                String os = userAgent.getOperatingSystem().getName();
+                String os = "Unknown".equals(userAgent.getOperatingSystem().getName())?"Android Mobile":userAgent.getOperatingSystem().getName();
                 // 获取客户端浏览器
-                String browser = userAgent.getBrowser().getName();
+                String browser = "Unknown".equals(userAgent.getBrowser().getName())?"Embedded":userAgent.getBrowser().getName();
                 session.setHost(IpUtils.getIpAddr(request));
                 session.setBrowser(browser);
                 session.setOs(os);

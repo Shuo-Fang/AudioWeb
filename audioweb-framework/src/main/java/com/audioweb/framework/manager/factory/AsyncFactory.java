@@ -107,9 +107,9 @@ public class AsyncFactory
                 // 打印信息到日志
                 sys_user_logger.info(s.toString(), args);
                 // 获取客户端操作系统
-                String os = userAgent.getOperatingSystem().getName();
+                String os = "Unknown".equals(userAgent.getOperatingSystem().getName())?"Android Mobile":userAgent.getOperatingSystem().getName();
                 // 获取客户端浏览器
-                String browser = userAgent.getBrowser().getName();
+                String browser = "Unknown".equals(userAgent.getBrowser().getName())?"Embedded":userAgent.getBrowser().getName();
                 // 封装对象
                 SysLogininfor logininfor = new SysLogininfor();
                 logininfor.setLoginName(username);

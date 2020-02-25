@@ -43,7 +43,6 @@ public class SysLoginService
     public SysUser login(String username, String password)
     {
     	HttpServletRequest re = ServletUtils.getRequest();
-    	re.getHeader("Authorization");
     	//App端校验
     	if(!StringUtils.isEmpty(re.getHeader("Authorization"))) {
     		//APP端登陆，无需验证码
