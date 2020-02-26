@@ -7,6 +7,12 @@ package com.audioweb.common.constant;
  */
 public interface ShiroConstants
 {
+
+    /**
+     * App端登陆凭证
+     */
+    public static final String AUTHORIZATION = "Authorization";
+    
     /**
      * 当前登录的用户
      */

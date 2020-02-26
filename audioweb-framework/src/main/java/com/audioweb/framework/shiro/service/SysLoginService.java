@@ -104,9 +104,12 @@ public class SysLoginService
             AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, MessageUtils.message("user.blocked", user.getRemark())));
             throw new UserBlockedException();
         }
-
-        passwordService.validate(user, password);
-
+        if(!StringUtils.isEmpty(re.getHeader(ShiroConstants.AUTHORIZATION))) {
+    		//APP端登陆验证
+            passwordService.appValidate(user, password,re.getHeader(ShiroConstants.AUTHORIZATION));
+    	}else {
+            passwordService.validate(user, password);
+    	}
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         recordLoginInfo(user);
         return user;

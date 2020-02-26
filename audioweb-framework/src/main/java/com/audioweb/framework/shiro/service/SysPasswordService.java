@@ -1,5 +1,8 @@
 package com.audioweb.framework.shiro.service;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import org.apache.shiro.cache.Cache;
@@ -38,7 +41,16 @@ public class SysPasswordService
     {
         loginRecordCache = cacheManager.getCache(ShiroConstants.LOGINRECORDCACHE);
     }
-
+    /**
+     * 网页端验证密码
+     * @Title: validate 
+     * @Description: 网页端验证密码
+     * @param user
+     * @param password void 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年2月26日 上午10:20:57
+     */
     public void validate(SysUser user, String password)
     {
         String loginName = user.getLoginName();
@@ -67,7 +79,49 @@ public class SysPasswordService
             clearLoginRecordCache(loginName);
         }
     }
+    /**
+     * 接口端验证密码
+     * @Title: appValidate 
+     * @Description: 接口端验证密码
+     * @param user
+     * @param password
+     * @param authorization void 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年2月26日 上午10:25:48
+     */
+    public void appValidate(SysUser user, String password, String authorization)
+    {
+        String loginName = user.getLoginName();
 
+        AtomicInteger retryCount = loginRecordCache.get(loginName);
+
+        if (retryCount == null)
+        {
+            retryCount = new AtomicInteger(0);
+            loginRecordCache.put(loginName, retryCount);
+        }
+        if (retryCount.incrementAndGet() > Integer.valueOf(maxRetryCount).intValue())
+        {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGIN_FAIL, MessageUtils.message("user.password.retry.limit.exceed", maxRetryCount)));
+            throw new UserPasswordRetryLimitExceedException(Integer.valueOf(maxRetryCount).intValue());
+        }
+
+        if (!appmatches(user, password,authorization))
+        {
+            AsyncManager.me().execute(AsyncFactory.recordLogininfor(loginName, Constants.LOGIN_FAIL, MessageUtils.message("user.password.retry.limit.count", retryCount)));
+            loginRecordCache.put(loginName, retryCount);
+            throw new UserPasswordNotMatchException();
+        }
+        else
+        {
+            clearLoginRecordCache(loginName);
+        }
+    }
+    public boolean appmatches(SysUser user, String newPassword,String authorization)
+    {
+        return newPassword.equals(encryptPassword("",user.getPassword(),authorization));
+    }
     public boolean matches(SysUser user, String newPassword)
     {
         return user.getPassword().equals(encryptPassword(user.getLoginName(), newPassword, user.getSalt()));
@@ -86,5 +140,4 @@ public class SysPasswordService
     public void unlock(String loginName){
         loginRecordCache.remove(loginName);
     }
-
 }
