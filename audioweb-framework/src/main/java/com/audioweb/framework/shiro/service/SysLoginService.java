@@ -12,6 +12,7 @@ import com.audioweb.common.enums.UserStatus;
 import com.audioweb.common.exception.user.CaptchaException;
 import com.audioweb.common.exception.user.UserBlockedException;
 import com.audioweb.common.exception.user.UserDeleteException;
+import com.audioweb.common.exception.user.UserInterfaceCheckException;
 import com.audioweb.common.exception.user.UserNotExistsException;
 import com.audioweb.common.exception.user.UserPasswordNotMatchException;
 import com.audioweb.common.utils.DateUtils;
@@ -20,6 +21,7 @@ import com.audioweb.common.utils.ServletUtils;
 import com.audioweb.framework.manager.AsyncManager;
 import com.audioweb.framework.manager.factory.AsyncFactory;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.system.domain.SysAuthorization;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.ISysUserService;
 
@@ -106,7 +108,11 @@ public class SysLoginService
         }
         if(!StringUtils.isEmpty(re.getHeader(ShiroConstants.AUTHORIZATION))) {
     		//APP端登陆验证
-            passwordService.appValidate(user, password,re.getHeader(ShiroConstants.AUTHORIZATION));
+        	if(SysAuthorization.checkAuthorization(re.getHeader(ShiroConstants.AUTHORIZATION))) {
+        		passwordService.appValidate(user, password,re.getHeader(ShiroConstants.AUTHORIZATION));
+        	}else {
+        		throw new UserInterfaceCheckException();
+        	}
     	}else {
             passwordService.validate(user, password);
     	}

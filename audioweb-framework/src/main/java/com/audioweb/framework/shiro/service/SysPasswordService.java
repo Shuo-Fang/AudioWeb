@@ -120,7 +120,7 @@ public class SysPasswordService
     }
     public boolean appmatches(SysUser user, String newPassword,String authorization)
     {
-        return newPassword.equals(encryptPassword("",user.getPassword(),authorization));
+        return newPassword.equals(encryptPassword("",encryptPassword("","",user.getPassword()),authorization));
     }
     public boolean matches(SysUser user, String newPassword)
     {

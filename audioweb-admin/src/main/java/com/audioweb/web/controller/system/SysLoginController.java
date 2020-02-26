@@ -1,5 +1,9 @@
 package com.audioweb.web.controller.system;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.SecurityUtils;
@@ -14,6 +18,7 @@ import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.ServletUtils;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.system.domain.SysAuthorization;
 
 /**
  * 登录验证
@@ -23,6 +28,8 @@ import com.audioweb.common.utils.StringUtils;
 @Controller
 public class SysLoginController extends BaseController
 {
+	public static LinkedList<String> authorizations = new LinkedList<>();
+	
     @GetMapping("/login")
     public String login(HttpServletRequest request, HttpServletResponse response)
     {
@@ -64,5 +71,12 @@ public class SysLoginController extends BaseController
     public String unauth()
     {
         return "error/unauth";
+    }
+    
+    @GetMapping("/getAuthorization")
+    @ResponseBody
+    public AjaxResult getAuthorization()
+    {
+        return success(SysAuthorization.getAuthorization());
     }
 }
