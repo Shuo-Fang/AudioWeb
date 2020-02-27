@@ -29,6 +29,24 @@
             <artifactId>audioweb-common</artifactId>
         </dependency>
         
+        <!-- 定时任务-->
+        <dependency>
+            <groupId>com.audioweb</groupId>
+            <artifactId>audioweb-quartz</artifactId>
+        </dependency>
+        
+        <!-- 定时任务-->
+        <dependency>
+            <groupId>com.audioweb</groupId>
+            <artifactId>audioweb-system</artifactId>
+        </dependency>
+        
+        <!-- netty依赖库 -->
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>4.1.45.Final</version>
+		</dependency>
     </dependencies>
 	
 </project>

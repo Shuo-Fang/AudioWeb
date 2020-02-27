@@ -202,14 +202,7 @@
 	            <version>${audioweb.version}</version>
 	        </dependency>
 	        
-			<!-- 终端服务-->
-	        <dependency>
-	            <groupId>com.audioweb</groupId>
-	            <artifactId>audioweb-clientserver</artifactId>
-	            <version>${audioweb.version}</version>
-	        </dependency>
-	        
-			<!-- 广播服务-->
+			<!-- 任务管理-->
 	        <dependency>
 	            <groupId>com.audioweb</groupId>
 	            <artifactId>audioweb-work</artifactId>
@@ -226,7 +219,6 @@
 		<module>audioweb-quartz</module>
 		<module>audioweb-generator</module>
         <module>audioweb-common</module>
-        <module>audioweb-clientserver</module>
         <module>audioweb-work</module>
     </modules>
     <packaging>pom</packaging>

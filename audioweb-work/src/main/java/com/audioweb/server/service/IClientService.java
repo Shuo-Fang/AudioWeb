@@ -1,4 +1,4 @@
-package com.audioweb.serverPool.service;
+package com.audioweb.server.service;
 
 public interface IClientService {
 	/**

@@ -6,12 +6,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 
-import com.audioweb.framework.websocket.BlobSocket;
-import com.audioweb.framework.websocket.MessageSocket;
-import com.audioweb.framework.websocket.WebSocketConfig;
-import com.audioweb.serverPool.NettyServer;
+import com.audioweb.server.NettyServer;
 
 import io.netty.channel.ChannelFuture;
 

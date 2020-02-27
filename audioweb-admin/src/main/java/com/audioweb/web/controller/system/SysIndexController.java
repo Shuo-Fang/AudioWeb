@@ -11,7 +11,7 @@ import com.audioweb.common.config.Global;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.framework.web.domain.Server;
-import com.audioweb.serverPool.service.IClientService;
+import com.audioweb.server.service.IClientService;
 import com.audioweb.system.domain.SysMenu;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.ISysMenuService;

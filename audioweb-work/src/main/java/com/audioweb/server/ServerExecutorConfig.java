@@ -1,4 +1,4 @@
-package com.audioweb.serverPool;
+package com.audioweb.server;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
