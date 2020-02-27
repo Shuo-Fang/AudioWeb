@@ -9,13 +9,8 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-
 import com.audioweb.common.config.datasource.DynamicDataSourceContextHolder;
 
 import io.netty.util.NettyRuntime;
@@ -28,10 +23,9 @@ import io.netty.util.internal.SystemPropertyUtil;
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
  * @date 2019年12月9日 下午4:41:19
  */
-@EnableAsync
 @Configuration
 @EnableScheduling
-public class ServerExecutorConfig implements SchedulingConfigurer, AsyncConfigurer{
+public class ServerExecutorConfig implements AsyncConfigurer{
 	/**
      *  获取活跃的 cpu数量
      */
@@ -134,34 +128,5 @@ public class ServerExecutorConfig implements SchedulingConfigurer, AsyncConfigur
 	            log.error("异步任务执行出现异常, message {}, emthod {}, params {}", throwable, method, objects);
 	        };
 	    }
-
-		/* (non-Javadoc) 
-		 * <p>Title: configureTasks</p> 
-		 * <p>Description: </p> 
-		 * @author ShuoFang 
-		 * @date 2020年1月20日 下午2:29:47
-		 * @param taskRegistrar 
-		 * @see org.springframework.scheduling.annotation.SchedulingConfigurer#configureTasks(org.springframework.scheduling.config.ScheduledTaskRegistrar) 
-		 */ 
 		
-		@Override
-		public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
-			// TODO Auto-generated method stub
-			ThreadPoolTaskScheduler taskScheduler = taskScheduler();
-	        scheduledTaskRegistrar.setTaskScheduler(taskScheduler);
-		}
-		
-		/**
-	     * 配置定时任务使用的线程池
-	     * @return
-	     */
-	    @Bean(destroyMethod = "shutdown", name = "taskScheduler")
-	    public ThreadPoolTaskScheduler taskScheduler(){
-	        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-	        scheduler.setPoolSize(5);
-	        scheduler.setThreadNamePrefix("scheduler-task-");
-	        scheduler.setAwaitTerminationSeconds(600);
-	        scheduler.setWaitForTasksToCompleteOnShutdown(true);
-	        return scheduler;
-	    }
 }
