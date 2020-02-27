@@ -1,16 +1,6 @@
-/**   
- * @Title: AppSocket.java 
- * @Package com.audioweb.framework.websocket 
- * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
- * @date 2020年2月25日 上午10:25:23 
- * @version V1.0   
- */ 
-package com.audioweb.framework.websocket;
+package com.audioweb.web.websocket;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.websocket.OnClose;
@@ -21,33 +11,39 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Component;
 
+import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.json.JSONObject;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 
-/** 
- * @ClassName: AppSocket 
- * @Description: App端socket连接
+/**
+ * 总信息管理的socket处理
+ * @ClassName: MessageSocket 
+ * @Description: TODO(总信息管理的socket处理) 
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
- * @date 2020年2月25日 上午10:25:23  
+ * @date 2019年12月9日 上午11:22:41
  */
-@ServerEndpoint(value = "/websocket/app", configurator = WebSocketConfig.class)
+@ServerEndpoint(value = "/websocket/message", configurator = WebSocketConfig.class)
 @Component
 //war部署时此注解@Component需要注释掉
-public class AppSocket {
+public class MessageSocket {
 	private static int onlineCount = 0;
-	private static CopyOnWriteArraySet<AppSocket> webSocketSet = new CopyOnWriteArraySet<>();
+	private static CopyOnWriteArraySet<MessageSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
+	private String onlineSessionId;
 	private SysUserServiceImpl userService;
 	// todo 这里需要一个变量来接收shiro中登录的人信息
 	private SysUser shiroUser;
-
+	
+	
 	@OnOpen
 	public void onOpen(Session session) {
 		this.session = session;
 		// 注入userService
 		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
+		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
+		WebsocketGlobal.putAppId(onlineSessionId);//存入全局信息中
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -131,7 +127,7 @@ public class AppSocket {
 	 * 群发自定义消息
 	 */
 	public void sendInfo(String text) throws IOException {
-		for (AppSocket item : webSocketSet) {
+		for (MessageSocket item : webSocketSet) {
 			try {
 				item.sendMessage(text);
 			} catch (IOException e) {
@@ -141,14 +137,14 @@ public class AppSocket {
 	}
 
 	public static synchronized int getOnlineCount() {
-		return AppSocket.onlineCount;
+		return MessageSocket.onlineCount;
 	}
 
 	public static synchronized void addOnlineCount() {
-		AppSocket.onlineCount++;
+		MessageSocket.onlineCount++;
 	}
 
 	public static synchronized void subOnlineCount() {
-		AppSocket.onlineCount--;
+		MessageSocket.onlineCount--;
 	}
 }

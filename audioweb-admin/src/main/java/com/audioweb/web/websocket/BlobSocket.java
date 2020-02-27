@@ -1,4 +1,4 @@
-package com.audioweb.framework.websocket;
+package com.audioweb.web.websocket;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -11,9 +11,9 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
@@ -32,6 +32,7 @@ public class BlobSocket {
 	private static int onlineCount = 0;
 	private static CopyOnWriteArraySet<BlobSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
+	private String onlineSessionId;
 	private SysUserServiceImpl userService;
 	// todo 这里需要一个变量来接收shiro中登录的人信息
 	private SysUser shiroUser;
@@ -41,6 +42,8 @@ public class BlobSocket {
 		this.session = session;
 		// 注入userService
 		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
+		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
+		WebsocketGlobal.putAppId(onlineSessionId);//存入全局信息中
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);

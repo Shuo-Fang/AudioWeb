@@ -1,10 +1,9 @@
-package com.audioweb.framework.websocket;
+package com.audioweb.web.websocket;
 
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
@@ -30,6 +29,7 @@ public class WebSocketConfig  extends ServerEndpointConfig.Configurator{
 	@Override
     public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
         // 将用户信息存储到socket的配置里
+        sec.getUserProperties().put("sessionId", ShiroUtils.getSessionId());
         sec.getUserProperties().put("user", ShiroUtils.getSysUser());
         super.modifyHandshake(sec, request, response);
     }

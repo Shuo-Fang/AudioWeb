@@ -1,55 +1,130 @@
-package com.audioweb.framework.websocket;
+/**   
+ * @Title: AppSocket.java 
+ * @Package com.audioweb.framework.websocket 
+ * @Description: TODO(用一句话描述该文件做什么) 
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @date 2020年2月25日 上午10:25:23 
+ * @version V1.0   
+ */ 
+package com.audioweb.web.websocket;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.json.JSONObject;
 import com.audioweb.common.utils.spring.SpringUtils;
+import com.audioweb.framework.shiro.session.OnlineSession;
+import com.audioweb.framework.shiro.session.OnlineSessionDAO;
+import com.audioweb.framework.shiro.web.session.SpringSessionValidationScheduler;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 
-/**
- * 总信息管理的socket处理
- * @ClassName: MessageSocket 
- * @Description: TODO(总信息管理的socket处理) 
+/** 
+ * @ClassName: AppSocket 
+ * @Description: App端socket连接
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
- * @date 2019年12月9日 上午11:22:41
+ * @date 2020年2月25日 上午10:25:23  
  */
-@ServerEndpoint(value = "/websocket/message", configurator = WebSocketConfig.class)
+@ServerEndpoint(value = "/websocket/app", configurator = WebSocketConfig.class)
 @Component
 //war部署时此注解@Component需要注释掉
-public class MessageSocket {
+public class AppSocket {
 	private static int onlineCount = 0;
-	private static CopyOnWriteArraySet<MessageSocket> webSocketSet = new CopyOnWriteArraySet<>();
+	private static CopyOnWriteArraySet<AppSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
-	private SysUserServiceImpl userService;
+	private String onlineSessionId;
 	// todo 这里需要一个变量来接收shiro中登录的人信息
 	private SysUser shiroUser;
+	
+	private static final Logger log = LoggerFactory.getLogger(AppSocket.class);
 
+    // 相隔多久检查一次session的有效性，单位毫秒，默认就是10分钟
+    @Value("${shiro.session.validationInterval}")
+    private long sessionValidationInterval;
+    
+    /**
+     * 定时器，用于防止http超时而挂起请求。
+     */
+    @Autowired
+    @Qualifier("scheduledExecutorService")
+    private ScheduledExecutorService executorService;
+
+    @Autowired
+    private OnlineSessionDAO onlineSessionDAO;
+    
+    
+	/** 
+	 * <p>Title: </p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang
+	 * @date 2020年2月27日 上午10:36:55 
+	 */
+	public AppSocket() {
+		// TODO Auto-generated constructor stub
+		/*try
+        {
+            executorService.scheduleAtFixedRate(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                	for(AppSocket socket:webSocketSet) {
+                		//socket.
+                	}
+                }
+            }, 1000, sessionValidationInterval * 60 * 1000, TimeUnit.MILLISECONDS);
+            if (log.isDebugEnabled())
+            {
+                log.debug("Websocket Session validation job successfully scheduled with Spring Scheduler.");
+            }
+
+        }
+        catch (Exception e)
+        {
+            if (log.isErrorEnabled())
+            {
+                log.error("Error starting the Spring Scheduler Websocket session validation job. Websocket Session validation may not occur.", e);
+            }
+        }*/
+	}
 	@OnOpen
 	public void onOpen(Session session) {
 		this.session = session;
-		// 注入userService
-		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
+		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
+		WebsocketGlobal.putAppId(onlineSessionId);//存入全局信息中
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
 		addOnlineCount();
-		System.out.println("有新链接加入!当前在线人数为" + getOnlineCount());
+		System.out.println("App有新链接加入!当前在线人数为" + getOnlineCount());
 	}
 
 	@OnClose
 	public void onClose() {
 		webSocketSet.remove(this);
+		WebsocketGlobal.removeAppId(onlineSessionId);//从全局信息中移除
 		subOnlineCount();
-		System.out.println("有一链接关闭!当前在线人数为" + getOnlineCount());
+		System.out.println("App有一链接关闭!当前在线人数为" + getOnlineCount());
 	}
 	/**
 	 * 
@@ -121,7 +196,7 @@ public class MessageSocket {
 	 * 群发自定义消息
 	 */
 	public void sendInfo(String text) throws IOException {
-		for (MessageSocket item : webSocketSet) {
+		for (AppSocket item : webSocketSet) {
 			try {
 				item.sendMessage(text);
 			} catch (IOException e) {
@@ -131,14 +206,14 @@ public class MessageSocket {
 	}
 
 	public static synchronized int getOnlineCount() {
-		return MessageSocket.onlineCount;
+		return AppSocket.onlineCount;
 	}
 
 	public static synchronized void addOnlineCount() {
-		MessageSocket.onlineCount++;
+		AppSocket.onlineCount++;
 	}
 
 	public static synchronized void subOnlineCount() {
-		MessageSocket.onlineCount--;
+		AppSocket.onlineCount--;
 	}
 }

@@ -14,6 +14,7 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.audioweb.common.constant.ShiroConstants;
+import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.common.utils.spring.SpringUtils;
@@ -24,7 +25,7 @@ import com.audioweb.system.service.ISysUserOnlineService;
 /**
  * 主要是在此如果会话的属性修改了 就标识下其修改了 然后方便 OnlineSessionDao同步
  * 
- * @author ruoyi
+ * @author ruoyi,shuofang
  */
 public class OnlineWebSessionManager extends DefaultWebSessionManager
 {
@@ -108,6 +109,17 @@ public class OnlineWebSessionManager extends DefaultWebSessionManager
         List<SysUserOnline> userOnlineList = userOnlineService.selectOnlineByExpired(expiredDate);
         // 批量过期删除
         List<String> needOfflineIdList = new ArrayList<String>();
+        //webSocket在线用户忽略
+        List<String> webSocketIds = WebsocketGlobal.getAllIds();
+        for(String id:webSocketIds) {
+        	for(SysUserOnline online:userOnlineList) {
+        		if(online.getSessionId().equals(id)) {
+        			userOnlineList.remove(online);
+        			break;
+        		}
+        	}
+        }
+        
         for (SysUserOnline userOnline : userOnlineList)
         {
             try
