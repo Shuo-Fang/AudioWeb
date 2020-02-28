@@ -1,5 +1,7 @@
 package com.audioweb;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -19,12 +21,6 @@ import io.netty.channel.ChannelFuture;
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class RuoYiApplication implements CommandLineRunner 
 {
-	@Value("${netty.loginPort}")
-    private int loginPort;
-
-    @Value("${netty.serverIp}")
-    private String serverIp;
-    
 	@Autowired
 	NettyServer server;
 	
@@ -51,7 +47,7 @@ public class RuoYiApplication implements CommandLineRunner
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		ChannelFuture future = server.startLoginServer(serverIp,loginPort);
+		List<ChannelFuture> futures = server.startServer();
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run() {
@@ -59,6 +55,8 @@ public class RuoYiApplication implements CommandLineRunner
             }
         });
         //服务端管道关闭的监听器并同步阻塞,直到channel关闭,线程才会往下执行,结束进程
-        future.channel().closeFuture().syncUninterruptibly();
+        for(ChannelFuture future:futures) {
+        	future.channel().closeFuture().syncUninterruptibly();
+        }
 	}
 }

@@ -9,11 +9,17 @@
 package com.audioweb.server.service;
 
 
-import io.netty.buffer.ByteBuf;
+import java.util.concurrent.Executor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.audioweb.common.utils.spring.SpringUtils;
+
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
 
 /** 
@@ -22,34 +28,10 @@ import io.netty.util.CharsetUtil;
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
  * @date 2020年1月20日 下午3:36:20  
  */
-public class LoginServerHandler extends ChannelInboundHandlerAdapter {
+public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+	private static final Logger  log = LoggerFactory.getLogger(TcpServerHandler.class);
+	private Executor io = (Executor)SpringUtils.getBean("IoServiceExecutor");
 	/**
-     * 对每一个传入的消息都要调用；
-     * @param ctx
-     * @param msg
-     * @throws Exception
-     */
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
-        ByteBuf in = (ByteBuf) msg;
-        System.out.println("server received: "+in.toString(CharsetUtil.UTF_8));
-
-        ctx.write(in);
-    }
-
-
-    /**
-     * 通知ChannelInboundHandler最后一次对channelRead()的调用时当前批量读取中的的最后一条消息。
-     * @param ctx
-     * @throws Exception
-     */
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
-    }
-
-    /**
      * 在读取操作期间，有异常抛出时会调用。
      * @param ctx
      * @param cause
@@ -60,4 +42,32 @@ public class LoginServerHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
+
+
+	/* (non-Javadoc) 
+	 * <p>Title: channelRead0</p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang 
+	 * @date 2020年2月28日 下午3:39:43
+	 * @param ctx
+	 * @param msg
+	 * @throws Exception 
+	 * @see io.netty.channel.SimpleChannelInboundHandler#channelRead0(io.netty.channel.ChannelHandlerContext, java.lang.Object) 
+	 */ 
+	
+	@Override
+	protected void channelRead0(final ChannelHandlerContext ctx,final DatagramPacket msg) throws Exception {
+		// TODO Auto-generated method stub
+        //System.out.println(req);
+        //Threads.sleep(1000);
+		String req = msg.content().toString(CharsetUtil.UTF_8);
+		io.execute(new Runnable() {
+			@Override
+			public void run() {
+				log.info(msg.sender()+":"+req);
+				// TODO Auto-generated method stub
+				ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));
+			}
+		});
+	}
 }
