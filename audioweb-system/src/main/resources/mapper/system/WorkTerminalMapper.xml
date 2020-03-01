@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audioweb.system.mapper.WorkTerminalMapper">
+    
+    <resultMap type="WorkTerminal" id="WorkTerminalResult">
+        <result property="terminalId"    column="terminal_id"    />
+        <result property="terminalName"    column="terminal_name"    />
+        <result property="terminalIp"    column="terminal_ip"    />
+        <result property="isCmic"    column="is_cmic"    />
+        <result property="isAotoCast"    column="is_aoto_cast"    />
+        <result property="domainId"    column="domain_id"    />
+        <result property="status"    column="status"    />
+        <result property="loginTime"    column="login_time"    />
+        <result property="precinct"    column="precinct"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectWorkTerminalVo">
+        select terminal_id, terminal_name, terminal_ip, is_cmic, is_aoto_cast, domain_id, status, login_time, precinct, del_flag, create_by, create_time, remark from work_terminal
+    </sql>
+
+    <select id="selectWorkTerminalList" parameterType="WorkTerminal" resultMap="WorkTerminalResult">
+        <include refid="selectWorkTerminalVo"/>
+        <where>  
+            <if test="terminalName != null  and terminalName != ''"> and terminal_name like concat('%', #{terminalName}, '%')</if>
+            <if test="terminalIp != null  and terminalIp != ''"> and terminal_ip = #{terminalIp}</if>
+            <if test="isCmic != null  and isCmic != ''"> and is_cmic = #{isCmic}</if>
+            <if test="isAotoCast != null  and isAotoCast != ''"> and is_aoto_cast = #{isAotoCast}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="loginTime != null "> and login_time = #{loginTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectWorkTerminalById" parameterType="String" resultMap="WorkTerminalResult">
+        <include refid="selectWorkTerminalVo"/>
+        where terminal_id = #{terminalId}
+    </select>
+        
+    <insert id="insertWorkTerminal" parameterType="WorkTerminal">
+        insert into work_terminal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="terminalId != null  and terminalId != ''">terminal_id,</if>
+            <if test="terminalName != null  and terminalName != ''">terminal_name,</if>
+            <if test="terminalIp != null  and terminalIp != ''">terminal_ip,</if>
+            <if test="isCmic != null  and isCmic != ''">is_cmic,</if>
+            <if test="isAotoCast != null  and isAotoCast != ''">is_aoto_cast,</if>
+            <if test="domainId != null ">domain_id,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="loginTime != null ">login_time,</if>
+            <if test="precinct != null  and precinct != ''">precinct,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="terminalId != null  and terminalId != ''">#{terminalId},</if>
+            <if test="terminalName != null  and terminalName != ''">#{terminalName},</if>
+            <if test="terminalIp != null  and terminalIp != ''">#{terminalIp},</if>
+            <if test="isCmic != null  and isCmic != ''">#{isCmic},</if>
+            <if test="isAotoCast != null  and isAotoCast != ''">#{isAotoCast},</if>
+            <if test="domainId != null ">#{domainId},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="loginTime != null ">#{loginTime},</if>
+            <if test="precinct != null  and precinct != ''">#{precinct},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWorkTerminal" parameterType="WorkTerminal">
+        update work_terminal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="terminalName != null  and terminalName != ''">terminal_name = #{terminalName},</if>
+            <if test="terminalIp != null  and terminalIp != ''">terminal_ip = #{terminalIp},</if>
+            <if test="isCmic != null  and isCmic != ''">is_cmic = #{isCmic},</if>
+            <if test="isAotoCast != null  and isAotoCast != ''">is_aoto_cast = #{isAotoCast},</if>
+            <if test="domainId != null ">domain_id = #{domainId},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="loginTime != null ">login_time = #{loginTime},</if>
+            <if test="precinct != null  and precinct != ''">precinct = #{precinct},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where terminal_id = #{terminalId}
+    </update>
+
+    <delete id="deleteWorkTerminalById" parameterType="String">
+        delete from work_terminal where terminal_id = #{terminalId}
+    </delete>
+
+    <delete id="deleteWorkTerminalByIds" parameterType="String">
+        delete from work_terminal where terminal_id in 
+        <foreach item="terminalId" collection="array" open="(" separator="," close=")">
+            #{terminalId}
+        </foreach>
+    </delete>
+    
+</mapper>

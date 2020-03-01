@@ -1,13 +1,4 @@
-/**   
- * @Title: LoginServerHandler.java 
- * @Package com.audioweb.serverPool.service 
- * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
- * @date 2020年1月20日 下午3:36:20 
- * @version V1.0   
- */ 
-package com.audioweb.server.service;
-
+package com.audioweb.server.handler;
 
 import java.util.concurrent.Executor;
 
@@ -21,15 +12,15 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.CharsetUtil;
-
-/** 
- * @ClassName: LoginServerHandler 
- * @Description: TODO(这里用一句话描述这个类的作用) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
- * @date 2020年1月20日 下午3:36:20  
+/**
+ * 终端通信处理
+ * @ClassName: ServerHandler 
+ * @Description: 终端通信处理
+ * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @date 2020年3月1日 下午2:13:57
  */
-public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
-	private static final Logger  log = LoggerFactory.getLogger(TcpServerHandler.class);
+public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+	private static final Logger  log = LoggerFactory.getLogger(ServerHandler.class);
 	private Executor io = (Executor)SpringUtils.getBean("IoServiceExecutor");
 	/**
      * 在读取操作期间，有异常抛出时会调用。
@@ -71,3 +62,4 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 		});
 	}
 }
+

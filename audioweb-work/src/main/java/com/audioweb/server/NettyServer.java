@@ -20,8 +20,9 @@ import org.springframework.stereotype.Component;
 
 import com.audioweb.common.config.datasource.DynamicDataSourceContextHolder;
 import com.audioweb.common.utils.spring.SpringUtils;
-import com.audioweb.server.service.LoginServerHandler;
-import com.audioweb.server.service.TcpServerHandler;
+import com.audioweb.server.handler.LoginServerHandler;
+import com.audioweb.server.handler.TcpServerHandler;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -103,6 +104,7 @@ public class NettyServer {
 		List<ChannelFuture> list= new ArrayList<>();
         ChannelFuture f = null;
         ChannelFuture l = null;
+        ChannelFuture m = null;
         /*
          * tcp server 配置
          */
@@ -133,7 +135,7 @@ public class NettyServer {
                 log.info("Netty server listening  on port " + qtClientPort + " and ready for connections...");
                 list.add(f);
             } else {
-                log.error("Netty server start up Error!");
+                log.error(qtClientPort+":Netty server start up Error!");
             }
         }
         /*
@@ -164,7 +166,38 @@ public class NettyServer {
                 log.info("Netty server listening  on port " + loginPort + " and ready for connections...");
                 list.add(l);
             } else {
-                log.error("Netty server start up Error!");
+                log.error(loginPort+":Netty server start up Error!");
+            }
+        }
+        /*
+         * io udp server 配置
+         */
+        try {
+            Bootstrap d = new Bootstrap();
+            d.group(udpWorkerGroup)
+                    .channel(NioDatagramChannel.class)
+                    .option(ChannelOption.SO_BROADCAST, true)
+                    .option(ChannelOption.SO_REUSEADDR, true)
+                    .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
+                    .localAddress(new InetSocketAddress(Integer.parseInt(serverPort)))
+                    .handler(new ChannelInitializer<Channel>() {
+                        @Override
+                        protected void initChannel(Channel channel) throws Exception {
+                            ChannelPipeline pipeline = channel.pipeline();
+                            pipeline.addLast(new LoginServerHandler());
+                        }
+                    });
+            m = d.bind().sync();
+            channel = f.channel();
+            log.info("======IOServer启动成功!!!=========");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (m != null && m.isSuccess()) {
+                log.info("Netty server listening  on port " + serverPort + " and ready for connections...");
+                list.add(m);
+            } else {
+                log.error(serverPort+":Netty server start up Error!");
             }
         }
         return list;
