@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="terminalName"    column="terminal_name"    />
         <result property="terminalIp"    column="terminal_ip"    />
         <result property="isCmic"    column="is_cmic"    />
-        <result property="isAotoCast"    column="is_aoto_cast"    />
+        <result property="isAutoCast"    column="is_auto_cast"    />
         <result property="domainId"    column="domain_id"    />
         <result property="status"    column="status"    />
         <result property="loginTime"    column="login_time"    />
@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectWorkTerminalVo">
-        select terminal_id, terminal_name, terminal_ip, is_cmic, is_aoto_cast, domain_id, status, login_time, precinct, del_flag, create_by, create_time, remark from work_terminal
+        select terminal_id, terminal_name, terminal_ip, is_cmic, is_auto_cast, domain_id, status, login_time, precinct, del_flag, create_by, create_time, remark from work_terminal
     </sql>
 
     <select id="selectWorkTerminalList" parameterType="WorkTerminal" resultMap="WorkTerminalResult">
@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="terminalName != null  and terminalName != ''"> and terminal_name like concat('%', #{terminalName}, '%')</if>
             <if test="terminalIp != null  and terminalIp != ''"> and terminal_ip = #{terminalIp}</if>
             <if test="isCmic != null  and isCmic != ''"> and is_cmic = #{isCmic}</if>
-            <if test="isAotoCast != null  and isAotoCast != ''"> and is_aoto_cast = #{isAotoCast}</if>
+            <if test="isAutoCast != null  and isAutoCast != ''"> and is_auto_cast = #{isAutoCast}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="loginTime != null "> and login_time = #{loginTime}</if>
             <if test="delFlag != null "> and del_flag = #{delFlag}</if>
@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="terminalName != null  and terminalName != ''">terminal_name,</if>
             <if test="terminalIp != null  and terminalIp != ''">terminal_ip,</if>
             <if test="isCmic != null  and isCmic != ''">is_cmic,</if>
-            <if test="isAotoCast != null  and isAotoCast != ''">is_aoto_cast,</if>
+            <if test="isAutoCast != null  and isAutoCast != ''">is_auto_cast,</if>
             <if test="domainId != null ">domain_id,</if>
             <if test="status != null  and status != ''">status,</if>
             <if test="loginTime != null ">login_time,</if>
@@ -66,7 +66,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="terminalName != null  and terminalName != ''">#{terminalName},</if>
             <if test="terminalIp != null  and terminalIp != ''">#{terminalIp},</if>
             <if test="isCmic != null  and isCmic != ''">#{isCmic},</if>
-            <if test="isAotoCast != null  and isAotoCast != ''">#{isAotoCast},</if>
+            <if test="isAutoCast != null  and isAutoCast != ''">#{isAutoCast},</if>
             <if test="domainId != null ">#{domainId},</if>
             <if test="status != null  and status != ''">#{status},</if>
             <if test="loginTime != null ">#{loginTime},</if>
@@ -84,7 +84,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="terminalName != null  and terminalName != ''">terminal_name = #{terminalName},</if>
             <if test="terminalIp != null  and terminalIp != ''">terminal_ip = #{terminalIp},</if>
             <if test="isCmic != null  and isCmic != ''">is_cmic = #{isCmic},</if>
-            <if test="isAotoCast != null  and isAotoCast != ''">is_aoto_cast = #{isAotoCast},</if>
+            <if test="isAutoCast != null  and isAutoCast != ''">is_auto_cast = #{isAutoCast},</if>
             <if test="domainId != null ">domain_id = #{domainId},</if>
             <if test="status != null  and status != ''">status = #{status},</if>
             <if test="loginTime != null ">login_time = #{loginTime},</if>

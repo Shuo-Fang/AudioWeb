@@ -51,7 +51,7 @@
 	                            </li>
 	                            <li>
 	                                <p>自动采播：</p>
-	                                <select name="isAotoCast" th:with="type=${@dict.getType('sys_yes_no')}">
+	                                <select name="isAutoCast" th:with="type=${@dict.getType('sys_yes_no')}">
 	                                    <option value="">所有</option>
 	                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
 	                                </select>
@@ -104,7 +104,7 @@
         var editFlag = [[${@permission.hasPermi('system:terminal:edit')}]];
         var removeFlag = [[${@permission.hasPermi('system:terminal:remove')}]];
         var isCmicDatas = [[${@dict.getType('sys_yes_no')}]];
-        var isAotoCastDatas = [[${@dict.getType('sys_yes_no')}]];
+        var isAutoCastDatas = [[${@dict.getType('sys_yes_no')}]];
         var prefix = ctx + "system/terminal";
 
 
@@ -150,10 +150,10 @@
                     }
                 },
                 {
-                    field : 'isAotoCast', 
+                    field : 'isAutoCast', 
                     title : '自动采播',
                     formatter: function(value, row, index) {
-                       return $.table.selectDictLabel(isAotoCastDatas, value);
+                       return $.table.selectDictLabel(isAutoCastDatas, value);
                     }
                 },
                 {

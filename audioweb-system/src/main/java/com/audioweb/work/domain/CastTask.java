@@ -47,6 +47,7 @@ public class CastTask {
 
 	/**	正在广播终端列表 */
 	private List<WorkTerminal> castlist;//正在广播终端列表
+	
 	/** 正在播放音频信息*/
-	private RunFile runfile;
+	//private RunFile runfile;
 }

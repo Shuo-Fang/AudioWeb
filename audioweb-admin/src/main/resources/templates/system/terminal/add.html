@@ -42,8 +42,8 @@
                 <label class="col-sm-3 control-label">自动采播：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('sys_yes_no')}">
-                        <input type="radio" th:id="${'isAotoCast_' + dict.dictCode}" name="isAotoCast" th:value="${dict.dictValue}" th:checked="${!dict.default}" required>
-                        <label th:for="${'isAotoCast_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                        <input type="radio" th:id="${'isAutoCast_' + dict.dictCode}" name="isAutoCast" th:value="${dict.dictValue}" th:checked="${!dict.default}" required>
+                        <label th:for="${'isAutoCast_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                     </div>
                 </div>
             </div>

@@ -39,7 +39,7 @@ public class WorkTerminal extends BaseEntity
 
     /** 自动采播 */
     @Excel(name = "自动采播")
-    private String isAotoCast;
+    private String isAutoCast;
 
     /** 所在分区 */
     @Excel(name = "所在分区")
@@ -109,14 +109,14 @@ public class WorkTerminal extends BaseEntity
     {
         return isCmic;
     }
-    public void setIsAotoCast(String isAotoCast) 
+    public void setIsAutoCast(String isAutoCast) 
     {
-        this.isAotoCast = isAotoCast;
+        this.isAutoCast = isAutoCast;
     }
 
-    public String getIsAotoCast() 
+    public String getIsAutoCast() 
     {
-        return isAotoCast;
+        return isAutoCast;
     }
     public void setDomainId(Long domainId) 
     {
@@ -224,7 +224,7 @@ public class WorkTerminal extends BaseEntity
             .append("terminalName", getTerminalName())
             .append("terminalIp", getTerminalIp())
             .append("isCmic", getIsCmic())
-            .append("isAotoCast", getIsAotoCast())
+            .append("isAutoCast", getIsAutoCast())
             .append("domainId", getDomainId())
             .append("status", getStatus())
             .append("loginTime", getLoginTime())
