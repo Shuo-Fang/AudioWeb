@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.audioweb.system.mapper.WorkTerminalMapper">
+<mapper namespace="com.audioweb.work.mapper.WorkTerminalMapper">
     
     <resultMap type="WorkTerminal" id="WorkTerminalResult">
         <result property="terminalId"    column="terminal_id"    />

@@ -7,6 +7,14 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-terminal-add">
+        <input name="domainId" type="hidden" id="treeId"/>
+        <input name="precinct" type="hidden" id="treeIds"/>
+        	<div class="form-group">    
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端ID：</label>
+                <div class="col-sm-8">
+                    <input name="terminalId" class="form-control" type="number" required>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端名称：</label>
                 <div class="col-sm-8">
@@ -23,9 +31,8 @@
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" required>
-                        <!-- <input name="domainId" class="form-control" type="text" > -->
-                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" required>
+                        <span class="input-group-addon" onclick="selectDomainTree()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
             </div>
@@ -56,19 +63,13 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">终端最后登录时间：</label>
-                <div class="col-sm-8">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input name="loginTime" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                    </div>
-                </div>
-            </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">终端管理分区：</label>
                 <div class="col-sm-8">
-                    <textarea name="precinct" class="form-control"></textarea>
+                	<div class="input-group">
+                    	<input name="domainNames" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true">
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
                 </div>
             </div>
         </form>
@@ -84,6 +85,10 @@
         			minlength: 2,
         			maxlength: 30
         		},
+        		terminalId:{
+        			minlength: 4,
+        			maxlength: 20
+        		},
         		terminalIp:{
         			isIp:true,
         			remote: {
@@ -92,39 +97,9 @@
                         dataType: "json",
                         data: {
                             "terminalIp": function () {
-                                return $.common.trim($("#terminalIp").val());
-                            }
-                        },
-                        dataFilter: function (data, type) {
-                        	return $.validate.unique(data);
-                        }
-                    }
-        		},
-        		email:{
-                    email:true,
-                    remote: {
-                        url: prefix + "/checkEmailUnique",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "email": function () {
-                                return $.common.trim($("#email").val());
-                            }
-                        },
-                        dataFilter: function (data, type) {
-                        	return $.validate.unique(data);
-                        }
-                    }
-        		},
-        		phonenumber:{
-        			isPhone:true,
-                    remote: {
-                        url: prefix + "/checkPhoneUnique",
-                        type: "post",
-                        dataType: "json",
-                        data: {
-                            "phonenumber": function () {
-                                return $.common.trim($("#phonenumber").val());
+                            	debugger
+                            	var data = $("input[name='terminalIp']").val();
+                                return data;
                             }
                         },
                         dataFilter: function (data, type) {
@@ -136,10 +111,7 @@
         	messages: {
         		"terminalIp": {
                     remote: "IP地址输入出错或已存在"
-                },
-        		"phonenumber":{
-                	remote: "手机号码已经存在"
-        		}
+                }
             },
             focusCleanup: true
         });
@@ -149,15 +121,9 @@
                 $.operate.save(prefix + "/add", $('#form-terminal-add').serialize());
             }
         }
-
-        $("input[name='loginTime']").datetimepicker({
-            format: "yyyy-mm-dd",
-            minView: "month",
-            autoclose: true
-        });
         
         
-        /*用户管理-新增-选择分区树*/
+        /*选择分区树*/
         function selectDomainTree() {
         	var treeId = $("#treeId").val();
         	var domainId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();

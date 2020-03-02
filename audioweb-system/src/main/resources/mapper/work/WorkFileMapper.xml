@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audioweb.file.mapper.WorkFileMapper">
+    
+    <resultMap type="WorkFile" id="WorkFileResult">
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="trackLength"    column="track_length"    />
+        <result property="bitRate"    column="bit_rate"    />
+        <result property="startByte"    column="start_byte"    />
+        <result property="channels"    column="channels"    />
+        <result property="format"    column="format"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="belongs"    column="belongs"    />
+        <result property="fileId"    column="file_id"    />
+    </resultMap>
+
+    <sql id="selectWorkFileVo">
+        select file_name, file_path, track_length, bit_rate, start_byte, channels, format, del_flag, belongs, file_id from work_file
+    </sql>
+
+    <select id="selectWorkFileList" parameterType="WorkFile" resultMap="WorkFileResult">
+        <include refid="selectWorkFileVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="belongs != null  and belongs != ''"> and belongs = #{belongs}</if>
+        </where>
+    </select>
+    
+    <select id="selectWorkFileById" parameterType="String" resultMap="WorkFileResult">
+        <include refid="selectWorkFileVo"/>
+        where file_id = #{fileId}
+    </select>
+        
+    <insert id="insertWorkFile" parameterType="WorkFile">
+        insert into work_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null  and fileName != ''">file_name,</if>
+            <if test="filePath != null  and filePath != ''">file_path,</if>
+            <if test="trackLength != null ">track_length,</if>
+            <if test="bitRate != null ">bit_rate,</if>
+            <if test="startByte != null ">start_byte,</if>
+            <if test="channels != null  and channels != ''">channels,</if>
+            <if test="format != null  and format != ''">format,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="belongs != null  and belongs != ''">belongs,</if>
+            <if test="fileId != null  and fileId != ''">file_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null  and fileName != ''">#{fileName},</if>
+            <if test="filePath != null  and filePath != ''">#{filePath},</if>
+            <if test="trackLength != null ">#{trackLength},</if>
+            <if test="bitRate != null ">#{bitRate},</if>
+            <if test="startByte != null ">#{startByte},</if>
+            <if test="channels != null  and channels != ''">#{channels},</if>
+            <if test="format != null  and format != ''">#{format},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="belongs != null  and belongs != ''">#{belongs},</if>
+            <if test="fileId != null  and fileId != ''">#{fileId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWorkFile" parameterType="WorkFile">
+        update work_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
+            <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
+            <if test="trackLength != null ">track_length = #{trackLength},</if>
+            <if test="bitRate != null ">bit_rate = #{bitRate},</if>
+            <if test="startByte != null ">start_byte = #{startByte},</if>
+            <if test="channels != null  and channels != ''">channels = #{channels},</if>
+            <if test="format != null  and format != ''">format = #{format},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="belongs != null  and belongs != ''">belongs = #{belongs},</if>
+        </trim>
+        where file_id = #{fileId}
+    </update>
+
+    <delete id="deleteWorkFileById" parameterType="String">
+        delete from work_file where file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteWorkFileByIds" parameterType="String">
+        delete from work_file where file_id in 
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </delete>
+    
+</mapper>

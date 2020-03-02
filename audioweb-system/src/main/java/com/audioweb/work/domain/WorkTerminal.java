@@ -96,6 +96,7 @@ public class WorkTerminal extends BaseEntity
     {
         this.terminalIp = terminalIp;
     }
+    @Size(min = 0, max = 30, message = "IP地址出错")
     public String getTerminalIp() 
     {
         return terminalIp;
@@ -109,16 +110,13 @@ public class WorkTerminal extends BaseEntity
     {
         return isCmic;
     }
-    public void setIsAutoCast(String isAutoCast) 
-    {
-        this.isAutoCast = isAutoCast;
-    }
-
-    public String getIsAutoCast() 
-    {
-        return isAutoCast;
-    }
-    public void setDomainId(Long domainId) 
+	public String getIsAutoCast() {
+		return isAutoCast;
+	}
+	public void setIsAutoCast(String isAutoCast) {
+		this.isAutoCast = isAutoCast;
+	}
+	public void setDomainId(Long domainId) 
     {
         this.domainId = domainId;
     }
