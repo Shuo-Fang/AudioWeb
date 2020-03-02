@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.enums.BusinessType;
-import com.audioweb.system.domain.SysUser;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
 import com.audioweb.common.core.controller.BaseController;
