@@ -1,12 +1,17 @@
-package com.audioweb.system.service.impl;
+package com.audioweb.work.service.impl;
 
+import java.net.InetAddress;
 import java.util.List;
 import com.audioweb.common.utils.DateUtils;
+import com.audioweb.common.utils.StringUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.audioweb.system.mapper.WorkTerminalMapper;
-import com.audioweb.system.domain.WorkTerminal;
-import com.audioweb.system.service.IWorkTerminalService;
+
+import com.audioweb.work.domain.WorkTerminal;
+import com.audioweb.work.mapper.WorkTerminalMapper;
+import com.audioweb.work.service.IWorkTerminalService;
+import com.audioweb.common.constant.TerminalConstants;
 import com.audioweb.common.core.text.Convert;
 
 /**
@@ -93,4 +98,39 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     {
         return workTerminalMapper.deleteWorkTerminalById(terminalId);
     }
+
+	/* (non-Javadoc) 
+	 * <p>Title: checkPhoneUnique</p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang 
+	 * @date 2020年3月2日 上午11:04:39
+	 * @param workTerminal
+	 * @return 
+	 * @see com.audioweb.system.service.IWorkTerminalService#checkPhoneUnique(com.audioweb.system.domain.WorkTerminal) 
+	 */ 
+    /**
+     * 校验终端IP地址是否唯一
+     *
+     * @param workTerminal 终端信息
+     * @return
+     */
+	@Override
+	public String checkIpUnique(WorkTerminal workTerminal) {
+		try {
+			if(!workTerminal.getTerminalIp().equals(InetAddress.getByName(workTerminal.getTerminalIp()).getHostAddress())){
+				return TerminalConstants.TERMINAL_IP_NOT_UNIQUE;
+			}
+		} catch (Exception e) {
+			return TerminalConstants.TERMINAL_IP_NOT_UNIQUE;
+		}
+		List<WorkTerminal> list = workTerminalMapper.selectWorkTerminalList(workTerminal);
+		if(list != null) {
+			for(WorkTerminal terminal:list) {
+				if(StringUtils.isNotNull(terminal) && !terminal.getDelFlag().equals("2")) {
+					return TerminalConstants.TERMINAL_IP_NOT_UNIQUE;
+				}
+			}
+		}
+        return TerminalConstants.TERMINAL_IP_UNIQUE;
+	}
 }

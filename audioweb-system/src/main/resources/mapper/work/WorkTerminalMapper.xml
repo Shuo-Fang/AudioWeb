@@ -33,7 +33,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isAotoCast != null  and isAotoCast != ''"> and is_aoto_cast = #{isAotoCast}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="loginTime != null "> and login_time = #{loginTime}</if>
+            <if test="delFlag != null "> and del_flag = #{delFlag}</if>
         </where>
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
     </select>
     
     <select id="selectWorkTerminalById" parameterType="String" resultMap="WorkTerminalResult">

@@ -6,7 +6,6 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.annotation.Excel;
-import com.audioweb.common.annotation.Excel.ColumnType;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.core.domain.BaseEntity;

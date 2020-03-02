@@ -1,6 +1,8 @@
-package com.audioweb.system.mapper;
+package com.audioweb.work.mapper;
 
-import com.audioweb.system.domain.WorkTerminal;
+import com.audioweb.system.domain.SysUser;
+import com.audioweb.work.domain.WorkTerminal;
+
 import java.util.List;
 
 /**

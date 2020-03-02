@@ -8,22 +8,32 @@
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-terminal-add">
             <div class="form-group">    
-                <label class="col-sm-3 control-label">终端名称：</label>
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端名称：</label>
                 <div class="col-sm-8">
                     <input name="terminalName" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label">IP：</label>
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>IP：</label>
                 <div class="col-sm-8">
                     <input name="terminalIp" class="form-control" type="text" required>
                 </div>
             </div>
-            <div class="form-group">    
+            <div class="form-group">
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" required>
+                        <!-- <input name="domainId" class="form-control" type="text" > -->
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-sm-3 control-label">寻呼话筒：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('sys_yes_no')}">
-                        <input type="radio" th:id="${'isCmic_' + dict.dictCode}" name="isCmic" th:value="${dict.dictValue}" th:checked="${dict.default}" required>
+                        <input type="radio" th:id="${'isCmic_' + dict.dictCode}" name="isCmic" th:value="${dict.dictValue}" th:checked="${!dict.default}" required>
                         <label th:for="${'isCmic_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                     </div>
                 </div>
@@ -32,25 +42,18 @@
                 <label class="col-sm-3 control-label">自动采播：</label>
                 <div class="col-sm-8">
                     <div class="radio-box" th:each="dict : ${@dict.getType('sys_yes_no')}">
-                        <input type="radio" th:id="${'isAotoCast_' + dict.dictCode}" name="isAotoCast" th:value="${dict.dictValue}" th:checked="${dict.default}" required>
+                        <input type="radio" th:id="${'isAotoCast_' + dict.dictCode}" name="isAotoCast" th:value="${dict.dictValue}" th:checked="${!dict.default}" required>
                         <label th:for="${'isAotoCast_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                     </div>
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label">所在分区：</label>
-                <div class="col-sm-8">
-                    <input name="domainId" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
                 <label class="col-sm-3 control-label">终端状态：</label>
                 <div class="col-sm-8">
-                    <div class="radio-box">
-                        <input type="radio" name="status" value="">
-                        <label th:for="status" th:text="未知"></label>
+                	<div class="radio-box" th:each="dict : ${@dict.getType('sys_normal_disable')}">
+                        <input type="radio" th:id="${'status_' + dict.dictCode}" name="status" th:value="${dict.dictValue}" th:checked="${dict.default}" required>
+                        <label th:for="${'status_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
                     </div>
-                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
                 </div>
             </div>
             <div class="form-group">    
@@ -68,12 +71,6 @@
                     <textarea name="precinct" class="form-control"></textarea>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">删除标志：</label>
-                <div class="col-sm-8">
-                    <input name="delFlag" class="form-control" type="text">
-                </div>
-            </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
@@ -81,10 +78,73 @@
     <script type="text/javascript">
         var prefix = ctx + "system/terminal"
         $("#form-terminal-add").validate({
+        	onkeyup: false,
+        	rules:{
+        		terminalName:{
+        			minlength: 2,
+        			maxlength: 30
+        		},
+        		terminalIp:{
+        			isIp:true,
+        			remote: {
+                        url: prefix + "/checkIpUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "terminalIp": function () {
+                                return $.common.trim($("#terminalIp").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        		email:{
+                    email:true,
+                    remote: {
+                        url: prefix + "/checkEmailUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "email": function () {
+                                return $.common.trim($("#email").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        		phonenumber:{
+        			isPhone:true,
+                    remote: {
+                        url: prefix + "/checkPhoneUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "phonenumber": function () {
+                                return $.common.trim($("#phonenumber").val());
+                            }
+                        },
+                        dataFilter: function (data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        	},
+        	messages: {
+        		"terminalIp": {
+                    remote: "IP地址输入出错或已存在"
+                },
+        		"phonenumber":{
+                	remote: "手机号码已经存在"
+        		}
+            },
             focusCleanup: true
         });
-
-        function submitHandler() {
+        
+        function submitHandler() {debugger
             if ($.validate.form()) {
                 $.operate.save(prefix + "/add", $('#form-terminal-add').serialize());
             }
@@ -95,6 +155,32 @@
             minView: "month",
             autoclose: true
         });
+        
+        
+        /*用户管理-新增-选择分区树*/
+        function selectDomainTree() {
+        	var treeId = $("#treeId").val();
+        	var domainId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        	var url = ctx + "system/domain/selectDomainTree/" + domainId;
+			var options = {
+				title: '选择分区',
+				width: "380",
+				url: url,
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
+		
+		function doSubmit(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if ($.tree.notAllowSelect(tree)) {
+				var body = layer.getChildFrame('body', index);
+    			$("#treeId").val(body.find('#treeId').val());
+    			$("#treeName").val(body.find('#treeName').val());
+    			layer.close(index);
+			}
+		}
+
     </script>
 </body>
 </html>

@@ -1,7 +1,8 @@
-package com.audioweb.system.service;
+package com.audioweb.work.service;
 
-import com.audioweb.system.domain.WorkTerminal;
 import java.util.List;
+
+import com.audioweb.work.domain.WorkTerminal;
 
 /**
  * 终端管理Service接口
@@ -58,4 +59,11 @@ public interface IWorkTerminalService
      * @return 结果
      */
     public int deleteWorkTerminalById(String terminalId);
+    /**
+     * 校验IP地址是否唯一
+     *
+     * @param workTerminal 终端信息
+     * @return 结果
+     */
+    public String checkIpUnique(WorkTerminal workTerminal);
 }

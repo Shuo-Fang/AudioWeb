@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.enums.BusinessType;
-import com.audioweb.system.domain.WorkTerminal;
-import com.audioweb.system.service.IWorkTerminalService;
+import com.audioweb.system.domain.SysUser;
+import com.audioweb.work.domain.WorkTerminal;
+import com.audioweb.work.service.IWorkTerminalService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.poi.ExcelUtil;
@@ -122,5 +123,15 @@ public class WorkTerminalController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(workTerminalService.deleteWorkTerminalByIds(ids));
+    }
+    
+    /**
+     * 校验IP地址
+     */
+    @PostMapping("/checkIpUnique")
+    @ResponseBody
+    public String checkIpUnique(WorkTerminal workTerminal)
+    {
+        return workTerminalService.checkIpUnique(workTerminal);
     }
 }

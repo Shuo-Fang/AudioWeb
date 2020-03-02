@@ -1,10 +1,16 @@
-package com.audioweb.system.domain;
+package com.audioweb.work.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.annotation.Excel;
+import com.audioweb.common.annotation.Excels;
+import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.system.domain.SysDomain;
+
 import java.util.Date;
+
+import javax.validation.constraints.Size;
 
 /**
  * 终端管理对象 work_terminal
@@ -53,11 +59,26 @@ public class WorkTerminal extends BaseEntity
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
 
+    /** 分区对象 */
+    @Excels({
+        @Excel(name = "分区名称", targetAttr = "domainName", type = Type.EXPORT),
+        @Excel(name = "分区负责人", targetAttr = "leader", type = Type.EXPORT)
+    })
+    private SysDomain domain;
+    
+    /** 是否正在广播	0为无任务,非0为对应的任务ID*/
+    private long taskId; 
+    
+    /** 是否在线	0为离线,1为在线(即将离线),2为在线(刚刚通信过)*/
+    private int isOnline; 
+    
+    /** 广播任务名称 */
+    private String taskName;
     public void setTerminalId(String terminalId) 
     {
         this.terminalId = terminalId;
     }
-
+    @Size(min = 0, max = 4, message = "终端ID长度不能超过4个字符")
     public String getTerminalId() 
     {
         return terminalId;
@@ -75,7 +96,6 @@ public class WorkTerminal extends BaseEntity
     {
         this.terminalIp = terminalIp;
     }
-
     public String getTerminalIp() 
     {
         return terminalIp;
@@ -144,6 +164,59 @@ public class WorkTerminal extends BaseEntity
         return delFlag;
     }
 
+    public SysDomain getDomain() {
+    	if (domain == null)
+        {
+            domain = new SysDomain();
+        }
+        return domain;
+	}
+
+	public void setDomain(SysDomain domain) {
+		this.domain = domain;
+	}
+	public long getTaskId() {
+		return taskId;
+	}
+	public void setTaskId(long taskId) {
+		this.taskId = taskId;
+	}
+	public int getIsOnline() {
+		return isOnline;
+	}
+	public void setIsOnline(int isOnline) {
+		this.isOnline = isOnline;
+	}
+	public String getTaskName() {
+		return taskName;
+	}
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 17;
+		result = prime * result + ((terminalId == null) ? 0 : terminalId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WorkTerminal other = (WorkTerminal) obj;
+		if (terminalId == null) {
+			if (other.terminalId != null)
+				return false;
+		} else if (!terminalId.equals(other.terminalId))
+			return false;
+		return true;
+	}
+	
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
