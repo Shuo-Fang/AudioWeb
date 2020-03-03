@@ -7,7 +7,13 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-terminal-edit" th:object="${workTerminal}">
-            <input name="terminalId" th:field="*{terminalId}" type="hidden">
+            <input name="terRealId" th:field="*{terRealId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">终端ID：</label>
+                <div class="col-sm-8">
+                    <input name="terminalId" th:field="*{terminalId}" class="form-control" type="text" required>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">终端名称：</label>
                 <div class="col-sm-8">
@@ -20,21 +26,28 @@
                     <input name="terminalIp" th:field="*{terminalIp}" class="form-control" type="text" required>
                 </div>
             </div>
-            <div class="form-group">    
+            <div class="form-group">
                 <label class="col-sm-3 control-label">寻呼话筒：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_yes_no')}">
-                        <input type="radio" th:id="${'isCmic_' + dict.dictCode}" name="isCmic" th:value="${dict.dictValue}" th:field="*{isCmic}" required>
-                        <label th:for="${'isCmic_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
-                    </div>
+                <div class="col-sm-2">
+               		<label class="toggle-switch switch-solid">
+                            <input type="checkbox" id="isCmic" onclick="showSelect();" th:field="*{isCmic}">
+                            <span></span>
+                    </label>
+                </div>
+                <label class="col-sm-3 control-label">自动采播：</label>
+                <div class="col-sm-2">
+                	<label class="toggle-switch switch-solid">
+                            <input type="checkbox" id="isAutoCast" onclick="showSelect();" th:field="*{isCmic}">
+                            <span></span>
+                    </label>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">自动采播：</label>
+            <div class="form-group">
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
                 <div class="col-sm-8">
-                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_yes_no')}">
-                        <input type="radio" th:id="${'isAutoCast_' + dict.dictCode}" name="isAutoCast" th:value="${dict.dictValue}" th:field="*{isAutoCast}" required>
-                        <label th:for="${'isAutoCast_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    <div class="input-group">
+                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" th:field="*{domain.domainName}" required>
+                        <span class="input-group-addon" onclick="selectDomainTree()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
             </div>

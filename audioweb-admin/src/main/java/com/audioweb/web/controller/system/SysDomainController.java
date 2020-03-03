@@ -133,6 +133,10 @@ public class SysDomainController extends BaseController
         {
             return AjaxResult.warn("分区存在用户,不允许删除");
         }
+        if (domainService.checkDomainExistTerminal(domainId))
+        {
+        	return AjaxResult.warn("分区存在终端,不允许删除");
+        }
         return toAjax(domainService.deleteDomainById(domainId));
     }
 

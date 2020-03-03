@@ -91,4 +91,15 @@ public interface ISysDomainService
      * @return 结果
      */
     public String checkDomainNameUnique(SysDomain domain);
+
+	/**
+	 * @Title: checkDomainExistTerminal 
+	 * @Description: 查询分区是否存在终端
+	 * @param domainId
+	 * @return boolean 返回类型 
+	 * @throws 抛出错误
+	 * @author ShuoFang 
+	 * @date 2020年3月3日 上午10:19:46
+	 */
+	boolean checkDomainExistTerminal(Long domainId);
 }

@@ -27,6 +27,14 @@ public interface SysDomainMapper
      * @return 结果
      */
     public int checkDomainExistUser(Long domainId);
+    
+    /**
+     * 查询分区是否存在终端
+     * 
+     * @param domainId 分区ID
+     * @return 结果
+     */
+    public int checkDomainExistTerminal(Long domainId);
 
     /**
      * 查询分区管理数据

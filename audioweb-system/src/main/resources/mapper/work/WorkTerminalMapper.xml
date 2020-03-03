@@ -5,6 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.audioweb.work.mapper.WorkTerminalMapper">
     
     <resultMap type="WorkTerminal" id="WorkTerminalResult">
+        <result property="terRealId"    column="ter_real_id"    />
         <result property="terminalId"    column="terminal_id"    />
         <result property="terminalName"    column="terminal_name"    />
         <result property="terminalIp"    column="terminal_ip"    />
@@ -18,22 +19,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="remark"    column="remark"    />
+        <association property="domain"    column="domain_id" javaType="Sysdomain" resultMap="domainResult" />
     </resultMap>
 
+	<resultMap id="domainResult" type="SysDomain">
+		<id     property="domainId"   column="domain_id"     />
+		<result property="parentId" column="parent_id"   />
+		<result property="domainName" column="domain_name"   />
+		<result property="ancestors" column="ancestors"   />
+		<result property="leader"   column="leader"      />
+		<result property="phone"   column="phone" />
+	</resultMap>
     <sql id="selectWorkTerminalVo">
-        select terminal_id, terminal_name, terminal_ip, is_cmic, is_auto_cast, domain_id, status, login_time, precinct, del_flag, create_by, create_time, remark from work_terminal
+        select d.ancestors,d.domain_name,d.domain_id,d.leader,d.phone,d.parent_id,
+        	   t.ter_real_id,t.terminal_id, t.terminal_name, t.terminal_ip, t.is_cmic, t.is_auto_cast, t.status, t.login_time, t.precinct, t.del_flag, t.create_by, t.create_time, t.remark 
+		from work_terminal t left join sys_domain d 
+		on t.domain_id = d.domain_id and d.status = 0 and d.del_flag = 0
     </sql>
 
     <select id="selectWorkTerminalList" parameterType="WorkTerminal" resultMap="WorkTerminalResult">
         <include refid="selectWorkTerminalVo"/>
         <where>  
+        	t.del_flag = '0'
             <if test="terminalName != null  and terminalName != ''"> and terminal_name like concat('%', #{terminalName}, '%')</if>
+            <if test="terminalId != null  and terminalId != ''"> and terminal_id = #{terminalId}</if>
+            <if test="domainId != null  and domainId != ''"> and t.domain_id = #{domainId}</if>
             <if test="terminalIp != null  and terminalIp != ''"> and terminal_ip = #{terminalIp}</if>
             <if test="isCmic != null  and isCmic != ''"> and is_cmic = #{isCmic}</if>
             <if test="isAutoCast != null  and isAutoCast != ''"> and is_auto_cast = #{isAutoCast}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="status != null  and status != ''"> and t.status = #{status}</if>
             <if test="loginTime != null "> and login_time = #{loginTime}</if>
-            <if test="delFlag != null "> and del_flag = #{delFlag}</if>
         </where>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
@@ -41,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectWorkTerminalById" parameterType="String" resultMap="WorkTerminalResult">
         <include refid="selectWorkTerminalVo"/>
-        where terminal_id = #{terminalId}
+        where ter_real_id = #{terRealId}
     </select>
         
     <insert id="insertWorkTerminal" parameterType="WorkTerminal">
@@ -81,6 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateWorkTerminal" parameterType="WorkTerminal">
         update work_terminal
         <trim prefix="SET" suffixOverrides=",">
+            <if test="terminalId != null  and terminalId != ''">terminal_id = #{terminalId},</if>
             <if test="terminalName != null  and terminalName != ''">terminal_name = #{terminalName},</if>
             <if test="terminalIp != null  and terminalIp != ''">terminal_ip = #{terminalIp},</if>
             <if test="isCmic != null  and isCmic != ''">is_cmic = #{isCmic},</if>
@@ -94,17 +110,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
         </trim>
-        where terminal_id = #{terminalId}
+        where ter_real_id = #{terRealId}
     </update>
 
     <delete id="deleteWorkTerminalById" parameterType="String">
-        delete from work_terminal where terminal_id = #{terminalId}
+    	update work_terminal set del_flag = '2' where ter_real_id = #{terRealId}
     </delete>
 
     <delete id="deleteWorkTerminalByIds" parameterType="String">
-        delete from work_terminal where terminal_id in 
-        <foreach item="terminalId" collection="array" open="(" separator="," close=")">
-            #{terminalId}
+        update work_terminal set del_flag = '2' where ter_real_id in 
+        <foreach item="terRealId" collection="array" open="(" separator="," close=")">
+            #{terRealId}
         </foreach>
     </delete>
     

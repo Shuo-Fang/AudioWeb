@@ -214,10 +214,10 @@
 	        	var data = $("#form-user-add").serializeArray();
 	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
 	        	var roleIds = $.form.selectCheckeds("role");
-	        	var postIds = $.form.selectSelects("post");
+	        	//var postIds = $.form.selectSelects("post");
 	        	data.push({"name": "status", "value": status});
 	        	data.push({"name": "roleIds", "value": roleIds});
-	        	data.push({"name": "postIds", "value": postIds});
+	        	//data.push({"name": "postIds", "value": postIds});
 	        	$.operate.saveTab(prefix + "/add", data);
 	        }
 	    }
@@ -245,13 +245,13 @@
     			layer.close(index);
 			}
 		}
-
-		$(function() {
+		
+		/* $(function() {
             $('#post').select2({
                 placeholder: "请选择岗位",
                 allowClear: true
             });
-        })
+        }) */
     </script>
 </body>
 </html>

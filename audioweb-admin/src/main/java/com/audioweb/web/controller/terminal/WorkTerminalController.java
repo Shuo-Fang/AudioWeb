@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
+import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.poi.ExcelUtil;
+import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.common.core.page.TableDataInfo;
 
 /**
@@ -86,16 +88,25 @@ public class WorkTerminalController extends BaseController
     @ResponseBody
     public AjaxResult addSave(WorkTerminal workTerminal)
     {
+    	if (UserConstants.USER_NAME_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(workTerminal)))
+        {
+            return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端ID已存在");
+        }
+        else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(workTerminalService.checkIdUnique(workTerminal)))
+        {
+            return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端IP已存在");
+        }
+    	workTerminal.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(workTerminalService.insertWorkTerminal(workTerminal));
     }
 
     /**
      * 修改终端管理
      */
-    @GetMapping("/edit/{terminalId}")
-    public String edit(@PathVariable("terminalId") String terminalId, ModelMap mmap)
+    @GetMapping("/edit/{terRealId}")
+    public String edit(@PathVariable("terRealId") String terRealId, ModelMap mmap)
     {
-        WorkTerminal workTerminal = workTerminalService.selectWorkTerminalById(terminalId);
+        WorkTerminal workTerminal = workTerminalService.selectWorkTerminalById(terRealId);
         mmap.put("workTerminal", workTerminal);
         return prefix + "/edit";
     }
@@ -132,5 +143,25 @@ public class WorkTerminalController extends BaseController
     public String checkIpUnique(WorkTerminal workTerminal)
     {
         return workTerminalService.checkIpUnique(workTerminal);
+    }
+    /**
+     * 校验终端ID
+     */
+    @PostMapping("/checkIdUnique")
+    @ResponseBody
+    public String checkIdUnique(WorkTerminal workTerminal)
+    {
+    	return workTerminalService.checkIdUnique(workTerminal);
+    }
+    /**
+     * 终端状态修改
+     */
+    @Log(title = "终端管理", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("system:terminal:edit")
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeStatus(WorkTerminal workTerminal)
+    {
+        return toAjax(workTerminalService.changeStatus(workTerminal));
     }
 }

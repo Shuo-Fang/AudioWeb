@@ -146,6 +146,18 @@ public class SysDomainServiceImpl implements ISysDomainService
         int result = domainMapper.checkDomainExistUser(domainId);
         return result > 0 ? true : false;
     }
+    /**
+     * 查询分区是否存在终端
+     * 
+     * @param domainId 分区ID
+     * @return 结果 true 存在 false 不存在
+     */
+    @Override
+    public boolean checkDomainExistTerminal(Long domainId)
+    {
+    	int result = domainMapper.checkDomainExistTerminal(domainId);
+    	return result > 0 ? true : false;
+    }
 
     /**
      * 删除分区管理信息

@@ -18,7 +18,7 @@ public interface IWorkTerminalService
      * @param terminalId 终端管理ID
      * @return 终端管理
      */
-    public WorkTerminal selectWorkTerminalById(String terminalId);
+    public WorkTerminal selectWorkTerminalById(String terRealId);
 
     /**
      * 查询终端管理列表
@@ -58,7 +58,7 @@ public interface IWorkTerminalService
      * @param terminalId 终端管理ID
      * @return 结果
      */
-    public int deleteWorkTerminalById(String terminalId);
+    public int deleteWorkTerminalById(String terRealId);
     /**
      * 校验IP地址是否唯一
      *
@@ -66,4 +66,22 @@ public interface IWorkTerminalService
      * @return 结果
      */
     public String checkIpUnique(WorkTerminal workTerminal);
+    /**
+     * 校验终端ID地址是否唯一
+     *
+     * @param workTerminal 终端信息
+     * @return 结果
+     */
+    public String checkIdUnique(WorkTerminal workTerminal);
+
+	/**
+	 * @Title: changeStatus 
+	 * @Description: 终端状态修改
+	 * @param workTerminal
+	 * @return int 返回类型 
+	 * @throws 抛出错误
+	 * @author ShuoFang 
+	 * @date 2020年3月3日 上午11:35:05
+	 */
+	public int changeStatus(WorkTerminal workTerminal);
 }

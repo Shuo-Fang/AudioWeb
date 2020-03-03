@@ -22,6 +22,10 @@ public class WorkTerminal extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
+    /** 终端序号ID */
+    private String terRealId;
+    
+    
     /** 终端ID */
     private String terminalId;
 
@@ -74,7 +78,14 @@ public class WorkTerminal extends BaseEntity
     
     /** 广播任务名称 */
     private String taskName;
-    public void setTerminalId(String terminalId) 
+    
+    public String getTerRealId() {
+		return terRealId;
+	}
+	public void setTerRealId(String terRealId) {
+		this.terRealId = terRealId;
+	}
+	public void setTerminalId(String terminalId) 
     {
         this.terminalId = terminalId;
     }

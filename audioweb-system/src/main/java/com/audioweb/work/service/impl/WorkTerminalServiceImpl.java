@@ -33,9 +33,9 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
      * @return 终端管理
      */
     @Override
-    public WorkTerminal selectWorkTerminalById(String terminalId)
+    public WorkTerminal selectWorkTerminalById(String terRealId)
     {
-        return workTerminalMapper.selectWorkTerminalById(terminalId);
+        return workTerminalMapper.selectWorkTerminalById(terRealId);
     }
 
     /**
@@ -94,9 +94,9 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
      * @return 结果
      */
     @Override
-    public int deleteWorkTerminalById(String terminalId)
+    public int deleteWorkTerminalById(String terRealId)
     {
-        return workTerminalMapper.deleteWorkTerminalById(terminalId);
+        return workTerminalMapper.deleteWorkTerminalById(terRealId);
     }
 
 	/* (non-Javadoc) 
@@ -132,5 +132,63 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 			}
 		}
         return TerminalConstants.TERMINAL_IP_UNIQUE;
+	}
+
+	/* (non-Javadoc) 
+	 * <p>Title: checkIdUnique</p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang 
+	 * @date 2020年3月3日 上午9:14:18
+	 * @param workTerminal
+	 * @return 
+	 * @see com.audioweb.work.service.IWorkTerminalService#checkIdUnique(com.audioweb.work.domain.WorkTerminal) 
+	 */ 
+	/**
+     * 校验终端ID是否唯一
+     *
+     * @param workTerminal 终端信息
+     * @return
+     */
+	@Override
+	public String checkIdUnique(WorkTerminal workTerminal) {
+		// TODO Auto-generated method stub
+		try {
+			int id = Integer.parseInt(workTerminal.getTerminalId());
+			if(id < 0 && id > 9999 ){
+				return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+			}
+		} catch (Exception e) {
+			return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+		}
+		List<WorkTerminal> list = workTerminalMapper.selectWorkTerminalList(workTerminal);
+		if(list != null) {
+			for(WorkTerminal terminal:list) {
+				if(StringUtils.isNotNull(terminal) && !terminal.getDelFlag().equals("2")) {
+					return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+				}
+			}
+		}
+		return TerminalConstants.TERMINAL_ID_UNIQUE;
+	}
+
+	/* (non-Javadoc) 
+	 * <p>Title: changeStatus</p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang 
+	 * @date 2020年3月3日 上午11:36:03
+	 * @param workTerminal
+	 * @return 
+	 * @see com.audioweb.work.service.IWorkTerminalService#changeStatus(com.audioweb.work.domain.WorkTerminal) 
+	 */ 
+	/**
+     * 终端状态修改
+     *
+     * @param workTerminal 终端信息
+     * @return
+     */
+	@Override
+	public int changeStatus(WorkTerminal workTerminal) 
+	{
+		return workTerminalMapper.updateWorkTerminal(workTerminal);
 	}
 }
