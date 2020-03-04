@@ -107,7 +107,7 @@
         var isCmicDatas = [[${@dict.getType('work_status')}]];
         var isAutoCastDatas = [[${@dict.getType('work_status')}]];
         var prefix = ctx + "system/terminal";
-
+		var domainId = 100;
 
 		$(function() {
 		    var panehHidden = false;
@@ -122,7 +122,7 @@
 		function queryTerminalList() {
             var options = {
                 url: prefix + "/list",
-                createUrl: prefix + "/add",
+                createUrl: prefix + "/add/"+domainId,
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
@@ -137,34 +137,40 @@
                 },
                 {
                     field : 'terminalId', 
-                    title : '终端ID'/* ,
+                    title : '终端ID',
+                    align: 'center'/* ,
                     visible: false */
                 },
                 {
                     field : 'terminalName', 
-                    title : '终端名称'
+                    title : '终端名称',
+                    align: 'center'
                 },
                 {
                     field : 'terminalIp', 
-                    title : 'IP'
+                    title : 'IP',
+                    align: 'center'
                 },
                 {
                     field : 'isCmic', 
                     title : '寻呼话筒',
                     formatter: function(value, row, index) {
                        return $.table.selectDictLabel(isCmicDatas, value);
-                    }
+                    },
+                    align: 'center'
                 },
                 {
                     field : 'isAutoCast', 
                     title : '自动采播',
                     formatter: function(value, row, index) {
                        return $.table.selectDictLabel(isAutoCastDatas, value);
-                    }
+                    },
+                    align: 'center'
                 },
                 {
-                    field : 'domainId', 
-                    title : '所在分区'
+                    field : 'domain.domainName', 
+                    title : '所在分区',
+                    align: 'center'
                 },
                 {
                    	visible: editFlag == 'hidden' ? false : true,
@@ -176,7 +182,8 @@
                 },
                 {
                     field : 'loginTime', 
-                    title : '终端最后登录时间'
+                    title : '终端最后登录时间',
+                    align: 'center'
                 },
                 {
                     title: '操作',
@@ -201,11 +208,12 @@
 		        onClick : zOnClick
 		    };
 			$.tree.init(options);
-			
-			function zOnClick(event, treeId, treeNode) {
+			function zOnClick(event, treeId, treeNode) {debugger
 				$("#domainId").val(treeNode.id);
 				$("#parentId").val(treeNode.pId);
+				domainId = treeNode.id;
 				$.table.search();
+				queryTerminalList();
 			}
 		}
 		

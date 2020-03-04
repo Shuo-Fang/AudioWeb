@@ -19,6 +19,7 @@ import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.system.service.ISysDomainService;
 import com.audioweb.common.core.page.TableDataInfo;
 
 /**
@@ -36,6 +37,9 @@ public class WorkTerminalController extends BaseController
     @Autowired
     private IWorkTerminalService workTerminalService;
 
+    @Autowired
+    private ISysDomainService domainService;
+    
     @RequiresPermissions("system:terminal:view")
     @GetMapping()
     public String terminal()
@@ -78,7 +82,15 @@ public class WorkTerminalController extends BaseController
     {
         return prefix + "/add";
     }
-
+    /**
+     * 新增分区
+     */
+    @GetMapping("/add/{parentId}")
+    public String add(@PathVariable("parentId") Long parentId, ModelMap mmap)
+    {
+        mmap.put("domain", domainService.selectDomainById(parentId));
+        return prefix + "/add";
+    }
     /**
      * 新增保存终端管理
      */

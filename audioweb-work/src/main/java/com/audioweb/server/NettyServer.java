@@ -1,7 +1,7 @@
 /**   
  * @Title: NettyServer.java 
  * @Package com.audioweb.serverPool 
- * @Description: 配置netty UDP服务端监听
+ * @Description: 配置netty TCP UDP服务端监听
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
  * @date 2020年1月20日 下午1:51:38 
  * @version V1.0   
@@ -157,7 +157,6 @@ public class NettyServer {
                         }
                     });
             l = c.bind().sync();
-            channel = f.channel();
             log.info("======loginServer启动成功!!!=========");
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,7 +187,6 @@ public class NettyServer {
                         }
                     });
             m = d.bind().sync();
-            channel = f.channel();
             log.info("======IOServer启动成功!!!=========");
         } catch (Exception e) {
             e.printStackTrace();

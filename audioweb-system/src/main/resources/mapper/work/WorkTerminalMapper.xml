@@ -43,12 +43,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         	t.del_flag = '0'
             <if test="terminalName != null  and terminalName != ''"> and terminal_name like concat('%', #{terminalName}, '%')</if>
             <if test="terminalId != null  and terminalId != ''"> and terminal_id = #{terminalId}</if>
-            <if test="domainId != null  and domainId != ''"> and t.domain_id = #{domainId}</if>
-            <if test="terminalIp != null  and terminalIp != ''"> and terminal_ip = #{terminalIp}</if>
-            <if test="isCmic != null  and isCmic != ''"> and is_cmic = #{isCmic}</if>
-            <if test="isAutoCast != null  and isAutoCast != ''"> and is_auto_cast = #{isAutoCast}</if>
+            <if test="domainId != null  and domainId != ''"> AND (d.domain_id = #{domainId} OR d.domain_id IN ( SELECT q.domain_id FROM sys_domain q WHERE FIND_IN_SET (#{domainId},ancestors) ))</if>
+            <if test="terminalIp != null  and terminalIp != ''"> and t.terminal_ip = #{terminalIp}</if>
+            <if test="isCmic != null  and isCmic != ''"> and t.is_cmic = #{isCmic}</if>
+            <if test="isAutoCast != null  and isAutoCast != ''"> and t.is_auto_cast = #{isAutoCast}</if>
             <if test="status != null  and status != ''"> and t.status = #{status}</if>
-            <if test="loginTime != null "> and login_time = #{loginTime}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+				AND date_format(t.login_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+				AND date_format(t.login_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+			</if>
         </where>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}

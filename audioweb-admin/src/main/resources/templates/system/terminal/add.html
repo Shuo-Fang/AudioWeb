@@ -7,7 +7,7 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-terminal-add">
-        <input name="domainId" type="hidden" id="treeId"/>
+        <input name="domainId" type="hidden" id="treeId" />
         <input name="precinct" type="hidden" id="treeIds"/>
         	<div class="form-group">    
         		<label class="col-sm-3 control-label">终端状态：</label>
@@ -40,7 +40,7 @@
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" required>
+                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" <c:if test="${domain != null}"> th:value="${domain.domainName}" </c:if> required </input>
                         <span class="input-group-addon" onclick="selectDomainTree()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
