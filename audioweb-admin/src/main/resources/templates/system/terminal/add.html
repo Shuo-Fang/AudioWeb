@@ -7,7 +7,7 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-terminal-add">
-        <input name="domainId" type="hidden" id="treeId" />
+        <input name="domainId" type="hidden" id="treeId" th:value="${domain != null?domain.domainId:''}"/>
         <input name="precinct" type="hidden" id="treeIds"/>
         	<div class="form-group">    
         		<label class="col-sm-3 control-label">终端状态：</label>
@@ -40,7 +40,7 @@
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" <c:if test="${domain != null}"> th:value="${domain.domainName}" </c:if> required </input>
+                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" th:value="${domain != null?domain.domainName:''}" required </input>
                         <span class="input-group-addon" onclick="selectDomainTree()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                 <label class="col-sm-3 control-label">终端管理分区：</label>
                 <div class="col-sm-8">
                 	<div class="input-group">
-                    	<input name="domainNames" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" required>
+                    	<input name="domainNames" onclick="selectTerminalTrees()" id="treeNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" required>
                         <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
@@ -155,8 +155,19 @@
                 $.operate.save(prefix + "/add", data);
             }
         }
-        
-        
+        /*复选终端树*/
+        function selectTerminalTrees(){
+        	var treeIds = $("#treeIds").val();
+        	var domainId = $.common.isEmpty(treeIds) ? "100" : $("#treeIds").val();
+        	var url = ctx + "system/domain/selectDomainTrees/" + domainId;
+			var options = {
+				title: '选择分区',
+				width: "380",
+				url: url,
+				callBack: getTerIds
+			};
+			$.modal.openOptions(options);
+        }
         /*选择分区树*/
         function selectDomainTree() {
         	var treeId = $("#treeId").val();
@@ -170,8 +181,20 @@
 			};
 			$.modal.openOptions(options);
 		}
-		
-		function doSubmit(index, layero){
+        
+        function getTerIds(index, layero){debugger
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
+				var ters = formatMulTree(tree.getCheckedNodes());
+    			$("#treeId").val(body.find('#treeId').val());
+    			$("#treeName").val(body.find('#treeName').val());
+    			layer.close(index);
+			}else{
+				$.modal.msgError("请选择对应分区");
+			}
+		}
+        
+		function doSubmit(index, layero){debugger
 			var tree = layero.find("iframe")[0].contentWindow.$._tree;
 			if ($.tree.notAllowSelect(tree)) {
 				var body = layer.getChildFrame('body', index);
@@ -188,6 +211,9 @@
 			}else{
 				$("#domainSelect").hide();
 			}
+		}
+		function formatMulTree(treeData){
+			
 		}
     </script>
 </body>

@@ -88,7 +88,9 @@ public class WorkTerminalController extends BaseController
     @GetMapping("/add/{parentId}")
     public String add(@PathVariable("parentId") Long parentId, ModelMap mmap)
     {
-        mmap.put("domain", domainService.selectDomainById(parentId));
+    	if(parentId != 0) {
+            mmap.put("domain", domainService.selectDomainById(parentId));
+    	}
         return prefix + "/add";
     }
     /**
@@ -175,5 +177,15 @@ public class WorkTerminalController extends BaseController
     public AjaxResult changeStatus(WorkTerminal workTerminal)
     {
         return toAjax(workTerminalService.changeStatus(workTerminal));
+    }
+    
+    /**
+     * 多选择分区树
+     */
+    @GetMapping("/selectDomainTrees/{domainId}")
+    public String selectDomainTrees(@PathVariable("domainId") Long domainId, ModelMap mmap)
+    {
+        mmap.put("domain", domainService.selectDomainById(domainId));
+        return prefix + "/checktree";
     }
 }
