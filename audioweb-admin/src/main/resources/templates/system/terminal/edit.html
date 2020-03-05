@@ -30,14 +30,14 @@
                 <label class="col-sm-3 control-label">寻呼话筒：</label>
                 <div class="col-sm-2">
                		<label class="toggle-switch switch-solid">
-                            <input type="checkbox" id="isCmic" onclick="showSelect();" th:field="*{isCmic}">
+                            <input type="checkbox" id="isCmic" onclick="showSelect();" th:checked="${isCmic == '0' ? true : false}">
                             <span></span>
                     </label>
                 </div>
                 <label class="col-sm-3 control-label">自动采播：</label>
                 <div class="col-sm-2">
                 	<label class="toggle-switch switch-solid">
-                            <input type="checkbox" id="isAutoCast" onclick="showSelect();" th:field="*{isCmic}">
+                            <input type="checkbox" id="isAutoCast" onclick="showSelect();" th:checked="${isAutoCast == '0' ? true : false}">
                             <span></span>
                     </label>
                 </div>

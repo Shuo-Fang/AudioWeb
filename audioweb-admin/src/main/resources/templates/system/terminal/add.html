@@ -40,7 +40,7 @@
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true" th:value="${domain != null?domain.domainName:''}" required </input>
+                    	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly="true"  th:value="${domain != null?domain.domainName:''}" required />
                         <span class="input-group-addon" onclick="selectDomainTree()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
@@ -185,7 +185,7 @@
         function getTerIds(index, layero){debugger
 			var tree = layero.find("iframe")[0].contentWindow.$._tree;
 			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
-				var ters = formatMulTree(tree.getCheckedNodes());
+				var ters = formatMulTree(tree.getCheckedNodes(),0);
     			$("#treeId").val(body.find('#treeId').val());
     			$("#treeName").val(body.find('#treeName').val());
     			layer.close(index);
@@ -212,8 +212,17 @@
 				$("#domainSelect").hide();
 			}
 		}
-		function formatMulTree(treeData){
-			
+		function formatMulTree(treeData,num){
+			var root = treeData[num];
+			if(root.check_Child_State == 2 || root.check_Child_State == -1){
+				return root.id;
+			}else {
+				let data = "";
+				let i = root.children.length;
+				for(;i>=0;i--){
+					if()
+				}
+			}
 		}
     </script>
 </body>
