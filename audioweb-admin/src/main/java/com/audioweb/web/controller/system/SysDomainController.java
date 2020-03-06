@@ -163,10 +163,10 @@ public class SysDomainController extends BaseController
     /**
      * 多选择分区树
      */
-    @GetMapping("/selectDomainTrees/{domainId}")
-    public String selectDomainTrees(@PathVariable("domainId") Long domainId, ModelMap mmap)
+    @GetMapping("/selectDomainTrees/{domainIds}")
+    public String selectDomainTrees(@PathVariable("domainIds") String domainIds, ModelMap mmap)
     {
-        mmap.put("domain", domainService.selectDomainById(domainId));
+        mmap.put("treeIds", domainIds);
         return prefix + "/checktree";
     }
 
@@ -180,7 +180,26 @@ public class SysDomainController extends BaseController
         List<Ztree> ztrees = domainService.selectDomainTree(new SysDomain());
         return ztrees;
     }
-
+    
+    /**
+     * 加载复选分区列表树
+     */
+    @GetMapping("/treesData/{domainIds}")
+    @ResponseBody
+    public List<Ztree> treesData(@PathVariable("domainIds") String domainIds)
+    {
+        List<Ztree> ztrees = domainService.selectDomainTree(new SysDomain());
+        String[] ids = domainIds.split(",");
+        for(String id:ids) {
+        	for(Ztree tree:ztrees) {
+        		if(tree.getId().equals(Long.parseLong(id))) {
+        			tree.setChecked(true);
+        			break;
+        		}
+        	}
+        }
+        return ztrees;
+    }
     /**
      * 加载角色分区（数据权限）列表树
      */

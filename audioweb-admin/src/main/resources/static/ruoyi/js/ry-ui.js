@@ -1470,6 +1470,13 @@ var table = {
                  });
             	return json;
             },
+            // 去除字符串最后一个字符
+            removeLast: function(obj){
+            	if ($.common.isEmpty(obj)) {
+            	    return null;
+            	}
+            	return obj.substr(0, obj.length - 1);
+            },
             // 获取obj对象长度
             getLength: function(obj) {
                 var count = 0;　　

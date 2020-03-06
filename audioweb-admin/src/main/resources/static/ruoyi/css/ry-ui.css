@@ -1008,3 +1008,16 @@ label {
 	border-radius: 6px;
 	background-color: #999;
 }
+
+.ztree li span.button.pIcon01_ico_open{
+	margin-right:2px; 
+	background: url(../../../ajax/libs/jquery-ztree/3.5/css/default/img/diy/1_open.png) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
+.ztree li span.button.pIcon01_ico_close{
+	margin-right:2px;
+	background: url(../../../ajax/libs/jquery-ztree/3.5/css/default/img/diy/1_close.png) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}

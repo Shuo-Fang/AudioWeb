@@ -9,8 +9,7 @@
 	button{font-family: "SimSun","Helvetica Neue",Helvetica,Arial;}
 </style>
 <body class="hold-transition box box-main">
-	<input id="treeId"   name="treeId"    type="hidden" th:value="${domain.domainId}"/>
-	<input id="treeName" name="treeName"  type="hidden" th:value="${domain.domainName}"/>
+	<input id="treeIds"   name="treeIds"    type="hidden" th:value="${treeIds}"/>
 	<div class="wrapper"><div class="treeShowHideButton" onclick="$.tree.toggleSearch();">
 		<label id="btnShow" title="显示搜索" style="display:none;">︾</label>
 		<label id="btnHide" title="隐藏搜索">︽</label>
@@ -29,11 +28,12 @@
 	<th:block th:include="include :: ztree-js" />
 	<script th:inline="javascript">
 		$(function() {
-			var url = ctx + "system/domain/treeData";
+			var domainIds = $("#treeIds").val()
+			var url = ctx + "system/domain/treesData/"+domainIds;
 			var options = {
 		        url: url,
 		        expandLevel: 2,
-		        onCheck : zOnClick,
+		        //onCheck : zOnClick,
 				view: {
 			        selectedMulti: true      // 设置是否允许同时选中多个节点
 			    },
@@ -43,14 +43,6 @@
 		    };
 			$.tree.init(options);
 		});
-		
-		function zOnClick(event, treeId, treeNode) {
-			//TODO
-		    var treeId = treeNode.id;
-		    var treeName = treeNode.name;
-		    $("#treeId").val(treeId);
-		    $("#treeName").val(treeName);
-		}
 	</script>
 </body>
 </html>

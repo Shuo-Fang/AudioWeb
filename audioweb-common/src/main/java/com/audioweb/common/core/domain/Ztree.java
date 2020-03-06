@@ -31,6 +31,11 @@ public class Ztree implements Serializable
 
     /** 是否能勾选 */
     private boolean nocheck = false;
+    
+    /** 节点类型  true 分区; false 终端*/
+    private boolean dtype = true;
+    /** 节点皮肤  */
+    private String iconSkin = "";
 
     public Long getId()
     {
@@ -101,4 +106,21 @@ public class Ztree implements Serializable
     {
         this.nocheck = nocheck;
     }
+
+	public boolean isDtype() {
+		return dtype;
+	}
+
+	public void setDtype(boolean dtype) {
+		this.dtype = dtype;
+	}
+
+	public String getIconSkin() {
+		return iconSkin;
+	}
+
+	public void setIconSkin(String iconSkin) {
+		this.iconSkin = iconSkin;
+	}
+	
 }
