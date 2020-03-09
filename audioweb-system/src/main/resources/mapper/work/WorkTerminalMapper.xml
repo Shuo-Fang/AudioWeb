@@ -34,13 +34,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select d.ancestors,d.domain_name,d.domain_id,d.leader,d.phone,d.parent_id,
         	   t.ter_real_id,t.terminal_id, t.terminal_name, t.terminal_ip, t.is_cmic, t.is_auto_cast, t.status, t.login_time, t.precinct, t.del_flag, t.create_by, t.create_time, t.remark 
 		from work_terminal t left join sys_domain d 
-		on t.domain_id = d.domain_id and d.status = 0 and d.del_flag = 0
+		on t.domain_id = d.domain_id and d.del_flag = 0
     </sql>
 
     <select id="selectWorkTerminalList" parameterType="WorkTerminal" resultMap="WorkTerminalResult">
         <include refid="selectWorkTerminalVo"/>
         <where>  
         	t.del_flag = '0'
+            <if test="domain.status != null  and domain.status != ''"> and d.status = #{domain.status}</if>
             <if test="terminalName != null  and terminalName != ''"> and terminal_name like concat('%', #{terminalName}, '%')</if>
             <if test="terminalId != null  and terminalId != ''"> and terminal_id = #{terminalId}</if>
             <if test="domainId != null  and domainId != ''"> AND (d.domain_id = #{domainId} OR d.domain_id IN ( SELECT q.domain_id FROM sys_domain q WHERE FIND_IN_SET (#{domainId},ancestors) ))</if>

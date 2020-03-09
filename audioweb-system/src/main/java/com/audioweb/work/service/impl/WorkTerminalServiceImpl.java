@@ -127,7 +127,11 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		if(list != null) {
 			for(WorkTerminal terminal:list) {
 				if(StringUtils.isNotNull(terminal) && !terminal.getDelFlag().equals("2")) {
-					return TerminalConstants.TERMINAL_IP_NOT_UNIQUE;
+					if(StringUtils.isNotEmpty(workTerminal.getTerRealId()) && terminal.getTerRealId().equals(workTerminal.getTerRealId())) {
+						return TerminalConstants.TERMINAL_IP_UNIQUE;
+					}else {
+						return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+					}
 				}
 			}
 		}
@@ -164,7 +168,11 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		if(list != null) {
 			for(WorkTerminal terminal:list) {
 				if(StringUtils.isNotNull(terminal) && !terminal.getDelFlag().equals("2")) {
-					return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+					if(StringUtils.isNotEmpty(workTerminal.getTerRealId()) && terminal.getTerRealId().equals(workTerminal.getTerRealId())) {
+						return TerminalConstants.TERMINAL_IP_UNIQUE;
+					}else {
+						return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+					}
 				}
 			}
 		}

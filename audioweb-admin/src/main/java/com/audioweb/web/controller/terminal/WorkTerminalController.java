@@ -17,8 +17,10 @@ import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.system.domain.SysDomain;
 import com.audioweb.system.service.ISysDomainService;
 import com.audioweb.common.core.page.TableDataInfo;
 
@@ -55,6 +57,11 @@ public class WorkTerminalController extends BaseController
     @ResponseBody
     public TableDataInfo list(WorkTerminal workTerminal)
     {
+    	if(StringUtils.isNotNull(workTerminal.getDomainId())) {
+    		SysDomain domain = workTerminal.getDomain();
+    		domain.setStatus(UserConstants.DOMAIN_NORMAL);
+    		workTerminal.setDomain(domain);
+    	}
         startPage();
         List<WorkTerminal> list = workTerminalService.selectWorkTerminalList(workTerminal);
         return getDataTable(list);
@@ -121,6 +128,16 @@ public class WorkTerminalController extends BaseController
     public String edit(@PathVariable("terRealId") String terRealId, ModelMap mmap)
     {
         WorkTerminal workTerminal = workTerminalService.selectWorkTerminalById(terRealId);
+        if(StringUtils.isNotEmpty(workTerminal.getPrecinct())) {
+        	String names = "";
+        	List<SysDomain> list = domainService.selectDomainListByIds(workTerminal.getPrecinct());
+        	for(SysDomain domain : list) {
+        		names += domain.getDomainName()+",";
+        	}
+        	if(StringUtils.isNotEmpty(names)) {
+        		workTerminal.setTaskName(names.substring(0, names.length()-1));
+        	}
+        }
         mmap.put("workTerminal", workTerminal);
         return prefix + "/edit";
     }

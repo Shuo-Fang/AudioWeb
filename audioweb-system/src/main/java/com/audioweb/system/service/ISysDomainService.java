@@ -83,6 +83,14 @@ public interface ISysDomainService
      * @return 分区信息
      */
     public SysDomain selectDomainById(Long domainId);
+    
+    /**
+     * 根据分区ID批量查询信息
+     * 
+     * @param domainId 分区ID
+     * @return 分区信息
+     */
+    public List<SysDomain> selectDomainListByIds(String precinct);
 
     /**
      * 校验分区名称是否唯一

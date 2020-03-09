@@ -79,6 +79,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where d.domain_id = #{domainId}
 	</select>
 
+	<select id="selectDomainListByIds" parameterType="String" resultMap="SysDomainResult">
+		select d.domain_id, d.parent_id, d.ancestors, d.domain_name, d.order_num, d.leader, d.phone, d.email, d.status,
+			(select domain_name from sys_domain where domain_id = d.parent_id) parent_name
+		from sys_domain d
+		where d.domain_id in 
+		<foreach item="precinct" collection="array" open="(" separator="," close=")">
+            #{precinct}
+        </foreach>
+	</select>
+	
 	<select id="selectChildrenDomainById" parameterType="Long" resultMap="SysDomainResult">
 		select * from sys_domain where find_in_set(#{domainId}, ancestors)
 	</select>
@@ -133,6 +143,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    <foreach collection="domains" item="item" index="index"
 	        separator=" " open="case domain_id" close="end">
 	        when #{item.domainId} then #{item.ancestors}
+	    </foreach>
+	    ,status = 
+	    <foreach collection="domains" item="item" index="index"
+	        separator=" " open="case domain_id" close="end">
+	        when #{item.domainId} then #{item.status}
 	    </foreach>
 	    where domain_id in
 	    <foreach collection="domains" item="item" index="index"

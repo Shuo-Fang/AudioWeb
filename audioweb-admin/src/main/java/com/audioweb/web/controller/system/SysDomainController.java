@@ -143,9 +143,9 @@ public class SysDomainController extends BaseController
     /**
      * 校验分区名称
      */
-    @PostMapping("/checkdomainNameUnique")
+    @PostMapping("/checkDomainNameUnique")
     @ResponseBody
-    public String checkdomainNameUnique(SysDomain domain)
+    public String checkDomainNameUnique(SysDomain domain)
     {
         return domainService.checkDomainNameUnique(domain);
     }

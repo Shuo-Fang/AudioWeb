@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.audioweb.common.annotation.DataScope;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.core.domain.Ztree;
+import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.exception.BusinessException;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
@@ -207,7 +208,7 @@ public class SysDomainServiceImpl implements ISysDomainService
             String newAncestors = newParentdomain.getAncestors() + "," + newParentdomain.getDomainId();
             String oldAncestors = olddomain.getAncestors();
             domain.setAncestors(newAncestors);
-            updatedomainChildren(domain.getDomainId(), newAncestors, oldAncestors);
+            updatedomainChildren(domain.getDomainId(), newAncestors, oldAncestors,domain.getStatus());
         }
         int result = domainMapper.updateDomain(domain);
         if (UserConstants.DOMAIN_NORMAL.equals(domain.getStatus()))
@@ -232,17 +233,22 @@ public class SysDomainServiceImpl implements ISysDomainService
     }
 
     /**
-     * 修改子元素关系
+     * 修改子元素关系以及是否启用
      * 
      * @param domainId 被修改的分区ID
      * @param newAncestors 新的父ID集合
      * @param oldAncestors 旧的父ID集合
+     * @param status 是否启用
      */
-    public void updatedomainChildren(Long domainId, String newAncestors, String oldAncestors)
+    public void updatedomainChildren(Long domainId, String newAncestors, String oldAncestors, String status)
     {
         List<SysDomain> children = domainMapper.selectChildrenDomainById(domainId);
         for (SysDomain child : children)
         {
+        	//如果为禁用则也禁用子分区
+        	if(!UserConstants.DOMAIN_NORMAL.equals(status)) {
+        		child.setStatus(status);
+        	}
             child.setAncestors(child.getAncestors().replace(oldAncestors, newAncestors));
         }
         if (children.size() > 0)
@@ -280,4 +286,16 @@ public class SysDomainServiceImpl implements ISysDomainService
         }
         return UserConstants.DOMAIN_NAME_UNIQUE;
     }
+
+    /**
+     * 根据分区ID批量查询信息
+     * 
+     * @param precinct 分区IDs
+     * @return 分区信息
+     */
+	@Override
+	public List<SysDomain> selectDomainListByIds(String precinct) 
+	{
+		return domainMapper.selectDomainListByIds(Convert.toStrArray(precinct));
+	}
 }

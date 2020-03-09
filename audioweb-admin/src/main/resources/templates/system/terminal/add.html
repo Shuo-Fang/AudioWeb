@@ -66,8 +66,8 @@
                 <label class="col-sm-3 control-label">终端管理分区：</label>
                 <div class="col-sm-8">
                 	<div class="input-group">
-                    	<input name="domainNames" onclick="selectTerminalTrees()" id="domainNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" required>
-                        <span class="input-group-addon" onclick="selectTerminalTrees()"><i class="fa fa-search"></i></span>
+                    	<input name="domainNames" onclick="selectDomainTrees()" id="domainNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" required>
+                        <span class="input-group-addon" onclick="selectDomainTrees()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
             </div>
@@ -156,7 +156,7 @@
             }
         }
         /*复选分区树*/
-        function selectTerminalTrees(){
+        function selectDomainTrees(){
         	var domainIds = $.common.isEmpty($("#precinct").val()) ? "0" : $("#precinct").val();
         	var url = ctx + "system/domain/selectDomainTrees/" + domainIds;
 			var options = {

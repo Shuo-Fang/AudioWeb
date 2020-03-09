@@ -2,12 +2,22 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('修改终端管理')" />
-    <th:block th:include="include :: datetimepicker-css" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <form class="form-horizontal m" id="form-terminal-edit" th:object="${workTerminal}">
             <input name="terRealId" th:field="*{terRealId}" type="hidden">
+            <input name="domainId" th:field="*{domainId}" type="hidden">
+            <input name="precinct" type="hidden" id="precinct" th:field="*{precinct}"/>
+            <div class="form-group">    
+        		<label class="col-sm-3 control-label">终端状态：</label>
+                <div class="col-sm-8">
+                	<label class="toggle-switch switch-solid">
+                            <input type="checkbox" id="status" th:checked="*{status == '0' ? true : false}">
+                            <span></span>
+                    </label>
+                </div>
+            </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label">终端ID：</label>
                 <div class="col-sm-8">
@@ -30,14 +40,14 @@
                 <label class="col-sm-3 control-label">寻呼话筒：</label>
                 <div class="col-sm-2">
                		<label class="toggle-switch switch-solid">
-                            <input type="checkbox" id="isCmic" onclick="showSelect();" th:checked="${isCmic == '0' ? true : false}">
+                            <input type="checkbox" id="isCmic" onclick="showSelect();" th:checked="*{isCmic == '0' ? true : false}">
                             <span></span>
                     </label>
                 </div>
                 <label class="col-sm-3 control-label">自动采播：</label>
                 <div class="col-sm-2">
                 	<label class="toggle-switch switch-solid">
-                            <input type="checkbox" id="isAutoCast" onclick="showSelect();" th:checked="${isAutoCast == '0' ? true : false}">
+                            <input type="checkbox" id="isAutoCast" onclick="showSelect();" th:checked="*{isAutoCast == '0' ? true : false}">
                             <span></span>
                     </label>
                 </div>
@@ -51,58 +61,174 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">所在分区：</label>
-                <div class="col-sm-8">
-                    <input name="domainId" th:field="*{domainId}" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">终端状态：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box">
-                        <input type="radio" name="status" value="">
-                        <label th:for="status" th:text="未知"></label>
-                    </div>
-                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">终端最后登录时间：</label>
-                <div class="col-sm-8">
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                        <input name="loginTime" th:value="${#dates.format(workTerminal.loginTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
+            <div class="form-group" id= "domainSelect">
                 <label class="col-sm-3 control-label">终端管理分区：</label>
                 <div class="col-sm-8">
-                    <textarea name="precinct" class="form-control">[[*{precinct}]]</textarea>
+                    <div class="input-group">
+                    	<input name="domainNames" onclick="selectDomainTrees()" id="domainNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" th:field="*{taskName}" required>
+                        <span class="input-group-addon" onclick="selectDomainTrees()"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">其他信息</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">备注：</label>
+                        <div class="col-xs-10">
+                            <textarea name="remark" maxlength="500" class="form-control" rows="3" th:field="*{remark}"></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
         </form>
     </div>
     <th:block th:include="include :: footer" />
-    <th:block th:include="include :: datetimepicker-js" />
     <script type="text/javascript">
         var prefix = ctx + "system/terminal";
+        $(function() {
+        	showSelect();
+        });
         $("#form-terminal-edit").validate({
+        	onkeyup: false,
+        	rules:{
+        		terminalName:{
+        			minlength: 2,
+        			maxlength: 30
+        		},
+        		terminalId:{
+        			minlength: 4,
+        			maxlength: 4,
+        			remote: {
+                        url: prefix + "/checkIdUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "terminalId": function () {
+                            	var data = $("input[name='terminalId']").val();
+                                return data;
+                            },
+                            "terRealId":$("input[name='terRealId']").val()
+                        },
+                        dataFilter: function (data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        		terminalIp:{
+        			isIp:true,
+        			remote: {
+                        url: prefix + "/checkIpUnique",
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            "terminalIp": function () {
+                            	var data = $("input[name='terminalIp']").val();
+                                return data;
+                            },
+                            "terRealId":$("input[name='terRealId']").val()
+                        },
+                        dataFilter: function (data, type) {
+                        	return $.validate.unique(data);
+                        }
+                    }
+        		},
+        	},
+        	messages: {
+        		"terminalIp": {
+                    remote: "IP地址输入出错或已存在"
+                },
+        		"terminalId": {
+                    remote: "终端ID地址输入出错或已存在"
+                }
+            },
             focusCleanup: true
         });
 
         function submitHandler() {
             if ($.validate.form()) {
-                $.operate.save(prefix + "/edit", $('#form-terminal-edit').serialize());
+	        	var data = $("#form-terminal-edit").serializeArray();
+	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
+	        	var isCmic = $("input[id='isCmic']").is(':checked') == true ? 0 : 1;
+	        	var isAutoCast = $("input[id='isAutoCast']").is(':checked') == true ? 0 : 1;
+	        	data.push({"name": "status", "value": status});
+	        	data.push({"name": "isCmic", "value": isCmic});
+	        	data.push({"name": "isAutoCast", "value": isAutoCast});
+                $.operate.save(prefix + "/edit", data);
             }
         }
+        /*选择分区树*/
+        function selectDomainTree() {
+        	var domainId = $("#domainId").val();
+        	domainId = $.common.isEmpty(domainId) ? "100" : $("#domainId").val();
+        	var url = ctx + "system/domain/selectDomainTree/" + domainId;
+			var options = {
+				title: '选择分区',
+				width: "380",
+				url: url,
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
 
-        $("input[name='loginTime']").datetimepicker({
-            format: "yyyy-mm-dd",
-            minView: "month",
-            autoclose: true
-        });
+		function doSubmit(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if ($.tree.notAllowSelect(tree)) {
+				var body = layer.getChildFrame('body', index);
+    			$("#domainId").val(body.find('#treeId').val());
+    			$("#treeName").val(body.find('#treeName').val());
+    			layer.close(index);
+			}
+		}
+		/*复选分区树*/
+        function selectDomainTrees(){
+        	var domainIds = $.common.isEmpty($("#precinct").val()) ? "0" : $("#precinct").val();
+        	var url = ctx + "system/domain/selectDomainTrees/" + domainIds;
+			var options = {
+				title: '选择分区',
+				width: "380",
+				url: url,
+				callBack: getDomainIds
+			};
+			$.modal.openOptions(options);
+        }
+		
+        function getDomainIds(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
+				var ters = formatMulTree(tree.getCheckedNodes());
+    			$("#precinct").val(ters.precinct);
+    			$("#domainNames").val(ters.domainNames);
+    			layer.close(index);
+			}else{
+				$.modal.msgError("请选择对应分区");
+			}
+		}
+        //处理按钮点击,显示分区选择
+		function showSelect(){
+			var is = $("input[id='isAutoCast']").is(':checked')||$("input[id='isCmic']").is(':checked');
+			if(is){
+				$("#domainSelect").show();
+			}else{
+				$("#domainSelect").hide();
+			}
+		}
+		//选中节点处理
+		function formatMulTree(trees){
+			var data = {
+					precinct:"",
+					domainNames : ""
+			};
+			for(var i = trees.length-1;i>=0;i--){
+				data.precinct += trees[i].id+",";
+				data.domainNames += trees[i].name +",";
+			}
+			if(!$.common.isEmpty(data.precinct)){
+				data.precinct = $.common.removeLast(data.precinct);
+				data.domainNames = $.common.removeLast(data.domainNames);
+			}
+			return data;
+		}
     </script>
 </body>
 </html>
