@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.enums.BusinessType;
-import com.audioweb.file.domain.WorkFile;
-import com.audioweb.file.service.IWorkFileService;
+import com.audioweb.work.domain.WorkFile;
+import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.poi.ExcelUtil;
@@ -23,7 +23,7 @@ import com.audioweb.common.core.page.TableDataInfo;
  * 音频任务中所有音频的存储序列信息Controller
  * 
  * @author shuofang
- * @date 2020-03-02
+ * @date 2020-03-10
  */
 @Controller
 @RequestMapping("/work/file")

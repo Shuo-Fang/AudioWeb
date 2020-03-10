@@ -10,13 +10,21 @@
                 <form id="formId">
                     <div class="select-list">
                         <ul>
-                            <li>
+                        	<li>
                                 <p>音频名称：</p>
                                 <input type="text" name="fileName"/>
                             </li>
                             <li>
-                                <p>音频所属地址类型,多个以：</p>
-                                <input type="text" name="belongs"/>
+                                <p>歌曲名称：</p>
+                                <input type="text" name="songName"/>
+                            </li>
+                            <li>
+                                <p>歌手名称：</p>
+                                <input type="text" name="artist"/>
+                            </li>
+                            <li>
+                                <p>歌曲专辑：</p>
+                                <input type="text" name="album"/>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -64,33 +72,29 @@
                     checkbox: true
                 },
                 {
+                    field : 'fileId', 
+                    title : '音频的父路径和音频合计的md5值',
+                    visible: false
+                },
+                {
                     field : 'fileName', 
                     title : '音频名称'
                 },
                 {
-                    field : 'trackLength', 
+                    field : 'songName', 
+                    title : '歌曲名称(歌源)'
+                },
+                {
+                    field : 'artist', 
+                    title : '歌手名称(歌源)'
+                },
+                {
+                    field : 'album', 
+                    title : '歌曲专辑(歌源)'
+                },
+                {
+                    field : 'duration', 
                     title : '音轨时长长度(ms)'
-                },
-                {
-                    field : 'bitRate', 
-                    title : '音频比特率'
-                },
-                {
-                    field : 'channels', 
-                    title : '音频声道数'
-                },
-                {
-                    field : 'format', 
-                    title : '音频格式'
-                },
-                {
-                    field : 'belongs', 
-                    title : '音频所属地址类型,多个以'
-                },
-                {
-                    field : 'fileId', 
-                    title : '音频的父路径和音频合计的md5值',
-                    visible: false
                 },
                 {
                     title: '操作',

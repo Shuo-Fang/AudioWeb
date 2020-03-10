@@ -1,18 +1,19 @@
-package com.audioweb.file.service.impl;
+package com.audioweb.work.service.impl;
 
 import java.util.List;
+import com.audioweb.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.audioweb.file.mapper.WorkFileMapper;
-import com.audioweb.file.domain.WorkFile;
-import com.audioweb.file.service.IWorkFileService;
+import com.audioweb.work.mapper.WorkFileMapper;
+import com.audioweb.work.domain.WorkFile;
+import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.text.Convert;
 
 /**
  * 音频任务中所有音频的存储序列信息Service业务层处理
  * 
  * @author shuofang
- * @date 2020-03-02
+ * @date 2020-03-10
  */
 @Service
 public class WorkFileServiceImpl implements IWorkFileService 
@@ -53,6 +54,7 @@ public class WorkFileServiceImpl implements IWorkFileService
     @Override
     public int insertWorkFile(WorkFile workFile)
     {
+        workFile.setCreateTime(DateUtils.getNowDate());
         return workFileMapper.insertWorkFile(workFile);
     }
 

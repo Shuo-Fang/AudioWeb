@@ -2,30 +2,37 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.audioweb.file.mapper.WorkFileMapper">
+<mapper namespace="com.audioweb.work.mapper.WorkFileMapper">
     
     <resultMap type="WorkFile" id="WorkFileResult">
+        <result property="fileId"    column="file_id"    />
         <result property="fileName"    column="file_name"    />
         <result property="filePath"    column="file_path"    />
-        <result property="trackLength"    column="track_length"    />
-        <result property="bitRate"    column="bit_rate"    />
-        <result property="startByte"    column="start_byte"    />
-        <result property="channels"    column="channels"    />
+        <result property="songName"    column="song_name"    />
+        <result property="artist"    column="artist"    />
+        <result property="album"    column="album"    />
+        <result property="duration"    column="duration"    />
         <result property="format"    column="format"    />
+        <result property="bitRate"    column="bit_rate"    />
+        <result property="sampleRate"    column="sample_rate"    />
+        <result property="startByte"    column="start_byte"    />
+        <result property="musicLength"    column="music_length"    />
         <result property="delFlag"    column="del_flag"    />
-        <result property="belongs"    column="belongs"    />
-        <result property="fileId"    column="file_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
     </resultMap>
 
     <sql id="selectWorkFileVo">
-        select file_name, file_path, track_length, bit_rate, start_byte, channels, format, del_flag, belongs, file_id from work_file
+        select file_id, file_name, file_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, del_flag, create_by, create_time from work_file
     </sql>
 
     <select id="selectWorkFileList" parameterType="WorkFile" resultMap="WorkFileResult">
         <include refid="selectWorkFileVo"/>
         <where>  
             <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
-            <if test="belongs != null  and belongs != ''"> and belongs = #{belongs}</if>
+            <if test="songName != null  and songName != ''"> and song_name like concat('%', #{songName}, '%')</if>
+            <if test="artist != null  and artist != ''"> and artist like concat('%', #{artist}, '%')</if>
+            <if test="album != null  and album != ''"> and album like concat('%', #{album}, '%')</if>
         </where>
     </select>
     
@@ -37,28 +44,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertWorkFile" parameterType="WorkFile">
         insert into work_file
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileId != null  and fileId != ''">file_id,</if>
             <if test="fileName != null  and fileName != ''">file_name,</if>
             <if test="filePath != null  and filePath != ''">file_path,</if>
-            <if test="trackLength != null ">track_length,</if>
-            <if test="bitRate != null ">bit_rate,</if>
-            <if test="startByte != null ">start_byte,</if>
-            <if test="channels != null  and channels != ''">channels,</if>
+            <if test="songName != null  and songName != ''">song_name,</if>
+            <if test="artist != null  and artist != ''">artist,</if>
+            <if test="album != null  and album != ''">album,</if>
+            <if test="duration != null ">duration,</if>
             <if test="format != null  and format != ''">format,</if>
+            <if test="bitRate != null ">bit_rate,</if>
+            <if test="sampleRate != null ">sample_rate,</if>
+            <if test="startByte != null ">start_byte,</if>
+            <if test="musicLength != null ">music_length,</if>
             <if test="delFlag != null  and delFlag != ''">del_flag,</if>
-            <if test="belongs != null  and belongs != ''">belongs,</if>
-            <if test="fileId != null  and fileId != ''">file_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileId != null  and fileId != ''">#{fileId},</if>
             <if test="fileName != null  and fileName != ''">#{fileName},</if>
             <if test="filePath != null  and filePath != ''">#{filePath},</if>
-            <if test="trackLength != null ">#{trackLength},</if>
-            <if test="bitRate != null ">#{bitRate},</if>
-            <if test="startByte != null ">#{startByte},</if>
-            <if test="channels != null  and channels != ''">#{channels},</if>
+            <if test="songName != null  and songName != ''">#{songName},</if>
+            <if test="artist != null  and artist != ''">#{artist},</if>
+            <if test="album != null  and album != ''">#{album},</if>
+            <if test="duration != null ">#{duration},</if>
             <if test="format != null  and format != ''">#{format},</if>
+            <if test="bitRate != null ">#{bitRate},</if>
+            <if test="sampleRate != null ">#{sampleRate},</if>
+            <if test="startByte != null ">#{startByte},</if>
+            <if test="musicLength != null ">#{musicLength},</if>
             <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
-            <if test="belongs != null  and belongs != ''">#{belongs},</if>
-            <if test="fileId != null  and fileId != ''">#{fileId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
          </trim>
     </insert>
 
@@ -67,13 +84,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="fileName != null  and fileName != ''">file_name = #{fileName},</if>
             <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
-            <if test="trackLength != null ">track_length = #{trackLength},</if>
-            <if test="bitRate != null ">bit_rate = #{bitRate},</if>
-            <if test="startByte != null ">start_byte = #{startByte},</if>
-            <if test="channels != null  and channels != ''">channels = #{channels},</if>
+            <if test="songName != null  and songName != ''">song_name = #{songName},</if>
+            <if test="artist != null  and artist != ''">artist = #{artist},</if>
+            <if test="album != null  and album != ''">album = #{album},</if>
+            <if test="duration != null ">duration = #{duration},</if>
             <if test="format != null  and format != ''">format = #{format},</if>
+            <if test="bitRate != null ">bit_rate = #{bitRate},</if>
+            <if test="sampleRate != null ">sample_rate = #{sampleRate},</if>
+            <if test="startByte != null ">start_byte = #{startByte},</if>
+            <if test="musicLength != null ">music_length = #{musicLength},</if>
             <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
-            <if test="belongs != null  and belongs != ''">belongs = #{belongs},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
         </trim>
         where file_id = #{fileId}
     </update>

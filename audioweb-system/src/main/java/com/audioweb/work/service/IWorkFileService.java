@@ -1,15 +1,15 @@
-package com.audioweb.file.mapper;
+package com.audioweb.work.service;
 
-import com.audioweb.file.domain.WorkFile;
+import com.audioweb.work.domain.WorkFile;
 import java.util.List;
 
 /**
- * 音频任务中所有音频的存储序列信息Mapper接口
+ * 音频任务中所有音频的存储序列信息Service接口
  * 
  * @author shuofang
- * @date 2020-03-02
+ * @date 2020-03-10
  */
-public interface WorkFileMapper 
+public interface IWorkFileService 
 {
     /**
      * 查询音频任务中所有音频的存储序列信息
@@ -44,18 +44,18 @@ public interface WorkFileMapper
     public int updateWorkFile(WorkFile workFile);
 
     /**
-     * 删除音频任务中所有音频的存储序列信息
+     * 批量删除音频任务中所有音频的存储序列信息
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    public int deleteWorkFileByIds(String ids);
+
+    /**
+     * 删除音频任务中所有音频的存储序列信息信息
      * 
      * @param fileId 音频任务中所有音频的存储序列信息ID
      * @return 结果
      */
     public int deleteWorkFileById(String fileId);
-
-    /**
-     * 批量删除音频任务中所有音频的存储序列信息
-     * 
-     * @param fileIds 需要删除的数据ID
-     * @return 结果
-     */
-    public int deleteWorkFileByIds(String[] fileIds);
 }
