@@ -3,6 +3,8 @@ package com.audioweb.system.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.audioweb.common.constant.TerminalConstants;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
@@ -13,7 +15,7 @@ import com.audioweb.system.service.ISysConfigService;
 /**
  * 参数配置 服务层实现
  * 
- * @author ruoyi
+ * @author ruoyi,shuofang
  */
 @Service
 public class SysConfigServiceImpl implements ISysConfigService
@@ -115,4 +117,26 @@ public class SysConfigServiceImpl implements ISysConfigService
         }
         return UserConstants.CONFIG_KEY_UNIQUE;
     }
+    
+    /**
+     * 获取文件广播路径
+     * 
+     * @return 文件广播路径
+     */
+	@Override
+	public String getFileProfile() 
+	{
+		return selectConfigByKey(TerminalConstants.FILECASTPATH);
+	}
+
+	 /**
+     * 获取终端点播路径
+     * 
+     * @return 终端点播路径
+     */
+	@Override
+	public String getTerProfile() 
+	{
+		return selectConfigByKey(TerminalConstants.POINTCASTPATH);
+	}
 }

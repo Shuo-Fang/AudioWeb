@@ -24,4 +24,10 @@ public class TerminalConstants {
     public final static String TERMINAL_ID_UNIQUE = "0";
     public final static String TERMINAL_ID_NOT_UNIQUE = "1";
     
+    /** 文件广播路径配置信息KEY */
+    public final static String FILECASTPATH = "work.file";
+    /** 终端点播路径配置信息KEY */
+    public final static String POINTCASTPATH = "work.point";
+    
+    
 }
