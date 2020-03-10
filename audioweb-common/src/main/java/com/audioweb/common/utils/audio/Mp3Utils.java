@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.utils.ExceptionUtil;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.common.utils.security.Md5Utils;
 
 /** 
  * @ClassName: Mp3Utils 
@@ -82,6 +83,9 @@ public class Mp3Utils {
             // 音频名称
             String fileName = mp3File.getFile().getName();
             music.put("fileName", StringUtils.isNotEmpty(fileName)?fileName:"");
+            //音频ID
+            String fileId = Md5Utils.hash(mp3File.getFile().getPath());
+            music.put("fileId", StringUtils.isNotEmpty(fileId)?fileId:"");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("文件读取失败: {}", path);

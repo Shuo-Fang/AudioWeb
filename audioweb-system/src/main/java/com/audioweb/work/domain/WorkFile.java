@@ -15,7 +15,7 @@ public class WorkFile extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 音频的父路径和音频合计的md5值 */
+    /** 音频的路径md5值 */
     private String fileId;
 
     /** 音频名称 */
