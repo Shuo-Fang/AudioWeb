@@ -92,7 +92,6 @@ public class Mp3Utils {
             log.error(ExceptionUtil.getExceptionMessage(e.getCause()));
             return null;
         }
-
         return music;
     }
 
@@ -104,9 +103,13 @@ public class Mp3Utils {
      * @return 歌曲信息
      * @throws Exception 可能抛出空指针异常
      */
-    private static String getInfoFromFrameMap(MP3File mp3File, String key) throws Exception {
-        ID3v23Frame frame = (ID3v23Frame) mp3File.getID3v2Tag().frameMap.get(key);
-        return frame.getContent();
+    private static String getInfoFromFrameMap(MP3File mp3File, String key){
+    	try {
+    		ID3v23Frame frame = (ID3v23Frame) mp3File.getID3v2Tag().frameMap.get(key);
+    		return frame.getContent();
+		} catch (Exception e) {
+			return null;
+		}
     }
     /**
      * 判断是否为MP3文件
@@ -143,6 +146,19 @@ public class Mp3Utils {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+    /**
+     * 获取file的ID
+     * @Title: getFileId 
+     * @Description: 获取file的ID
+     * @param path
+     * @return String 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年3月11日 上午10:34:44
+     */
+    public static String getFileId(String path) {
+		return Md5Utils.hash(path);
 	}
     /*public static void main(String[] args) {
 		System.out.println(isMp3("E:\\music\\CloudMusic\\梁邦彦 - Forgotten Sorrow.mp3"));

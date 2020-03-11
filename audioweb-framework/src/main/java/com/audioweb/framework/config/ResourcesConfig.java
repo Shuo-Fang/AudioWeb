@@ -1,5 +1,7 @@
 package com.audioweb.framework.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimerTask;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import com.audioweb.common.constant.Constants;
 import com.audioweb.framework.interceptor.RepeatSubmitInterceptor;
 import com.audioweb.framework.manager.AsyncManager;
 import com.audioweb.system.service.ISysConfigService;
+import com.audioweb.work.service.IWorkFileService;
 
 /**
  * 通用配置
@@ -23,8 +26,11 @@ import com.audioweb.system.service.ISysConfigService;
 @Configuration
 public class ResourcesConfig implements WebMvcConfigurer
 {
-	@Autowired
+    @Autowired
     private ISysConfigService configService;
+	
+	@Autowired
+	private IWorkFileService workFileService;
 
     /**
      * 首页地址
@@ -58,11 +64,16 @@ public class ResourcesConfig implements WebMvcConfigurer
 			
 			@Override
 			public void run() {
+				List<String>  paths = new ArrayList<String>();
 				 /** 文件广播路径 */
-		        registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + configService.getFileProfile() + "/");
-		        /** 终端点播路径 */
-		        registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + configService.getTerProfile() + "/");
-				System.out.println("测试运行");
+				paths.add(configService.getFileProfile());
+				 /** 终端点播路径 */
+				paths.add(configService.getTerProfile());
+				for(String path:paths) {
+					registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + path + "/");
+				}
+				/** 启动时初始化一次文件信息*/
+				workFileService.initWorkFiles(paths);
 			}
 		},10000);
     }

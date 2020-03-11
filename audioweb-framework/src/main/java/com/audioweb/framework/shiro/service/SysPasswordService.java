@@ -1,8 +1,5 @@
 package com.audioweb.framework.shiro.service;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.PostConstruct;
 import org.apache.shiro.cache.Cache;

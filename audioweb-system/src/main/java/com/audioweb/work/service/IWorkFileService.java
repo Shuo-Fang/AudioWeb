@@ -58,4 +58,29 @@ public interface IWorkFileService
      * @return 结果
      */
     public int deleteWorkFileById(String fileId);
+    
+    /**
+     * 批量修改音频任务中所有音频的存储序列信息
+     * 
+     * @param workFiles 音频任务中所有音频的存储序列信息
+     * @return 结果
+     */
+    public int updateWorkFileList(List<WorkFile> workFiles);
+    /**
+     * 批量新增音频任务中所有音频的存储序列信息
+     * 
+     * @param workFiles 音频任务中所有音频的存储序列信息
+     * @return 结果
+     */
+    public int batchInsertWorkFiles(List<WorkFile> workFiles);
+    /**
+     * 扫描本地音频文件信息
+     * @Title: initWorkFiles 
+     * @Description: 扫描本地音频文件信息
+     * @param paths 路径 void 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年3月11日 下午2:45:09
+     */
+    public void initWorkFiles(List<String> paths);
 }

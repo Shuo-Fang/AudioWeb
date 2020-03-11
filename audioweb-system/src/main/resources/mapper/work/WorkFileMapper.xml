@@ -19,20 +19,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="musicLength"    column="music_length"    />
         <result property="delFlag"    column="del_flag"    />
         <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectWorkFileVo">
-        select file_id, file_name, file_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, del_flag, create_by, create_time from work_file
+        select file_id, file_name, file_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, del_flag, create_by, update_time from work_file
     </sql>
 
     <select id="selectWorkFileList" parameterType="WorkFile" resultMap="WorkFileResult">
         <include refid="selectWorkFileVo"/>
-        <where>  
+        <where>
             <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
             <if test="songName != null  and songName != ''"> and song_name like concat('%', #{songName}, '%')</if>
             <if test="artist != null  and artist != ''"> and artist like concat('%', #{artist}, '%')</if>
             <if test="album != null  and album != ''"> and album like concat('%', #{album}, '%')</if>
+            <if test="delFlag != null  and delFlag != ''"> and del_flag = #{delFlag}</if>
         </where>
     </select>
     
@@ -58,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="musicLength != null ">music_length,</if>
             <if test="delFlag != null  and delFlag != ''">del_flag,</if>
             <if test="createBy != null  and createBy != ''">create_by,</if>
-            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="fileId != null  and fileId != ''">#{fileId},</if>
@@ -75,7 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="musicLength != null ">#{musicLength},</if>
             <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
             <if test="createBy != null  and createBy != ''">#{createBy},</if>
-            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
          </trim>
     </insert>
 
@@ -95,7 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="musicLength != null ">music_length = #{musicLength},</if>
             <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
-            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
         </trim>
         where file_id = #{fileId}
     </update>
@@ -111,4 +112,135 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
     
+    <update id="updateWorkFileList" parameterType="java.util.List" >
+    	update 
+    		work_file
+    	<trim prefix="set" suffixOverrides=",">
+    		<trim prefix="file_name =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.fileName != null and item.fileName != ''">
+						when file_id = #{item.fileId} then #{item.fileName}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="file_path =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.filePath != null and item.filePath != ''">
+						when file_id = #{item.fileId} then #{item.filePath}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="song_name =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.songName != null and item.songName != ''">
+						when file_id = #{item.fileId} then #{item.songName}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="artist =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.artist != null and item.artist != ''">
+						when file_id = #{item.fileId} then #{item.artist}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="album =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.album != null and item.album != ''">
+						when file_id = #{item.fileId} then #{item.album}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="duration =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.duration != null">
+						when file_id = #{item.fileId} then #{item.duration}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="format =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.format != null and item.format != ''">
+						when file_id = #{item.fileId} then #{item.format}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="bit_rate =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.bitRate != null">
+						when file_id = #{item.fileId} then #{item.bitRate}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="sample_rate =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.sampleRate != null">
+						when file_id = #{item.fileId} then #{item.sampleRate}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="start_byte =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.startByte != null">
+						when file_id = #{item.fileId} then #{item.startByte}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="music_length =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.musicLength != null">
+						when file_id = #{item.fileId} then #{item.musicLength}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="del_flag =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.delFlag != null and item.delFlag != ''">
+						when file_id = #{item.fileId} then #{item.delFlag}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="create_by =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.createBy != null and item.createBy != ''">
+						when file_id = #{item.fileId} then #{item.createBy}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="update_time =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.updateTime != null">
+						when file_id = #{item.fileId} then #{item.updateTime}
+					</if>
+				</foreach>
+			</trim>
+    	</trim>
+    	<where>
+			file_id in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+				#{item.fileId}
+			</foreach>
+		</where>
+    </update>
+    
+    
+	<insert id="batchInsertWorkFiles" parameterType="java.util.List">
+	    INSERT INTO work_file(file_id, file_name, file_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, create_by)
+	    VALUES
+	    <foreach collection="list" item="item" separator=",">
+	        (#{item.fileId},
+	        #{item.fileName},
+	        #{item.filePath},
+	        #{item.songName},
+	        #{item.artist},
+	        #{item.album},
+	        #{item.duration},
+	        #{item.format},
+	        #{item.bitRate},
+	        #{item.sampleRate},
+	        #{item.startByte},
+	        #{item.musicLength},
+	        #{item.createBy})
+	    </foreach>
+	</insert>
 </mapper>

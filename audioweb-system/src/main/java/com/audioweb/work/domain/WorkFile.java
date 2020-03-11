@@ -59,6 +59,12 @@ public class WorkFile extends BaseEntity
     /** 删除标志（0代表存在 1代表搜索不到 2代表删除） */
     private String delFlag;
 
+    /** 
+	 * <p>Title: </p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang
+	 * @date 2020年3月11日 下午1:27:29 
+	 */
     public void setFileId(String fileId) 
     {
         this.fileId = fileId;
@@ -194,7 +200,7 @@ public class WorkFile extends BaseEntity
             .append("musicLength", getMusicLength())
             .append("delFlag", getDelFlag())
             .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
+            .append("updateTime", getUpdateTime())
             .toString();
     }
 }

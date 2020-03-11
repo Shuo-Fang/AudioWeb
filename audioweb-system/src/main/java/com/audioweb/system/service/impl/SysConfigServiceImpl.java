@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.audioweb.common.constant.TerminalConstants;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
@@ -126,7 +126,7 @@ public class SysConfigServiceImpl implements ISysConfigService
 	@Override
 	public String getFileProfile() 
 	{
-		return selectConfigByKey(TerminalConstants.FILECASTPATH);
+		return selectConfigByKey(WorkConstants.FILECASTPATH);
 	}
 
 	 /**
@@ -137,6 +137,6 @@ public class SysConfigServiceImpl implements ISysConfigService
 	@Override
 	public String getTerProfile() 
 	{
-		return selectConfigByKey(TerminalConstants.POINTCASTPATH);
+		return selectConfigByKey(WorkConstants.POINTCASTPATH);
 	}
 }

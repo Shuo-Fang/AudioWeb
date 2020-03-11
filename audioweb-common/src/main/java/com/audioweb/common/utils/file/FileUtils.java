@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -139,4 +142,60 @@ public class FileUtils
         }
         return filename;
     }
+    
+    /**
+	 * 创建目录
+	 * @param destDirName目标目录名
+	 * @return 
+	 */
+	public static Boolean createDir(String destDirName) {
+		File dir = new File(destDirName);
+		if(!dir.exists()){				//判断文件整个路径是否存在
+			System.out.println("创建路径");
+			return dir.mkdirs();		//不存在就全部创建
+		}
+		return false;
+	}
+	/**
+	 * 判断目录是否存在
+	 * @param destDirName目标目录名
+	 * @return 
+	 */
+	public static Boolean findDir(String destDirName) {
+		File dir = new File(destDirName);
+		if(dir.exists() && dir.isDirectory()){				//判断是否为目录
+			System.out.println("存在路径");
+			return true;		//存在
+		}
+		return false;
+	}
+	
+	/**
+	 * 读取路径下所有文件，包括子文件夹下文件
+	 * 
+	 * @param filePath
+	 * @return listFiles
+	 * @throws 
+	 */
+	public static List<String> getCurFilesList(String filePath) {
+		List<String> files = new ArrayList<String>();
+        File file = new File(filePath);
+        if(findDir(filePath)) {
+	        File[] tempList = file.listFiles();
+	        for (int i = 0; i < tempList.length; i++) {
+	            if (tempList[i].isFile()) {
+	                files.add(tempList[i].getPath());
+	                //文件名，不包含路径
+	                //String fileName = tempList[i].getName();
+	            }
+	            if (tempList[i].isDirectory()) {
+	                //这里递归
+	            	files.addAll(getCurFilesList(tempList[i].getPath()));
+	            }
+	        }
+        }else {//不存在就创建
+        	createDir(filePath);
+        }
+        return files;
+	}
 }

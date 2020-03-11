@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.mapper.WorkTerminalMapper;
 import com.audioweb.work.service.IWorkTerminalService;
-import com.audioweb.common.constant.TerminalConstants;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.text.Convert;
 
 /**
@@ -118,24 +118,24 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	public String checkIpUnique(WorkTerminal workTerminal) {
 		try {
 			if(!workTerminal.getTerminalIp().equals(InetAddress.getByName(workTerminal.getTerminalIp()).getHostAddress())){
-				return TerminalConstants.TERMINAL_IP_NOT_UNIQUE;
+				return WorkConstants.TERMINAL_IP_NOT_UNIQUE;
 			}
 		} catch (Exception e) {
-			return TerminalConstants.TERMINAL_IP_NOT_UNIQUE;
+			return WorkConstants.TERMINAL_IP_NOT_UNIQUE;
 		}
 		List<WorkTerminal> list = workTerminalMapper.selectWorkTerminalList(workTerminal);
 		if(list != null) {
 			for(WorkTerminal terminal:list) {
 				if(StringUtils.isNotNull(terminal) && !terminal.getDelFlag().equals("2")) {
 					if(StringUtils.isNotEmpty(workTerminal.getTerRealId()) && terminal.getTerRealId().equals(workTerminal.getTerRealId())) {
-						return TerminalConstants.TERMINAL_IP_UNIQUE;
+						return WorkConstants.TERMINAL_IP_UNIQUE;
 					}else {
-						return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+						return WorkConstants.TERMINAL_ID_NOT_UNIQUE;
 					}
 				}
 			}
 		}
-        return TerminalConstants.TERMINAL_IP_UNIQUE;
+        return WorkConstants.TERMINAL_IP_UNIQUE;
 	}
 
 	/* (non-Javadoc) 
@@ -159,24 +159,24 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		try {
 			int id = Integer.parseInt(workTerminal.getTerminalId());
 			if(id < 0 && id > 9999 ){
-				return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+				return WorkConstants.TERMINAL_ID_NOT_UNIQUE;
 			}
 		} catch (Exception e) {
-			return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+			return WorkConstants.TERMINAL_ID_NOT_UNIQUE;
 		}
 		List<WorkTerminal> list = workTerminalMapper.selectWorkTerminalList(workTerminal);
 		if(list != null) {
 			for(WorkTerminal terminal:list) {
 				if(StringUtils.isNotNull(terminal) && !terminal.getDelFlag().equals("2")) {
 					if(StringUtils.isNotEmpty(workTerminal.getTerRealId()) && terminal.getTerRealId().equals(workTerminal.getTerRealId())) {
-						return TerminalConstants.TERMINAL_IP_UNIQUE;
+						return WorkConstants.TERMINAL_IP_UNIQUE;
 					}else {
-						return TerminalConstants.TERMINAL_ID_NOT_UNIQUE;
+						return WorkConstants.TERMINAL_ID_NOT_UNIQUE;
 					}
 				}
 			}
 		}
-		return TerminalConstants.TERMINAL_ID_UNIQUE;
+		return WorkConstants.TERMINAL_ID_UNIQUE;
 	}
 
 	/* (non-Javadoc) 

@@ -58,4 +58,19 @@ public interface WorkFileMapper
      * @return 结果
      */
     public int deleteWorkFileByIds(String[] fileIds);
+    
+    /**
+     * 批量修改音频任务中所有音频的存储序列信息
+     * 
+     * @param workFiles 音频任务中所有音频的存储序列信息
+     * @return 结果
+     */
+    public int updateWorkFileList(List<WorkFile> workFiles); 
+    /**
+     * 批量新增音频任务中所有音频的存储序列信息
+     * 
+     * @param workFiles 音频任务中所有音频的存储序列信息
+     * @return 结果
+     */
+    public int batchInsertWorkFiles(List<WorkFile> workFiles); 
 }
