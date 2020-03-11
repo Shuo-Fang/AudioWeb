@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.service.IWorkFileService;
@@ -49,6 +50,7 @@ public class WorkFileController extends BaseController
     @ResponseBody
     public TableDataInfo list(WorkFile workFile)
     {
+    	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
         startPage();
         List<WorkFile> list = workFileService.selectWorkFileList(workFile);
         return getDataTable(list);
