@@ -61,4 +61,19 @@ public class Constants
      * 资源映射路径 前缀
      */
     public static final String RESOURCE_PREFIX = "/profile";
+    /**
+     * 文件广播音频资源映射路径前缀
+     */
+    public static final String AUDIO_FILE_PREFIX = "/audio/file";
+    /**
+     * 终端点播音频资源映射路径前缀
+     */
+    public static final String AUDIO_POINT_PREFIX = "/audio/point";
+    /**
+     * 文件转语音音频资源映射路径前缀
+     */
+    public static final String AUDIO_WORD_PREFIX = "/audio/word";
+
+    /** 文件路径配置信息KEY */
+    public final static String PREFIX_PATH = "sys.profile";
 }

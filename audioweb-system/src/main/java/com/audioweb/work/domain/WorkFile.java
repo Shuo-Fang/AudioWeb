@@ -21,9 +21,14 @@ public class WorkFile extends BaseEntity
     /** 音频名称 */
     @Excel(name = "音频名称")
     private String fileName;
+    /** 音频所属类型  */
+    private String fileType;
 
     /** 音频根路径 */
     private String filePath;
+    
+    /** 音频虚拟路径 */
+    private String virPath;
 
     /** 歌曲名称(歌源) */
     @Excel(name = "歌曲名称(歌源)")
@@ -58,6 +63,9 @@ public class WorkFile extends BaseEntity
 
     /** 删除标志（0代表存在 1代表搜索不到 2代表删除） */
     private String delFlag;
+    
+    /** 备注(或文字转语音中的文字信息) */
+    private String remark;
 
     /** 
 	 * <p>Title: </p> 
@@ -183,12 +191,62 @@ public class WorkFile extends BaseEntity
         return delFlag;
     }
 
-    @Override
+    public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getVirPath() {
+		return virPath;
+	}
+
+	public void setVirPath(String virPath) {
+		this.virPath = virPath;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 17;
+		result = prime * result + ((fileId == null) ? 0 : fileId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WorkFile other = (WorkFile) obj;
+		if (fileId == null) {
+			if (other.fileId != null)
+				return false;
+		} else if (!fileId.equals(other.fileId))
+			return false;
+		return true;
+	}
+	
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("fileId", getFileId())
             .append("fileName", getFileName())
+            .append("fileType", getFileName())
             .append("filePath", getFilePath())
+            .append("virPath", getFileName())
             .append("songName", getSongName())
             .append("artist", getArtist())
             .append("album", getAlbum())
@@ -201,6 +259,7 @@ public class WorkFile extends BaseEntity
             .append("delFlag", getDelFlag())
             .append("createBy", getCreateBy())
             .append("updateTime", getUpdateTime())
+            .append("remark", getUpdateTime())
             .toString();
     }
 }

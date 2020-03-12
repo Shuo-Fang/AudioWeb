@@ -28,11 +28,19 @@ public class WorkConstants {
     public final static String FILECASTPATH = "work.file";
     /** 终端点播路径配置信息KEY */
     public final static String POINTCASTPATH = "work.point";
+    /** 文字转音频路径配置信息KEY */
+    public final static String WORDPATH = "work.word";
     
     /** 音频文件的状态码*/
     public final static String AUDIOFILENORMAL = "0";
     public final static String AUDIOFILENOTFOND = "1";
     public final static String AUDIOFILEDESTOY = "2";
+    
     /** 丢失文件的最长存留信息 默认为7天 */
     public final static Long AUDIOFILENOTFONDDATE = (long) (7*24*60*60*1000);
+    
+    /** 音频文件所属类型的状态码 0为文件广播,1为终端点播,2为文字转语音*/
+    public final static String AUDIOFILETYPE = "0";
+    public final static String AUDIOPOINTTYPE = "1";
+    public final static String AUDIOWORDTYPE = "2";
 }

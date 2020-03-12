@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.audioweb.common.utils.CommonUtils;
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.audio.Mp3Utils;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.audioweb.work.mapper.WorkFileMapper;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.service.IWorkFileService;
+import com.audioweb.common.constant.Constants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.text.Convert;
 
@@ -34,7 +34,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 {
 	private final Logger log = LoggerFactory.getLogger(WorkFileServiceImpl.class);
 
-    @Autowired
+	@Autowired
     private WorkFileMapper workFileMapper;
 
     /**
@@ -144,84 +144,115 @@ public class WorkFileServiceImpl implements IWorkFileService
      * @date 2020年3月11日 下午2:45:09
      */
 	@Override
-	public void initWorkFiles(List<String> paths) {
+	public void initWorkFiles(Map<String, String> paths) {
 		Long time = System.currentTimeMillis();
-		List<String> allFiles = new ArrayList<>();
-		/**获取路径下全部文件地址*/
-		if(StringUtils.isNotEmpty(paths)) {
-			CommonUtils.removeDuplicate(paths);
-			for(String path:paths) {
+		for(Map.Entry<String, String> value:paths.entrySet()) {
+			String path = value.getValue().replace("/", "\\");
+			List<String> allFiles = new ArrayList<>();
+			/**获取路径下全部文件地址*/
+			if(StringUtils.isNotEmpty(path)) {
 				allFiles.addAll(FileUtils.getCurFilesList(path));
 			}
-		}
-		/**数据库中存储的文件信息*/
-		List<WorkFile> workFiles = selectWorkFileList(new WorkFile());
-		/**需要更新的文件信息*/
-		List<WorkFile> upDataFiles = new ArrayList<WorkFile>();
-		/**需要新增的文件信息*/
-		List<WorkFile> addFiles = new ArrayList<WorkFile>();
-		/**需要删除的文件信息*/
-		String deleteIds = "";
-		Map<String, WorkFile> fileMap = new HashMap<String, WorkFile>();
-		for(WorkFile file:workFiles) {
-			fileMap.put(file.getFileId(), file);
-		}
-		/**遍历读取音频文件信息并进行对比*/
-		for(String filePath:allFiles) {
-			if(Mp3Utils.isMp3(filePath)) {
-				String fileId=Mp3Utils.getFileId(filePath);
-				WorkFile workFile = fileMap.get(fileId);
-				if(workFile == null) {
-					try {
-						addFiles.add(BeanUtils.mapToBean(Mp3Utils.getMusicInfo(filePath), WorkFile.class));
-					} catch (Exception e) {
-						e.printStackTrace();
+			/**数据库中存储的文件信息*/
+			List<WorkFile> workFiles = selectWorkFileList(new WorkFile());
+			/**需要更新的文件信息*/
+			List<WorkFile> upDataFiles = new ArrayList<WorkFile>();
+			/**需要新增的文件信息*/
+			List<WorkFile> addFiles = new ArrayList<WorkFile>();
+			/**需要删除的文件信息*/
+			String deleteIds = "";
+			Map<String, WorkFile> fileMap = new HashMap<String, WorkFile>();
+			for(WorkFile file:workFiles) {
+				fileMap.put(file.getFileId(), file);
+			}
+			/**遍历读取音频文件信息并进行对比*/
+			for(String filePath:allFiles) {
+				if(Mp3Utils.isMp3(filePath)) {
+					String fileId=Mp3Utils.getFileId(filePath);
+					WorkFile workFile = fileMap.get(fileId);
+					if(workFile == null) {
+						try {
+							WorkFile file = BeanUtils.mapToBean(Mp3Utils.getMusicInfo(filePath), WorkFile.class);
+							String string = file.getFilePath().replace(path, getVirPath(value.getKey()));
+							file.setVirPath(string);
+							file.setFileType(value.getKey());
+							addFiles.add(file);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}else if(!workFile.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)){
+						workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+						workFile.setUpdateTime(new Date(time));
+						workFile.setVirPath(workFile.getFilePath().replace(path, getVirPath(value.getKey())));
+						if(StringUtils.isEmpty(workFile.getFileType()) || !workFile.getFileType().contains(value.getKey())) {
+							workFile.setFileType(StringUtils.isEmpty(workFile.getFileType())?value.getKey():(workFile.getFileType()+value.getKey()));
+						}
+						upDataFiles.add(workFile);
+					}else if(StringUtils.isEmpty(workFile.getFileType()) || !workFile.getFileType().contains(value.getKey())) {
+						workFile.setFileType(StringUtils.isEmpty(workFile.getFileType())?value.getKey():(workFile.getFileType()+value.getKey()));
+						upDataFiles.add(workFile);
 					}
-				}else if(!workFile.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)){
-					workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
-					workFile.setUpdateTime(new Date(time));
-					upDataFiles.add(workFile);
+					/**对比后删除map中对应的文件信息*/
+					fileMap.remove(fileId);
 				}
-				/**对比后删除map中对应的文件信息*/
-				fileMap.remove(fileId);
+			}
+			/**遍历完后剩余数据的更新处理*/
+			for(Map.Entry<String, WorkFile> entry:fileMap.entrySet()) {
+				WorkFile file = entry.getValue();
+				if(file.getFileType().contains(value.getKey())) {
+					if(file.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)) {
+						file.setDelFlag(WorkConstants.AUDIOFILENOTFOND);
+						file.setUpdateTime(new Date(time));
+						upDataFiles.add(file);
+					}else if(file.getUpdateTime().getTime() < (time - WorkConstants.AUDIOFILENOTFONDDATE)){
+						/** 删除或丢失文件存储时间超过了7天*/
+						deleteIds += file.getFileId()+",";
+					}
+				}
+			}
+			/**执行数据库新增更新删除操作*/
+			if(StringUtils.isNotEmpty(deleteIds)) {
+				try {
+					int num = deleteWorkFileByIds(deleteIds);
+					log.info("{}:{}个删除或丢失的音频文件已被删除",getVirPath(value.getKey()),num);
+				} catch (Exception e) {
+					log.error("{}:音频文件扫描删除丢失废弃文件失败-",getVirPath(value.getKey()),e);
+				}
+			}
+			if(StringUtils.isNotEmpty(addFiles)) {
+				try {
+					int num = batchInsertWorkFiles(addFiles);
+					log.info("{}:{}个本地新增的音频文件已添加",getVirPath(value.getKey()),num);
+				} catch (Exception e) {
+					log.error("{}:本地新增的音频文件扫描写入数据库失败-",getVirPath(value.getKey()),e);
+				}
+			}
+			if(StringUtils.isNotEmpty(upDataFiles)) {
+				try {
+					int num = updateWorkFileList(upDataFiles);
+					log.info("{}:{}个本地状态更新的音频文件已更新",getVirPath(value.getKey()),num);
+				} catch (Exception e) {
+					log.error("{}:本地更新的音频文件扫描写入数据库失败-",getVirPath(value.getKey()),e);
+				}
 			}
 		}
-		/**遍历完后剩余数据的更新处理*/
-		for(Map.Entry<String, WorkFile> entry:fileMap.entrySet()) {
-			WorkFile file = entry.getValue();
-			if(file.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)) {
-				file.setDelFlag(WorkConstants.AUDIOFILENOTFOND);
-				file.setUpdateTime(new Date(time));
-				upDataFiles.add(file);
-			}else if(file.getUpdateTime().getTime() < (time - WorkConstants.AUDIOFILENOTFONDDATE)){
-				/** 删除或丢失文件存储时间超过了7天*/
-				deleteIds += file.getFileId()+",";
-			}
+	}
+	private String getVirPath(String type) {
+		String result = "";
+		switch (type) {
+			case WorkConstants.AUDIOFILETYPE:
+				result = Constants.AUDIO_FILE_PREFIX;
+				break;
+			case WorkConstants.AUDIOPOINTTYPE:
+				result = Constants.AUDIO_POINT_PREFIX;
+				break;
+			case WorkConstants.AUDIOWORDTYPE:
+				result = Constants.AUDIO_WORD_PREFIX;
+				break;
+			default:
+				result = Constants.AUDIO_FILE_PREFIX;
+				break;
 		}
-		/**执行数据库新增更新删除操作*/
-		if(StringUtils.isNotEmpty(deleteIds)) {
-			try {
-				int num = deleteWorkFileByIds(deleteIds);
-				log.info("{}个删除或丢失的音频文件已被删除",num);
-			} catch (Exception e) {
-				log.error("音频文件扫描删除丢失废弃文件失败：",e);
-			}
-		}
-		if(StringUtils.isNotEmpty(addFiles)) {
-			try {
-				int num = batchInsertWorkFiles(addFiles);
-				log.info("{}个本地新增的音频文件已添加",num);
-			} catch (Exception e) {
-				log.error("本地新增的音频文件扫描写入数据库失败：",e);
-			}
-		}
-		if(StringUtils.isNotEmpty(upDataFiles)) {
-			try {
-				int num = updateWorkFileList(upDataFiles);
-				log.info("{}个本地状态更新的音频文件已更新",num);
-			} catch (Exception e) {
-				log.error("本地更新的音频文件扫描写入数据库失败：",e);
-			}
-		}
+		return result;
 	}
 }

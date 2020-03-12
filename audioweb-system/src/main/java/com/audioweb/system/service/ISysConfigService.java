@@ -65,18 +65,4 @@ public interface ISysConfigService
      * @return 结果
      */
     public String checkConfigKeyUnique(SysConfig config);
-    
-    /**
-     * 获取文件广播路径
-     * 
-     * @return 文件广播路径
-     */
-    public String getFileProfile();
-    
-    /**
-     * 获取终端点播路径
-     * 
-     * @return 终端点播路径
-     */
-    public String getTerProfile();
 }

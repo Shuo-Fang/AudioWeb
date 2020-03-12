@@ -2,6 +2,7 @@ package com.audioweb.work.service;
 
 import com.audioweb.work.domain.WorkFile;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 音频任务中所有音频的存储序列信息Service接口
@@ -77,10 +78,10 @@ public interface IWorkFileService
      * 扫描本地音频文件信息
      * @Title: initWorkFiles 
      * @Description: 扫描本地音频文件信息
-     * @param paths 路径 void 返回类型 
+     * @param void 返回类型 
      * @throws 抛出错误
      * @author ShuoFang 
      * @date 2020年3月11日 下午2:45:09
      */
-    public void initWorkFiles(List<String> paths);
+    public void initWorkFiles(Map<String, String> paths);
 }

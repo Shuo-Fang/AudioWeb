@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
@@ -117,26 +116,4 @@ public class SysConfigServiceImpl implements ISysConfigService
         }
         return UserConstants.CONFIG_KEY_UNIQUE;
     }
-    
-    /**
-     * 获取文件广播路径
-     * 
-     * @return 文件广播路径
-     */
-	@Override
-	public String getFileProfile() 
-	{
-		return selectConfigByKey(WorkConstants.FILECASTPATH);
-	}
-
-	 /**
-     * 获取终端点播路径
-     * 
-     * @return 终端点播路径
-     */
-	@Override
-	public String getTerProfile() 
-	{
-		return selectConfigByKey(WorkConstants.POINTCASTPATH);
-	}
 }
