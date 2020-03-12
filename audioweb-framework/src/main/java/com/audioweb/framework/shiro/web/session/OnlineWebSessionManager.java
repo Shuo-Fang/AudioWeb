@@ -128,7 +128,7 @@ public class OnlineWebSessionManager extends DefaultWebSessionManager
     		        		session.touch();
 						} catch (Exception e) {
 							e.printStackTrace();
-							log.error("出错");
+							log.error("更新websocket对应连接session出错");
 						}
     		        }
         			break;
