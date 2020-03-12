@@ -43,7 +43,7 @@ public class MessageSocket {
 		// 注入userService
 		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
 		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
-		WebsocketGlobal.putAppId(onlineSessionId);//存入全局信息中
+		WebsocketGlobal.putMessageId(onlineSessionId);//存入全局信息中
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -54,6 +54,7 @@ public class MessageSocket {
 	@OnClose
 	public void onClose() {
 		webSocketSet.remove(this);
+		WebsocketGlobal.removeMessageId(onlineSessionId);//从全局信息中移除
 		subOnlineCount();
 		System.out.println("有一链接关闭!当前在线人数为" + getOnlineCount());
 	}

@@ -43,7 +43,7 @@ public class BlobSocket {
 		// 注入userService
 		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
 		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
-		WebsocketGlobal.putAppId(onlineSessionId);//存入全局信息中
+		WebsocketGlobal.putBlobId(onlineSessionId);//存入全局信息中
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -54,6 +54,7 @@ public class BlobSocket {
 	@OnClose
 	public void onClose() {
 		webSocketSet.remove(this);
+		WebsocketGlobal.removeBlobId(onlineSessionId);//从全局信息中移除
 		subOnlineCount();
 		System.out.println("有一链接关闭!当前广播人数为" + getOnlineCount());
 	}

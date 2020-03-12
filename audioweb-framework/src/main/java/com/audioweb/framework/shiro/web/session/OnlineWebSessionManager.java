@@ -29,6 +29,8 @@ import com.audioweb.system.service.ISysUserOnlineService;
  */
 public class OnlineWebSessionManager extends DefaultWebSessionManager
 {
+	/**默认提前查询16分钟的超时信息,用于及时更新挂机会话信息*/
+	private static final Integer AHEAD_TIME = 12*60*1000;
     private static final Logger log = LoggerFactory.getLogger(OnlineWebSessionManager.class);
 
     @Override
@@ -104,7 +106,7 @@ public class OnlineWebSessionManager extends DefaultWebSessionManager
         int invalidCount = 0;
 
         int timeout = (int) this.getGlobalSessionTimeout();
-        Date expiredDate = DateUtils.addMilliseconds(new Date(), 0 - timeout);
+        Date expiredDate = DateUtils.addMilliseconds(new Date(), 0 - timeout + AHEAD_TIME);
         ISysUserOnlineService userOnlineService = SpringUtils.getBean(ISysUserOnlineService.class);
         List<SysUserOnline> userOnlineList = userOnlineService.selectOnlineByExpired(expiredDate);
         // 批量过期删除
@@ -115,21 +117,37 @@ public class OnlineWebSessionManager extends DefaultWebSessionManager
         	for(SysUserOnline online:userOnlineList) {
         		if(online.getSessionId().equals(id)) {
         			userOnlineList.remove(online);
+        			/**手动更新session最后会话信息，防止掉线*/
+        			//OnlineSession session = getOnlineSession(new DefaultSessionKey(online.getSessionId()));
+        			OnlineSession session = null;
+    		        Object obj = doGetSession(new DefaultSessionKey(online.getSessionId()));
+    		        if (StringUtils.isNotNull(obj))
+    		        {
+    		        	try {
+    		        		session = (OnlineSession)obj;
+    		        		session.touch();
+						} catch (Exception e) {
+							e.printStackTrace();
+							log.error("出错");
+						}
+    		        }
         			break;
         		}
         	}
         }
-        
+        /** 并未超时用户忽略 */
         for (SysUserOnline userOnline : userOnlineList)
         {
             try
             {
-                SessionKey key = new DefaultSessionKey(userOnline.getSessionId());
-                Session session = retrieveSession(key);
-                if (session != null)
-                {
-                    throw new InvalidSessionException();
-                }
+            	if(userOnline.getLastAccessTime().before(DateUtils.addMilliseconds(new Date(), 0 - timeout))) {
+	                SessionKey key = new DefaultSessionKey(userOnline.getSessionId());
+	                Session session = retrieveSession(key);
+	                if (session != null)
+	                {
+	                    throw new InvalidSessionException();
+	                }
+            	}
             }
             catch (InvalidSessionException e)
             {
