@@ -368,6 +368,20 @@ var table = {
     				}
     			});
             },
+            // 批量下载音频
+            downloadAll: function() {
+            	table.set();
+            	var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            	if (rows.length == 0) {
+            		$.modal.alertWarning("请至少选择一条记录");
+            		return;
+            	}
+            	$.modal.confirm("确认要下载选中的" + rows.length + "条音频吗?", function() {
+            		var url = table.options.exportUrl;
+            		var data = { "ids": rows.join() };
+            		$.operate.submit(url, "post", "json", data);
+            	});
+            },
             // 导入数据
             importExcel: function(formId) {
             	table.set();

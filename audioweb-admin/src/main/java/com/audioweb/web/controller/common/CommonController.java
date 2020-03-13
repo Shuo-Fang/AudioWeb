@@ -42,7 +42,7 @@ public class CommonController
     {
         try
         {
-            if (!FileUtils.isValidFilename(fileName))
+            if (!FileUtils.isValidFilename(fileName,FileUtils.AUDIONAME_PATTERN))
             {
                 throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
             }

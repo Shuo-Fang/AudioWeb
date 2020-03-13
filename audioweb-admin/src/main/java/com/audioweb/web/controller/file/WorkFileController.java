@@ -1,5 +1,6 @@
 package com.audioweb.web.controller.file;
 
+import java.io.File;
 import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.common.core.page.TableDataInfo;
 
@@ -51,6 +53,15 @@ public class WorkFileController extends BaseController
     public TableDataInfo list(WorkFile workFile)
     {
     	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+    	if(StringUtils.isNotEmpty(workFile.getFilePath())) {
+    		try {
+    			File f = new File(workFile.getFilePath());
+    			workFile.setFilePath(f.getPath().replaceAll("\\\\","\\\\\\\\"));
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("文件类型配置地址有误，请检查");
+			}
+    	}
         startPage();
         List<WorkFile> list = workFileService.selectWorkFileList(workFile);
         return getDataTable(list);

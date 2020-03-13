@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FileUtils
 {
+	/**只能为英文,中文和 _ - | . */
     public static String FILENAME_PATTERN = "[a-zA-Z0-9_\\-\\|\\.\\u4e00-\\u9fa5]+";
+    public static String AUDIONAME_PATTERN = "^[^?\\ * | \" < > : /]{1,256}$";
 
     /**
      * 输出指定文件的byte数组
@@ -100,11 +102,12 @@ public class FileUtils
      * 文件名称验证
      * 
      * @param filename 文件名称
+     * @param type 校验正则
      * @return true 正常 false 非法
      */
-    public static boolean isValidFilename(String filename)
+    public static boolean isValidFilename(String filename,String type)
     {
-        return filename.matches(FILENAME_PATTERN);
+        return filename.matches(type);
     }
 
     /**
