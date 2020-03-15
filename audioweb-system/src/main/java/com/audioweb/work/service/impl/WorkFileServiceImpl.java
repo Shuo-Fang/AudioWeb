@@ -97,6 +97,18 @@ public class WorkFileServiceImpl implements IWorkFileService
     {
         return workFileMapper.deleteWorkFileByIds(Convert.toStrArray(ids));
     }
+    
+    /**
+     * 更新删除音频任务中所有音频的存储序列信息对象
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    @Override
+    public int slowDeleteWorkFileByIds(String ids)
+    {
+    	return workFileMapper.slowDeleteWorkFileByIds(Convert.toStrArray(ids));
+    }
 
     /**
      * 删除音频任务中所有音频的存储序列信息信息

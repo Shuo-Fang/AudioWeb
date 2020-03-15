@@ -5,11 +5,10 @@ import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.constant.WorkConstants;
@@ -19,6 +18,7 @@ import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.common.core.page.TableDataInfo;
 
@@ -71,7 +71,7 @@ public class WorkFileController extends BaseController
      * 导出音频任务中所有音频的存储序列信息列表
      */
     @RequiresPermissions("work:file:export")
-    @Log(title = "音频任务中所有音频的存储序列信息", businessType = BusinessType.EXPORT)
+    @Log(title = "音频存储信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(WorkFile workFile)
@@ -129,12 +129,14 @@ public class WorkFileController extends BaseController
      * 删除音频任务中所有音频的存储序列信息
      */
     @RequiresPermissions("work:file:remove")
-    @Log(title = "音频任务中所有音频的存储序列信息", businessType = BusinessType.DELETE)
+    @Log(title = "音频存储信息", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
-    public AjaxResult remove(String ids)
+    public AjaxResult remove(@RequestParam("ids")String ids,@RequestParam(value = "paths[]") String[] paths)
     {
-    	
-        return toAjax(workFileService.deleteWorkFileByIds(ids));
+    	for(String path :paths) {
+    		FileUtils.deleteFile(path);
+    	}
+        return toAjax(workFileService.slowDeleteWorkFileByIds(ids));
     }
 }

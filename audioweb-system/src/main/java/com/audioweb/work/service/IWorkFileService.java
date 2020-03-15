@@ -51,6 +51,14 @@ public interface IWorkFileService
      * @return 结果
      */
     public int deleteWorkFileByIds(String ids);
+    
+    /**
+     * 批量更新删除音频任务中所有音频的存储序列信息
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    public int slowDeleteWorkFileByIds(String ids);
 
     /**
      * 删除音频任务中所有音频的存储序列信息信息

@@ -119,6 +119,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from work_file where file_id = #{fileId}
     </delete>
 
+    <update id="slowDeleteWorkFileByIds" parameterType="String">
+        update work_file set del_flag = '2' where file_id in 
+        <foreach item="fileId" collection="array" open="(" separator="," close=")">
+            #{fileId}
+        </foreach>
+    </update>
+    
     <delete id="deleteWorkFileByIds" parameterType="String">
         delete from work_file where file_id in 
         <foreach item="fileId" collection="array" open="(" separator="," close=")">

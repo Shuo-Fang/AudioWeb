@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.audioweb.common.annotation.Log;
 import com.audioweb.common.config.Global;
 import com.audioweb.common.config.ServerConfig;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.audio.Mp3Utils;
 import com.audioweb.common.utils.file.FileUploadUtils;
@@ -128,6 +130,7 @@ public class CommonController {
 	@RequestMapping(value = "/common/audio/upload", method = RequestMethod.POST)
 	@ResponseBody
     @RequiresPermissions("work:file:add")
+    @Log(title = "音频存储信息", businessType = BusinessType.INSERT)
 	public AjaxResult uploadReport(HttpServletRequest request, HttpServletResponse response) {
 		if (ServletFileUpload.isMultipartContent(request)) {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
