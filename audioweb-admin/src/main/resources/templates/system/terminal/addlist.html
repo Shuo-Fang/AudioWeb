@@ -10,34 +10,47 @@
         <input name="domainId" type="hidden" id="treeId" th:value="${domain != null?domain.domainId:''}"/>
         <input name="precinct" type="hidden" id="precinct"/>
         	<div class="form-group">    
-        		<label class="col-sm-3 control-label">终端状态：</label>
-                <div class="col-sm-8">
+        		<label class="col-sm-3 control-label">终端状态:</label>
+                <div class="col-sm-2">
                 	<label class="toggle-switch switch-solid">
                             <input type="checkbox" id="status" checked>
                             <span></span>
                     </label>
                 </div>
+        		<label class="col-sm-3 control-label">是否覆盖原终端:</label>
+                <div class="col-sm-2">
+                	<label class="toggle-switch switch-solid">
+                            <input type="checkbox" id="iscover">
+                            <span></span>
+                    </label>
+                </div>
             </div>
         	<div class="form-group">    
-                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端ID：</label>
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>添加数量:</label>
+                <div class="col-sm-8">
+                    <input name="terminalNum" class="form-control" type="number" min="1" max = "200"  required>
+                </div>
+            </div>
+        	<div class="form-group">    
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>起始终端ID:</label>
                 <div class="col-sm-8">
                     <input name="terminalId" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端名称：</label>
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端名称:</label>
                 <div class="col-sm-8">
                     <input name="terminalName" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">    
-                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>IP：</label>
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>起始IP:</label>
                 <div class="col-sm-8">
                     <input name="terminalIp" class="form-control" type="text" required>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区：</label>
+                <label class="col-sm-3 control-label"><span style="color: red; ">*</span>所属分区:</label>
                 <div class="col-sm-8">
                     <div class="input-group">
                     	<input name="domainName" onclick="selectDomainTree()" id="treeName" type="text" placeholder="请选择归属分区" class="form-control" readonly  th:value="${domain != null?domain.domainName:''}" required />
@@ -46,14 +59,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">寻呼话筒：</label>
+                <label class="col-sm-3 control-label">寻呼话筒:</label>
                 <div class="col-sm-2">
                		<label class="toggle-switch switch-solid">
                             <input type="checkbox" id="isCmic" onclick="showSelect();">
                             <span></span>
                     </label>
                 </div>
-                <label class="col-sm-3 control-label">自动采播：</label>
+                <label class="col-sm-3 control-label">自动采播:</label>
                 <div class="col-sm-2">
                 	<label class="toggle-switch switch-solid">
                             <input type="checkbox" id="isAutoCast" onclick="showSelect();">
@@ -63,7 +76,7 @@
                 
             </div>
             <div class="form-group" id= "domainSelect" style="display:none;" >
-                <label class="col-sm-3 control-label">终端管理分区：</label>
+                <label class="col-sm-3 control-label">终端管理分区:</label>
                 <div class="col-sm-8">
                 	<div class="input-group">
                     	<input name="domainNames" onclick="selectDomainTrees()" id="domainNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly required>
@@ -75,7 +88,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group">
-                        <label class="col-xs-2 control-label">备注：</label>
+                        <label class="col-xs-2 control-label">备注:</label>
                         <div class="col-xs-10">
                             <textarea name="remark" maxlength="500" class="form-control" rows="3"></textarea>
                         </div>
@@ -149,10 +162,12 @@
 	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
 	        	var isCmic = $("input[id='isCmic']").is(':checked') == true ? 0 : 1;
 	        	var isAutoCast = $("input[id='isAutoCast']").is(':checked') == true ? 0 : 1;
+	        	var terminalNum = $("input[id='terminalNum']").is(':checked') == true ? 0 : 1;
 	        	data.push({"name": "status", "value": status});
 	        	data.push({"name": "isCmic", "value": isCmic});
 	        	data.push({"name": "isAutoCast", "value": isAutoCast});
-                $.operate.save(prefix + "/add", data);
+	        	data.push({"name": "terminalNum", "value": terminalNum});
+                $.operate.save(prefix + "/addlist", data);
             }
         }
         /*复选分区树*/

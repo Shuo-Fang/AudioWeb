@@ -79,6 +79,9 @@
 	            </div>
 	
 	            <div class="btn-group-sm" id="toolbar" role="group">
+	                <a class="btn btn-info" onclick="addlist()" shiro:hasPermission="system:terminal:add">
+	                    <i class="fa fa-plus"></i> 批量添加
+	                </a>
 	                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:terminal:add">
 	                    <i class="fa fa-plus"></i> 添加
 	                </a>
@@ -316,6 +319,12 @@
 			}
 			return data;
 		}
+      	//批量添加终端
+      	 // 添加信息
+        function addlist() {
+        	table.set();
+        	$.modal.open("添加" + table.options.modalName, prefix + "/addlist/"+ domainId);
+        }
     </script>
 </body>
 </html>

@@ -278,7 +278,7 @@ public class WorkFileServiceImpl implements IWorkFileService
      * @return 结果
      */
 	@Override
-	public WorkFile insertWorkFile(String basePath,String workFilePath,String type,String creatBy) {
+	public WorkFile insertWorkFile(String basePath,String workFilePath,String type,String creatBy,String remark) {
 		try {
 			basePath = FileUtils.formatPath(FileUtils.formatToLin(basePath));
 			WorkFile file = BeanUtils.mapToBean(Mp3Utils.getMusicInfo(workFilePath), WorkFile.class);
@@ -286,6 +286,10 @@ public class WorkFileServiceImpl implements IWorkFileService
 			file.setFileType(type);
 			file.setCreateBy(creatBy);
 			file.setUpdateTime(DateUtils.getNowDate());
+			file.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+			if(StringUtils.isNotEmpty(remark)) {
+				file.setRemark(remark);
+			}
 			if(StringUtils.isNotNull(workFileMapper.selectWorkFileById(file.getFileId())) 
 					&& workFileMapper.updateWorkFile(file) > 0) {
 				return file;

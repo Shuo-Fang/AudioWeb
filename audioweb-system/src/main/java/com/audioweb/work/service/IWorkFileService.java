@@ -101,6 +101,6 @@ public interface IWorkFileService
      * @param type 音频路径类型
      * @return 结果
      */
-    public WorkFile insertWorkFile(String basePath,String workFilePath,String type,String creatBy);
+    public WorkFile insertWorkFile(String basePath,String workFilePath,String type,String creatBy,String remark);
 
 }

@@ -137,6 +137,7 @@ public class CommonController {
     @ApiOperation("音频文件上传管理")
     @ApiImplicitParams ({
     	@ApiImplicitParam(name = "type", value = "上传音频文件属性类型,work.file为文件广播文件,work.point为终端采播文件,work.word为文本广播文件", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "remark", value = "上传音频文件的备注,若为文本广播则对应其中的文本",  dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "file_data", value = "上传的音频文件", required = true, dataType = "file", paramType = "form")
     })
     @RequestMapping(value = "/common/audio/upload", method = RequestMethod.POST)
@@ -150,6 +151,11 @@ public class CommonController {
 			try {
 				// 上传文件路径
 				String value = multipartRequest.getParameterMap().get("type")[0];
+				//备注
+				String remark = "";
+				if(StringUtils.isNotNull(multipartRequest.getParameterMap().get("remark"))) {
+					remark = multipartRequest.getParameterMap().get("remark")[0];
+				}
 				String filePath = configService.selectConfigByKey(value);
 				filePath = FileUtils.formatPath(FileUtils.formatToLin(filePath));
 				for (MultipartFile item : fileList) {
@@ -161,7 +167,7 @@ public class CommonController {
 						}else {
 							String fileName = FileUploadUtils.upload(filePath, item, false);
 							if(Mp3Utils.isMp3(fileName)){
-								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, value.equals("work.file")?"0":"1",ShiroUtils.getLoginName());
+								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, value.equals("work.file")?"0":"1",ShiroUtils.getLoginName(),remark);
 								if(StringUtils.isNotNull(fWorkFile)) {
 									String url = fWorkFile.getVirPath();
 									AjaxResult ajax = AjaxResult.success();

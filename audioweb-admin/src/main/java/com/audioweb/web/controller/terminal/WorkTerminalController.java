@@ -90,7 +90,7 @@ public class WorkTerminalController extends BaseController
         return prefix + "/add";
     }
     /**
-     * 新增分区
+     * 新增终端
      */
     @GetMapping("/add/{parentId}")
     public String add(@PathVariable("parentId") Long parentId, ModelMap mmap)
@@ -99,6 +99,17 @@ public class WorkTerminalController extends BaseController
             mmap.put("domain", domainService.selectDomainById(parentId));
     	}
         return prefix + "/add";
+    }
+    /**
+     * 批量新增终端
+     */
+    @GetMapping("/addlist/{parentId}")
+    public String addList(@PathVariable("parentId") Long parentId, ModelMap mmap)
+    {
+    	if(parentId != 0) {
+    		mmap.put("domain", domainService.selectDomainById(parentId));
+    	}
+    	return prefix + "/addlist";
     }
     /**
      * 新增保存终端管理
@@ -119,6 +130,27 @@ public class WorkTerminalController extends BaseController
         }
     	workTerminal.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(workTerminalService.insertWorkTerminal(workTerminal));
+    }
+    
+    /**
+     * 新增保存终端管理
+     */
+    @RequiresPermissions("system:terminal:add")
+    @Log(title = "终端管理", businessType = BusinessType.INSERT)
+    @PostMapping("/addlist")
+    @ResponseBody
+    public AjaxResult addlistSave(WorkTerminal workTerminal)
+    {
+    	if (UserConstants.USER_NAME_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(workTerminal)))
+    	{
+    		return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端ID已存在");
+    	}
+    	else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(workTerminalService.checkIdUnique(workTerminal)))
+    	{
+    		return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端IP已存在");
+    	}
+    	workTerminal.setCreateBy(ShiroUtils.getLoginName());
+    	return toAjax(workTerminalService.insertWorkTerminal(workTerminal));
     }
 
     /**
