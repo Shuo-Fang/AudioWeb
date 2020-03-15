@@ -134,6 +134,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 		return workFileMapper.batchInsertWorkFiles(workFiles);
 	}
 
+	
     /**
      * 扫描本地音频文件信息
      * @Title: initWorkFiles 
@@ -147,7 +148,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 	public void initWorkFiles(Map<String, String> paths) {
 		Long time = System.currentTimeMillis();
 		for(Map.Entry<String, String> value:paths.entrySet()) {
-			String path = value.getValue().replace("/", "\\");
+			String path = value.getValue().replaceAll("/", "\\\\");
 			List<String> allFiles = new ArrayList<>();
 			/**获取路径下全部文件地址*/
 			if(StringUtils.isNotEmpty(path)) {
@@ -174,6 +175,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 						try {
 							WorkFile file = BeanUtils.mapToBean(Mp3Utils.getMusicInfo(filePath), WorkFile.class);
 							String string = file.getFilePath().replace(path, getVirPath(value.getKey()));
+							string = string.replaceAll("\\\\", "/");
 							file.setVirPath(string);
 							file.setFileType(value.getKey());
 							addFiles.add(file);
@@ -183,7 +185,9 @@ public class WorkFileServiceImpl implements IWorkFileService
 					}else if(!workFile.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)){
 						workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
 						workFile.setUpdateTime(new Date(time));
-						workFile.setVirPath(workFile.getFilePath().replace(path, getVirPath(value.getKey())));
+						String string = workFile.getFilePath().replace(path, getVirPath(value.getKey()));
+						string = string.replaceAll("\\\\", "/");
+						workFile.setVirPath(string);
 						if(StringUtils.isEmpty(workFile.getFileType()) || !workFile.getFileType().contains(value.getKey())) {
 							workFile.setFileType(StringUtils.isEmpty(workFile.getFileType())?value.getKey():(workFile.getFileType()+value.getKey()));
 						}
@@ -254,5 +258,31 @@ public class WorkFileServiceImpl implements IWorkFileService
 				break;
 		}
 		return result;
+	}
+    /**
+     * 新增音频信息处理
+     * 
+     * @param basePath 音频根目录
+     * @param workFilePath 音频文件路径
+     * @param type 音频路径类型
+     * @return 结果
+     */
+	@Override
+	public WorkFile insertWorkFile(String basePath,String workFilePath,String type) {
+		try {
+			basePath = basePath.replaceAll("/", "\\\\");
+			WorkFile file = BeanUtils.mapToBean(Mp3Utils.getMusicInfo(workFilePath), WorkFile.class);
+			String string = file.getFilePath().replace(basePath, getVirPath(type));
+			string = string.replaceAll("\\\\", "/");
+			file.setVirPath(string);
+			file.setFileType(type);
+			if(workFileMapper.insertWorkFile(file)>0) {
+				return file;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

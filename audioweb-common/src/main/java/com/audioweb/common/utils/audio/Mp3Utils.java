@@ -78,7 +78,7 @@ public class Mp3Utils {
             String format = audioHeader.getFormat()+" "+audioHeader.getChannels();
             music.put("format", StringUtils.isNotEmpty(format)?format:"");
             // 音频路径
-            String filePath = mp3File.getFile().getParent();
+            String filePath = mp3File.getFile().getPath();
             music.put("filePath", StringUtils.isNotEmpty(filePath)?filePath:"");
             // 音频名称
             String fileName = mp3File.getFile().getName();

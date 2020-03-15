@@ -36,7 +36,7 @@ public class WorkFileController extends BaseController
 
     @Autowired
     private IWorkFileService workFileService;
-
+    
     @RequiresPermissions("work:file:view")
     @GetMapping()
     public String file()
@@ -56,7 +56,7 @@ public class WorkFileController extends BaseController
     	if(StringUtils.isNotEmpty(workFile.getFilePath())) {
     		try {
     			File f = new File(workFile.getFilePath());
-    			workFile.setFilePath(f.getPath().replaceAll("\\\\","\\\\\\\\"));
+    			workFile.setFilePath((f.getPath()+"\\").replaceAll("\\\\","\\\\\\\\"));
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("文件类型配置地址有误，请检查");
@@ -84,15 +84,15 @@ public class WorkFileController extends BaseController
     /**
      * 新增音频任务中所有音频的存储序列信息
      */
-    @GetMapping("/add")
+/*    @GetMapping("/add")
     public String add()
     {
         return prefix + "/add";
     }
 
-    /**
+    *//**
      * 新增保存音频任务中所有音频的存储序列信息
-     */
+     *//*
     @RequiresPermissions("work:file:add")
     @Log(title = "音频任务中所有音频的存储序列信息", businessType = BusinessType.INSERT)
     @PostMapping("/add")
@@ -100,30 +100,30 @@ public class WorkFileController extends BaseController
     public AjaxResult addSave(WorkFile workFile)
     {
         return toAjax(workFileService.insertWorkFile(workFile));
-    }
+    }*/
 
     /**
      * 修改音频任务中所有音频的存储序列信息
      */
-    @GetMapping("/edit/{fileId}")
+/*    @GetMapping("/edit/{fileId}")
     public String edit(@PathVariable("fileId") String fileId, ModelMap mmap)
     {
         WorkFile workFile = workFileService.selectWorkFileById(fileId);
         mmap.put("workFile", workFile);
         return prefix + "/edit";
-    }
+    }*/
 
     /**
      * 修改保存音频任务中所有音频的存储序列信息
      */
-    @RequiresPermissions("work:file:edit")
+/*    @RequiresPermissions("work:file:edit")
     @Log(title = "音频任务中所有音频的存储序列信息", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(WorkFile workFile)
     {
         return toAjax(workFileService.updateWorkFile(workFile));
-    }
+    }*/
 
     /**
      * 删除音频任务中所有音频的存储序列信息
@@ -134,6 +134,7 @@ public class WorkFileController extends BaseController
     @ResponseBody
     public AjaxResult remove(String ids)
     {
+    	
         return toAjax(workFileService.deleteWorkFileByIds(ids));
     }
 }

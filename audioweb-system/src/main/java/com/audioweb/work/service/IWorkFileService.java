@@ -35,7 +35,7 @@ public interface IWorkFileService
      * @return 结果
      */
     public int insertWorkFile(WorkFile workFile);
-
+    
     /**
      * 修改音频任务中所有音频的存储序列信息
      * 
@@ -84,4 +84,15 @@ public interface IWorkFileService
      * @date 2020年3月11日 下午2:45:09
      */
     public void initWorkFiles(Map<String, String> paths);
+
+    /**
+     * 新增音频信息处理
+     * 
+     * @param basePath 音频根目录
+     * @param workFilePath 音频路径
+     * @param type 音频路径类型
+     * @return 结果
+     */
+    public WorkFile insertWorkFile(String basePath,String workFilePath,String type);
+
 }
