@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.utils.ExceptionUtil;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.common.utils.security.Md5Utils;
 
 /** 
@@ -78,7 +79,7 @@ public class Mp3Utils {
             String format = audioHeader.getFormat()+" "+audioHeader.getChannels();
             music.put("format", StringUtils.isNotEmpty(format)?format:"");
             // 音频路径
-            String filePath = mp3File.getFile().getPath();
+            String filePath = FileUtils.formatToLin(mp3File.getFile().getPath());
             music.put("filePath", StringUtils.isNotEmpty(filePath)?filePath:"");
             // 音频名称
             String fileName = mp3File.getFile().getName();

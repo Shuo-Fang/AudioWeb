@@ -201,4 +201,57 @@ public class FileUtils
         }
         return files;
 	}
+	/**
+	 * 将路径分隔符改为适应linux系统下路径(或为http虚拟路径)(因为win系统能兼容此路径,将不再转化回win路径分隔符)
+	 * @Title: formatToWin 
+	 * @Description: 将路径分隔符改为适应linux系统下路径(或为http虚拟路径)(因为win系统能兼容此路径,将不再转化回win路径分隔符)
+	 * @param path
+	 * @return String 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年3月15日 下午2:42:07
+	 */
+	public static String formatToLin(String path) {
+		return path.replaceAll("\\\\", "/");
+	}
+	/**
+	 * 将路径分隔符改为自动适应系统下路径
+	 * @Title: formatToSys 
+	 * @Description: 将路径分隔符改为自动适应系统下路径
+	 * @param path
+	 * @return String 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年3月15日 下午2:43:58
+	 */
+	public static String formatToSys(String path) {
+		if(File.pathSeparator.equals("\\")) {
+			path = path.replaceAll("/", "\\\\");
+		}else {
+			path = path.replaceAll("\\\\", "/");
+		}
+		return path;
+	}
+	/**
+	 * 检查路径最后一个字符是否为分隔符，是则去掉返回
+	 * @Title: formatPath 
+	 * @Description: 检查路径最后一个字符是否为分隔符，是则去掉返回
+	 * @param path
+	 * @return String 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年3月15日 下午3:08:20
+	 */
+	public static String formatPath(String path) {
+		int i = path.lastIndexOf("\\");
+		if(i>= 0 && i == path.length()-1) {
+			return path.substring(0,path.length()-1);
+		}else {
+			i = path.lastIndexOf("/");
+			if(i>= 0 && i == path.length()-1) {
+				return path.substring(0,path.length()-1);
+			}
+		}
+		return path;
+	}
 }

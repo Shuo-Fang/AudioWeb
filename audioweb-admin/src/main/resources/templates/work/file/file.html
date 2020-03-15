@@ -90,6 +90,7 @@
         /* var editFlag = [[${@permission.hasPermi('work:file:edit')}]]; */
         var removeFlag = [[${@permission.hasPermi('work:file:remove')}]];
         var prefix = ctx + "work/file";
+        var openFlag = false;
         console.log(ctx);
         $("#fileinput-demo-1").on("fileuploaded", function (event, data, previewId, index) {debugger
          	var result = data.response;
@@ -204,19 +205,24 @@
 		function showUpload(){
 			var b = $('#file-div').is(':hidden');
 			if(b){
-				layer.confirm("请选择上传音频所属的类型", {
-	    	        icon: 3,
-	    	        title: "上传类型",
-	    	        btn: ['文件广播','终端点播']
-	    	    },function (index) {
-	    	    	layer.close(index);
-	    			initUpload('work.file');
+				if(!openFlag){
+					openFlag = true;
+					layer.confirm("请选择上传音频所属的类型", {
+		    	        icon: 3,
+		    	        title: "上传类型",
+		    	        btn: ['文件广播','终端点播']
+		    	    },function (index) {
+		    	    	layer.close(index);
+		    			initUpload('work.file');
+		    			$('.file-controller').slideToggle(300);
+		    	    },function (index) {
+		    	    	layer.close(index);
+		    			initUpload('work.point');
+		    			$('.file-controller').slideToggle(300);
+		    	    });
+				}else{
 	    			$('.file-controller').slideToggle(300);
-	    	    },function (index) {
-	    	    	layer.close(index);
-	    			initUpload('work.point');
-	    			$('.file-controller').slideToggle(300);
-	    	    });
+				}
 			}else{
     			$('.file-controller').slideToggle(300);
 			}

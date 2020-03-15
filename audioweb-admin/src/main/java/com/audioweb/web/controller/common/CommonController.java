@@ -30,9 +30,15 @@ import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.audio.Mp3Utils;
 import com.audioweb.common.utils.file.FileUploadUtils;
 import com.audioweb.common.utils.file.FileUtils;
+import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.service.ISysConfigService;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.service.IWorkFileService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 
 
 /**
@@ -40,6 +46,7 @@ import com.audioweb.work.service.IWorkFileService;
  * 
  * @author ruoyi
  */
+@Api("文件上传管理")
 @Controller
 public class CommonController {
 	private static final Logger log = LoggerFactory.getLogger(CommonController.class);
@@ -127,7 +134,12 @@ public class CommonController {
 	 /**
      * 通用上传请求
      */
-	@RequestMapping(value = "/common/audio/upload", method = RequestMethod.POST)
+    @ApiOperation("音频文件上传管理")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "type", value = "上传音频文件属性类型,work.file为文件广播文件,work.point为终端采播文件,work.word为文本广播文件", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "file_data", value = "上传的音频文件", required = true, dataType = "file", paramType = "form")
+    })
+    @RequestMapping(value = "/common/audio/upload", method = RequestMethod.POST)
 	@ResponseBody
     @RequiresPermissions("work:file:add")
     @Log(title = "音频存储信息", businessType = BusinessType.INSERT)
@@ -139,16 +151,17 @@ public class CommonController {
 				// 上传文件路径
 				String value = multipartRequest.getParameterMap().get("type")[0];
 				String filePath = configService.selectConfigByKey(value);
+				filePath = FileUtils.formatPath(FileUtils.formatToLin(filePath));
 				for (MultipartFile item : fileList) {
 					try {
 						// 上传并返回新文件名称
-						File file = new File(filePath+"\\"+item.getOriginalFilename());
+						File file = new File(filePath+"/"+item.getOriginalFilename());
 						if(file.exists()) {
 							return AjaxResult.error("此文件已存在！");
 						}else {
 							String fileName = FileUploadUtils.upload(filePath, item, false);
 							if(Mp3Utils.isMp3(fileName)){
-								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, value.equals("work.file")?"0":"1");
+								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, value.equals("work.file")?"0":"1",ShiroUtils.getLoginName());
 								if(StringUtils.isNotNull(fWorkFile)) {
 									String url = fWorkFile.getVirPath();
 									AjaxResult ajax = AjaxResult.success();

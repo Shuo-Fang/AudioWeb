@@ -15,11 +15,19 @@ import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.service.IWorkFileService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
+import com.audioweb.system.service.ISysConfigService;
 import com.audioweb.common.core.page.TableDataInfo;
 
 /**
@@ -28,6 +36,7 @@ import com.audioweb.common.core.page.TableDataInfo;
  * @author shuofang
  * @date 2020-03-10
  */
+@Api("音频文件信息管理")
 @Controller
 @RequestMapping("/work/file")
 public class WorkFileController extends BaseController
@@ -37,6 +46,9 @@ public class WorkFileController extends BaseController
     @Autowired
     private IWorkFileService workFileService;
     
+	@Autowired
+    private ISysConfigService configService;
+	
     @RequiresPermissions("work:file:view")
     @GetMapping()
     public String file()
@@ -56,7 +68,7 @@ public class WorkFileController extends BaseController
     	if(StringUtils.isNotEmpty(workFile.getFilePath())) {
     		try {
     			File f = new File(workFile.getFilePath());
-    			workFile.setFilePath((f.getPath()+"\\").replaceAll("\\\\","\\\\\\\\"));
+    			workFile.setFilePath(FileUtils.formatToLin(FileUtils.formatPath(f.getPath()).concat("/")));
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("文件类型配置地址有误，请检查");
@@ -65,6 +77,33 @@ public class WorkFileController extends BaseController
         startPage();
         List<WorkFile> list = workFileService.selectWorkFileList(workFile);
         return getDataTable(list);
+    }
+    
+    /**
+     * 查询音频任务中所有音频的存储序列信息列表
+     */
+    @ApiOperation("获取音频文件详细")
+    @ApiImplicitParam(name = "type", value = "获取音频文件属性类型,work.file为文件广播文件,work.point为终端采播文件,work.word为文本广播文件", required = true, dataType = "String", paramType = "query")
+    @PostMapping("/listAll")
+    @ResponseBody
+    @ApiResponses({
+        @ApiResponse(code=500,message="传参出错"),
+        @ApiResponse(code=0,message="获取成功")
+    })
+    public AjaxResult listAll(@RequestParam String type)
+    {
+    	try {
+	    	WorkFile workFile = new WorkFile();
+	    	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+	    	workFile.setFilePath(FileUtils.formatToLin(FileUtils.formatPath(configService.selectConfigByKey(type)).concat("/")));
+	    	List<WorkFile> list = workFileService.selectWorkFileList(workFile);
+	    	AjaxResult result = success("获取成功");
+	    	result.put("list", list);
+	    	return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error("传参出错");
     }
 
     /**

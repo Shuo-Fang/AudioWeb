@@ -39,6 +39,10 @@
                             <b  class="font-noraml">创建时间：</b>
                             <p class="pull-right" >[[${#dates.format(user.createTime, 'yyyy-MM-dd')}]]</p>
                         </li>
+                        <li class="list-group-item"><i class="fa fa-vcard-o"></i>
+                            <b  class="font-noraml">个人序列号：</b>
+                            <p class="pull-right" >[[${user.salt}]]</p>
+                        </li>
                     </ul>
                 </div>
             </div>

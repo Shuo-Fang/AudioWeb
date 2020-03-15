@@ -40,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="album != null  and album != ''"> and album like concat('%', #{album}, '%')</if>
             <if test="delFlag != null  and delFlag != ''"> and del_flag = #{delFlag}</if>
         </where>
+        order by update_time desc
     </select>
     
     <select id="selectWorkFileById" parameterType="String" resultMap="WorkFileResult">
@@ -120,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <update id="slowDeleteWorkFileByIds" parameterType="String">
-        update work_file set del_flag = '2' where file_id in 
+        update work_file set del_flag = '2',update_time = now() where file_id in 
         <foreach item="fileId" collection="array" open="(" separator="," close=")">
             #{fileId}
         </foreach>
@@ -267,7 +268,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     
 	<insert id="batchInsertWorkFiles" parameterType="java.util.List">
-	    INSERT INTO work_file(file_id, file_name, file_type, file_path, vir_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, create_by,remark)
+	    INSERT INTO work_file(file_id, file_name, file_type, file_path, vir_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, create_by, update_time, remark)
 	    VALUES
 	    <foreach collection="list" item="item" separator=",">
 	        (#{item.fileId},
@@ -285,6 +286,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        #{item.startByte},
 	        #{item.musicLength},
 	        #{item.createBy},
+	        #{item.updateTime},
 	        #{item.remark})
 	    </foreach>
 	</insert>

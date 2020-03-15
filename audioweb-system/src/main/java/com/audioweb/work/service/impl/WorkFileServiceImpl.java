@@ -1,7 +1,6 @@
 package com.audioweb.work.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.audio.Mp3Utils;
 import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.common.utils.file.FileUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +68,7 @@ public class WorkFileServiceImpl implements IWorkFileService
     @Override
     public int insertWorkFile(WorkFile workFile)
     {
-        workFile.setCreateTime(DateUtils.getNowDate());
+        workFile.setUpdateTime(DateUtils.getNowDate());
         return workFileMapper.insertWorkFile(workFile);
     }
 
@@ -131,6 +129,9 @@ public class WorkFileServiceImpl implements IWorkFileService
 	@Override
 	public int updateWorkFileList(List<WorkFile> workFiles) 
 	{
+		for(WorkFile workFile:workFiles) {
+			workFile.setUpdateTime(DateUtils.getNowDate());
+		}
 		return workFileMapper.updateWorkFileList(workFiles);
 	}
 
@@ -143,6 +144,9 @@ public class WorkFileServiceImpl implements IWorkFileService
 	@Override
 	public int batchInsertWorkFiles(List<WorkFile> workFiles) 
 	{
+		for(WorkFile workFile:workFiles) {
+			workFile.setUpdateTime(DateUtils.getNowDate());
+		}
 		return workFileMapper.batchInsertWorkFiles(workFiles);
 	}
 
@@ -160,7 +164,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 	public void initWorkFiles(Map<String, String> paths) {
 		Long time = System.currentTimeMillis();
 		for(Map.Entry<String, String> value:paths.entrySet()) {
-			String path = value.getValue().replaceAll("/", "\\\\");
+			String path = FileUtils.formatPath(FileUtils.formatToLin(value.getValue()));
 			List<String> allFiles = new ArrayList<>();
 			/**获取路径下全部文件地址*/
 			if(StringUtils.isNotEmpty(path)) {
@@ -186,9 +190,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 					if(workFile == null) {
 						try {
 							WorkFile file = BeanUtils.mapToBean(Mp3Utils.getMusicInfo(filePath), WorkFile.class);
-							String string = file.getFilePath().replace(path, getVirPath(value.getKey()));
-							string = string.replaceAll("\\\\", "/");
-							file.setVirPath(string);
+							file.setVirPath(file.getFilePath().replace(path, getVirPath(value.getKey())));
 							file.setFileType(value.getKey());
 							addFiles.add(file);
 						} catch (Exception e) {
@@ -196,10 +198,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 						}
 					}else if(!workFile.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)){
 						workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
-						workFile.setUpdateTime(new Date(time));
-						String string = workFile.getFilePath().replace(path, getVirPath(value.getKey()));
-						string = string.replaceAll("\\\\", "/");
-						workFile.setVirPath(string);
+						workFile.setVirPath(workFile.getFilePath().replace(path, getVirPath(value.getKey())));
 						if(StringUtils.isEmpty(workFile.getFileType()) || !workFile.getFileType().contains(value.getKey())) {
 							workFile.setFileType(StringUtils.isEmpty(workFile.getFileType())?value.getKey():(workFile.getFileType()+value.getKey()));
 						}
@@ -218,7 +217,6 @@ public class WorkFileServiceImpl implements IWorkFileService
 				if(file.getFileType().contains(value.getKey())) {
 					if(file.getDelFlag().equals(WorkConstants.AUDIOFILENORMAL)) {
 						file.setDelFlag(WorkConstants.AUDIOFILENOTFOND);
-						file.setUpdateTime(new Date(time));
 						upDataFiles.add(file);
 					}else if(file.getUpdateTime().getTime() < (time - WorkConstants.AUDIOFILENOTFONDDATE)){
 						/** 删除或丢失文件存储时间超过了7天*/
@@ -280,15 +278,18 @@ public class WorkFileServiceImpl implements IWorkFileService
      * @return 结果
      */
 	@Override
-	public WorkFile insertWorkFile(String basePath,String workFilePath,String type) {
+	public WorkFile insertWorkFile(String basePath,String workFilePath,String type,String creatBy) {
 		try {
-			basePath = basePath.replaceAll("/", "\\\\");
+			basePath = FileUtils.formatPath(FileUtils.formatToLin(basePath));
 			WorkFile file = BeanUtils.mapToBean(Mp3Utils.getMusicInfo(workFilePath), WorkFile.class);
-			String string = file.getFilePath().replace(basePath, getVirPath(type));
-			string = string.replaceAll("\\\\", "/");
-			file.setVirPath(string);
+			file.setVirPath(file.getFilePath().replace(basePath, getVirPath(type)));
 			file.setFileType(type);
-			if(workFileMapper.insertWorkFile(file)>0) {
+			file.setCreateBy(creatBy);
+			file.setUpdateTime(DateUtils.getNowDate());
+			if(StringUtils.isNotNull(workFileMapper.selectWorkFileById(file.getFileId())) 
+					&& workFileMapper.updateWorkFile(file) > 0) {
+				return file;
+			}else if(workFileMapper.insertWorkFile(file)>0) {
 				return file;
 			}
 		} catch (Exception e) {
