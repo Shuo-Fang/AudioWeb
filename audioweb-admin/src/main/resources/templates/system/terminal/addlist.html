@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('新增终端管理')" />
-    <!-- <th:block th:include="include :: datetimepicker-css" /> -->
+    <th:block th:include="include :: header('批量新增终端管理')" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
@@ -17,18 +16,19 @@
                             <span></span>
                     </label>
                 </div>
-        		<label class="col-sm-3 control-label">是否覆盖原终端:</label>
-                <div class="col-sm-2">
-                	<label class="toggle-switch switch-solid">
-                            <input type="checkbox" id="iscover">
-                            <span></span>
-                    </label>
+        		<div class="radio check-box col-sm-3">
+                    <label>
+                        <input  type="radio" value="1" name= "delFlag" checked=""> <i></i>跳过已有终端</label>
+                </div>
+        		<div class="radio check-box col-sm-4">
+                    <label>
+                        <input  type="radio" value="0" name= "delFlag" > <i></i>覆盖已有终端</label>
                 </div>
             </div>
         	<div class="form-group">    
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>添加数量:</label>
                 <div class="col-sm-8">
-                    <input name="terminalNum" class="form-control" type="number" min="1" max = "200"  required>
+                    <input name="isOnline" class="form-control" type="number" min="1" max = "200"  required>
                 </div>
             </div>
         	<div class="form-group">    
@@ -39,8 +39,14 @@
             </div>
             <div class="form-group">    
                 <label class="col-sm-3 control-label"><span style="color: red; ">*</span>终端名称:</label>
-                <div class="col-sm-8">
-                    <input name="terminalName" class="form-control" type="text" required>
+                <div class="col-sm-3">
+                    <input name="terminalName" class="form-control" type="text" placeholder = '例如:高中'>
+                </div>
+                <div class="col-sm-2">
+                    <input name="taskId" class="form-control" type="number" value = "1" required>
+                </div>
+                <div class="col-sm-3">
+                    <input name="taskName" class="form-control" type="text" placeholder = '例如:班'>
                 </div>
             </div>
             <div class="form-group">    
@@ -98,7 +104,6 @@
         </form>
     </div>
     <th:block th:include="include :: footer" />
-    <!-- <th:block th:include="include :: datetimepicker-js" /> -->
     <script type="text/javascript">
         var prefix = ctx + "system/terminal"
         $("#form-terminal-add").validate({
@@ -162,12 +167,10 @@
 	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
 	        	var isCmic = $("input[id='isCmic']").is(':checked') == true ? 0 : 1;
 	        	var isAutoCast = $("input[id='isAutoCast']").is(':checked') == true ? 0 : 1;
-	        	var terminalNum = $("input[id='terminalNum']").is(':checked') == true ? 0 : 1;
 	        	data.push({"name": "status", "value": status});
 	        	data.push({"name": "isCmic", "value": isCmic});
 	        	data.push({"name": "isAutoCast", "value": isAutoCast});
-	        	data.push({"name": "terminalNum", "value": terminalNum});
-                $.operate.save(prefix + "/addlist", data);
+                $.operate.saveModal(prefix + "/addlist", data, saveCall);
             }
         }
         /*复选分区树*/
@@ -241,6 +244,28 @@
 				data.domainNames = $.common.removeLast(data.domainNames);
 			}
 			return data;
+		}
+		function saveCall(result){
+			if (result.code == web_status.SUCCESS) {
+            	var parent = window.parent;
+                if (parent.table.options.type == table_type.bootstrapTable) {
+                    $.modal.close();
+                    parent.$.modal.alertSuccess(result.msg);
+                    parent.$.table.refresh();
+                } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                    $.modal.close();
+                    parent.$.modal.alertSuccess(result.msg);
+                    parent.$.treeTable.refresh();
+                } else {
+                    $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+                }
+            } else if (result.code == web_status.WARNING) {
+                $.modal.alertWarning(result.msg)
+            }  else {
+                $.modal.alertError(result.msg);
+            }
+            $.modal.closeLoading();
+            $.modal.enable();
 		}
     </script>
 </body>

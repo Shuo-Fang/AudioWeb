@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.constant.UserConstants;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
@@ -131,28 +133,122 @@ public class WorkTerminalController extends BaseController
     	workTerminal.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(workTerminalService.insertWorkTerminal(workTerminal));
     }
-    
     /**
-     * 新增保存终端管理
+     * 批量新增保存终端管理
      */
     @RequiresPermissions("system:terminal:add")
     @Log(title = "终端管理", businessType = BusinessType.INSERT)
     @PostMapping("/addlist")
     @ResponseBody
-    public AjaxResult addlistSave(WorkTerminal workTerminal)
+    public AjaxResult addSaveList(WorkTerminal workTerminal)
     {
-    	if (UserConstants.USER_NAME_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(workTerminal)))
-    	{
-    		return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端ID已存在");
-    	}
-    	else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(workTerminalService.checkIdUnique(workTerminal)))
-    	{
-    		return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端IP已存在");
-    	}
-    	workTerminal.setCreateBy(ShiroUtils.getLoginName());
-    	return toAjax(workTerminalService.insertWorkTerminal(workTerminal));
+    	/** 特别注明，在批量新增终端中，其中采用了DelFlag作为判断是否覆盖已有终端,isOnline作为需要添加的终端数量值,taskId作为终端名称递增值，taskName作为终端名后缀*/
+    	String message = "";
+    	String error = "";
+    	int errorNum = 0;
+    	try {
+    		int terNum = workTerminal.getIsOnline();//需要添加的终端数量
+    		int terNameNum = (int) workTerminal.getTaskId();
+    		String terPrefix = StringUtils.isEmpty(workTerminal.getTerminalName())?"":workTerminal.getTerminalName();
+    		String terSuffix = StringUtils.isEmpty(workTerminal.getTaskName())?"":workTerminal.getTaskName();
+    		int terId = Integer.parseInt(workTerminal.getTerminalId());
+    		Long ip = IpUtils.ip2Long(workTerminal.getTerminalIp());
+    		if(StringUtils.isNotEmpty(workTerminal.getDelFlag()) && workTerminal.getDelFlag().equals("0")) {
+    			//为覆盖终端
+    			//1.先删除原可能存在的终端
+    			String delIds  = "";
+    			for(int i = 0;i<terNum;i++) {
+    				delIds += StringUtils.formatToTerId(terId+i)+",";
+    			}
+    			workTerminalService.deleteWorkTerminalByIds(delIds);
+    			//2.批量新增终端
+    			for(int i = 0;i<terNum;i++) {
+    				WorkTerminal terminal = new WorkTerminal();
+    				terminal.setTerminalIp(IpUtils.long2IP(ip+i));
+    				if (WorkConstants.TERMINAL_IP_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(terminal)))
+    		    	{
+        				terminal.setTerminalId(StringUtils.formatToTerId(terId+i));
+        				terminal.setTerminalName(terPrefix+(terNameNum+i)+terSuffix);
+    					error = error.concat("终端'").concat(terminal.getTerminalName()).concat("';IP:'").concat(terminal.getTerminalIp()).concat("'已存在，添加失败\r\n");
+    					errorNum++;
+    		    	}else {
+        				terminal.setTerminalId(StringUtils.formatToTerId(terId+i));
+        				terminal.setTerminalName(terPrefix+(terNameNum+i)+terSuffix);
+    		    		terminal.setCreateBy(ShiroUtils.getLoginName());
+    		    		terminal.setDomainId(workTerminal.getDomainId());
+    		    		terminal.setIsAutoCast(workTerminal.getIsAutoCast());
+    		    		terminal.setIsCmic(workTerminal.getIsCmic());
+    		    		terminal.setRemark(workTerminal.getRemark());
+    		    		terminal.setStatus(workTerminal.getStatus());
+    		    		if(StringUtils.isNotEmpty(workTerminal.getPrecinct())) {
+    		    			terminal.setPrecinct(workTerminal.getPrecinct());
+    		    		}
+    		    		try {
+							if(workTerminalService.insertWorkTerminal(terminal) <= 0) {
+								error = error.concat("终端'").concat(terminal.getTerminalName()).concat("'新增失败，请重试\r\n");
+								errorNum++;
+							}
+						} catch (Exception e) {
+							error = error.concat("终端'").concat(terminal.getTerminalName()).concat("'新增失败，请重试\r\n");
+							errorNum++;
+						}
+    		    	}
+    			}
+    		}else {
+    			//为跳过终端
+    			//批量新增终端
+    			for(int i = 0;i<terNum;i++) {
+    				WorkTerminal terminal = new WorkTerminal();
+    				terminal.setTerminalId(StringUtils.formatToTerId(terId+i));
+    				if (WorkConstants.TERMINAL_ID_NOT_UNIQUE.equals(workTerminalService.checkIdUnique(terminal)))
+    		    	{
+        				terminal.setTerminalName(terPrefix+(terNameNum+i)+terSuffix);
+    		    		error = error.concat("跳过新增终端'").concat(terminal.getTerminalName()).concat("'，终端ID已存在\r\n");
+    		    		errorNum++;
+    		    	}else {
+    		    		terminal = new WorkTerminal();
+        				terminal.setTerminalIp(IpUtils.long2IP(ip+i));
+    		    		if (WorkConstants.TERMINAL_IP_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(terminal)))
+	    		    	{
+	        				terminal.setTerminalName(terPrefix+(terNameNum+i)+terSuffix);
+	    					error = error.concat("跳过新增终端'").concat(terminal.getTerminalName()).concat("';IP:'").concat(terminal.getTerminalIp()).concat("'该IP已存在终端\r\n");
+	    					errorNum++;
+	    		    	}else {
+	        				terminal.setTerminalId(StringUtils.formatToTerId(terId+i));
+	        				terminal.setTerminalName(terPrefix+(terNameNum+i)+terSuffix);
+	    		    		terminal.setCreateBy(ShiroUtils.getLoginName());
+	    		    		terminal.setDomainId(workTerminal.getDomainId());
+	    		    		terminal.setIsAutoCast(workTerminal.getIsAutoCast());
+	    		    		terminal.setIsCmic(workTerminal.getIsCmic());
+	    		    		terminal.setRemark(workTerminal.getRemark());
+	    		    		terminal.setStatus(workTerminal.getStatus());
+	    		    		if(StringUtils.isNotEmpty(workTerminal.getPrecinct())) {
+	    		    			terminal.setPrecinct(workTerminal.getPrecinct());
+	    		    		}
+	    		    		try {
+								if(workTerminalService.insertWorkTerminal(terminal) <= 0) {
+									error = error.concat("终端'").concat(terminal.getTerminalName()).concat("'新增失败，请重试\r\n");
+									errorNum++;
+								}
+							} catch (Exception e) {
+								error = error.concat("终端'").concat(terminal.getTerminalName()).concat("'新增失败，请重试\r\n");
+								errorNum++;
+							}
+	    		    	}
+    		    	}
+    			}
+        	}
+    		message = "本次批量新增终端共'".concat(terNum+"").concat("'个，其中成功添加'").concat((terNum-errorNum)+"").concat("'个，失败或跳过'").concat(errorNum+"").concat("'个\r\n");
+    		if(errorNum > 0) {
+    			message = message.concat("详情如下：\r\n");
+    		}
+    		return success(message+error);
+    	} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return error("批量新增失败，请检查填写是否正确或稍后再试");
     }
-
+    
     /**
      * 修改终端管理
      */

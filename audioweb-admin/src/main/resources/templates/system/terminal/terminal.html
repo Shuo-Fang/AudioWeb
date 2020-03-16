@@ -64,7 +64,7 @@
 	                                </select>
 	                            </li>
 	                            <li class="select-time">
-	                                <p>终端最后登录时间：</p>
+	                                <p>登录时间：</p>
 	                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginLoginTime]"/>
 	                                <span>-</span>
 	                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endLoginTime]"/>
@@ -201,7 +201,12 @@
                 },
                 {
                     field : 'loginTime', 
-                    title : '终端最后登录时间',
+                    title : '登录时间',
+                    align: 'center'
+                },
+                {
+                    field : 'remark', 
+                    title : '备注',
                     align: 'center'
                 },
                 {

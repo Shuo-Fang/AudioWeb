@@ -130,7 +130,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 					if(StringUtils.isNotEmpty(workTerminal.getTerRealId()) && terminal.getTerRealId().equals(workTerminal.getTerRealId())) {
 						return WorkConstants.TERMINAL_IP_UNIQUE;
 					}else {
-						return WorkConstants.TERMINAL_ID_NOT_UNIQUE;
+						return WorkConstants.TERMINAL_IP_NOT_UNIQUE;
 					}
 				}
 			}

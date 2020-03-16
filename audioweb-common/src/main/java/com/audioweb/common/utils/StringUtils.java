@@ -395,4 +395,19 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         }
         return sb.toString();
     }
+    /**
+     * 格式化填充字符到4位值
+     * @Title: formatToTerId 
+     * @Description: TODO(这里用一句话描述这个方法的作用)  void 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年3月16日 下午10:26:51
+     */
+    public static String formatToTerId(int terId) {
+		String string = terId+"";
+		while(string.length() < 4) {
+			string = "0"+ string;
+		}
+		return string;
+	}
 }
