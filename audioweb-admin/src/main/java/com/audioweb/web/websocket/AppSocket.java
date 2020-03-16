@@ -9,14 +9,8 @@
 package com.audioweb.web.websocket;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -32,12 +26,8 @@ import org.springframework.stereotype.Component;
 
 import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.json.JSONObject;
-import com.audioweb.common.utils.spring.SpringUtils;
-import com.audioweb.framework.shiro.session.OnlineSession;
 import com.audioweb.framework.shiro.session.OnlineSessionDAO;
-import com.audioweb.framework.shiro.web.session.SpringSessionValidationScheduler;
 import com.audioweb.system.domain.SysUser;
-import com.audioweb.system.service.impl.SysUserServiceImpl;
 
 /** 
  * @ClassName: AppSocket 
