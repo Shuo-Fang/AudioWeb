@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 public class HttpUtils
 {
     private static final Logger log = LoggerFactory.getLogger(HttpUtils.class);
+    public static final String GBK = "GBK";
+    public static final String UTF_8 = "UTF-8";
 
     /**
      * 向指定 URL 发送GET方法的请求
@@ -95,9 +97,10 @@ public class HttpUtils
      *
      * @param url 发送请求的 URL
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+     * @param charset 请求编码格式
      * @return 所代表远程资源的响应结果
      */
-    public static String sendPost(String url, String param)
+    public static String sendPost(String url, String param,String charset)
     {
         PrintWriter out = null;
         BufferedReader in = null;
@@ -111,14 +114,14 @@ public class HttpUtils
             conn.setRequestProperty("accept", "*/*");
             conn.setRequestProperty("connection", "Keep-Alive");
             conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-            conn.setRequestProperty("Accept-Charset", "utf-8");
-            conn.setRequestProperty("contentType", "utf-8");
+            conn.setRequestProperty("Accept-Charset", charset);
+            conn.setRequestProperty("contentType", charset);
             conn.setDoOutput(true);
             conn.setDoInput(true);
             out = new PrintWriter(conn.getOutputStream());
             out.print(param);
             out.flush();
-            in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+            in = new BufferedReader(new InputStreamReader(conn.getInputStream(), charset));
             String line;
             while ((line = in.readLine()) != null)
             {
