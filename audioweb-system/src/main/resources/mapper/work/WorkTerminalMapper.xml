@@ -131,4 +131,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
     
+    <update id="updateTerminalDomainByIds" parameterType="Map">
+        update work_terminal set domain_id = #{domainId} where ter_real_id in 
+        <foreach item="terRealId" collection="ids" open="(" separator="," close=")">
+            #{terRealId}
+        </foreach>
+    </update>
+    
 </mapper>

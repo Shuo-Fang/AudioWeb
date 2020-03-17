@@ -110,7 +110,7 @@ public class WorkFileController extends BaseController
      * 导出音频任务中所有音频的存储序列信息列表
      */
     @RequiresPermissions("work:file:export")
-    @Log(title = "音频存储信息", businessType = BusinessType.EXPORT)
+    @Log(title = "音频信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(WorkFile workFile)
@@ -168,7 +168,7 @@ public class WorkFileController extends BaseController
      * 删除音频任务中所有音频的存储序列信息
      */
     @RequiresPermissions("work:file:remove")
-    @Log(title = "音频存储信息", businessType = BusinessType.DELETE)
+    @Log(title = "音频信息", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(@RequestParam("ids")String ids,@RequestParam(value = "paths[]") String[] paths)

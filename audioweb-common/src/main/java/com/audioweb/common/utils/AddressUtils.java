@@ -16,7 +16,7 @@ public class AddressUtils
 {
     private static final Logger log = LoggerFactory.getLogger(AddressUtils.class);
 
-    public static final String IP_URL = "http://ip.taobao.com/service/getIpInfo.php";
+    public static final String IP_URL = "http://whois.pconline.com.cn/ipJson.jsp";
 
     public static String getRealAddressByIP(String ip)
     {
@@ -29,7 +29,7 @@ public class AddressUtils
         }
         if (Global.isAddressEnabled())
         {
-            String rspStr = HttpUtils.sendPost(IP_URL, "ip=" + ip);
+            String rspStr = HttpUtils.sendPost(IP_URL, "ip=" + ip + "&json=true");
             if (StringUtils.isEmpty(rspStr))
             {
                 log.error("获取地理位置异常 {}", ip);
@@ -39,10 +39,9 @@ public class AddressUtils
             try
             {
                 obj = JSON.unmarshal(rspStr, JSONObject.class);
-                JSONObject data = obj.getObj("data");
-                String region = data.getStr("region");
-                String city = data.getStr("city");
-                address = region + " " + city;
+                //String region = obj.getStr("pro");
+                //String city = obj.getStr("city");
+                address = obj.getStr("addr");
             }
             catch (Exception e)
             {

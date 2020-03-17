@@ -143,7 +143,7 @@ public class CommonController {
     @RequestMapping(value = "/common/audio/upload", method = RequestMethod.POST)
 	@ResponseBody
     @RequiresPermissions("work:file:add")
-    @Log(title = "音频存储信息", businessType = BusinessType.INSERT)
+    @Log(title = "音频信息", businessType = BusinessType.INSERT)
 	public AjaxResult uploadReport(HttpServletRequest request, HttpServletResponse response) {
 		if (ServletFileUpload.isMultipartContent(request)) {
 			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -173,6 +173,7 @@ public class CommonController {
 									AjaxResult ajax = AjaxResult.success();
 									ajax.put("fileName", fWorkFile.getFileName());
 									ajax.put("url", serverConfig.getUrl()+url);
+									ajax.put("fileId", fWorkFile.getFileId());
 									return ajax;
 								}else {
 									FileUtils.deleteFile(fileName);

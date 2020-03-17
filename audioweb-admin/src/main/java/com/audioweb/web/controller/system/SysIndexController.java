@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.config.Global;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.framework.web.domain.Server;
 import com.audioweb.system.domain.SysMenu;
@@ -95,8 +96,10 @@ public class SysIndexController extends BaseController
     @ResponseBody
     public AjaxResult getUserInfo() {
     	AjaxResult result = success("获取成功");
-    	ShiroUtils.getSysUser();
-    	result.put("user", ShiroUtils.getSysUser());
+    	SysUser user = new SysUser();
+    	BeanUtils.copyBeanProp(user,ShiroUtils.getSysUser());
+    	user.setPassword("");
+    	result.put("user", user);
     	return result;
 	}
 }

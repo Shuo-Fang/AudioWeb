@@ -1,6 +1,7 @@
 package com.audioweb.work.service.impl;
 
 import java.net.InetAddress;
+import java.util.HashMap;
 import java.util.List;
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
@@ -198,5 +199,30 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	public int changeStatus(WorkTerminal workTerminal) 
 	{
 		return workTerminalMapper.updateWorkTerminal(workTerminal);
+	}
+
+	/* (non-Javadoc) 
+	 * <p>Title: updateTerminalDomainByIds</p> 
+	 * <p>Description: </p> 
+	 * @author 10155 
+	 * @date 2020年3月17日 下午6:07:16
+	 * @param domainId
+	 * @param ids
+	 * @return 
+	 * @see com.audioweb.work.service.IWorkTerminalService#updateTerminalDomainByIds(java.lang.String, java.lang.String) 
+	 */ 
+	 /**
+     * 批量修改终端分区
+     * 
+     * @param ids 需要修改的数据ID
+     * @return 结果
+     */
+	@Override
+	public int updateTerminalDomainByIds(String domainId, String ids) 
+	{
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("domainId", domainId);
+		map.put("ids", Convert.toStrArray(ids));
+		return workTerminalMapper.updateTerminalDomainByIds(map);
 	}
 }

@@ -1,8 +1,8 @@
 package com.audioweb.work.mapper;
 
-import com.audioweb.system.domain.SysUser;
 import com.audioweb.work.domain.WorkTerminal;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -60,4 +60,11 @@ public interface WorkTerminalMapper
      * @return 结果
      */
     public int deleteWorkTerminalByIds(String[] terminalIds);
+    /**
+     * 批量修改终端分区
+     * 
+     * @param terminalIds 需要修改的数据ID
+     * @return 结果
+     */
+    public int updateTerminalDomainByIds(HashMap<String, Object> map);
 }

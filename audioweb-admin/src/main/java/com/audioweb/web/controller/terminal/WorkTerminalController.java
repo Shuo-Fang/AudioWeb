@@ -291,7 +291,7 @@ public class WorkTerminalController extends BaseController
     @ResponseBody
     public AjaxResult editDomain(@RequestParam String ids,@RequestParam String domainId)
     {
-    	return success();
+    	return toAjax(workTerminalService.updateTerminalDomainByIds(domainId,ids));
     }
 
     /**

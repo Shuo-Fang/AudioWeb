@@ -51,6 +51,13 @@ public interface IWorkTerminalService
      * @return 结果
      */
     public int deleteWorkTerminalByIds(String ids);
+    /**
+     * 批量更新终端分区
+     * 
+     * @param ids 需要修改的数据ID
+     * @return 结果
+     */
+    public int updateTerminalDomainByIds(String domainId,String ids);
 
     /**
      * 删除终端管理信息
