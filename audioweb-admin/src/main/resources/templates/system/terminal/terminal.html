@@ -88,12 +88,15 @@
 	                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:terminal:edit">
 	                    <i class="fa fa-edit"></i> 修改
 	                </a>
+	                <a class="btn btn-warning multiple disabled" onclick="editDomain()" shiro:hasPermission="system:terminal:edit">
+	                    <i class="fa fa-edit"></i> 分区修改
+	                </a>
 	                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:terminal:remove">
 	                    <i class="fa fa-remove"></i> 删除
 	                </a>
-	                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:terminal:export">
+	                <!-- <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:terminal:export">
 	                    <i class="fa fa-download"></i> 导出
-	                 </a>
+	                 </a> -->
 	            </div>
 	            <div class="col-sm-12 select-table table-striped">
 	                <table id="bootstrap-table"></table>
@@ -111,7 +114,7 @@
         var isAutoCastDatas = [[${@dict.getType('work_status')}]];
         var prefix = ctx + "system/terminal";
 		var domainId = 0;
-		var checkTerId;
+		var checkTerId,data;
 
 		$(function() {
 		    var panehHidden = false;
@@ -133,6 +136,7 @@
                 modalName: "终端管理",
                 clickToSelect:true,
                 rememberSelected:true,
+                uniqueId : "terRealId",
                 columns: [{
                 	field: 'state',
                     checkbox: true
@@ -330,6 +334,44 @@
         	table.set();
         	$.modal.open("添加" + table.options.modalName, prefix + "/addlist/"+ domainId);
         }
+      	function editDomain(){
+      		table.set();
+        	var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.affectedRowIds() : $.table.selectColumns(table.options.uniqueId);
+        	if (rows.length == 0) {
+        		$.modal.alertWarning("请至少选择一条记录");
+        		return;
+        	}
+        	$.modal.confirm("确认要修改选中的" + rows.length + "条终端的分区信息么?", function() {debugger
+    			data = { "ids": rows.join() };
+    			selectDomainTree();
+    			//$.operate.submit(url, "post", "json", data);
+        	});
+      	}
+      	 /*选择分区树*/
+        function selectDomainTree() {
+        	var treeId = $("#treeId").val();
+        	var domainId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        	var url = ctx + "system/domain/selectDomainTree/" + domainId;
+			var options = {
+				title: '选择分区',
+				width: "380",
+				url: url,
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
+      	 
+        function doSubmit(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if ($.tree.notAllowSelect(tree)) {
+				var body = layer.getChildFrame('body', index);
+				data.domainId = body.find('#treeId').val();
+    			//$("#treeId").val(body.find('#treeId').val());
+    			//$("#treeName").val(body.find('#treeName').val());
+    			$.operate.post(prefix + "/editdomain", data);
+    			layer.close(index);
+			}
+		}
     </script>
 </body>
 </html>

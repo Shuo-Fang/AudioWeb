@@ -7,19 +7,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.audioweb.common.config.Global;
 import com.audioweb.common.core.controller.BaseController;
+import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.framework.web.domain.Server;
 import com.audioweb.system.domain.SysMenu;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.ISysMenuService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 /**
  * 首页 业务处理
  * 
  * @author ruoyi
  */
+@Api("用户信息获取")
 @Controller
 public class SysIndexController extends BaseController
 {
@@ -82,4 +89,14 @@ public class SysIndexController extends BaseController
         mmap.put("version", Global.getVersion());
         return "main";
     }
+    
+    @ApiOperation("获取用户信息")
+    @GetMapping("/getUserInfo")
+    @ResponseBody
+    public AjaxResult getUserInfo() {
+    	AjaxResult result = success("获取成功");
+    	ShiroUtils.getSysUser();
+    	result.put("user", ShiroUtils.getSysUser());
+    	return result;
+	}
 }

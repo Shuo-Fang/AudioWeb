@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.constant.UserConstants;
@@ -280,6 +281,17 @@ public class WorkTerminalController extends BaseController
     public AjaxResult editSave(WorkTerminal workTerminal)
     {
         return toAjax(workTerminalService.updateWorkTerminal(workTerminal));
+    }
+    /**
+     * 修改保存终端管理
+     */
+    @RequiresPermissions("system:terminal:edit")
+    @Log(title = "终端管理", businessType = BusinessType.UPDATE)
+    @PostMapping("/editdomain")
+    @ResponseBody
+    public AjaxResult editDomain(@RequestParam String ids,@RequestParam String domainId)
+    {
+    	return success();
     }
 
     /**
