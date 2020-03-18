@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.enums.CastWorkType;
 
 /** 
  * @ClassName: CastTask 
@@ -35,7 +36,7 @@ public class CastTask extends BaseEntity{
 	private Integer vol = -1;
 	
 	/**	广播类型 */
-	private String castType;
+	private CastWorkType castType;
 	
 	/**	广播地址 */
 	private String castAddress;
@@ -86,10 +87,10 @@ public class CastTask extends BaseEntity{
 	public void setVol(Integer vol) {
 		this.vol = vol;
 	}
-	public String getCastType() {
+	public CastWorkType getCastType() {
 		return castType;
 	}
-	public void setCastType(String castType) {
+	public void setCastType(CastWorkType castType) {
 		this.castType = castType;
 	}
 	public String getCastAddress() {

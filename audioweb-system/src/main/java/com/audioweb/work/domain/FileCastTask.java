@@ -34,5 +34,44 @@ public class FileCastTask extends CastTask{
 	
 	/** 音频播放位置*/
 	private volatile Long fileSign;
-	
+
+	public WorkFile getRunFile() {
+		return runFile;
+	}
+
+	public void setRunFile(WorkFile runFile) {
+		this.runFile = runFile;
+	}
+
+	public List<WorkFile> getCastFileList() {
+		return castFileList;
+	}
+
+	public void setCastFileList(List<WorkFile> castFileList) {
+		this.castFileList = castFileList;
+	}
+
+	public String getRandomSerial() {
+		return randomSerial;
+	}
+
+	public void setRandomSerial(String randomSerial) {
+		this.randomSerial = randomSerial;
+	}
+
+	public String getFileCastType() {
+		return fileCastType;
+	}
+
+	public void setFileCastType(String fileCastType) {
+		this.fileCastType = fileCastType;
+	}
+
+	public Long getFileSign() {
+		return fileSign;
+	}
+
+	public void setFileSign(Long fileSign) {
+		this.fileSign = fileSign;
+	}
 }

@@ -9,7 +9,6 @@
 package com.audioweb.server.handler;
 
 import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;

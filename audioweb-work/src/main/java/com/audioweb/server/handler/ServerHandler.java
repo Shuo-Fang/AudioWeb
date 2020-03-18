@@ -60,6 +60,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 				ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));
 			}
 		});
+		msg.release();
 	}
 }
 

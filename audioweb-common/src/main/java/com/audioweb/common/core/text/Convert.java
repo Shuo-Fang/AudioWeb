@@ -1,11 +1,17 @@
 package com.audioweb.common.core.text;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.Set;
+
+import com.audioweb.common.enums.BusinessStatus;
+import com.audioweb.common.enums.BusinessType;
+import com.audioweb.common.enums.CastWorkType;
+import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.utils.StringUtils;
 
 /**
@@ -996,4 +1002,38 @@ public class Convert
         }
         return head + s.replaceAll("(零.)*零元", "元").replaceFirst("(零.)+", "").replaceAll("(零.)+", "零").replaceAll("^整$", "零元整");
     }
+    /**
+     * 数字转byte数组
+     * @Title: intToBytes 
+     * @Description: 数字转byte数组
+     * @param num	需要转化的数字
+     * @param length 需要输出的byte数组长度 最多4位
+     * @return byte[] 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年3月18日 下午8:57:07
+     */
+    public static byte[] intToBytes(int num,int length) {
+    	byte[] result = new byte[length];
+    	for(int i = (length-1)>3?3:length-1;i >= 0;i--) {
+            result[i] = (byte)((num >> 8*i) & 0xFF);
+    	}
+        return result;
+	}
+    /**
+     * 英文字符转byte数组
+     * @Title: isoToBytes 
+     * @Description: 英文字符转byte数组
+     * @param str
+     * @return byte[] 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年3月18日 下午9:19:09
+     */
+    public static byte[] isoToBytes(String str) {
+		return str.getBytes(CharsetKit.CHARSET_ISO_8859_1);
+	}
+    public static void main(String[] args) {
+		System.out.println(Convert.toByte(ClientCommand.CMDTYPE_SERVERRETURN));
+	}
 }
