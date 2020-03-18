@@ -1,7 +1,10 @@
 package com.audioweb.web.controller.common;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -171,9 +174,11 @@ public class CommonController {
 								if(StringUtils.isNotNull(fWorkFile)) {
 									String url = fWorkFile.getVirPath();
 									AjaxResult ajax = AjaxResult.success();
-									ajax.put("fileName", fWorkFile.getFileName());
-									ajax.put("url", serverConfig.getUrl()+url);
-									ajax.put("fileId", fWorkFile.getFileId());
+									Map<String, String> data = new HashMap<String, String>();
+									data.put("fileName", fWorkFile.getFileName());
+									data.put("url", serverConfig.getUrl()+url);
+									data.put("fileId", fWorkFile.getFileId());
+									ajax.put(AjaxResult.DATA_TAG, data);
 									return ajax;
 								}else {
 									FileUtils.deleteFile(fileName);

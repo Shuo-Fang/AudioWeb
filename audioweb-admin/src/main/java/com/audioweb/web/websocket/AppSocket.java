@@ -24,10 +24,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.json.JSONObject;
 import com.audioweb.framework.shiro.session.OnlineSessionDAO;
 import com.audioweb.system.domain.SysUser;
+import com.audioweb.work.global.WebsocketGlobal;
 
 /** 
  * @ClassName: AppSocket 
@@ -134,12 +134,14 @@ public class AppSocket {
 		JSONObject jsonObject = new JSONObject();
 		if(message != null && message.equals("time")) {
 			//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			jsonObject.put("type", message);
+			jsonObject.put("code", "0");
+			jsonObject.put("msg", "获取成功");
 			jsonObject.put("data", System.currentTimeMillis());
 			sendMessage(jsonObject.toCompactString());
 		}else {
-			jsonObject.put("type", message);
-			jsonObject.put("data", "100");
+			jsonObject.put("data", message);
+			jsonObject.put("code", "0");
+			jsonObject.put("msg", "获取成功");
 			sendInfo(jsonObject.toCompactString());
 		}
 	}

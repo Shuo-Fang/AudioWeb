@@ -25,7 +25,7 @@ import io.swagger.annotations.ApiOperation;
  * 
  * @author ruoyi
  */
-//@Api("用户信息管理")
+@Api("服务器测试用接口，忽略")
 @RestController
 @RequestMapping("/test/user")
 public class TestController extends BaseController

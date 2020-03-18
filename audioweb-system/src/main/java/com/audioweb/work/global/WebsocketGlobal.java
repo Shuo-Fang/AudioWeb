@@ -6,7 +6,7 @@
  * @date 2020年2月27日 下午12:03:28 
  * @version V1.0   
  */ 
-package com.audioweb.common.global;
+package com.audioweb.work.global;
 
 import java.util.ArrayList;
 import java.util.HashSet;

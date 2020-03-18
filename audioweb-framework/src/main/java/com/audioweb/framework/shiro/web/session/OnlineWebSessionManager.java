@@ -14,13 +14,13 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.audioweb.common.constant.ShiroConstants;
-import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.framework.shiro.session.OnlineSession;
 import com.audioweb.system.domain.SysUserOnline;
 import com.audioweb.system.service.ISysUserOnlineService;
+import com.audioweb.work.global.WebsocketGlobal;
 
 /**
  * 主要是在此如果会话的属性修改了 就标识下其修改了 然后方便 OnlineSessionDao同步

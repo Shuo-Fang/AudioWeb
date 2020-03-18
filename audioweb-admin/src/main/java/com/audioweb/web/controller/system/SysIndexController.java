@@ -99,7 +99,8 @@ public class SysIndexController extends BaseController
     	SysUser user = new SysUser();
     	BeanUtils.copyBeanProp(user,ShiroUtils.getSysUser());
     	user.setPassword("");
-    	result.put("user", user);
+    	user.setSalt("");
+    	result.put(AjaxResult.DATA_TAG, user);
     	return result;
 	}
 }

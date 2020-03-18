@@ -98,7 +98,7 @@ public class WorkFileController extends BaseController
 	    	workFile.setFilePath(FileUtils.formatToLin(FileUtils.formatPath(configService.selectConfigByKey(type)).concat("/")));
 	    	List<WorkFile> list = workFileService.selectWorkFileList(workFile);
 	    	AjaxResult result = success("获取成功");
-	    	result.put("list", list);
+	    	result.put(AjaxResult.DATA_TAG, list);
 	    	return result;
 		} catch (Exception e) {
 			e.printStackTrace();

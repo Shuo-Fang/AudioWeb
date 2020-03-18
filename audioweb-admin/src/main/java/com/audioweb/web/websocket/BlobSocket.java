@@ -1,6 +1,7 @@
 package com.audioweb.web.websocket;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -13,10 +14,10 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.springframework.stereotype.Component;
 
-import com.audioweb.common.global.WebsocketGlobal;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
+import com.audioweb.work.global.WebsocketGlobal;
 
 /**
  * 实时广播中的socket连接
@@ -104,6 +105,12 @@ public class BlobSocket {
 	public void sendMessage(String message) throws IOException {
 		// String m = "1,2,3,4,5";
 		this.session.getBasicRemote().sendText(message);
+	}
+	
+	public void sendMessage(byte[] message) throws IOException {
+		// String m = "1,2,3,4,5";
+		ByteBuffer buffer = ByteBuffer.wrap(message);
+		this.session.getBasicRemote().sendBinary(buffer);
 	}
 
 	/**
