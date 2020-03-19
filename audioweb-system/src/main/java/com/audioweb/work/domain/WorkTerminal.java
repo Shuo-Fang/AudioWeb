@@ -6,9 +6,12 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.validation.constraints.Size;
 
@@ -20,7 +23,9 @@ import javax.validation.constraints.Size;
  */
 public class WorkTerminal extends BaseEntity
 {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
+	
+	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>();
 
     /** 终端序号ID */
     private String terRealId;
@@ -193,6 +198,9 @@ public class WorkTerminal extends BaseEntity
 	public void setIsOnline(int isOnline) {
 		this.isOnline = isOnline;
 	}
+	public static Map<String, WorkTerminal> getTerminalMap() {
+		return terminalMap;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -215,6 +223,30 @@ public class WorkTerminal extends BaseEntity
 		} else if (!terminalId.equals(other.terminalId))
 			return false;
 		return true;
+	}
+	
+	/** 将终端信息存入维护 */
+	public static Boolean put(WorkTerminal terminal) {
+		if(StringUtils.isNotNull(terminal)&& StringUtils.isNotEmpty(terminal.getTerminalId())) {
+			terminalMap.put(terminal.getTerminalId(), terminal);
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	/** 查询终端信息是否存在  */
+	public static Boolean exist(String terminalId) {
+		return terminalMap.containsKey(terminalId);
+	}
+	
+	/**获取维护的指定终端信息*/
+	public static WorkTerminal get(String terminalId) {
+		if(StringUtils.isNotEmpty(terminalId)) {
+			return terminalMap.get(terminalId);
+		}else {
+			return null;
+		}
 	}
 	
     @Override
