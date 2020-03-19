@@ -8,13 +8,17 @@
  */ 
 package com.audioweb.work.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.enums.CastWorkType;
+import com.audioweb.common.utils.StringUtils;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,10 +30,12 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020年3月2日 下午1:27:26  
  */
 @ApiModel("广播任务实体")
-public class CastTask extends BaseEntity{
-	public static final String FILECASTTASK = "FileCastTask";
-	private static final long serialVersionUID = 1L;
+public class CastTask extends BaseEntity implements BaseRunning{
 	
+	private static final long serialVersionUID = 1L;
+	/**默认16宽度即可，一般达不到满载*/
+	private static Map<Long, CastTask> taskMap = new ConcurrentHashMap<Long, CastTask>();
+
 	/** 广播编号ID */
 	@ApiModelProperty("广播编号ID")
 	private Long taskId;
@@ -82,6 +88,12 @@ public class CastTask extends BaseEntity{
 	@ApiModelProperty("正在广播终端列表")
 	private List<WorkTerminal> castlist;
 	
+	public CastTask() {
+		
+	}
+	public CastTask(Long id) {
+		taskId = id;
+	}
     
     public Long getTaskId() {
 		return taskId;
@@ -131,7 +143,6 @@ public class CastTask extends BaseEntity{
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	
 	
     public List<String> getDomainidlist() {
 		return domainidlist;
@@ -200,4 +211,34 @@ public class CastTask extends BaseEntity{
             .append("remark", getRemark())
             .toString();
     }
+	@Override
+	public boolean put() {
+		if(StringUtils.isNotNull(taskId)) {
+			taskMap.put(taskId, this);
+			return true;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean exist() {
+		return taskMap.containsKey(taskId);
+	}
+	@Override
+	public CastTask get() {
+		if(StringUtils.isNotNull(taskId)) {
+			return taskMap.get(taskId);
+		}else {
+			return null;
+		}
+	}
+	@Override
+	public void clear() {
+		taskMap.clear();
+	}
+	
+	@Override
+	public List<CastTask> getList() {
+		return new ArrayList<CastTask>(taskMap.values());
+	}
 }

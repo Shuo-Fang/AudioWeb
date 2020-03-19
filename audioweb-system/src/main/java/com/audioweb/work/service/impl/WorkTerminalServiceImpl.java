@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.mapper.WorkTerminalMapper;
 import com.audioweb.work.service.IWorkTerminalService;
+import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.text.Convert;
 
@@ -224,5 +225,16 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		map.put("domainId", domainId);
 		map.put("ids", Convert.toStrArray(ids));
 		return workTerminalMapper.updateTerminalDomainByIds(map);
+	}
+
+	@Override
+	public void initWorkTerminals() {
+		WorkTerminal terminal = new WorkTerminal();
+		terminal.getDomain().setStatus(UserConstants.DOMAIN_NORMAL);
+		terminal.clear();
+		List<WorkTerminal> workTerminal  = workTerminalMapper.selectWorkTerminalList(terminal);
+		for(WorkTerminal wTerminal:workTerminal) {
+			wTerminal.put();
+		}
 	}
 }

@@ -14,7 +14,7 @@ import com.audioweb.common.constant.Constants;
 import com.audioweb.common.constant.ShiroConstants;
 import com.audioweb.common.utils.MessageUtils;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.framework.manager.AsyncManager;
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.framework.manager.factory.AsyncFactory;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysUser;

@@ -17,7 +17,7 @@ import com.audioweb.common.enums.BusinessStatus;
 import com.audioweb.common.json.JSON;
 import com.audioweb.common.utils.ServletUtils;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.framework.manager.AsyncManager;
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.framework.manager.factory.AsyncFactory;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysOperLog;

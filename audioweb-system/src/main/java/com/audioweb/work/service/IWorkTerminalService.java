@@ -91,4 +91,13 @@ public interface IWorkTerminalService
 	 * @date 2020年3月3日 上午11:35:05
 	 */
 	public int changeStatus(WorkTerminal workTerminal);
+	/**
+	 * 初始化终端缓存
+	 * @Title: initWorkTerminals 
+	 * @Description: TODO(这里用一句话描述这个方法的作用)  void 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年3月19日 下午11:28:14
+	 */
+	public void initWorkTerminals();
 }

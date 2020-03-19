@@ -1,9 +1,15 @@
 package com.audioweb.work.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.StringUtils;
 
 /**
  * 音频任务中所有音频的存储序列信息对象 work_file
@@ -11,9 +17,11 @@ import com.audioweb.common.core.domain.BaseEntity;
  * @author shuofang
  * @date 2020-03-10
  */
-public class WorkFile extends BaseEntity
+public class WorkFile extends BaseEntity implements BaseRunning
 {
     private static final long serialVersionUID = 1L;
+    /**默认最大音频加载值为1000 -> 1000*0.75+1 = 751*/
+	private static Map<String, WorkFile> fileMap = new ConcurrentHashMap<String, WorkFile>(512);
 
     /** 音频的路径md5值 */
     private String fileId;
@@ -66,7 +74,15 @@ public class WorkFile extends BaseEntity
     
     /** 备注(或文字转语音中的文字信息) */
     private String remark;
-
+    
+    public WorkFile() {
+    	
+    }
+    
+    public WorkFile(String id) {
+		fileId = id;
+	}
+    
     /** 
 	 * <p>Title: </p> 
 	 * <p>Description: </p> 
@@ -262,4 +278,36 @@ public class WorkFile extends BaseEntity
             .append("remark", getUpdateTime())
             .toString();
     }
+
+	@Override
+	public boolean put() {
+		if(StringUtils.isNotEmpty(fileId)) {
+			fileMap.put(fileId, this);
+			return true;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean exist() {
+		return fileMap.containsKey(fileId);
+	}
+	@Override
+	public WorkFile get() {
+		if(StringUtils.isNotEmpty(fileId)) {
+			return fileMap.get(fileId);
+		}else {
+			return null;
+		}
+	}
+
+	@Override
+	public void clear() {
+		fileMap.clear();
+	}
+	
+	@Override
+	public List<WorkFile> getList() {
+		return new ArrayList<WorkFile>(fileMap.values());
+	}
 }

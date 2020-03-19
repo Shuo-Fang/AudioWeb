@@ -30,7 +30,7 @@ public class BossPoolConfig implements PoolConfig{
     public Executor bossServiceExecutor() {
         log.info("start BossServiceExecutor");
         return new ThreadPoolExecutor(NUMBER_OF_CORES,
-				NUMBER_OF_CORES*4, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,
+				NUMBER_OF_CORES*8, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,
 				new LinkedBlockingQueue<Runnable>(1024),
 				new BasicThreadFactory.Builder().namingPattern("boss-pool-%d").daemon(true).build(),
 				new ThreadPoolExecutor.AbortPolicy()) {

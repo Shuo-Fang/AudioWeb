@@ -13,7 +13,7 @@ import com.audioweb.common.constant.ShiroConstants;
 import com.audioweb.common.exception.user.UserPasswordNotMatchException;
 import com.audioweb.common.exception.user.UserPasswordRetryLimitExceedException;
 import com.audioweb.common.utils.MessageUtils;
-import com.audioweb.framework.manager.AsyncManager;
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.framework.manager.factory.AsyncFactory;
 import com.audioweb.system.domain.SysUser;
 

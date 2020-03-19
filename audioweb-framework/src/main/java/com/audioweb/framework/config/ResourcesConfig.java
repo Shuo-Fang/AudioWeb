@@ -2,7 +2,9 @@ package com.audioweb.framework.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,9 +16,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.framework.interceptor.RepeatSubmitInterceptor;
-import com.audioweb.framework.manager.AsyncManager;
+import com.audioweb.common.thread.manager.AsyncManager;
+import com.audioweb.common.utils.DateUtils;
 import com.audioweb.system.service.ISysConfigService;
 import com.audioweb.work.service.IWorkFileService;
+import com.audioweb.work.service.IWorkTerminalService;
 
 /**
  * 通用配置
@@ -26,11 +30,19 @@ import com.audioweb.work.service.IWorkFileService;
 @Configuration
 public class ResourcesConfig implements WebMvcConfigurer
 {
+	/**定时刷新指定时间*/
+	private static final String scheduleTime = "02:00:00";
+	
+	private static Map<String, String> paths = new HashMap<String, String>();
+	
+	private static volatile long scheTime;
     @Autowired
     private ISysConfigService configService;
 	
 	@Autowired
 	private IWorkFileService workFileService;
+	@Autowired
+	private IWorkTerminalService workTerminalService;
 
     /**
      * 首页地址
@@ -67,27 +79,65 @@ public class ResourcesConfig implements WebMvcConfigurer
 		/** 文字转音频路径 */
 		String wordPath = configService.selectConfigByKey(WorkConstants.WORDPATH);
 		registry.addResourceHandler(Constants.AUDIO_WORD_PREFIX + "/**").addResourceLocations("file:" + wordPath + "/");
-        /** 初始化路径文件信息 */
-        AsyncManager.me().execute(new TimerTask() {
-			
-			@Override
-			public void run() {
-				Map<String, String> paths = new HashMap<String, String>();
-				paths.put(WorkConstants.AUDIOFILETYPE, filePath);
-				paths.put(WorkConstants.AUDIOPOINTTYPE, pointPath);
-				paths.put(WorkConstants.AUDIOWORDTYPE, wordPath);
-				/** 启动时初始化一次文件信息*/
-				workFileService.initWorkFiles(paths);
-			}
-		},10000);
+        /** 初始化路径信息 */
+		paths.put(WorkConstants.AUDIOFILETYPE, filePath);
+		paths.put(WorkConstants.AUDIOPOINTTYPE, pointPath);
+		paths.put(WorkConstants.AUDIOWORDTYPE, wordPath);
     }
 
     /**
-     * 自定义拦截规则
+     * 自定义拦截规则 及 各类资源和定时任务初始化管理
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry)
     {
         registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
+        /**文件初始化刷新管理*/
+        AsyncManager.me().execute(new TimerTask() {
+			@Override
+			public void run() {
+				/** 启动时初始化一次文件信息*/
+				workFileService.initWorkFiles(paths);
+				/**启动时初始化一次广播终端信息*/
+				workTerminalService.initWorkTerminals();
+			}
+		}, 10000);
+        /**定时每天刷新一次*/
+        long oneDay = 24 * 60 * 60 * 1000;
+        long initDelay  = DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getDate()+" "+scheduleTime).getTime();
+        AsyncManager.me().scheduleExecute(new TimerTask() {
+			@Override
+			public void run() {
+				/** 启动时初始化一次文件信息*/
+				workFileService.initWorkFiles(paths);
+			}
+		},initDelay,oneDay,TimeUnit.MILLISECONDS);
+        
+        
+        /**测试*/
+        AsyncManager.me().scheduleExecute(new TimerTask() {
+			
+			@Override
+			public void run() {
+				long time = System.currentTimeMillis();
+				int i  = (int) (time - scheTime) - 40;
+				if(i > 4 || i< -4) {
+					System.out.println(i);
+				}
+				scheTime = time;
+			}
+		}, 0, 40, TimeUnit.MILLISECONDS);
+/*        new Timer().scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				long time = System.currentTimeMillis();
+				int i  = (int) (time - scheTime) - 40;
+				if(i > 4 || i< -4) {
+					System.out.println(i);
+				}
+				scheTime = time;
+			}
+        }, 0, 40);*/
     }
 }

@@ -12,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.audioweb.common.config.datasource.DynamicDataSourceContextHolder;
+import com.audioweb.common.utils.Threads;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.server.handler.LoginServerHandler;
 import com.audioweb.server.handler.TcpServerHandler;
@@ -64,15 +66,15 @@ public class NettyServer {
 	/*
 	 * boss线程池
 	 */
-	//private Executor boss = (Executor)SpringUtils.getBean("BossServiceExecutor");
+	private ExecutorService boss = (ExecutorService)SpringUtils.getBean("BossServiceExecutor");
 	/*
 	 * io线程池
 	 */
-	private Executor io = (Executor)SpringUtils.getBean("IoServiceExecutor");
+	private ExecutorService io = (ExecutorService)SpringUtils.getBean("IoServiceExecutor");
 	/*
 	 * tcp线程池
 	 */
-	private Executor tcp = (Executor)SpringUtils.getBean("TcpServiceExecutor");
+	private ExecutorService tcp = (ExecutorService)SpringUtils.getBean("TcpServiceExecutor");
 	/*
      *  获取活跃的 cpu数量
      */
@@ -220,6 +222,9 @@ public class NettyServer {
         tcpWorkerGroup.shutdownGracefully();
         udpWorkerGroup.shutdownGracefully();
         loginWorkerGroup.shutdownGracefully();
+        Threads.shutdownAndAwaitTermination(boss);
+        Threads.shutdownAndAwaitTermination(io);
+        Threads.shutdownAndAwaitTermination(tcp);
         log.info("Shutdown Netty Server Success!");
     }
 }

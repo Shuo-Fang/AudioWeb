@@ -41,7 +41,7 @@ public class IoPoolConfig implements PoolConfig {
     public Executor ioServiceExecutor() {
         log.info("start IoServiceExecutor");
         return new ThreadPoolExecutor(NUMBER_OF_CORES*2,
-				NUMBER_OF_CORES*4, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,
+				NUMBER_OF_CORES*8, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,
 				new LinkedBlockingQueue<Runnable>(1024),
 				new MyThreadFactory(2),
 				new ThreadPoolExecutor.AbortPolicy()) {

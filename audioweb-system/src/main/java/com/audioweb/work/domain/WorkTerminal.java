@@ -9,7 +9,9 @@ import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,11 +23,11 @@ import javax.validation.constraints.Size;
  * @author shuofang
  * @date 2020-03-01
  */
-public class WorkTerminal extends BaseEntity
+public class WorkTerminal extends BaseEntity implements BaseRunning
 {
 	private static final long serialVersionUID = 1L;
-	
-	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>();
+	/** 181 = 240*0.75+1 设定预定满载值为240*/
+	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>(128);
 
     /** 终端序号ID */
     private String terRealId;
@@ -80,6 +82,12 @@ public class WorkTerminal extends BaseEntity
     
     /** 是否在线	0为离线,1为在线(即将离线),2为在线(刚刚通信过)*/
     private int isOnline; 
+    public WorkTerminal() {
+    	
+	}
+    public WorkTerminal(String id) {
+    	terminalId = id;
+    }
     
     public String getTerRealId() {
 		return terRealId;
@@ -226,9 +234,10 @@ public class WorkTerminal extends BaseEntity
 	}
 	
 	/** 将终端信息存入维护 */
-	public static Boolean put(WorkTerminal terminal) {
-		if(StringUtils.isNotNull(terminal)&& StringUtils.isNotEmpty(terminal.getTerminalId())) {
-			terminalMap.put(terminal.getTerminalId(), terminal);
+	@Override
+	public boolean put() {
+		if(StringUtils.isNotEmpty(terminalId)) {
+			terminalMap.put(terminalId, this);
 			return true;
 		}else {
 			return false;
@@ -236,12 +245,14 @@ public class WorkTerminal extends BaseEntity
 	}
 	
 	/** 查询终端信息是否存在  */
-	public static Boolean exist(String terminalId) {
+	@Override
+	public boolean exist() {
 		return terminalMap.containsKey(terminalId);
 	}
 	
 	/**获取维护的指定终端信息*/
-	public static WorkTerminal get(String terminalId) {
+	@Override
+	public WorkTerminal get() {
 		if(StringUtils.isNotEmpty(terminalId)) {
 			return terminalMap.get(terminalId);
 		}else {
@@ -267,4 +278,13 @@ public class WorkTerminal extends BaseEntity
             .append("remark", getRemark())
             .toString();
     }
+	@Override
+	public void clear() {
+		terminalMap.clear();
+	}
+	
+	@Override
+	public List<WorkTerminal> getList() {
+		return new ArrayList<WorkTerminal>(terminalMap.values());
+	}
 }

@@ -1,5 +1,6 @@
 package com.audioweb.framework.manager;
 
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.framework.shiro.web.session.SpringSessionValidationScheduler;
 import net.sf.ehcache.CacheManager;
 import org.apache.shiro.cache.ehcache.EhCacheManager;

@@ -250,6 +250,16 @@ public class WorkFileServiceImpl implements IWorkFileService
 				}
 			}
 		}
+		log.info("完成音频扫描");
+		WorkFile workFile = new WorkFile();
+		workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+		workFile.clear();
+		/**数据库中存储的文件信息*/
+		List<WorkFile> workFiles = selectWorkFileList(workFile);
+		/**将文件存入缓存中维护*/
+		for(WorkFile file:workFiles) {
+			file.put();
+		}
 	}
 	private String getVirPath(String type) {
 		String result = "";

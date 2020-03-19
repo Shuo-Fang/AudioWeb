@@ -8,7 +8,7 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import com.audioweb.common.enums.OnlineStatus;
-import com.audioweb.framework.manager.AsyncManager;
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.framework.manager.factory.AsyncFactory;
 import com.audioweb.framework.shiro.service.SysShiroService;
 

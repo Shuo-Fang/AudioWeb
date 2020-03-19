@@ -18,10 +18,10 @@ import com.audioweb.common.utils.Threads;
 public class ThreadPoolConfig
 {
     // 核心线程池大小
-    private int corePoolSize = 20;
+    private int corePoolSize = 32;
 
     // 最大可创建的线程数
-    private int maxPoolSize = 100;
+    private int maxPoolSize = 256;
 
     // 队列最大长度
     private int queueCapacity = 1000;
