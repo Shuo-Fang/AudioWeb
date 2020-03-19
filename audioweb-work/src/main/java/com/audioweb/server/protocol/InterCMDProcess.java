@@ -1,15 +1,13 @@
 package com.audioweb.server.protocol;
 
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Value;
 
 import com.audioweb.common.core.text.CharsetKit;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.ClientCommand;
+import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.StringUtils;
 
@@ -21,9 +19,10 @@ public class InterCMDProcess {
 	/** 心跳检测接收端口默认6970 */
 	@Value("${netty.serverPort}")
 	private static int netHeartRecPort;
+	/** ByteBuffer默认指定大小 */
+	private static final Integer NORMALSIZE = 50;
 	
-	private static final SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd  HHmmss");
-	
+	//private static final SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd  HHmmss");
 	/*******************解析接收到的数据*************************/
 	/**
 	 * 从收到的数据包解析登录终端编号
@@ -42,14 +41,14 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer returnLoginBytes(){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		encoded.put(ClientCommand.CMD_LOGIN.getCmd());
 		encoded.put((byte)18);
 		encoded.put(ClientCommand.CMD_NONE.getCmd());
 		encoded.put(ClientCommand.CMD_HAVE.getCmd());
 		encoded.put(ClientCommand.CMD_NONE.getCmd());
-		String dateString = netHeartRecPort+formatter.format(new Date());
+		String dateString = netHeartRecPort+DateUtils.dateTimeNow(DateUtils.YYMMDD__HHMMSS);//formatter.format(new Date());
 		return sendStringToBytes(encoded,dateString,null);
 	}
 	/**
@@ -57,7 +56,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer returnNetHeart(){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		encoded.put(ClientCommand.CMD_NETHEART.getCmd());
 		for(int i=2;i<6;i++){
@@ -131,7 +130,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer reply(String groupip,String groupPort){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		encoded.put(ClientCommand.CMD_CMICEnable.getCmd());
 		for(int i=0;i<4;i++){
@@ -152,7 +151,7 @@ public class InterCMDProcess {
 	 * @date 2020年3月18日 下午9:42:51
 	 */
 	public static ByteBuffer vodFileCast(ClientCommand type,String imot){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		if(type == ClientCommand.CMD_STOPVOD && imot.equals("1")){//点播停止
 			encoded.put(0, ClientCommand.CMDTYPE_TERCONTROL.getCmd());
@@ -176,7 +175,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer sendCast(Boolean isstart,String multiCastIp, int targetPort,int vol,CastWorkType type){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		switch(type) {
 		case FILE:
@@ -260,7 +259,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer sendMainTermCast(Boolean isstart,String ipOrCmd, int targetPort,CastWorkType type){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 		/*switch(type) {
@@ -362,7 +361,7 @@ public class InterCMDProcess {
 	 * @return
 	 */
 	public static ByteBuffer sendVolSet(int vol,Boolean issave){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_VOLSET.getCmd());
 		for(int i=2;i<6;i++){
@@ -383,7 +382,7 @@ public class InterCMDProcess {
 	 * @return
 	 */
 	public static ByteBuffer sendTerReboot(){
-		ByteBuffer encoded = ByteBuffer.allocate(50);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.REQUEST_RESTART.getCmd());
 		for(int i=2;i<6;i++){

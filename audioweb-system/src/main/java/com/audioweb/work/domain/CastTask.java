@@ -16,58 +16,72 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.enums.CastWorkType;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 /** 
  * @ClassName: CastTask 
  * @Description: 广播任务信息
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
  * @date 2020年3月2日 下午1:27:26  
  */
+@ApiModel("广播任务实体")
 public class CastTask extends BaseEntity{
 	public static final String FILECASTTASK = "FileCastTask";
 	private static final long serialVersionUID = 1L;
 	
 	/** 广播编号ID */
+	@ApiModelProperty("广播编号ID")
 	private Long taskId;
 	
 	/** 广播任务名称 */
+	@ApiModelProperty("广播任务名称")
 	private String taskName;
 	
 	/** 广播音量 */
+	@ApiModelProperty("广播音量")
 	private Integer vol = -1;
 	
 	/**	广播类型 */
+	@ApiModelProperty("广播类型:0,文件广播;1,定时广播;2,实时采播;3,终端采播;4,终端点播;5,寻呼话筒;6,控件广播;7,文本广播")
 	private CastWorkType castType;
 	
 	/**	广播地址 */
+	@ApiModelProperty("广播地址")
 	private String castAddress;
 	
 	/**	广播端口 */
+	@ApiModelProperty("广播端口")
 	private Integer castPort;
 	
 	/**	广播级别 */
+	@ApiModelProperty("广播级别")
 	private Integer castLevel;
 	
     /** 备注 */
-    private String remark;
+	@ApiModelProperty("备注")
+	private String remark;
     
     /** 是否正在广播 */
+	@ApiModelProperty("是否正在广播")
 	private Boolean isCast = false;
 	
 	/** 是否暂停广播 */
+	@ApiModelProperty("是否暂停广播")
 	private Boolean isStop;
 
     /**	广播初始化分区列表 */
+	@ApiModelProperty("广播初始化分区列表")
 	private List<String> domainidlist;
 	
 	/**	广播初始化终端列表 */
+	@ApiModelProperty("广播初始化终端列表")
 	private List<WorkTerminal> castTeridlist;
 
 	/**	正在广播终端列表 */
+	@ApiModelProperty("正在广播终端列表")
 	private List<WorkTerminal> castlist;
 	
-	/** 正在播放音频信息*/
-	//private RunFile runfile;
-    
     
     public Long getTaskId() {
 		return taskId;

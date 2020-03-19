@@ -143,15 +143,15 @@ public class WorkTerminalController extends BaseController
     @ResponseBody
     public AjaxResult addSaveList(WorkTerminal workTerminal)
     {
-    	/** 特别注明，在批量新增终端中，其中采用了DelFlag作为判断是否覆盖已有终端,isOnline作为需要添加的终端数量值,taskId作为终端名称递增值，taskName作为终端名后缀*/
+    	/** 特别注明，在批量新增终端中，其中采用了DelFlag作为判断是否覆盖已有终端,isOnline作为需要添加的终端数量值,terRealId作为终端名称递增值，domainName作为终端名后缀*/
     	String message = "";
     	String error = "";
     	int errorNum = 0;
     	try {
     		int terNum = workTerminal.getIsOnline();//需要添加的终端数量
-    		int terNameNum = (int) workTerminal.getTaskId();
+    		int terNameNum = Integer.parseInt(workTerminal.getTerRealId());
     		String terPrefix = StringUtils.isEmpty(workTerminal.getTerminalName())?"":workTerminal.getTerminalName();
-    		String terSuffix = StringUtils.isEmpty(workTerminal.getTaskName())?"":workTerminal.getTaskName();
+    		String terSuffix = StringUtils.isEmpty(workTerminal.getDomain().getDomainName())?"":workTerminal.getDomain().getDomainName();
     		int terId = Integer.parseInt(workTerminal.getTerminalId());
     		Long ip = IpUtils.ip2Long(workTerminal.getTerminalIp());
     		if(StringUtils.isNotEmpty(workTerminal.getDelFlag()) && workTerminal.getDelFlag().equals("0")) {
@@ -264,7 +264,7 @@ public class WorkTerminalController extends BaseController
         		names += domain.getDomainName()+",";
         	}
         	if(StringUtils.isNotEmpty(names)) {
-        		workTerminal.setTaskName(names.substring(0, names.length()-1));
+        		workTerminal.setDelFlag(names.substring(0, names.length()-1));
         	}
         }
         mmap.put("workTerminal", workTerminal);

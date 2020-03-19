@@ -70,14 +70,11 @@ public class WorkTerminal extends BaseEntity
     })
     private SysDomain domain;
     
-    /** 是否正在广播	0为无任务,非0为对应的任务ID*/
-    private long taskId; 
+    /** 广播信息 */
+    private CastTask castTask; 
     
     /** 是否在线	0为离线,1为在线(即将离线),2为在线(刚刚通信过)*/
     private int isOnline; 
-    
-    /** 广播任务名称 */
-    private String taskName;
     
     public String getTerRealId() {
 		return terRealId;
@@ -184,23 +181,17 @@ public class WorkTerminal extends BaseEntity
 	public void setDomain(SysDomain domain) {
 		this.domain = domain;
 	}
-	public long getTaskId() {
-		return taskId;
+	public CastTask getCastTask() {
+		return castTask;
 	}
-	public void setTaskId(long taskId) {
-		this.taskId = taskId;
+	public void setCastTask(CastTask castTask) {
+		this.castTask = castTask;
 	}
 	public int getIsOnline() {
 		return isOnline;
 	}
 	public void setIsOnline(int isOnline) {
 		this.isOnline = isOnline;
-	}
-	public String getTaskName() {
-		return taskName;
-	}
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
 	}
 	@Override
 	public int hashCode() {

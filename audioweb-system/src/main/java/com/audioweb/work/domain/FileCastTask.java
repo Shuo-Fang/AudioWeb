@@ -1,7 +1,7 @@
 /**   
  * @Title: FileCastTask.java 
  * @Package com.audioweb.work.domain 
- * @Description: TODO(用一句话描述该文件做什么) 
+ * @Description: 文件-定时-文本广播广播对象
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
  * @date 2020年3月18日 下午4:00:17 
  * @version V1.0   
@@ -10,30 +10,45 @@ package com.audioweb.work.domain;
 
 import java.util.List;
 
-/** 文件-定时广播广播对象
+import com.audioweb.common.enums.FileCastType;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/** 文件-定时-文本广播广播对象
  * @ClassName: FileCastTask 
  * @Description: 文件广播广播对象
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
  * @date 2020年3月18日 下午4:00:17  
  */
+@ApiModel("文件广播实体")
 public class FileCastTask extends CastTask{
 
 	private static final long serialVersionUID = 1L;
 	
 	/** 正在广播的文件信息 */
+	@ApiModelProperty("正在广播的文件")
 	private WorkFile runFile;
 	
 	/** 需要广播的文件列表 */
+	@ApiModelProperty("需要广播的文件列表")
 	private List<WorkFile> castFileList;
 	
-	/** 随机广播20位长度序列号*/
-	private String randomSerial;
-	
-	/** 文件广播类型*/
-	private String fileCastType;
+	/** 文件广播类型 */
+	@ApiModelProperty("广播的文件类型：0,顺序播放;1,列表循环;2,随机播放")
+	private FileCastType fileCastType;
 	
 	/** 音频播放位置*/
+	@ApiModelProperty("音频播放位置，单位byte")
 	private volatile Long fileSign;
+	
+	/** 定时剩余时长 */
+	@ApiModelProperty("定时剩余时长，单位ms")
+	private volatile Long timing;
+	
+	/** 是否音频播放完再停止 */
+	@ApiModelProperty("是否音频播放完再停止")
+	private Boolean completeClose;
 
 	public WorkFile getRunFile() {
 		return runFile;
@@ -51,19 +66,11 @@ public class FileCastTask extends CastTask{
 		this.castFileList = castFileList;
 	}
 
-	public String getRandomSerial() {
-		return randomSerial;
-	}
-
-	public void setRandomSerial(String randomSerial) {
-		this.randomSerial = randomSerial;
-	}
-
-	public String getFileCastType() {
+	public FileCastType getFileCastType() {
 		return fileCastType;
 	}
 
-	public void setFileCastType(String fileCastType) {
+	public void setFileCastType(FileCastType fileCastType) {
 		this.fileCastType = fileCastType;
 	}
 
@@ -73,5 +80,21 @@ public class FileCastTask extends CastTask{
 
 	public void setFileSign(Long fileSign) {
 		this.fileSign = fileSign;
+	}
+
+	public Long getTiming() {
+		return timing;
+	}
+
+	public void setTiming(Long timing) {
+		this.timing = timing;
+	}
+
+	public Boolean getCompleteClose() {
+		return completeClose;
+	}
+
+	public void setCompleteClose(Boolean completeClose) {
+		this.completeClose = completeClose;
 	}
 }

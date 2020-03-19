@@ -28,7 +28,12 @@
             <groupId>com.audioweb</groupId>
             <artifactId>audioweb-common</artifactId>
         </dependency>
-        
+        <!--防止进入swagger页面报类型转换错误，排除2.9.2中的引用，手动增加1.5.21版本-->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>1.5.21</version>
+        </dependency>
     </dependencies>
 	
 </project>
