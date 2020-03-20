@@ -9,6 +9,7 @@
 package com.audioweb.web.controller.castTask;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.work.domain.CastTask;
+import com.audioweb.work.domain.FileCastTask;
+import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -61,11 +64,12 @@ public class CastTaskController extends BaseController{
     @ResponseBody
     public AjaxResult getTask() {
     	AjaxResult result = success("获取成功");
-    	CastTask task = new CastTask();
+    	CastTask task = new FileCastTask();
     	task.setTaskId(1244L);
     	task.setCastType(CastWorkType.FILE);
     	task.setIsCast(true);
     	task.setVol(34);
+    	task.setCastlist(new ArrayList<WorkTerminal>());
     	result.put(AjaxResult.DATA_TAG, task);
     	return result;
 	}

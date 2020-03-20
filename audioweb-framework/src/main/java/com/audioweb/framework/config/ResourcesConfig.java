@@ -120,32 +120,5 @@ public class ResourcesConfig implements WebMvcConfigurer
 				workFileService.initWorkFiles(paths);
 			}
 		},initDelay,oneDay,TimeUnit.MILLISECONDS);
-        
-        
-        /**测试*/
-        AsyncManager.me().scheduleExecute(new TimerTask() {
-			
-			@Override
-			public void run() {
-				long time = System.currentTimeMillis();
-				int i  = (int) (time - scheTime) - 40;
-				if(i > 4 || i< -4) {
-					System.out.println(i);
-				}
-				scheTime = time;
-			}
-		}, 0, 40, TimeUnit.MILLISECONDS);
-/*        new Timer().scheduleAtFixedRate(new TimerTask() {
-			
-			@Override
-			public void run() {
-				long time = System.currentTimeMillis();
-				int i  = (int) (time - scheTime) - 40;
-				if(i > 4 || i< -4) {
-					System.out.println(i);
-				}
-				scheTime = time;
-			}
-        }, 0, 40);*/
     }
 }

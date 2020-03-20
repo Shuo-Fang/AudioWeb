@@ -54,11 +54,11 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	
 	/**	广播地址 */
 	@ApiModelProperty("广播地址")
-	private String castAddress;
+	transient private String castAddress;
 	
 	/**	广播端口 */
 	@ApiModelProperty("广播端口")
-	private Integer castPort;
+	transient private Integer castPort;
 	
 	/**	广播级别 */
 	@ApiModelProperty("广播级别")
@@ -78,15 +78,15 @@ public class CastTask extends BaseEntity implements BaseRunning{
 
     /**	广播初始化分区列表 */
 	@ApiModelProperty("广播初始化分区列表")
-	private List<String> domainidlist;
+	transient private List<String> domainidlist;
 	
 	/**	广播初始化终端列表 */
 	@ApiModelProperty("广播初始化终端列表")
-	private List<WorkTerminal> castTeridlist;
+	transient private List<WorkTerminal> castTeridlist;
 
 	/**	正在广播终端列表 */
 	@ApiModelProperty("正在广播终端列表")
-	private List<WorkTerminal> castlist;
+	transient private List<WorkTerminal> castlist;
 	
 	public CastTask() {
 		
@@ -240,5 +240,14 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	@Override
 	public List<CastTask> export() {
 		return new ArrayList<CastTask>(taskMap.values());
+	}
+	
+	/**将全部的对象更新替换为缓存中存储的对象**/
+	public static void loadAll(List<CastTask> entity) {
+		for(CastTask task : entity) {
+			if(task.exist()) {
+				task = task.get();
+			}
+		}
 	}
 }

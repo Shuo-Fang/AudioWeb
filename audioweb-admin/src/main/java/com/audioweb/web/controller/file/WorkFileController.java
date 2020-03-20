@@ -43,6 +43,8 @@ public class WorkFileController extends BaseController
 {
     private String prefix = "work/file";
 
+    private String path = "work.file";
+    
     @Autowired
     private IWorkFileService workFileService;
     
@@ -65,15 +67,20 @@ public class WorkFileController extends BaseController
     public TableDataInfo list(WorkFile workFile)
     {
     	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
-    	if(StringUtils.isNotEmpty(workFile.getFilePath())) {
-    		try {
-    			File f = new File(workFile.getFilePath());
-    			workFile.setFilePath(FileUtils.formatToLin(FileUtils.formatPath(f.getPath()).concat("/")));
-			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("文件类型配置地址有误，请检查");
+    	/**默认自动加载文件广播列表*/
+		try {
+			String filePath = "";
+			if(StringUtils.isEmpty(workFile.getFilePath())) {
+				filePath = configService.selectConfigByKey(path);
+			}else {
+				filePath = workFile.getFilePath();
 			}
-    	}
+			File f = new File(filePath);
+			workFile.setFilePath(FileUtils.formatToLin(FileUtils.formatPath(f.getPath()).concat("/")));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("文件类型配置地址有误，请检查");
+		}
         startPage();
         List<WorkFile> list = workFileService.selectWorkFileList(workFile);
         return getDataTable(list);

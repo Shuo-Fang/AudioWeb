@@ -9,6 +9,7 @@
 package com.audioweb.work.domain;
 
 import java.util.List;
+import java.util.Timer;
 
 import com.audioweb.common.enums.FileCastType;
 
@@ -25,6 +26,9 @@ import io.swagger.annotations.ApiModelProperty;
 public class FileCastTask extends CastTask{
 
 	private static final long serialVersionUID = 1L;
+	
+	/**文件广播的timer定时器*/
+	transient  private Timer timer;
 	
 	/** 正在广播的文件信息 */
 	@ApiModelProperty("正在广播的文件")
@@ -49,7 +53,13 @@ public class FileCastTask extends CastTask{
 	/** 是否音频播放完再停止 */
 	@ApiModelProperty("是否音频播放完再停止")
 	private Boolean completeClose;
-
+	
+	/**文件广播中的音频文件分包大小*/
+	transient private int bitsize;
+	
+	/**文件广播中每次广播的时间间隔*/
+	transient private int timesize;
+	
 	public WorkFile getRunFile() {
 		return runFile;
 	}
@@ -96,5 +106,29 @@ public class FileCastTask extends CastTask{
 
 	public void setCompleteClose(Boolean completeClose) {
 		this.completeClose = completeClose;
+	}
+
+	public int getBitsize() {
+		return bitsize;
+	}
+
+	public void setBitsize(int bitsize) {
+		this.bitsize = bitsize;
+	}
+
+	public int getTimesize() {
+		return timesize;
+	}
+
+	public void setTimesize(int timesize) {
+		this.timesize = timesize;
+	}
+
+	public Timer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(Timer timer) {
+		this.timer = timer;
 	}
 }

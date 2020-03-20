@@ -310,4 +310,13 @@ public class WorkFile extends BaseEntity implements BaseRunning
 	public List<WorkFile> export() {
 		return new ArrayList<WorkFile>(fileMap.values());
 	}
+	
+	/**将全部的对象更新替换为缓存中存储的对象**/
+	public static void loadAll(List<WorkFile> entity) {
+		for(WorkFile task : entity) {
+			if(task.exist()) {
+				task = task.get();
+			}
+		}
+	}
 }

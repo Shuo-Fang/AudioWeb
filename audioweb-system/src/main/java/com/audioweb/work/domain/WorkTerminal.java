@@ -287,4 +287,13 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 	public List<WorkTerminal> export() {
 		return new ArrayList<WorkTerminal>(terminalMap.values());
 	}
+	
+	/**将全部的对象更新替换为缓存中存储的对象**/
+	public static void loadAll(List<WorkTerminal> entity) {
+		for(WorkTerminal task : entity) {
+			if(task.exist()) {
+				task = task.get();
+			}
+		}
+	}
 }

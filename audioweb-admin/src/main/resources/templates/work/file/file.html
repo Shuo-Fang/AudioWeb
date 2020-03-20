@@ -12,15 +12,15 @@
                     <div class="select-list">
                         <ul>
                         	<li>
-                                <p>文件名称：</p>
+                                <p>音频名称:</p>
                                 <input type="text" name="fileName"/>
                             </li>
                             <li>
-                                <p>音频名称：</p>
+                                <p>歌曲名称:</p>
                                 <input type="text" name="songName"/>
                             </li>
                             <li>
-                                <p>歌手名称：</p>
+                                <p>歌手名称:</p>
                                 <input type="text" name="artist"/>
                             </li>
                             <!-- <li>
@@ -28,9 +28,8 @@
                                 <input type="text" name="album"/>
                             </li> -->
                             <li>
-                                <p>所属类型：</p>
+                                <p>所属类型:</p>
                                 <select name="filePath">
-                                    <option value="">所有</option>
                                     <option th:value="${@config.getKey('work.file')}">文件广播</option>
                                     <option th:value="${@config.getKey('work.point')}">终端点播</option>
                                     <option th:value="${@config.getKey('work.word')}">文本广播</option>
@@ -72,6 +71,10 @@
 <!--                 <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="work:file:edit">
                     <i class="fa fa-edit"></i> 修改
                 </a> -->
+                </a>
+                <a class="btn btn-primary" onclick="" shiro:hasPermission="work:file:add">
+                    <i class="fa fa-language"></i> 生成
+                </a>
                 <a class="btn btn-warning" onclick="downloadAll()" shiro:hasPermission="work:file:export">
                    <i class="fa fa-download"></i> 下载
                 </a> 
