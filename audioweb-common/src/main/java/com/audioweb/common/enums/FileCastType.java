@@ -21,25 +21,17 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @JSONType(serializeEnumAsJavaBean = true)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum FileCastType{
-	ORDER("ORDER","顺序播放"),LIST("LIST","列表循环"),RANDOM("RANDOM","随机播放");
+	ORDER("顺序播放"),LIST("列表循环"),RANDOM("随机播放");
 	 /**
      * 枚举值码
      */
     private final String code;
  
-    /**
-     * 枚举描述
-     */
-    private final String message;
-	private FileCastType(String code,String message) {
+	private FileCastType(String code) {
 		this.code = code;
-		this.message = message;
 	}
     public String getCode()
     {
         return code;
     }
-	public String getMessage() {
-		return message;
-	}
 }

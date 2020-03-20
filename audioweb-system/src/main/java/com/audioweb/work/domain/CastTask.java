@@ -31,6 +31,7 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @ApiModel("广播任务实体")
 public class CastTask extends BaseEntity implements BaseRunning{
+	private static volatile long  realTaskId = 0;
 	
 	private static final long serialVersionUID = 1L;
 	/**默认16宽度即可，一般达不到满载*/
@@ -38,7 +39,7 @@ public class CastTask extends BaseEntity implements BaseRunning{
 
 	/** 广播编号ID */
 	@ApiModelProperty("广播编号ID")
-	private Long taskId;
+	private Long taskId = realTaskId++;
 	
 	/** 广播任务名称 */
 	@ApiModelProperty("广播任务名称")
