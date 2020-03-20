@@ -238,7 +238,7 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	}
 	
 	@Override
-	public List<CastTask> getList() {
+	public List<CastTask> export() {
 		return new ArrayList<CastTask>(taskMap.values());
 	}
 }

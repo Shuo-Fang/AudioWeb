@@ -14,6 +14,6 @@ public interface BaseRunning {
 	
 	public void clear();
 	
-	public List<?> getList();
+	public List<?> export();
 	
 }

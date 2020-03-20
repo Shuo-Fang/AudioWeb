@@ -284,7 +284,7 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 	}
 	
 	@Override
-	public List<WorkTerminal> getList() {
+	public List<WorkTerminal> export() {
 		return new ArrayList<WorkTerminal>(terminalMap.values());
 	}
 }

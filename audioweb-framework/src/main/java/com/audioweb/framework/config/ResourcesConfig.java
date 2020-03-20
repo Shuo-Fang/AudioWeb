@@ -33,8 +33,6 @@ public class ResourcesConfig implements WebMvcConfigurer
 	/**定时刷新指定时间*/
 	private static final String scheduleTime = "02:00:00";
 	
-	private static Map<String, String> paths = new HashMap<String, String>();
-	
 	private static volatile long scheTime;
     @Autowired
     private ISysConfigService configService;
@@ -80,19 +78,11 @@ public class ResourcesConfig implements WebMvcConfigurer
 		String wordPath = configService.selectConfigByKey(WorkConstants.WORDPATH);
 		registry.addResourceHandler(Constants.AUDIO_WORD_PREFIX + "/**").addResourceLocations("file:" + wordPath + "/");
         /** 初始化路径信息 */
+		Map<String, String> paths = new HashMap<String, String>();
 		paths.put(WorkConstants.AUDIOFILETYPE, filePath);
 		paths.put(WorkConstants.AUDIOPOINTTYPE, pointPath);
 		paths.put(WorkConstants.AUDIOWORDTYPE, wordPath);
-    }
-
-    /**
-     * 自定义拦截规则 及 各类资源和定时任务初始化管理
-     */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry)
-    {
-        registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
-        /**文件初始化刷新管理*/
+		 /**文件初始化刷新管理*/
         AsyncManager.me().execute(new TimerTask() {
 			@Override
 			public void run() {
@@ -102,13 +92,31 @@ public class ResourcesConfig implements WebMvcConfigurer
 				workTerminalService.initWorkTerminals();
 			}
 		}, 10000);
+    }
+
+    /**
+     * 自定义拦截规则 及 各类资源和定时任务初始化管理
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry)
+    {
+        registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
         /**定时每天刷新一次*/
         long oneDay = 24 * 60 * 60 * 1000;
         long initDelay  = DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getDate()+" "+scheduleTime).getTime();
         AsyncManager.me().scheduleExecute(new TimerTask() {
 			@Override
 			public void run() {
-				/** 启动时初始化一次文件信息*/
+				 /** 文件广播路径 */
+		        String filePath = configService.selectConfigByKey(WorkConstants.FILECASTPATH);
+		        /** 终端点播路径 */
+				String pointPath = configService.selectConfigByKey(WorkConstants.POINTCASTPATH);
+				/** 文字转音频路径 */
+				String wordPath = configService.selectConfigByKey(WorkConstants.WORDPATH);
+				Map<String, String> paths = new HashMap<String, String>();
+				paths.put(WorkConstants.AUDIOFILETYPE, filePath);
+				paths.put(WorkConstants.AUDIOPOINTTYPE, pointPath);
+				paths.put(WorkConstants.AUDIOWORDTYPE, wordPath);
 				workFileService.initWorkFiles(paths);
 			}
 		},initDelay,oneDay,TimeUnit.MILLISECONDS);

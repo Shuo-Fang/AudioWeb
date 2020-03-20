@@ -307,7 +307,7 @@ public class WorkFile extends BaseEntity implements BaseRunning
 	}
 	
 	@Override
-	public List<WorkFile> getList() {
+	public List<WorkFile> export() {
 		return new ArrayList<WorkFile>(fileMap.values());
 	}
 }
