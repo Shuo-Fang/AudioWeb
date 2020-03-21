@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
+import com.audioweb.common.config.Global;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.work.domain.WorkFile;
@@ -43,8 +44,6 @@ public class WorkFileController extends BaseController
 {
     private String prefix = "work/file";
 
-    private String path = "work.file";
-    
     @Autowired
     private IWorkFileService workFileService;
     
@@ -69,10 +68,8 @@ public class WorkFileController extends BaseController
     	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
     	/**默认自动加载文件广播列表*/
 		try {
-			String filePath = "";
-			if(StringUtils.isEmpty(workFile.getFilePath())) {
-				filePath = configService.selectConfigByKey(path);
-			}else {
+			String filePath = Global.getFilePath();
+			if(StringUtils.isNotEmpty(workFile.getFilePath())) {
 				filePath = workFile.getFilePath();
 			}
 			File f = new File(filePath);

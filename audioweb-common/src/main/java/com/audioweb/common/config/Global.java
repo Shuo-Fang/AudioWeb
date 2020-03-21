@@ -26,6 +26,15 @@ public class Global
 
     /** 上传路径 */
     private static String profile;
+    
+    /** 音频文件上传路径 */
+    private static String filePath;
+    
+    /** 点播上传路径 */
+    private static String pointPath;
+    
+    /** 文本音频上传路径 */
+    private static String wordPath;
 
     /** 获取地址开关 */
     private static boolean addressEnabled;
@@ -74,8 +83,9 @@ public class Global
     {
         return profile;
     }
-
-    public void setProfile(String profile)
+    
+    /**默认文件上传地址由数据库获取，不再从配置中获取*/
+    public static void setProfile(String profile)
     {
         Global.profile = profile;
     }
@@ -114,4 +124,27 @@ public class Global
         return getProfile() + "/upload";
     }
 
+	public static String getFilePath() {
+		return filePath;
+	}
+
+	public static void setFilePath(String filePath) {
+		Global.filePath = filePath;
+	}
+
+	public static String getPointPath() {
+		return pointPath;
+	}
+
+	public static void setPointPath(String pointPath) {
+		Global.pointPath = pointPath;
+	}
+
+	public static String getWordPath() {
+		return wordPath;
+	}
+
+	public static void setWordPath(String wordPath) {
+		Global.wordPath = wordPath;
+	}
 }

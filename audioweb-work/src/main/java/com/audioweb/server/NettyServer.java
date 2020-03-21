@@ -11,14 +11,13 @@ package com.audioweb.server;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.config.datasource.DynamicDataSourceContextHolder;
 import com.audioweb.common.utils.Threads;
 import com.audioweb.common.utils.spring.SpringUtils;
@@ -34,8 +33,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -51,18 +48,6 @@ import io.netty.util.internal.SystemPropertyUtil;
  */
 @Component
 public class NettyServer {
-	
-	@Value("${netty.islinux}")
-	private String islinux;
-	
-	@Value("${netty.serverPort}")
-	private String serverPort;
-	
-	@Value("${netty.loginPort}")
-	private String loginPort;
-	
-	@Value("${netty.qtClientPort}")
-	private String qtClientPort;
 	/*
 	 * boss线程池
 	 */
@@ -81,15 +66,9 @@ public class NettyServer {
     private final static int NUMBER_OF_CORES = Math.max(1, SystemPropertyUtil.getInt(
             "io.netty.eventLoopThreads", NettyRuntime.availableProcessors()));
     public static final Logger  log = LoggerFactory.getLogger(DynamicDataSourceContextHolder.class);
-	private final EventLoopGroup loginWorkerGroup = islinux != null && islinux.equals("1")?
-			new EpollEventLoopGroup(NUMBER_OF_CORES,io):
-			new NioEventLoopGroup(NUMBER_OF_CORES,io);
-	private final EventLoopGroup udpWorkerGroup = islinux != null && islinux.equals("1")?
-			new EpollEventLoopGroup(NUMBER_OF_CORES*3,io):
-			new NioEventLoopGroup(NUMBER_OF_CORES*3,io);
-	private final EventLoopGroup tcpWorkerGroup = islinux != null && islinux.equals("1")?
-			new EpollEventLoopGroup(NUMBER_OF_CORES*2,tcp):
-			new NioEventLoopGroup(NUMBER_OF_CORES*2,tcp);
+	private final EventLoopGroup loginWorkerGroup =	new NioEventLoopGroup(NUMBER_OF_CORES,io);
+	private final EventLoopGroup udpWorkerGroup = 	new NioEventLoopGroup(NUMBER_OF_CORES*3,io);
+	private final EventLoopGroup tcpWorkerGroup =	new NioEventLoopGroup(NUMBER_OF_CORES*2,tcp);
 	private Channel channel;
 	/**
 	 * 启动loginServer
@@ -116,7 +95,7 @@ public class NettyServer {
             ServerBootstrap b = new ServerBootstrap();
             EventLoopGroup tcpBossGroup = new NioEventLoopGroup(1);
             b.group(tcpBossGroup, tcpWorkerGroup)
-                    .channel(islinux != null && islinux.equals("1")?EpollServerSocketChannel.class:NioServerSocketChannel.class)
+                    .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .option(ChannelOption.SO_BACKLOG,64)
                     // 第2次握手服务端向客户端发送请求确认，同时把此连接放入队列A中，
@@ -127,7 +106,6 @@ public class NettyServer {
                     .option(ChannelOption.SO_KEEPALIVE,true)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,30000)//连接超时30000毫秒
                     .option(ChannelOption.SO_TIMEOUT,5000)//输入流的read方法被阻塞时，接受数据的等待超时时间5000毫秒，抛出SocketException
-                    .localAddress(new InetSocketAddress(Integer.parseInt(qtClientPort)))
                     //child是在客户端连接connect之后处理的handler，不带child的是在客户端初始化时需要进行处理的
                     .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)//缓冲池
                     .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -138,17 +116,17 @@ public class NettyServer {
                         }
                     });
 
-            f = b.bind().sync();
+            f = b.bind(new InetSocketAddress(NettyConfig.getQtClientPort())).sync();
             channel = f.channel();
             log.info("======TcpServer启动成功!!!=========");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (f != null && f.isSuccess()) {
-                log.info("Netty server listening  on port " + qtClientPort + " and ready for connections...");
+                log.info("Netty server listening  on port " + NettyConfig.getQtClientPort() + " and ready for connections...");
                 list.add(f);
             } else {
-                log.error(qtClientPort+":Netty server start up Error!");
+                log.error(NettyConfig.getQtClientPort()+":Netty server start up Error!");
             }
         }
         /*
@@ -161,7 +139,7 @@ public class NettyServer {
                     .option(ChannelOption.SO_BROADCAST, true)
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
-                    .localAddress(new InetSocketAddress(Integer.parseInt(loginPort)))
+                    .localAddress(new InetSocketAddress(NettyConfig.getLoginPort()))
                     .handler(new ChannelInitializer<Channel>() {
                         @Override
                         protected void initChannel(Channel channel) throws Exception {
@@ -175,10 +153,10 @@ public class NettyServer {
             e.printStackTrace();
         } finally {
             if (l != null && l.isSuccess()) {
-                log.info("Netty server listening  on port " + loginPort + " and ready for connections...");
+                log.info("Netty server listening  on port " + NettyConfig.getLoginPort() + " and ready for connections...");
                 list.add(l);
             } else {
-                log.error(loginPort+":Netty server start up Error!");
+                log.error(NettyConfig.getLoginPort()+":Netty server start up Error!");
             }
         }
         /*
@@ -191,7 +169,7 @@ public class NettyServer {
                     .option(ChannelOption.SO_BROADCAST, true)
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
-                    .localAddress(new InetSocketAddress(Integer.parseInt(serverPort)))
+                    .localAddress(new InetSocketAddress(NettyConfig.getServerIp(),NettyConfig.getServerPort()))
                     .handler(new ChannelInitializer<Channel>() {
                         @Override
                         protected void initChannel(Channel channel) throws Exception {
@@ -205,10 +183,10 @@ public class NettyServer {
             e.printStackTrace();
         } finally {
             if (m != null && m.isSuccess()) {
-                log.info("Netty server listening  on port " + serverPort + " and ready for connections...");
+                log.info("Netty server listening  on port " + NettyConfig.getServerPort() + " and ready for connections...");
                 list.add(m);
             } else {
-                log.error(serverPort+":Netty server start up Error!");
+                log.error(NettyConfig.getServerPort()+":Netty server start up Error!");
             }
         }
         return list;

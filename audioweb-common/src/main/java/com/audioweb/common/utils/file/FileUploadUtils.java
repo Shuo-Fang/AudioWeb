@@ -33,19 +33,9 @@ public class FileUploadUtils
     /**
      * 默认上传的地址
      */
-    private static String defaultBaseDir = Global.getProfile();
+    //private static String defaultBaseDir = Global.getProfile();
 
     private static int counter = 0;
-
-    public static void setDefaultBaseDir(String defaultBaseDir)
-    {
-        FileUploadUtils.defaultBaseDir = defaultBaseDir;
-    }
-
-    public static String getDefaultBaseDir()
-    {
-        return defaultBaseDir;
-    }
 
     /**
      * 以默认配置进行文件上传
@@ -58,7 +48,7 @@ public class FileUploadUtils
     {
         try
         {
-            return upload(getDefaultBaseDir(), file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION,true);
+            return upload(Global.getProfile(), file, MimeTypeUtils.DEFAULT_ALLOWED_EXTENSION,true);
         }
         catch (Exception e)
         {

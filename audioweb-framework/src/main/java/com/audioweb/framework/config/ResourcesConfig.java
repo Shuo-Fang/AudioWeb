@@ -13,6 +13,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.audioweb.common.config.Global;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.framework.interceptor.RepeatSubmitInterceptor;
@@ -69,26 +71,28 @@ public class ResourcesConfig implements WebMvcConfigurer
         /** swagger配置 */
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        /**初始化存储文本文件上传路径*/
+        Global.setProfile(configService.selectConfigByKey(Constants.PREFIX_PATH));
         /** 本地文件上传路径 */
-        registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + configService.selectConfigByKey(Constants.PREFIX_PATH) + "/");
+        registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**").addResourceLocations("file:" + Global.getProfile() + "/");
 		 /** 文件广播路径 */
-        String filePath = configService.selectConfigByKey(WorkConstants.FILECASTPATH);
-		registry.addResourceHandler(Constants.AUDIO_FILE_PREFIX + "/**").addResourceLocations("file:" + filePath + "/");
+        Global.setFilePath(configService.selectConfigByKey(WorkConstants.FILECASTPATH));
+		registry.addResourceHandler(Constants.AUDIO_FILE_PREFIX + "/**").addResourceLocations("file:" + Global.getFilePath() + "/");
 		/** 终端点播路径 */
-		String pointPath = configService.selectConfigByKey(WorkConstants.POINTCASTPATH);
-		registry.addResourceHandler(Constants.AUDIO_POINT_PREFIX + "/**").addResourceLocations("file:" + pointPath + "/");
+		Global.setPointPath(configService.selectConfigByKey(WorkConstants.POINTCASTPATH));
+		registry.addResourceHandler(Constants.AUDIO_POINT_PREFIX + "/**").addResourceLocations("file:" + Global.getPointPath() + "/");
 		/** 文字转音频路径 */
-		String wordPath = configService.selectConfigByKey(WorkConstants.WORDPATH);
-		registry.addResourceHandler(Constants.AUDIO_WORD_PREFIX + "/**").addResourceLocations("file:" + wordPath + "/");
-        /** 初始化路径信息 */
-		Map<String, String> paths = new HashMap<String, String>();
-		paths.put(WorkConstants.AUDIOFILETYPE, filePath);
-		paths.put(WorkConstants.AUDIOPOINTTYPE, pointPath);
-		paths.put(WorkConstants.AUDIOWORDTYPE, wordPath);
+		Global.setWordPath((configService.selectConfigByKey(WorkConstants.WORDPATH)));
+		registry.addResourceHandler(Constants.AUDIO_WORD_PREFIX + "/**").addResourceLocations("file:" + Global.getWordPath() + "/");
 		 /**文件初始化刷新管理*/
         AsyncManager.me().execute(new TimerTask() {
 			@Override
 			public void run() {
+		        /** 初始化路径信息 */
+				Map<String, String> paths = new HashMap<String, String>();
+				paths.put(WorkConstants.AUDIOFILETYPE, Global.getFilePath());
+				paths.put(WorkConstants.AUDIOPOINTTYPE, Global.getPointPath());
+				paths.put(WorkConstants.AUDIOWORDTYPE, Global.getWordPath());
 				/** 启动时初始化一次文件信息*/
 				workFileService.initWorkFiles(paths);
 				/**启动时初始化一次广播终端信息*/
