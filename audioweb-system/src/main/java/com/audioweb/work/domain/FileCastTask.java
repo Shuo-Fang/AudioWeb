@@ -8,6 +8,7 @@
  */ 
 package com.audioweb.work.domain;
 
+import java.io.BufferedInputStream;
 import java.util.List;
 import java.util.Timer;
 
@@ -59,6 +60,9 @@ public class FileCastTask extends WorkCastTask{
 	
 	/**文件广播中每次广播的时间间隔*/
 	transient private int timesize;
+	
+	/**文件读取信息流*/
+	transient private BufferedInputStream in; 
 	
 	public WorkFile getRunFile() {
 		return runFile;
@@ -130,5 +134,13 @@ public class FileCastTask extends WorkCastTask{
 
 	public void setTimer(Timer timer) {
 		this.timer = timer;
+	}
+
+	public BufferedInputStream getIn() {
+		return in;
+	}
+
+	public void setIn(BufferedInputStream in) {
+		this.in = in;
 	}
 }
