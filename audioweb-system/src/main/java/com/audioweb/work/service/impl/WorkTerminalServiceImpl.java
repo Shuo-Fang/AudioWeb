@@ -78,6 +78,16 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     }
 
     /**
+     * 批量更新终端最后登录时间
+     * 
+     * @param List<WorkTerminal> 终端管理
+     * @return 结果
+     */
+    public int updateTerminalDateList(List<WorkTerminal> workTerminal) 
+    {
+    	return workTerminalMapper.updateTerminalDateList(workTerminal);
+    }
+    /**
      * 删除终端管理对象
      * 
      * @param ids 需要删除的数据ID

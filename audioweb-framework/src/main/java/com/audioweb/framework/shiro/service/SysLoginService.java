@@ -47,7 +47,7 @@ public class SysLoginService
     	HttpServletRequest re = ServletUtils.getRequest();
     	//App端校验
     	if(!StringUtils.isEmpty(re.getHeader("Authorization"))) {
-    		//APP端登陆，无需验证码
+    		//APP端登录，无需验证码
     	}else if (!StringUtils.isEmpty(re.getAttribute(ShiroConstants.CURRENT_CAPTCHA)))
         {
             // 验证码校验
@@ -107,7 +107,7 @@ public class SysLoginService
             throw new UserBlockedException();
         }
         if(!StringUtils.isEmpty(re.getHeader(ShiroConstants.AUTHORIZATION))) {
-    		//APP端登陆验证
+    		//APP端登录验证
         	if(SysAuthorization.checkAuthorization(re.getHeader(ShiroConstants.AUTHORIZATION))) {
         		passwordService.appValidate(user, password,re.getHeader(ShiroConstants.AUTHORIZATION));
         	}else {

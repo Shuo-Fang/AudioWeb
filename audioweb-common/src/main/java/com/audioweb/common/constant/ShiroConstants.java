@@ -9,7 +9,7 @@ public interface ShiroConstants
 {
 
     /**
-     * App端登陆凭证
+     * App端登录凭证
      */
     public static final String AUTHORIZATION = "Authorization";
     

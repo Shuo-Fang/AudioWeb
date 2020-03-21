@@ -9,14 +9,17 @@
 package com.audioweb.server.handler;
 
 
-import java.net.InetSocketAddress;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.server.protocol.InterCMDProcess;
-
+import com.audioweb.server.service.SpringBeanServicePool;
+import com.audioweb.work.domain.WorkTerminal;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
@@ -61,11 +64,32 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 		AsyncManager.me().ioExecute(new Runnable() {
 			@Override
 			public void run() {
-				InetSocketAddress sAddress = (InetSocketAddress)(ctx.channel().localAddress());
-				String ip = sAddress.getAddress().getHostAddress();
-				/**判断是否为登陆命令*/
+				String ip = msg.sender().getAddress().getHostAddress();
+				/**判断是否为登录命令*/
 				if(ClientCommand.CMD_LOGIN.getCmd().equals(req[1]) && req.length > 9) {
+					/**获取登录的ID号以及对应的校验IP地址*/
 					String terid = InterCMDProcess.getTeridFromLogin(req);
+					/**进行登录校验*/
+					WorkTerminal terminal = new WorkTerminal(terid);
+					if(terminal.exist()) {
+						WorkTerminal me = terminal.get();
+						/**IP验证*/
+						if(me.getTerminalIp().equals(ip)) {
+							me.setLoginTime(new Date());
+							me.setIsOnline(0);//存储登录信息
+							terminal.setTerRealId(me.getTerRealId());
+							terminal.setLoginTime(new Date());
+							log.info("终端登录成功："+terid);
+							ByteBuf buf = ctx.alloc().buffer();
+							buf.writeBytes(InterCMDProcess.returnLoginBytes());
+							ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
+							SpringBeanServicePool.getService().getTerminalServiceImpl().updateWorkTerminal(terminal);
+						}else {
+							log.info("登录终端IP配置有误："+terid);
+						}
+					}else {
+						log.info("登录终端配置不存在");
+					}
 				}
 				//log.info(msg.sender()+":"+req);
 				//ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));

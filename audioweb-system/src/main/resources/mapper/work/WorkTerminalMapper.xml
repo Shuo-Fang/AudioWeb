@@ -138,4 +138,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </update>
     
+    <update id="updateTerminalDateList" parameterType="java.util.List" >
+    	update 
+    		work_terminal
+    	<trim prefix="set" suffixOverrides=",">
+    		<trim prefix="login_time =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.loginTime != null and item.loginTime != ''">
+						when ter_real_id = #{item.terRealId} then #{item.loginTime}
+					</if>
+				</foreach>
+			</trim>
+    	</trim>
+    	<where>
+			ter_real_id in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+				#{item.terRealId}
+			</foreach>
+		</where>
+    </update>
 </mapper>

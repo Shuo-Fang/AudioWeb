@@ -43,6 +43,13 @@ public interface IWorkTerminalService
      * @return 结果
      */
     public int updateWorkTerminal(WorkTerminal workTerminal);
+    /**
+     * 批量更新终端最后登录时间
+     * 
+     * @param List<WorkTerminal> 终端管理
+     * @return 结果
+     */
+    public int updateTerminalDateList(List<WorkTerminal> workTerminal);
 
     /**
      * 批量删除终端管理
