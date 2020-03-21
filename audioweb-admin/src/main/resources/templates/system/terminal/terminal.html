@@ -134,6 +134,8 @@
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
                 modalName: "终端管理",
+		        sortName: "loginTime",
+		        sortOrder: "desc",
                 clickToSelect:true,
                 rememberSelected:true,
                 uniqueId : "terRealId",
@@ -149,7 +151,8 @@
                 {
                     field : 'terminalId', 
                     title : '终端ID',
-                    align: 'center'/* ,
+                    align: 'center',
+		            sortable: true/* ,
                     visible: false */
                 },
                 {
@@ -206,7 +209,8 @@
                 {
                     field : 'loginTime', 
                     title : '登录时间',
-                    align: 'center'
+                    align: 'center',
+		            sortable: true
                 },
                 {
                     field : 'remark', 
