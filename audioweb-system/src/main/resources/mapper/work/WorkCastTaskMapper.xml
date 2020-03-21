@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audioweb.work.mapper.WorkCastTaskMapper">
+    
+    <resultMap type="WorkCastTask" id="WorkCastTaskResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="vol"    column="vol"    />
+        <result property="castType"    column="cast_type"    />
+        <result property="castAddress"    column="cast_address"    />
+        <result property="castPort"    column="cast_port"    />
+        <result property="castLevel"    column="cast_level"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectWorkCastTaskVo">
+        select task_id, task_name, vol, cast_type, cast_address, cast_port, cast_level, remark from work_cast_task
+    </sql>
+
+    <select id="selectWorkCastTaskList" parameterType="WorkCastTask" resultMap="WorkCastTaskResult">
+        <include refid="selectWorkCastTaskVo"/>
+        <where>  
+            <if test="taskName != null  and taskName != ''"> and task_name like concat('%', #{taskName}, '%')</if>
+            <if test="castType != null"> and cast_type = #{castType}</if>
+            <if test="castAddress != null  and castAddress != ''"> and cast_address = #{castAddress}</if>
+            <if test="castPort != null "> and cast_port = #{castPort}</if>
+            <if test="castLevel != null  and castLevel != ''"> and cast_level = #{castLevel}</if>
+        </where>
+    </select>
+    
+    <select id="selectWorkCastTaskById" parameterType="Long" resultMap="WorkCastTaskResult">
+        <include refid="selectWorkCastTaskVo"/>
+        where task_id = #{taskId}
+    </select>
+        
+    <insert id="insertWorkCastTask" parameterType="WorkCastTask">
+        insert into work_cast_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null ">task_id,</if>
+            <if test="taskName != null  and taskName != ''">task_name,</if>
+            <if test="vol != null ">vol,</if>
+            <if test="castType != null">cast_type,</if>
+            <if test="castAddress != null  and castAddress != ''">cast_address,</if>
+            <if test="castPort != null ">cast_port,</if>
+            <if test="castLevel != null  and castLevel != ''">cast_level,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null ">#{taskId},</if>
+            <if test="taskName != null  and taskName != ''">#{taskName},</if>
+            <if test="vol != null ">#{vol},</if>
+            <if test="castType != null">#{castType},</if>
+            <if test="castAddress != null  and castAddress != ''">#{castAddress},</if>
+            <if test="castPort != null ">#{castPort},</if>
+            <if test="castLevel != null  and castLevel != ''">#{castLevel},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWorkCastTask" parameterType="WorkCastTask">
+        update work_cast_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
+            <if test="vol != null ">vol = #{vol},</if>
+            <if test="castType != null">cast_type = #{castType},</if>
+            <if test="castAddress != null  and castAddress != ''">cast_address = #{castAddress},</if>
+            <if test="castPort != null ">cast_port = #{castPort},</if>
+            <if test="castLevel != null  and castLevel != ''">cast_level = #{castLevel},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteWorkCastTaskById" parameterType="Long">
+        delete from work_cast_task where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteWorkCastTaskByIds" parameterType="String">
+        delete from work_cast_task where task_id in 
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+    
+    <delete id="deleteWorkCastTaskAll">
+        delete from work_cast_task
+    </delete>
+    
+</mapper>

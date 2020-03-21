@@ -23,7 +23,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020年3月18日 下午4:00:17  
  */
 @ApiModel("文件广播实体")
-public class FileCastTask extends CastTask{
+public class FileCastTask extends WorkCastTask{
 
 	private static final long serialVersionUID = 1L;
 	

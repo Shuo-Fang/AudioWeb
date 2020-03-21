@@ -78,7 +78,7 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
     private SysDomain domain;
     
     /** 广播信息 */
-    private CastTask castTask; 
+    private WorkCastTask castTask; 
     
     /** 是否在线	0为离线,1为在线(即将离线),2为在线(刚刚通信过)*/
     private int isOnline; 
@@ -194,10 +194,10 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 	public void setDomain(SysDomain domain) {
 		this.domain = domain;
 	}
-	public CastTask getCastTask() {
+	public WorkCastTask getCastTask() {
 		return castTask;
 	}
-	public void setCastTask(CastTask castTask) {
+	public void setCastTask(WorkCastTask castTask) {
 		this.castTask = castTask;
 	}
 	public int getIsOnline() {

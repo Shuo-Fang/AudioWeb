@@ -30,12 +30,12 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020年3月2日 下午1:27:26  
  */
 @ApiModel("广播任务实体")
-public class CastTask extends BaseEntity implements BaseRunning{
+public class WorkCastTask extends BaseEntity implements BaseRunning{
 	private static volatile long  realTaskId = 0;
 	
 	private static final long serialVersionUID = 1L;
 	/**默认16宽度即可，一般达不到满载*/
-	private static Map<Long, CastTask> taskMap = new ConcurrentHashMap<Long, CastTask>();
+	private static Map<Long, WorkCastTask> taskMap = new ConcurrentHashMap<Long, WorkCastTask>();
 
 	/** 广播编号ID */
 	@ApiModelProperty("广播编号ID")
@@ -63,7 +63,7 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	
 	/**	广播级别 */
 	@ApiModelProperty("广播级别")
-	private Integer castLevel;
+	private String castLevel;
 	
     /** 备注 */
 	@ApiModelProperty("备注")
@@ -88,13 +88,6 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	/**	正在广播终端列表 */
 	@ApiModelProperty("正在广播终端列表")
 	transient private List<WorkTerminal> castlist;
-	
-	public CastTask() {
-		
-	}
-	public CastTask(Long id) {
-		taskId = id;
-	}
     
     public Long getTaskId() {
 		return taskId;
@@ -132,10 +125,10 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	public void setCastPort(Integer castPort) {
 		this.castPort = castPort;
 	}
-	public Integer getCastLevel() {
+	public String getCastLevel() {
 		return castLevel;
 	}
-	public void setCastLevel(Integer castLevel) {
+	public void setCastLevel(String castLevel) {
 		this.castLevel = castLevel;
 	}
 	public String getRemark() {
@@ -190,7 +183,7 @@ public class CastTask extends BaseEntity implements BaseRunning{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CastTask other = (CastTask) obj;
+		WorkCastTask other = (WorkCastTask) obj;
 		if (taskId == null) {
 			if (other.taskId != null)
 				return false;
@@ -226,7 +219,7 @@ public class CastTask extends BaseEntity implements BaseRunning{
 		return taskMap.containsKey(taskId);
 	}
 	@Override
-	public CastTask get() {
+	public WorkCastTask get() {
 		if(StringUtils.isNotNull(taskId)) {
 			return taskMap.get(taskId);
 		}else {
@@ -239,13 +232,13 @@ public class CastTask extends BaseEntity implements BaseRunning{
 	}
 	
 	@Override
-	public List<CastTask> export() {
-		return new ArrayList<CastTask>(taskMap.values());
+	public List<WorkCastTask> export() {
+		return new ArrayList<WorkCastTask>(taskMap.values());
 	}
 	
 	/**将全部的对象更新替换为缓存中存储的对象**/
-	public static void loadAll(List<CastTask> entity) {
-		for(CastTask task : entity) {
+	public static void loadAll(List<WorkCastTask> entity) {
+		for(WorkCastTask task : entity) {
 			if(task.exist()) {
 				task = task.get();
 			}

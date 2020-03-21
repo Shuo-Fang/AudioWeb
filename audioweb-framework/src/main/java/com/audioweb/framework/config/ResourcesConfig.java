@@ -19,6 +19,7 @@ import com.audioweb.framework.interceptor.RepeatSubmitInterceptor;
 import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.system.service.ISysConfigService;
+import com.audioweb.work.service.IWorkCastTaskService;
 import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.work.service.IWorkTerminalService;
 
@@ -32,15 +33,17 @@ public class ResourcesConfig implements WebMvcConfigurer
 {
 	/**定时刷新指定时间*/
 	private static final String scheduleTime = "02:00:00";
-	
-	private static volatile long scheTime;
     @Autowired
     private ISysConfigService configService;
 	
 	@Autowired
 	private IWorkFileService workFileService;
+	
 	@Autowired
 	private IWorkTerminalService workTerminalService;
+	
+	@Autowired
+	private IWorkCastTaskService workCastTaskService;
 
     /**
      * 首页地址
@@ -90,6 +93,8 @@ public class ResourcesConfig implements WebMvcConfigurer
 				workFileService.initWorkFiles(paths);
 				/**启动时初始化一次广播终端信息*/
 				workTerminalService.initWorkTerminals();
+				/**启动时初始化一次广播终端信息*/
+				workCastTaskService.deleteWorkCastTaskAll();
 			}
 		}, 10000);
     }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增广播任务')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-castTask-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">广播任务名称：</label>
+                <div class="col-sm-8">
+                    <input name="taskName" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">广播任务音量：</label>
+                <div class="col-sm-8">
+                    <input name="vol" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">"0","文件广播"，"1","定时广播"，"2","实时采播"，"3","控件广播"，"4","文本广播"，"5","终端点播"，"6","终端采播"，"7","寻呼话筒"：</label>
+                <div class="col-sm-8">
+                    <select name="castType" class="form-control m-b" th:with="type=${@dict.getType('work_cast_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">广播地址：</label>
+                <div class="col-sm-8">
+                    <input name="castAddress" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">广播端口：</label>
+                <div class="col-sm-8">
+                    <input name="castPort" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">广播级别：警戒-0，最高-1，高-2，中-3，低-4，最低-5：</label>
+                <div class="col-sm-8">
+                    <select name="castLevel" class="form-control m-b" th:with="type=${@dict.getType('work_priority')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "work/castTask"
+        $("#form-castTask-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-castTask-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

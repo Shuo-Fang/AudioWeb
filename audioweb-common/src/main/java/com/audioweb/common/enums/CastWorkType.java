@@ -6,25 +6,16 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @JSONType(serializeEnumAsJavaBean = true)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum CastWorkType{
-	FILE("0","文件广播"),TIME("1","定时广播"),REAL("2","实时采播"),CLIENT("3","终端采播"),
-	POINT("4","终端点播"),PAGING("5","寻呼话筒"),PLUG("6","控件广播"),WORD("7","文本广播");
+	FILE("文件广播"),TIME("定时广播"),REAL("实时采播"),PLUG("控件广播"),
+	WORD("文本广播"),POINT("终端点播"),CLIENT("终端采播"),PAGING("寻呼话筒");
 	 /**
      * 枚举值码
      */
-    private final String code;
- 
-    /**
-     * 枚举描述
-     */
-    private final String message;
-	private CastWorkType(String code,String message) {
-		this.code = code;
-		this.message = message;
+    private final String info;
+	private CastWorkType(String info) {
+		this.info = info;
 	}
-	public String getMessage() {
-		return message;
-	}
-	public String getCode() {
-		return code;
+	public String getInfo() {
+		return info;
 	}
 }
