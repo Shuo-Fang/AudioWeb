@@ -2,7 +2,6 @@ package com.audioweb.framework.config;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +14,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.audioweb.common.config.Global;
+import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.framework.interceptor.RepeatSubmitInterceptor;
@@ -71,6 +71,8 @@ public class ResourcesConfig implements WebMvcConfigurer
         /** swagger配置 */
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        /**初始化netty服务器绑定IP地址*/
+        NettyConfig.setServerIp(configService.selectConfigByKey(Constants.IP_CONFIG));
         /**初始化存储文本文件上传路径*/
         Global.setProfile(configService.selectConfigByKey(Constants.PREFIX_PATH));
         /** 本地文件上传路径 */

@@ -76,4 +76,7 @@ public class Constants
 
     /** 文件路径配置信息KEY */
     public final static String PREFIX_PATH = "sys.profile";
+    
+    /** netty服务绑定ip地址 */
+    public final static String IP_CONFIG = "sys.config.ip";
 }

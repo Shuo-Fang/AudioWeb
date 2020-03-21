@@ -139,7 +139,7 @@ public class NettyServer {
                     .option(ChannelOption.SO_BROADCAST, true)
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
-                    .localAddress(new InetSocketAddress(NettyConfig.getLoginPort()))
+                    .localAddress(new InetSocketAddress(NettyConfig.getServerIp(),NettyConfig.getLoginPort()))
                     .handler(new ChannelInitializer<Channel>() {
                         @Override
                         protected void initChannel(Channel channel) throws Exception {

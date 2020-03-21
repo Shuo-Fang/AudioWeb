@@ -32,7 +32,7 @@ public class NettyConfig {
 		return serverIp;
 	}
 
-	public void setServerIp(String serverIp) {
+	public static void setServerIp(String serverIp) {
 		NettyConfig.serverIp = serverIp;
 	}
 

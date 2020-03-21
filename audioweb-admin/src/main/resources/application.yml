@@ -14,8 +14,8 @@ ruoyi:
   addressEnabled: true
 # 通信线程池配置
 netty:
-  #绑定IP地址
-  serverIp: 127.0.0.1
+  #绑定IP地址 已经给予数据库进行配置
+  #serverIp: 127.0.0.1
   #终端登录端口
   loginPort: 1000
   #终端通信端口
