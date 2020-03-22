@@ -296,4 +296,30 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 			}
 		}
 	}
+	
+	@Override
+	public boolean remove() {
+		return StringUtils.isNotNull(terminalMap.remove(terminalIp));
+	}
+	
+	/**通过realID查询终端是否缓存*/
+	public static boolean isExist(WorkTerminal workTerminal) {
+		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
+		for(WorkTerminal t:terminals) {
+			if(t.getTerRealId().equals(workTerminal.getTerRealId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**通过realID查询终端实际存储信息*/
+	public static WorkTerminal getTerById(WorkTerminal workTerminal) {
+		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
+		for(WorkTerminal t:terminals) {
+			if(t.getTerRealId().equals(workTerminal.getTerRealId())) {
+				return t;
+			}
+		}
+		return null;
+	}
 }

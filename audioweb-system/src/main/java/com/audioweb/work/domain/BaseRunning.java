@@ -15,6 +15,9 @@ public interface BaseRunning {
 	/**从缓存中获取存储的本对象*/
 	public BaseEntity get();
 	
+	/**从缓存中删除存储的本对象*/
+	public boolean remove();
+	
 	/**清除全部的缓存*/
 	public void clear();
 	

@@ -5,8 +5,11 @@ import java.util.concurrent.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.audioweb.common.enums.ClientCommand;
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.spring.SpringUtils;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -48,19 +51,35 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 	
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx,final DatagramPacket msg) throws Exception {
-		// TODO Auto-generated method stub
-        //System.out.println(req);
-        //Threads.sleep(1000);
-		String req = msg.content().toString(CharsetUtil.UTF_8);
-		io.execute(new Runnable() {
+		ByteBuf content = msg.content();
+		AsyncManager.me().ioExecute(new Runnable() {
 			@Override
 			public void run() {
-				log.info(msg.sender()+":"+req);
-				// TODO Auto-generated method stub
-				ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));
+				String ip = msg.sender().getAddress().getHostAddress();
+				Byte audio = content.readByte();
+				Byte command = content.readByte();
+				/**为数据音频包*/
+				if(ClientCommand.CMD_PACKAGE.getCmd().equals(audio)) {
+					/**若为音频包，则直接进行转发操作*/
+					/**后续补充测试*/
+				}else {
+					ClientCommand cmd = ClientCommand.valueOf(command);
+					byte[] req = new byte[msg.content().readableBytes()];
+					msg.content().readBytes(req);
+					/**为命令包，进行判断**/
+					switch(cmd){
+					/**终端心跳包*/
+					case CMD_NETHEART:
+						
+						break;
+					default:
+						
+						break;
+					}
+				}
 			}
+			
 		});
-		msg.release();
 	}
 }
 

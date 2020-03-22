@@ -132,7 +132,7 @@ public class InterCMDProcess {
 	public static ByteBuffer reply(String groupip,String groupPort){
 		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
-		encoded.put(ClientCommand.CMD_CMICEnable.getCmd());
+		encoded.put(ClientCommand.CMD_CMICENABLE.getCmd());
 		for(int i=0;i<4;i++){
 			encoded.put(ClientCommand.CMD_NONE.getCmd());
 		}

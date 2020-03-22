@@ -71,11 +71,7 @@ public class RunningTerminalController extends BaseController
     	}
         startPage();
         List<WorkTerminal> list = workTerminalService.selectWorkTerminalList(workTerminal);
-        for(WorkTerminal terminal:list) {
-        	if(terminal.exist()) {
-        		terminal = terminal.get();
-        	}
-        }
+        WorkTerminal.loadAll(list);
         return getDataTable(list);
     }
     /**
@@ -110,9 +106,7 @@ public class RunningTerminalController extends BaseController
     		SysDomain domain = workTerminal.getDomain();
     		domain.setStatus(UserConstants.DOMAIN_NORMAL);
     		List<WorkTerminal> list = workTerminalService.selectWorkTerminalList(workTerminal);
-	    	for(WorkTerminal terminal:list) {
-	    		terminal = terminal.get();
-	    	}
+    		WorkTerminal.loadAll(list);
     		AjaxResult result = success();
 	    	result.put(AjaxResult.DATA_TAG, list);
 	    	result.put("total", new PageInfo(list).getTotal());

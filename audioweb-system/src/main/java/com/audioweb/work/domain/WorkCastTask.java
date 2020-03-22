@@ -244,4 +244,8 @@ public class WorkCastTask extends BaseEntity implements BaseRunning{
 			}
 		}
 	}
+	@Override
+	public boolean remove() {
+		return StringUtils.isNotNull(taskMap.remove(taskId));
+	}
 }

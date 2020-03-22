@@ -23,6 +23,8 @@ public enum ClientCommand {
 	CMD_NORMAL((byte)7),
 	/** 终端采播(终端采播) */
 	CMD_TERMINAL((byte)8),
+	/**	终端回送的音频包指令 */
+	CMD_PACKAGE((byte)10),
 	/**	服务器发送的音频数据包 0x0b  单播、组播、广播 */
 	CMDTYPE_AUDIODATA((byte)11),
 	/** 点播音频列表 */
@@ -46,7 +48,7 @@ public enum ClientCommand {
 	/** 寻呼话筒开启回复 */
 	CMD_CMICREPLY((byte)93),
 	/** 寻呼话筒点播开始 */
-	CMD_CMICEnable((byte)95),
+	CMD_CMICENABLE((byte)95),
 	/** 寻呼话筒进入下级列表 */
 	CMD_CMICELIST((byte)96),
 	/**	寻呼话筒对讲或传输填充命令 */
@@ -62,4 +64,55 @@ public enum ClientCommand {
 	public void setCmd(byte cmd) {
 		this.cmd = cmd;
 	}
+	
+	public static ClientCommand valueOf(Byte value) {    //    手写的从Byte到enum的转换函数
+        switch (value) {
+        case 0:
+            return CMD_NONE;
+        case 1:
+        	return CMD_LOGIN;
+        case 3:
+        	return CMD_NETHEART;
+        case 4:
+        	return IP_REQUEST;
+        case 5:
+        	return CMD_VOLSET;
+        case 7:
+        	return CMD_STOPVOD;
+        case 8:
+        	return CMD_TERMINAL;
+        case 10:
+        	return CMD_PACKAGE;
+        case 11:
+        	return CMDTYPE_AUDIODATA;
+        case 12:
+        	return CMD_VODFILELIST;
+        case 13:
+        	return CMD_VODFILECAST;
+        case 26:
+        	return CMD_VODFILEPAUSE;
+        case 27:
+        	return CMD_FILECAST;
+        case 40:
+        	return CMD_TIMINGCAST;
+        case 41:
+        	return CMD_PIC_SEND;
+        case 49:
+        	return CMD_OK;
+        case 89:
+        	return REQUEST_RESTART;
+        case 90:
+        	return CMD_CMICCAST;
+        case 93:
+        	return CMD_CMICREPLY;
+        case 95:
+        	return CMD_CMICENABLE;
+        case 96:
+        	return CMD_CMICELIST;
+        case (byte) 0xAA:
+        	return CMD_PAD;
+        default:
+            return null;
+        }
+    }
 }

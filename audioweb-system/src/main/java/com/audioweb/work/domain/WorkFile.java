@@ -319,4 +319,8 @@ public class WorkFile extends BaseEntity implements BaseRunning
 			}
 		}
 	}
+	@Override
+	public boolean remove() {
+		return StringUtils.isNotNull(fileMap.remove(fileId));
+	}
 }

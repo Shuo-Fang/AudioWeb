@@ -43,4 +43,7 @@ public class WorkConstants {
     public final static String AUDIOFILETYPE = "0";
     public final static String AUDIOPOINTTYPE = "1";
     public final static String AUDIOWORDTYPE = "2";
+    /** 通用状态 0为正常，1为异常或停用*/
+    public final static String NORMAL = "0";
+    public final static String DESTOY = "1";
 }

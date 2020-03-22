@@ -3,6 +3,8 @@ package com.audioweb.work.service.impl;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TimerTask;
+
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
 
@@ -15,6 +17,7 @@ import com.audioweb.work.service.IWorkTerminalService;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.text.Convert;
+import com.audioweb.common.thread.manager.AsyncManager;
 
 /**
  * 终端管理Service业务层处理
@@ -62,6 +65,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     public int insertWorkTerminal(WorkTerminal workTerminal)
     {
         workTerminal.setCreateTime(DateUtils.getNowDate());
+        workTerminal.put();
         return workTerminalMapper.insertWorkTerminal(workTerminal);
     }
 
@@ -74,6 +78,18 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     @Override
     public int updateWorkTerminal(WorkTerminal workTerminal)
     {
+    	/**缓存同步*/
+    	if(WorkTerminal.isExist(workTerminal)) {
+    		/**删除停用终端的缓存*/
+    		if(StringUtils.isNotEmpty(workTerminal.getStatus()) && !workTerminal.getStatus().equals(WorkConstants.NORMAL)) {
+    			workTerminal.remove();
+    		}
+    	}else {
+    		/**添加启用终端的缓存*/
+    		if(StringUtils.isNotEmpty(workTerminal.getStatus()) && workTerminal.getStatus().equals(WorkConstants.NORMAL)) {
+    			workTerminal.put();
+    		}
+    	}
         return workTerminalMapper.updateWorkTerminal(workTerminal);
     }
 
@@ -167,7 +183,6 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
      */
 	@Override
 	public String checkIdUnique(WorkTerminal workTerminal) {
-		// TODO Auto-generated method stub
 		try {
 			int id = Integer.parseInt(workTerminal.getTerminalId());
 			if(id < 0 && id > 9999 ){
@@ -209,6 +224,15 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	@Override
 	public int changeStatus(WorkTerminal workTerminal) 
 	{
+		/**缓存同步*/
+		WorkTerminal terminal = WorkTerminal.getTerById(workTerminal);
+		if(StringUtils.isNotNull(terminal)) {
+			terminal.remove();
+		}else {
+			terminal = workTerminalMapper.selectWorkTerminalById(workTerminal.getTerRealId());
+			terminal.setStatus(workTerminal.getStatus());
+			terminal.put();
+		}
 		return workTerminalMapper.updateWorkTerminal(workTerminal);
 	}
 

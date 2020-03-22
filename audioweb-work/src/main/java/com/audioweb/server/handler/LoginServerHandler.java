@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.server.protocol.InterCMDProcess;
-import com.audioweb.server.service.SpringBeanServicePool;
+import com.audioweb.server.service.impl.SpringBeanServiceImpl;
 import com.audioweb.work.domain.WorkTerminal;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -70,20 +70,22 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 					/**获取登录的ID号以及对应的校验IP地址*/
 					String terid = InterCMDProcess.getTeridFromLogin(req);
 					/**进行登录校验*/
-					WorkTerminal terminal = new WorkTerminal(terid);
+					WorkTerminal terminal = new WorkTerminal();
+					terminal.setTerminalIp(ip);
 					if(terminal.exist()) {
 						WorkTerminal me = terminal.get();
 						/**IP验证*/
-						if(me.getTerminalIp().equals(ip)) {
+						if(me.getTerminalId().equals(terid)) {
 							me.setLoginTime(new Date());
 							me.setIsOnline(0);//存储登录信息
 							terminal.setTerRealId(me.getTerRealId());
 							terminal.setLoginTime(new Date());
+							terminal.setIsOnline(0);
 							log.info("终端登录成功："+terid);
 							ByteBuf buf = ctx.alloc().buffer();
 							buf.writeBytes(InterCMDProcess.returnLoginBytes());
 							ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
-							SpringBeanServicePool.getService().getTerminalServiceImpl().updateWorkTerminal(terminal);
+							SpringBeanServiceImpl.loginTerminal(terminal);
 						}else {
 							log.info("登录终端IP配置有误："+terid);
 						}

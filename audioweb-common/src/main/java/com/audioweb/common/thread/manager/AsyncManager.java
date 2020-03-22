@@ -68,7 +68,7 @@ public class AsyncManager
      */
     public void execute(TimerTask task,int delay)
     {
-    	executor.schedule(task, OPERATE_DELAY_TIME, TimeUnit.MILLISECONDS);
+    	executor.schedule(task, delay, TimeUnit.MILLISECONDS);
     }
 
     /**
