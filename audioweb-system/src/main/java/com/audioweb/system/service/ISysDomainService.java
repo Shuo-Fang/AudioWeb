@@ -91,6 +91,14 @@ public interface ISysDomainService
      * @return 分区信息
      */
     public List<SysDomain> selectDomainListByIds(String precinct);
+    
+    /**
+     * 根据分区ID批量查询子分区信息
+     * 
+     * @param domainId 分区ID
+     * @return 分区信息
+     */
+    public List<SysDomain> selectChildrenDomainById(Long domainId);
 
     /**
      * 校验分区名称是否唯一

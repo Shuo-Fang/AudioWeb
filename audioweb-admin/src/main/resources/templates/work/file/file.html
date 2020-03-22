@@ -92,6 +92,7 @@
     <script th:inline="javascript">
         /* var editFlag = [[${@permission.hasPermi('work:file:edit')}]]; */
         var removeFlag = [[${@permission.hasPermi('work:file:remove')}]];
+        var exportFlag = [[${@permission.hasPermi('work:file:export')}]];
         var prefix = ctx + "work/file";
         var openFlag = false;
         console.log(ctx);
@@ -180,8 +181,8 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
-                         actions.push('<a class="btn btn-primary btn-xs " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="fa fa-bell-o"></i>试听</a>');
-                         actions.push('<a class="btn btn-success btn-xs " download  href="' + row.virPath + '"><i class="fa fa-file-audio-o"></i>下载</a>');
+                         actions.push('<a class="btn btn-primary btn-xs '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="fa fa-bell-o"></i>试听</a>');
+                         actions.push('<a class="btn btn-success btn-xs '+ exportFlag +'" download  href="' + row.virPath + '"><i class="fa fa-file-audio-o"></i>下载</a>');
                          actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\')"><i class="fa fa-remove"></i>删除</a>');
                          return actions.join('');
                     }

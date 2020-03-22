@@ -89,6 +89,7 @@ public class WorkFileController extends BaseController
     @ApiOperation("获取音频文件详细")
     @ApiImplicitParam(name = "type", value = "获取音频文件属性类型,work.file为文件广播文件,work.point为终端采播文件,work.word为文本广播文件", required = true, dataType = "String", paramType = "query")
     @PostMapping("/listAll")
+    @RequiresPermissions("work:file:list")
     @ResponseBody
     @ApiResponses({
         @ApiResponse(code=500,message="传参出错"),

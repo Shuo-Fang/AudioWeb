@@ -80,8 +80,8 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
     /** 广播信息 */
     private WorkCastTask castTask; 
     
-    /** 是否在线	0为离线,1为在线(即将离线),2为在线(刚刚通信过)*/
-    private int isOnline; 
+    /** 是否在线	0为在线(刚刚通信过),1为在线(即将离线),2为离线*/
+    private Integer isOnline; 
     public WorkTerminal() {
     	
 	}
@@ -200,10 +200,10 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 	public void setCastTask(WorkCastTask castTask) {
 		this.castTask = castTask;
 	}
-	public int getIsOnline() {
+	public Integer getIsOnline() {
 		return isOnline;
 	}
-	public void setIsOnline(int isOnline) {
+	public void setIsOnline(Integer isOnline) {
 		this.isOnline = isOnline;
 	}
 	public static Map<String, WorkTerminal> getTerminalMap() {

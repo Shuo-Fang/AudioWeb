@@ -19,6 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="remark"    column="remark"    />
+        <result property="isOnline"    column="is_online"    />
         <association property="domain"    column="domain_id" javaType="Sysdomain" resultMap="domainResult" />
     </resultMap>
 
@@ -32,7 +33,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
     <sql id="selectWorkTerminalVo">
         select d.ancestors,d.domain_name,d.domain_id,d.leader,d.phone,d.parent_id,
-        	   t.ter_real_id,t.terminal_id, t.terminal_name, t.terminal_ip, t.is_cmic, t.is_auto_cast, t.status, t.login_time, t.precinct, t.del_flag, t.create_by, t.create_time, t.remark 
+        	   t.ter_real_id,t.terminal_id, t.terminal_name, t.terminal_ip, t.is_cmic, t.is_auto_cast, t.status, t.login_time, t.precinct, t.del_flag, t.create_by, t.create_time, t.remark , t.is_online 
 		from work_terminal t left join sys_domain d 
 		on t.domain_id = d.domain_id and d.del_flag = 0
     </sql>
@@ -49,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isCmic != null  and isCmic != ''"> and t.is_cmic = #{isCmic}</if>
             <if test="isAutoCast != null  and isAutoCast != ''"> and t.is_auto_cast = #{isAutoCast}</if>
             <if test="status != null  and status != ''"> and t.status = #{status}</if>
+            <if test="isOnline != null"> and t.is_online = #{isOnline}</if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
 				AND date_format(t.login_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
 			</if>
@@ -56,7 +58,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND date_format(t.login_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
         </where>
-        order by terminal_id asc
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
     </select>
@@ -116,6 +117,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
             <if test="createTime != null ">create_time = #{createTime},</if>
             <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="isOnline != null">is_online = #{isOnline},</if>
         </trim>
         where ter_real_id = #{terRealId}
     </update>
@@ -146,6 +148,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				<foreach collection="list" item="item">
 					<if test="item.loginTime != null and item.loginTime != ''">
 						when ter_real_id = #{item.terRealId} then #{item.loginTime}
+					</if>
+				</foreach>
+			</trim>
+    	</trim>
+    	<trim prefix="set" suffixOverrides=",">
+    		<trim prefix="is_online =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.isOnline != null">
+						when ter_real_id = #{item.terRealId} then #{item.isOnline}
 					</if>
 				</foreach>
 			</trim>

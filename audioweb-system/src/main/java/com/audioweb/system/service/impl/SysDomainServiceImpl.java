@@ -298,4 +298,15 @@ public class SysDomainServiceImpl implements ISysDomainService
 	{
 		return domainMapper.selectDomainListByIds(Convert.toStrArray(precinct));
 	}
+	/**
+	 * 根据分区ID批量查询子分区信息
+	 * 
+	 * @param domainId 分区ID
+	 * @return 分区信息
+	 */
+	@Override
+	public List<SysDomain> selectChildrenDomainById(Long domainId) 
+	{
+		return domainMapper.selectChildrenDomainById(domainId);
+	}
 }
