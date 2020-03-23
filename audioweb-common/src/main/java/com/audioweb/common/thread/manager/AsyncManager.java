@@ -39,7 +39,7 @@ public class AsyncManager
      * TCP操作任务调度线程池
      */
     private ExecutorService tcpExecutor = SpringUtils.getBean("TcpServiceExecutor");
-
+    
     /**
      * 单例模式
      */

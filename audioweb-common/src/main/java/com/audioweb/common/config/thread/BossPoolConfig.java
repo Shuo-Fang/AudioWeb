@@ -8,7 +8,7 @@
  */ 
 package com.audioweb.common.config.thread;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -27,7 +27,7 @@ import com.audioweb.common.utils.Threads;
 @Configuration
 public class BossPoolConfig implements PoolConfig{
 	@Bean(name = "BossServiceExecutor")
-    public Executor bossServiceExecutor() {
+    public ExecutorService bossServiceExecutor() {
         log.info("start BossServiceExecutor");
         return new ThreadPoolExecutor(NUMBER_OF_CORES,
 				NUMBER_OF_CORES*8, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,

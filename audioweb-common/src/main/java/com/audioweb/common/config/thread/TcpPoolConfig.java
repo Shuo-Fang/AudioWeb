@@ -8,7 +8,7 @@
  */ 
 package com.audioweb.common.config.thread;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
@@ -35,7 +35,7 @@ public class TcpPoolConfig implements PoolConfig{
 	 * @date 2020年2月28日 上午10:13:32
 	 */
     @Bean(name = "TcpServiceExecutor")
-    public Executor tcpServiceExecutor() {
+    public ExecutorService tcpServiceExecutor() {
         log.info("start TcpServiceExecutor");
         return new ThreadPoolExecutor(NUMBER_OF_CORES,
 				NUMBER_OF_CORES*2, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,

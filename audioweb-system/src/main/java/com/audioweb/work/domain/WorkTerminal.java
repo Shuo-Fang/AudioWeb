@@ -236,8 +236,8 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 	/** 将终端信息存入维护 */
 	@Override
 	public boolean put() {
-		if(StringUtils.isNotEmpty(terminalId)) {
-			terminalMap.put(terminalId, this);
+		if(StringUtils.isNotEmpty(terminalIp)) {
+			terminalMap.put(terminalIp, this);
 			return true;
 		}else {
 			return false;
@@ -247,14 +247,14 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 	/** 查询终端信息是否存在  */
 	@Override
 	public boolean exist() {
-		return terminalMap.containsKey(terminalId);
+		return terminalMap.containsKey(terminalIp);
 	}
 	
 	/**获取维护的指定终端信息*/
 	@Override
 	public WorkTerminal get() {
-		if(StringUtils.isNotEmpty(terminalId)) {
-			return terminalMap.get(terminalId);
+		if(StringUtils.isNotEmpty(terminalIp)) {
+			return terminalMap.get(terminalIp);
 		}else {
 			return null;
 		}

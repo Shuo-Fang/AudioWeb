@@ -9,7 +9,7 @@
 package com.audioweb.common.config.thread;
 
 import java.util.Locale;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -38,7 +38,7 @@ public class IoPoolConfig implements PoolConfig {
 	 * @date 2020年2月28日 上午10:40:34
 	 */
 	@Bean(name = "IoServiceExecutor")
-    public Executor ioServiceExecutor() {
+    public ExecutorService ioServiceExecutor() {
         log.info("start IoServiceExecutor");
         return new ThreadPoolExecutor(NUMBER_OF_CORES*2,
 				NUMBER_OF_CORES*8, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,

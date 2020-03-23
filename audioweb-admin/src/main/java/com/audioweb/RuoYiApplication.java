@@ -1,16 +1,11 @@
 package com.audioweb;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-import com.audioweb.server.NettyServer;
-
-import io.netty.channel.ChannelFuture;
+import com.audioweb.server.ServerManager;
 
 /**
  * 启动程序
@@ -18,10 +13,10 @@ import io.netty.channel.ChannelFuture;
  * @author ruoyi,shuofang
  */
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
-public class RuoYiApplication implements CommandLineRunner 
+public class RuoYiApplication// implements CommandLineRunner 
 {
 	@Autowired
-	NettyServer server;
+	ServerManager server;
 	
     public static void main(String[] args)
     {
@@ -43,19 +38,15 @@ public class RuoYiApplication implements CommandLineRunner
 	 * @see org.springframework.boot.CommandLineRunner#run(java.lang.String[]) 
 	 */ 
 	
-	@Override
+/*	@Override
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
-		List<ChannelFuture> futures = server.startServer();
+		server.startServer();
         Runtime.getRuntime().addShutdownHook(new Thread(){
             @Override
             public void run() {
-            	server.destroy();
+            	server.destory();
             }
         });
-        //服务端管道关闭的监听器并同步阻塞,直到channel关闭,线程才会往下执行,结束进程
-        for(ChannelFuture future:futures) {
-        	future.channel().closeFuture().syncUninterruptibly();
-        }
-	}
+	}*/
 }

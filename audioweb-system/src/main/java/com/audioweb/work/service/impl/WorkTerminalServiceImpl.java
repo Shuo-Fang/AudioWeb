@@ -227,8 +227,10 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		/**缓存同步*/
 		WorkTerminal terminal = WorkTerminal.getTerById(workTerminal);
 		if(StringUtils.isNotNull(terminal)) {
-			terminal.remove();
-		}else {
+			if(!workTerminal.getStatus().equals(WorkConstants.NORMAL)) {
+				terminal.remove();
+			}
+		}else if(workTerminal.getStatus().equals(WorkConstants.NORMAL)){
 			terminal = workTerminalMapper.selectWorkTerminalById(workTerminal.getTerRealId());
 			terminal.setStatus(workTerminal.getStatus());
 			terminal.put();
@@ -265,6 +267,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	public void initWorkTerminals() {
 		WorkTerminal terminal = new WorkTerminal();
 		terminal.getDomain().setStatus(UserConstants.DOMAIN_NORMAL);
+		terminal.setStatus(WorkConstants.NORMAL);
 		terminal.clear();
 		List<WorkTerminal> workTerminal  = workTerminalMapper.selectWorkTerminalList(terminal);
 		for(WorkTerminal wTerminal:workTerminal) {

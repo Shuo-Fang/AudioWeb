@@ -1,20 +1,14 @@
 package com.audioweb.server.handler;
 
-import java.util.concurrent.Executor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.thread.manager.AsyncManager;
-import com.audioweb.common.utils.spring.SpringUtils;
-
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.util.CharsetUtil;
 /**
  * 终端通信处理
  * @ClassName: ServerHandler 
@@ -24,7 +18,6 @@ import io.netty.util.CharsetUtil;
  */
 public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 	private static final Logger  log = LoggerFactory.getLogger(ServerHandler.class);
-	private Executor io = (Executor)SpringUtils.getBean("IoServiceExecutor");
 	/**
      * 在读取操作期间，有异常抛出时会调用。
      * @param ctx
