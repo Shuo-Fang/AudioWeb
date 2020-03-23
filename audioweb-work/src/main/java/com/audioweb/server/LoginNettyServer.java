@@ -85,10 +85,10 @@ public class LoginNettyServer extends NettyBase{
 	
 	@Override
 	public void destory() {
-		log.info("Shutdown IoNetty Server...");
+		log.info("Shutdown LoginNetty Server...");
 		if(channel != null) { channel.close();}
 		loginWorkerGroup.shutdownGracefully();
         Threads.shutdownAndAwaitTermination(io);
-        log.info("Shutdown IoNetty Server Success!");
+        log.info("Shutdown LoginNetty Server Success!");
 	}
 }
