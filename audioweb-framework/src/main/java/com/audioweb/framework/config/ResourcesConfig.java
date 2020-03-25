@@ -21,7 +21,6 @@ import com.audioweb.framework.interceptor.RepeatSubmitInterceptor;
 import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.system.service.ISysConfigService;
-import com.audioweb.work.service.IWorkCastTaskService;
 import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.work.service.IWorkTerminalService;
 
@@ -43,10 +42,6 @@ public class ResourcesConfig implements WebMvcConfigurer
 	
 	@Autowired
 	private IWorkTerminalService workTerminalService;
-	
-	@Autowired
-	private IWorkCastTaskService workCastTaskService;
-
     /**
      * 首页地址
      */
@@ -99,8 +94,6 @@ public class ResourcesConfig implements WebMvcConfigurer
 				workFileService.initWorkFiles(paths);
 				/**启动时初始化一次广播终端信息*/
 				workTerminalService.initWorkTerminals();
-				/**启动时初始化一次广播终端信息*/
-				workCastTaskService.deleteWorkCastTaskAll();
 			}
 		}, 10000);
     }

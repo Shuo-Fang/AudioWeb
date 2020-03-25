@@ -1,12 +1,15 @@
 package com.audioweb.work.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.audioweb.work.mapper.WorkCastTaskMapper;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.service.IWorkCastTaskService;
+import com.github.pagehelper.PageInfo;
 import com.audioweb.common.core.text.Convert;
+import com.audioweb.common.utils.StringUtils;
 
 /**
  * 广播任务Service业务层处理
@@ -17,8 +20,6 @@ import com.audioweb.common.core.text.Convert;
 @Service
 public class WorkCastTaskServiceImpl implements IWorkCastTaskService 
 {
-    @Autowired
-    private WorkCastTaskMapper workCastTaskMapper;
 
     /**
      * 查询广播任务
@@ -29,7 +30,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public WorkCastTask selectWorkCastTaskById(Long taskId)
     {
-        return workCastTaskMapper.selectWorkCastTaskById(taskId);
+        return null;
     }
 
     /**
@@ -39,9 +40,46 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @return 广播任务
      */
     @Override
-    public List<WorkCastTask> selectWorkCastTaskList(WorkCastTask workCastTask)
+    public List<WorkCastTask> selectWorkCastTaskList(WorkCastTask workCastTask,Integer pageNum,Integer pageSize)
     {
-        return workCastTaskMapper.selectWorkCastTaskList(workCastTask);
+    	List<WorkCastTask> list = workCastTask.export();
+    	List<WorkCastTask> result = new ArrayList<WorkCastTask>();
+    	/**先做筛选*/
+    	if(StringUtils.isNotEmpty(workCastTask.getTaskName())) {
+    		for(int i = list.size()-1 ;i>=0 ;i--) {
+    			if(list.get(i).getTaskName().indexOf(workCastTask.getTaskName()) < 0) {
+    				list.remove(i);
+    			}
+    		}
+    	}
+    	if(StringUtils.isNotNull(workCastTask.getCastType())) {
+    		for(int i = list.size()-1 ;i>=0 ;i--) {
+    			if(list.get(i).getCastType() != workCastTask.getCastType()) {
+    				list.remove(i);
+    			}
+    		}
+    	}
+    	if(StringUtils.isNotEmpty(workCastTask.getCastLevel())) {
+    		for(int i = list.size()-1 ;i>=0 ;i--) {
+    			if(Integer.parseInt(list.get(i).getCastLevel()) > Integer.parseInt(workCastTask.getCastLevel()) ) {
+    				list.remove(i);
+    			}
+    		}
+    	}
+    	Collections.sort(list);
+    	/**总数*/
+    	int size = list.size();
+    	/**分页过滤*/
+    	for(int i = (pageNum-1)*pageSize;i<pageNum*pageSize && i < size;i++) {
+    		result.add(list.get(i));
+    	}
+    	PageInfo<WorkCastTask> tInfo = new PageInfo<WorkCastTask>(result);
+    	tInfo.setTotal(list.size());
+    	tInfo.setPageNum(pageNum);
+    	tInfo.setPageSize(pageSize);
+    	tInfo.setSize(result.size());
+    	tInfo.setPageSize((int)Math.ceil(list.size()));
+        return tInfo.getList();
     }
 
     /**
@@ -53,7 +91,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int insertWorkCastTask(WorkCastTask workCastTask)
     {
-        return workCastTaskMapper.insertWorkCastTask(workCastTask);
+        return workCastTask.put()?1:0;
     }
 
     /**
@@ -65,7 +103,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int updateWorkCastTask(WorkCastTask workCastTask)
     {
-        return workCastTaskMapper.updateWorkCastTask(workCastTask);
+        return 0;
     }
 
     /**
@@ -77,7 +115,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int deleteWorkCastTaskByIds(String ids)
     {
-        return workCastTaskMapper.deleteWorkCastTaskByIds(Convert.toStrArray(ids));
+        return 0;
     }
 
     /**
@@ -89,16 +127,6 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int deleteWorkCastTaskById(Long taskId)
     {
-        return workCastTaskMapper.deleteWorkCastTaskById(taskId);
+        return 0;
     }
-
-    /**
-     * 系统初始化删除全部缓存任务
-     * 
-     * @return 结果
-     */
-	@Override
-	public int deleteWorkCastTaskAll() {
-		return workCastTaskMapper.deleteWorkCastTaskAll();
-	}
 }

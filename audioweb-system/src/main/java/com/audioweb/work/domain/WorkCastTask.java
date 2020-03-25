@@ -9,8 +9,11 @@
 package com.audioweb.work.domain;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -30,7 +33,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020年3月2日 下午1:27:26  
  */
 @ApiModel("广播任务实体")
-public class WorkCastTask extends BaseEntity implements BaseRunning{
+public class WorkCastTask extends BaseEntity implements BaseRunning,Comparable<WorkCastTask> {
 	private static volatile long  realTaskId = 0;
 	
 	private static final long serialVersionUID = 1L;
@@ -233,7 +236,13 @@ public class WorkCastTask extends BaseEntity implements BaseRunning{
 	
 	@Override
 	public List<WorkCastTask> export() {
-		return new ArrayList<WorkCastTask>(taskMap.values());
+		List<WorkCastTask> returnResult = new ArrayList<WorkCastTask>();
+        Set<Entry<Long, WorkCastTask>> eSet  =  taskMap.entrySet();
+        Iterator<Entry<Long, WorkCastTask>> it = eSet.iterator();
+        while(it.hasNext()) {
+            returnResult.add(it.next().getValue());
+        }
+		return returnResult;
 	}
 	
 	/**将全部的对象更新替换为缓存中存储的对象**/
@@ -247,5 +256,10 @@ public class WorkCastTask extends BaseEntity implements BaseRunning{
 	@Override
 	public boolean remove() {
 		return StringUtils.isNotNull(taskMap.remove(taskId));
+	}
+	
+	@Override
+	public int compareTo(WorkCastTask task) {           //重写Comparable接口的compareTo方法，
+		return Integer.parseInt(this.castLevel) - Integer.parseInt(task.castLevel);// 根据castLevel升序排列，降序修改相减顺序即可
 	}
 }

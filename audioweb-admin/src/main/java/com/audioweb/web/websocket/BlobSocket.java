@@ -7,11 +7,14 @@ import java.util.Date;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.audioweb.common.utils.spring.SpringUtils;
@@ -30,6 +33,7 @@ import com.audioweb.work.global.WebsocketGlobal;
 @Component
 //war部署时此注解@Component需要注释掉
 public class BlobSocket {
+	private static final Logger  log = LoggerFactory.getLogger(BlobSocket.class);
 	private static int onlineCount = 0;
 	private static CopyOnWriteArraySet<BlobSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
@@ -100,6 +104,12 @@ public class BlobSocket {
             e.printStackTrace();
         }
 
+    }
+	
+
+	@OnError
+    public void onError(Throwable t) throws Throwable {
+		log.error("BlobSocket Error: ",t);
     }
 	
 	public void sendMessage(String message) throws IOException {

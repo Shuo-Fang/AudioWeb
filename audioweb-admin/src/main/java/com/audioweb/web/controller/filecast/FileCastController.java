@@ -1,4 +1,4 @@
-package com.audioweb.web.controller.file;
+package com.audioweb.web.controller.filecast;
 
 import java.io.File;
 import java.util.List;
@@ -39,10 +39,10 @@ import com.audioweb.common.core.page.TableDataInfo;
  */
 @Api("音频文件信息管理")
 @Controller
-@RequestMapping("/work/file")
-public class WorkFileController extends BaseController
+@RequestMapping("/work/filecast")
+public class FileCastController extends BaseController
 {
-    private String prefix = "work/file";
+    private String prefix = "work/filecast";
 
     @Autowired
     private IWorkFileService workFileService;
@@ -50,17 +50,16 @@ public class WorkFileController extends BaseController
 	@Autowired
     private ISysConfigService configService;
 	
-    @RequiresPermissions("work:file:view")
+    @RequiresPermissions("work:filecast:view")
     @GetMapping()
     public String file()
     {
-        return prefix + "/file";
+        return prefix + "/filecast";
     }
 
     /**
      * 查询音频任务中所有音频的存储序列信息列表
      */
-    @RequiresPermissions("work:file:list")
     @PostMapping("/list")
     @ResponseBody
     public TableDataInfo list(WorkFile workFile)
@@ -86,7 +85,7 @@ public class WorkFileController extends BaseController
     /**
      * 查询音频任务中所有音频的存储序列信息列表
      */
-    @ApiOperation("获取音频文件详细")
+/*    @ApiOperation("获取音频文件详细")
     @ApiImplicitParam(name = "type", value = "获取音频文件属性类型,work.file为文件广播文件,work.point为终端采播文件,work.word为文本广播文件", required = true, dataType = "String", paramType = "query")
     @PostMapping("/listAll")
     @RequiresPermissions("work:file:list")
@@ -111,9 +110,9 @@ public class WorkFileController extends BaseController
     	return error("传参出错");
     }
 
-    /**
+    *//**
      * 导出音频任务中所有音频的存储序列信息列表
-     */
+     *//*
     @RequiresPermissions("work:file:export")
     @Log(title = "音频信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
@@ -125,10 +124,10 @@ public class WorkFileController extends BaseController
         return util.exportExcel(list, "file");
     }
 
-    /**
+    *//**
      * 新增音频任务中所有音频的存储序列信息
-     */
-/*    @GetMapping("/add")
+     *//*
+    @GetMapping("/add")
     public String add()
     {
         return prefix + "/add";
@@ -144,34 +143,34 @@ public class WorkFileController extends BaseController
     public AjaxResult addSave(WorkFile workFile)
     {
         return toAjax(workFileService.insertWorkFile(workFile));
-    }*/
+    }
 
-    /**
+    *//**
      * 修改音频任务中所有音频的存储序列信息
-     */
-/*    @GetMapping("/edit/{fileId}")
+     *//*
+    @GetMapping("/edit/{fileId}")
     public String edit(@PathVariable("fileId") String fileId, ModelMap mmap)
     {
         WorkFile workFile = workFileService.selectWorkFileById(fileId);
         mmap.put("workFile", workFile);
         return prefix + "/edit";
-    }*/
+    }
 
-    /**
+    *//**
      * 修改保存音频任务中所有音频的存储序列信息
-     */
-/*    @RequiresPermissions("work:file:edit")
+     *//*
+    @RequiresPermissions("work:file:edit")
     @Log(title = "音频任务中所有音频的存储序列信息", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(WorkFile workFile)
     {
         return toAjax(workFileService.updateWorkFile(workFile));
-    }*/
+    }
 
-    /**
+    *//**
      * 删除音频任务中所有音频的存储序列信息
-     */
+     *//*
     @RequiresPermissions("work:file:remove")
     @Log(title = "音频信息", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
@@ -185,5 +184,5 @@ public class WorkFileController extends BaseController
     		FileUtils.deleteFile(path);
     	}
         return toAjax(workFileService.slowDeleteWorkFileByIds(ids));
-    }
+    }*/
 }

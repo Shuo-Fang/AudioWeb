@@ -37,6 +37,12 @@ public class WorkFile extends BaseEntity implements BaseRunning
     
     /** 音频虚拟路径 */
     private String virPath;
+    
+    /** 图像根路径 */
+    private String imagePath;
+    
+    /** 图像虚拟路径 */
+    private String imageVirPath;
 
     /** 歌曲名称(歌源) */
     @Excel(name = "歌曲名称(歌源)")
@@ -229,6 +235,22 @@ public class WorkFile extends BaseEntity implements BaseRunning
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public String getImageVirPath() {
+		return imageVirPath;
+	}
+
+	public void setImageVirPath(String imageVirPath) {
+		this.imageVirPath = imageVirPath;
 	}
 
 	@Override

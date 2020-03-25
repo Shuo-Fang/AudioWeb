@@ -16,11 +16,15 @@ import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.audio.mp3.MP3AudioHeader;
 import org.jaudiotagger.audio.mp3.MP3File;
 import org.jaudiotagger.tag.id3.ID3v23Frame;
+import org.jaudiotagger.tag.id3.framebody.FrameBodyAPIC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.audioweb.common.config.Global;
+import com.audioweb.common.constant.Constants;
 import com.audioweb.common.utils.ExceptionUtil;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.common.utils.file.FileUploadUtils;
 import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.common.utils.security.Md5Utils;
 
@@ -38,6 +42,8 @@ public class Mp3Utils {
     private static final String ARTIST_KEY = "TPE1";
     /** 歌曲专辑 */
     private static final String ALBUM_KEY = "TALB";
+    /** 歌曲图片 */
+    private static final String PICTURE_KEY = "APIC";
     
     /**
      * 通过歌曲文件地址, 获取歌曲信息
@@ -87,6 +93,13 @@ public class Mp3Utils {
             //音频ID
             String fileId = Md5Utils.hash(mp3File.getFile().getPath());
             music.put("fileId", StringUtils.isNotEmpty(fileId)?fileId:"");
+            //音频图片路径
+            byte[] imageData = getImageFromFrameMap(mp3File);
+            if(StringUtils.isNotNull(imageData)) {
+            	String imagePath = FileUtils.formatToLin(FileUploadUtils.saveImage(imageData, fileName));
+            	music.put("imagePath", StringUtils.isNotEmpty(imagePath)?imagePath:"");
+            	music.put("imageVirPath", StringUtils.isNotEmpty(imagePath)?imagePath.replace(FileUtils.formatPath(FileUtils.formatToLin(Global.getImagePath())), Constants.RESOURCE_PREFIX+"/image"):"");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             log.error("文件读取失败: {}", path);
@@ -111,6 +124,22 @@ public class Mp3Utils {
 		} catch (Exception e) {
 			return null;
 		}
+    }
+    /**
+     * 通过键值,获取歌曲中对应的字段信息
+     *
+     * @param mp3File mp3音乐文件
+     * @return 歌曲信息
+     * @throws Exception 可能抛出空指针异常
+     */
+    private static byte[] getImageFromFrameMap(MP3File mp3File){
+    	try {
+    		ID3v23Frame frame = (ID3v23Frame) mp3File.getID3v2Tag().frameMap.get(PICTURE_KEY);
+    		FrameBodyAPIC body = (FrameBodyAPIC) frame.getBody();
+    		return body.getImageData();
+    	} catch (Exception e) {
+    		return null;
+    	}
     }
     /**
      * 判断是否为MP3文件

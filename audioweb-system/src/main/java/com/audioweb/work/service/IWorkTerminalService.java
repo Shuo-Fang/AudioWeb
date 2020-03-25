@@ -2,6 +2,7 @@ package com.audioweb.work.service;
 
 import java.util.List;
 
+import com.audioweb.common.core.domain.Ztree;
 import com.audioweb.work.domain.WorkTerminal;
 
 /**
@@ -107,4 +108,13 @@ public interface IWorkTerminalService
 	 * @date 2020年3月19日 下午11:28:14
 	 */
 	public void initWorkTerminals();
+	/**
+	 * 初始化终端树
+	 * @Title: roleTerminalTreeData 
+	 * @Description: TODO(这里用一句话描述这个方法的作用)  void 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年3月25日 下午10:00:09
+	 */
+	public List<Ztree> roleTerminalTreeData(String domainIds,String terIds);
 }

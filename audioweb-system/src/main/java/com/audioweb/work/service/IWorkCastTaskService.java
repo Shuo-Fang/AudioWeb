@@ -25,7 +25,7 @@ public interface IWorkCastTaskService
      * @param workCastTask 广播任务
      * @return 广播任务集合
      */
-    public List<WorkCastTask> selectWorkCastTaskList(WorkCastTask workCastTask);
+    public List<WorkCastTask> selectWorkCastTaskList(WorkCastTask workCastTask,Integer pageNum,Integer pageSize);
 
     /**
      * 新增广播任务
@@ -59,10 +59,4 @@ public interface IWorkCastTaskService
      */
     public int deleteWorkCastTaskById(Long taskId);
     
-    /**
-     * 系统初始化删除全部缓存任务
-     * 
-     * @return 结果
-     */
-    public int deleteWorkCastTaskAll();
 }

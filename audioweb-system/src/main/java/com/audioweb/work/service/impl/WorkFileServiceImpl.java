@@ -221,6 +221,10 @@ public class WorkFileServiceImpl implements IWorkFileService
 					}else if(file.getUpdateTime().getTime() < (time - WorkConstants.AUDIOFILENOTFONDDATE)){
 						/** 删除或丢失文件存储时间超过了7天*/
 						deleteIds += file.getFileId()+",";
+						/**删除对应的文件图像信息*/
+						if(StringUtils.isNotEmpty(file.getImagePath())) {
+							FileUtils.deleteFile(file.getImagePath());
+						}
 					}
 				}
 			}

@@ -1,12 +1,14 @@
 package com.audioweb.work.service.impl;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TimerTask;
-
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.system.domain.SysDomain;
+import com.audioweb.system.service.ISysDomainService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,11 @@ import org.springframework.stereotype.Service;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.mapper.WorkTerminalMapper;
 import com.audioweb.work.service.IWorkTerminalService;
+import com.audioweb.common.annotation.DataScope;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.constant.WorkConstants;
+import com.audioweb.common.core.domain.Ztree;
 import com.audioweb.common.core.text.Convert;
-import com.audioweb.common.thread.manager.AsyncManager;
 
 /**
  * 终端管理Service业务层处理
@@ -28,8 +31,13 @@ import com.audioweb.common.thread.manager.AsyncManager;
 @Service
 public class WorkTerminalServiceImpl implements IWorkTerminalService 
 {
+	private static final String ISNOTCHECK = "0";
+	private static final String ISCHECK = "1";
     @Autowired
     private WorkTerminalMapper workTerminalMapper;
+
+    @Autowired
+    private ISysDomainService domainService;
 
     /**
      * 查询终端管理
@@ -273,5 +281,80 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		for(WorkTerminal wTerminal:workTerminal) {
 			wTerminal.put();
 		}
+	}
+	/***
+	 * 初始化终端复选树
+	 */
+	@Override
+	public List<Ztree> roleTerminalTreeData(String domainIds,String terIds) {
+		List<String> doms = Convert.strToList(domainIds);
+		List<String> ters = Convert.strToList(terIds);
+		List<SysDomain> father =domainService.selectDomainList(new SysDomain());
+		List<Ztree> result = new ArrayList<Ztree>();
+		for(SysDomain domain:father) {
+			/**分区正常*/
+			if(UserConstants.DOMAIN_NORMAL.equals(domain.getStatus())) {
+                Ztree ztree = new Ztree();
+                ztree.setId(domain.getDomainId());
+                ztree.setpId(domain.getParentId());
+                ztree.setName(domain.getDomainName());
+                ztree.setTitle(domain.getDomainName());
+                for(String dom:doms) {
+                	if(dom.contains(String.valueOf(domain.getDomainId()))) {
+                		/**可能存在相同的ID*/
+                		ztree.setChecked(true);
+                		result.add(ztree);
+                		if(dom.contains("_")) {
+                			/**存在下划线为半选,需要进一步筛选*/
+                			result.addAll(getChildren(domain,ters,ISNOTCHECK));
+                		}else {
+                			result.addAll(getChildren(domain,ters,ISCHECK));
+                		}
+                	}else {
+                		/**未被选中*/
+                		result.addAll(getChildren(domain,ters,ISNOTCHECK));
+                	}
+                }
+			}
+		}
+		return result;
+	}
+	/**
+	 * 
+	 * @Title: getChildren 
+	 * @Description: TODO(这里用一句话描述这个方法的作用) 
+	 * @param domain
+	 * @param terIds
+	 * @param checked 0 为半选或未选,1为全选
+	 * @return List<Ztree> 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年3月25日 下午10:59:38
+	 */
+	private List<Ztree> getChildren(SysDomain domain,List<String> terIds,String checked) {
+		List<Ztree> child = new ArrayList<Ztree>();
+		WorkTerminal terminal = new WorkTerminal();
+		terminal.setStatus(WorkConstants.NORMAL);
+		terminal.setDomain(domain);
+		/**获取当前分区下全部*/
+		List<WorkTerminal> terminals = workTerminalMapper.selectWorkTerminalList(terminal);
+		for(WorkTerminal ter:terminals) {
+			Ztree tree = new Ztree();
+			tree.setpId(ter.getDomainId());
+			tree.setId(Long.parseLong(ter.getTerRealId()));
+			tree.setName(ter.getTerminalName());
+			tree.setTitle(ter.getTerminalId());
+			tree.setIconSkin("icon02");
+			if("0".equals(checked)) {//非全选
+				if(terIds.contains(ter.getTerRealId())) {
+					tree.setChecked(true);
+					terIds.remove(ter.getTerRealId());
+				}
+			}else{
+				tree.setChecked(true);
+			}
+			child.add(tree);
+		}
+		return child;
 	}
 }

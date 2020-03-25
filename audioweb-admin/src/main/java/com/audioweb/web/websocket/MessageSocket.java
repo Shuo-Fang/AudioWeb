@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.audioweb.common.json.JSONObject;
 import com.audioweb.common.utils.spring.SpringUtils;
+import com.audioweb.server.NettyBase;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 import com.audioweb.work.global.WebsocketGlobal;
@@ -28,6 +32,7 @@ import com.audioweb.work.global.WebsocketGlobal;
 @Component
 //war部署时此注解@Component需要注释掉
 public class MessageSocket {
+	private static final Logger  log = LoggerFactory.getLogger(MessageSocket.class);
 	private static int onlineCount = 0;
 	private static CopyOnWriteArraySet<MessageSocket> webSocketSet = new CopyOnWriteArraySet<>();
 	private Session session;
@@ -82,9 +87,15 @@ public class MessageSocket {
 		}else {
 			jsonObject.put("type", message);
 			jsonObject.put("data", "100");
-			sendInfo(jsonObject.toCompactString());
+			sendMessage(jsonObject.toCompactString());
+			//sendInfo(jsonObject.toCompactString());
 		}
 	}
+	
+	@OnError
+    public void onError(Throwable t) throws Throwable {
+		log.error("MessageSocket Error: ",t);
+    }
 	/**
 	 * 
 	 * @Title: onMessage 
@@ -127,10 +138,28 @@ public class MessageSocket {
 	/**
 	 * 群发自定义消息
 	 */
-	public void sendInfo(String text) throws IOException {
+	public static void sendInfo(String tyep,String data) throws IOException {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("type", tyep);
+		jsonObject.put("data", data);
 		for (MessageSocket item : webSocketSet) {
 			try {
-				item.sendMessage(text);
+				item.sendMessage(jsonObject.toCompactString());
+			} catch (IOException e) {
+				continue;
+			}
+		}
+	}
+	/**
+	 * 群发刷新页面消息
+	 */
+	public static void refreshInfo(String menuId) throws IOException {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("type", "refresh");
+		jsonObject.put("data", menuId);
+		for (MessageSocket item : webSocketSet) {
+			try {
+				item.sendMessage(jsonObject.toCompactString());
 			} catch (IOException e) {
 				continue;
 			}

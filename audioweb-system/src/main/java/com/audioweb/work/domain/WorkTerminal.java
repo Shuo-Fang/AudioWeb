@@ -322,4 +322,8 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 		}
 		return null;
 	}
+	/**通过ip查询终端实际存储信息*/
+	public static WorkTerminal getTerByIp(String ip) {
+		return terminalMap.get(ip);
+	}
 }

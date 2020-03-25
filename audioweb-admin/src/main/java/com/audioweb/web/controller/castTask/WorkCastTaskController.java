@@ -47,17 +47,17 @@ public class WorkCastTaskController extends BaseController
     @RequiresPermissions("work:castTask:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(WorkCastTask workCastTask)
+    public TableDataInfo list(WorkCastTask workCastTask,Integer pageNum,Integer pageSize)
     {
         startPage();
-        List<WorkCastTask> list = workCastTaskService.selectWorkCastTaskList(workCastTask);
+        List<WorkCastTask> list = workCastTaskService.selectWorkCastTaskList(workCastTask,pageNum,pageSize);
         return getDataTable(list);
     }
 
     /**
      * 导出广播任务列表
      */
-    @RequiresPermissions("work:castTask:export")
+/*    @RequiresPermissions("work:castTask:export")
     @Log(title = "广播任务", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     @ResponseBody
@@ -66,7 +66,7 @@ public class WorkCastTaskController extends BaseController
         List<WorkCastTask> list = workCastTaskService.selectWorkCastTaskList(workCastTask);
         ExcelUtil<WorkCastTask> util = new ExcelUtil<WorkCastTask>(WorkCastTask.class);
         return util.exportExcel(list, "castTask");
-    }
+    }*/
 
     /**
      * 新增广播任务

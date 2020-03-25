@@ -10,6 +10,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="fileType"    column="file_type"    />
         <result property="filePath"    column="file_path"    />
         <result property="virPath"    column="vir_path"    />
+        <result property="imagePath"    column="image_path"    />
+        <result property="imageVirPath"    column="image_vir_path"    />
         <result property="songName"    column="song_name"    />
         <result property="artist"    column="artist"    />
         <result property="album"    column="album"    />
@@ -26,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectWorkFileVo">
-        select file_id, file_name, file_type, file_path, vir_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, del_flag, create_by, update_time, remark from work_file
+        select file_id, file_name, file_type, file_path, vir_path ,image_path, image_vir_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, del_flag, create_by, update_time, remark from work_file
     </sql>
 
     <select id="selectWorkFileList" parameterType="WorkFile" resultMap="WorkFileResult">
@@ -56,6 +58,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fileType != null  and fileType != ''">file_type,</if>
             <if test="filePath != null  and filePath != ''">file_path,</if>
             <if test="virPath != null  and virPath != ''">vir_path,</if>
+            <if test="imagePath != null  and imagePath != ''">image_path,</if>
+            <if test="imageVirPath != null  and imageVirPath != ''">image_vir_path,</if>
             <if test="songName != null  and songName != ''">song_name,</if>
             <if test="artist != null  and artist != ''">artist,</if>
             <if test="album != null  and album != ''">album,</if>
@@ -76,6 +80,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fileType != null  and fileType != ''">#{fileType},</if>
             <if test="filePath != null  and filePath != ''">#{filePath},</if>
             <if test="virPath != null  and virPath != ''">#{virPath},</if>
+            <if test="imagePath != null  and imagePath != ''">#{imagePath},</if>
+            <if test="imageVirPath != null  and imageVirPath != ''">#{imageVirPath},</if>
             <if test="songName != null  and songName != ''">#{songName},</if>
             <if test="artist != null  and artist != ''">#{artist},</if>
             <if test="album != null  and album != ''">#{album},</if>
@@ -99,6 +105,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fileType != null  and fileType != ''">file_type = #{fileType},</if>
             <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
             <if test="virPath != null  and virPath != ''">vir_path = #{virPath},</if>
+            <if test="imagePath != null  and imagePath != ''">image_path = #{imagePath},</if>
+            <if test="imageVirPath != null  and imageVirPath != ''">image_vir_path = #{imageVirPath},</if>
             <if test="songName != null  and songName != ''">song_name = #{songName},</if>
             <if test="artist != null  and artist != ''">artist = #{artist},</if>
             <if test="album != null  and album != ''">album = #{album},</if>
@@ -163,6 +171,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				<foreach collection="list" item="item">
 					<if test="item.virPath != null and item.virPath != ''">
 						when file_id = #{item.fileId} then #{item.virPath}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="image_path =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.imagePath != null and item.imagePath != ''">
+						when file_id = #{item.fileId} then #{item.imagePath}
+					</if>
+				</foreach>
+			</trim>
+    		<trim prefix="image_vir_path =(case" suffix="end),">
+				<foreach collection="list" item="item">
+					<if test="item.imageVirPath != null and item.imageVirPath != ''">
+						when file_id = #{item.fileId} then #{item.imageVirPath}
 					</if>
 				</foreach>
 			</trim>
@@ -268,7 +290,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     
 	<insert id="batchInsertWorkFiles" parameterType="java.util.List">
-	    INSERT INTO work_file(file_id, file_name, file_type, file_path, vir_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, create_by, update_time, remark)
+	    INSERT INTO work_file(file_id, file_name, file_type, file_path, vir_path, image_path, image_vir_path, song_name, artist, album, duration, format, bit_rate, sample_rate, start_byte, music_length, create_by, update_time, remark)
 	    VALUES
 	    <foreach collection="list" item="item" separator=",">
 	        (#{item.fileId},
@@ -276,6 +298,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	        #{item.fileType},
 	        #{item.filePath},
 	        #{item.virPath},
+	        #{item.imagePath},
+	        #{item.imageVirPath},
 	        #{item.songName},
 	        #{item.artist},
 	        #{item.album},

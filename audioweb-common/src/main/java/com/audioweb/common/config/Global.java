@@ -107,6 +107,14 @@ public class Global
     {
         return getProfile() + "/avatar";
     }
+    
+    /**
+     * 获取音频图片存储路径
+     */
+    public static String getImagePath()
+    {
+    	return getProfile() + "/image";
+    }
 
     /**
      * 获取下载路径

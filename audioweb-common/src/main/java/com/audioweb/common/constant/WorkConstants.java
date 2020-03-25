@@ -46,4 +46,8 @@ public class WorkConstants {
     /** 通用状态 0为正常，1为异常或停用*/
     public final static String NORMAL = "0";
     public final static String DESTOY = "1";
+    
+    /**默认需要刷新的页面ID*/
+    public final static String WORK_TERMINAL = "2020";
+    public final static String WORK_CASTTASK = "2021";
 }

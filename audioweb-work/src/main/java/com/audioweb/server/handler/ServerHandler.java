@@ -5,6 +5,10 @@ import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.thread.manager.AsyncManager;
+import com.audioweb.common.utils.StringUtils;
+import com.audioweb.server.protocol.InterCMDProcess;
+import com.audioweb.work.domain.WorkTerminal;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -63,8 +67,21 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 					switch(cmd){
 					/**终端心跳包*/
 					case CMD_NETHEART:
-						
+						WorkTerminal terminal = WorkTerminal.getTerByIp(ip);
+						String terid = InterCMDProcess.getTeridFromLogin(req);
+						if(StringUtils.isNotNull(terminal) && terminal.getTerminalId().equals(terid)) {
+							if(StringUtils.isNotNull(terminal.getCastTask())){
+								/**若有广播任务则先入组*/
+								
+							}else {
+								/**则正常入组刷新终端登录状态*/
+								ByteBuf buf = ctx.alloc().buffer();
+								buf.writeBytes(InterCMDProcess.returnNetHeart());
+								ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
+							}
+						}
 						break;
+						
 					default:
 						
 						break;

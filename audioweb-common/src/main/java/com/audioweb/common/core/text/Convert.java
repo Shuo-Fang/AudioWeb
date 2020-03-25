@@ -1,16 +1,15 @@
 package com.audioweb.common.core.text;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
-import com.audioweb.common.enums.BusinessStatus;
-import com.audioweb.common.enums.BusinessType;
-import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.utils.StringUtils;
 
@@ -370,6 +369,35 @@ public class Convert
     public static String[] toStrArray(String str)
     {
         return toStrArray(",", str);
+    }
+    
+    /**
+     * 转换为String数组<br>
+     * 
+     * @param str 被转换的值
+     * @return 结果
+     */
+    public static List<String> strToList(String str)
+    {
+    	if(StringUtils.isNotEmpty(str)) {
+    		return Arrays.asList(toStrArray(",", str));
+    	}else {
+			return new ArrayList<>();
+		}
+    }
+    /**
+     * 转换为String数组<br>
+     * 
+     * @param str 被转换的值
+     * @return 结果
+     */
+    public static String listToStr(List<String> list)
+    {
+    	if(StringUtils.isNotEmpty(list)) {
+    		return StringUtils.join(list.toArray(), ",");
+    	}else {
+			return "";
+		}
     }
 
     /**

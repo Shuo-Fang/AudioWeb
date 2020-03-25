@@ -1,6 +1,7 @@
 package com.audioweb.common.utils.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,7 +76,33 @@ public class FileUploadUtils
             throw new IOException(e.getMessage(), e);
         }
     }
-
+    /**
+     * 
+     * @Title: saveImage 
+     * @Description: 保存音频图像信息
+     * @param imageData
+     * @param fileName
+     * @return 图像绝对路径
+     * @throws FileSizeLimitExceededException
+     * @throws IOException
+     * @throws FileNameLengthLimitExceededException
+     * @throws InvalidExtensionException String 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年3月25日 下午8:28:10
+     */
+    public static final String saveImage(byte[] imageData,String fileName)
+            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
+            InvalidExtensionException
+    {
+    	String filePath = Global.getImagePath();
+        String fileset  = DateUtils.datePath() + "/" + encodingFilename(fileName) + ".jpg";
+        File desc = getAbsoluteFile(filePath, fileset);
+        FileOutputStream fos = new FileOutputStream(desc);
+        fos.write(imageData);
+        fos.close();
+        return desc.getPath();
+    }
     /**
      * 文件上传
      *
@@ -90,23 +117,23 @@ public class FileUploadUtils
      * @throws InvalidExtensionException 文件校验异常
      */
     public static final String upload(String baseDir, MultipartFile file, String[] allowedExtension, boolean rename)
-            throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
-            InvalidExtensionException
+    		throws FileSizeLimitExceededException, IOException, FileNameLengthLimitExceededException,
+    		InvalidExtensionException
     {
-        int fileNamelength = file.getOriginalFilename().length();
-        if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH)
-        {
-            throw new FileNameLengthLimitExceededException(FileUploadUtils.DEFAULT_FILE_NAME_LENGTH);
-        }
-
-        assertAllowed(file, allowedExtension);
-        
-        String fileName = extractFilename(file,rename);
-
-        File desc = getAbsoluteFile(baseDir, fileName);
-        file.transferTo(desc);
-        String pathFileName = getPathFileName(baseDir, fileName, rename);
-        return pathFileName;
+    	int fileNamelength = file.getOriginalFilename().length();
+    	if (fileNamelength > FileUploadUtils.DEFAULT_FILE_NAME_LENGTH)
+    	{
+    		throw new FileNameLengthLimitExceededException(FileUploadUtils.DEFAULT_FILE_NAME_LENGTH);
+    	}
+    	
+    	assertAllowed(file, allowedExtension);
+    	
+    	String fileName = extractFilename(file,rename);
+    	
+    	File desc = getAbsoluteFile(baseDir, fileName);
+    	file.transferTo(desc);
+    	String pathFileName = getPathFileName(baseDir, fileName, rename);
+    	return pathFileName;
     }
 
     /**

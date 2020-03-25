@@ -419,7 +419,7 @@ public class InterCMDProcess {
 	 */
 	private static ByteBuffer sendStringToBytes(ByteBuffer bb,String content,byte[] lastbytes){
 		if(StringUtils.isNotEmpty(content)) {
-			bb.put(content.getBytes(CharsetKit.CHARSET_GBK));
+			bb.put(content.getBytes(CharsetKit.CHARSET_GB2312));
 		}
 		if(StringUtils.isNotNull(lastbytes)) {
 			bb.put(lastbytes);

@@ -19,24 +19,8 @@ import java.util.Set;
  * @date 2020年2月27日 下午12:03:28  
  */
 public class WebsocketGlobal {
-	private static Set<String> appSessionIds = new HashSet<String>();
 	private static Set<String> messageSessionIds = new HashSet<String>();
 	private static Set<String> BlobSessionIds = new HashSet<String>();
-	/**
-	 * 存储会话sessionID
-	 * @Title: putAppId 
-	 * @Description: 存储会话sessionID
-	 * @param sessionId
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
-	 * @date 2020年2月27日 下午1:15:14
-	 */
-	public static boolean putAppId(String sessionId) {
-		synchronized (appSessionIds) {
-			return appSessionIds.add(sessionId);
-		}
-	}
 	/**
 	 * 存储会话sessionID
 	 * @Title: putMessageId 
@@ -65,21 +49,6 @@ public class WebsocketGlobal {
 	public static boolean putBlobId(String sessionId) {
 		synchronized (BlobSessionIds) {
 			return BlobSessionIds.add(sessionId);
-		}
-	}
-	/**
-	 * 移除会话sessionID
-	 * @Title: removeAppId 
-	 * @Description: 移除会话sessionID
-	 * @param sessionId
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
-	 * @date 2020年2月27日 下午1:15:55
-	 */
-	public static boolean removeAppId(String sessionId) {
-		synchronized (appSessionIds) {
-			return appSessionIds.remove(sessionId);
 		}
 	}
 	/**
@@ -125,7 +94,6 @@ public class WebsocketGlobal {
 		Set<String> all = new HashSet<String>();
 		all.addAll(BlobSessionIds);
 		all.addAll(messageSessionIds);
-		all.addAll(appSessionIds);
 		return new ArrayList<String>(all);
 	}
 }

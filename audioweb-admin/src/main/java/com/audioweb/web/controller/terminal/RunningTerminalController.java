@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.audioweb.common.annotation.DataScope;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
@@ -125,13 +127,10 @@ public class RunningTerminalController extends BaseController
     public AjaxResult listDomain()
     {
     	try {
-    		Long domainId = ShiroUtils.getSysUser().getDomainId();
-    		SysDomain myDomain = domainService.selectDomainById(domainId);
-    		List<SysDomain> list = domainService.selectChildrenDomainById(domainId);
+    		List<SysDomain> list = domainService.selectDomainList(new SysDomain());
     		if(StringUtils.isNull(list)) {
     			list = new ArrayList<SysDomain>();
     		}
-    		list.add(myDomain);
     		AjaxResult result = success();
     		result.put(AjaxResult.DATA_TAG, list);
     		return result;

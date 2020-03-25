@@ -1021,3 +1021,9 @@ label {
 	vertical-align:top; 
 	*vertical-align:middle
 }
+.ztree li span.button.icon02_ico_docu{
+	margin-right:2px;
+	background: url(../../../ajax/libs/jquery-ztree/3.5/css/default/img/diy/12.png) no-repeat scroll 0 0 transparent; 
+	vertical-align:top; 
+	*vertical-align:middle
+}
