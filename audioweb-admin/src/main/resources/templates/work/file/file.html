@@ -131,32 +131,37 @@
                     visible: false
                 },
                 {
-                    align: 'center',
                     field : 'fileName', 
                     title : '音频名称',
+		            width: '25%',
+                    align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 30, "open");
+                    	return $.table.tooltip(value);
                    	}
                 },
                 {
-                    align: 'center',
                     field : 'songName', 
                     title : '歌曲名称',
+		            width: '20%',
+                    align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 20, "open");
+                    	return $.table.tooltip(value);
                    	}
                 },
                 {
-                    align: 'center',
                     field : 'artist', 
                     title : '歌手名称',
+		            width: '15%',
+                    align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "open");
+                    	return $.table.tooltip(value, 15, "");
                    	}
                 },
                 {
                     field : 'album', 
                     title : '歌曲专辑',
+		            width: '20%',
+                    align: "left",
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 15, "open");
                    	}
@@ -164,6 +169,7 @@
                 {
                     field : 'duration', 
                     title : '音频时长',
+		            width: '5%',
                     align: 'center',
                    	formatter: function(value, row, index) {
                    		var num = Math.floor(value/1000);
@@ -173,6 +179,7 @@
                 {
                     title: '操作',
                     align: 'center',
+		            width: '15%',
                     formatter: function(value, row, index) {
                         var actions = [];
                          actions.push('<a class="btn btn-primary btn-xs '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="fa fa-bell-o"></i>试听</a>');

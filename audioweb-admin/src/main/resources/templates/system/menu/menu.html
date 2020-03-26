@@ -91,7 +91,10 @@
 		            field: 'url',
 		            title: '请求地址',
 		            width: '15%',
-		            align: "left"
+                    align: "left",
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
 		        },
 		        {
 		            title: '类型',
@@ -126,7 +129,10 @@
 		            field: 'perms',
 		            title: '权限标识',
 		            width: '15%',
-		            align: "left",
+                    align: "left",
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
 		        },
 		        {
 		            title: '操作',
