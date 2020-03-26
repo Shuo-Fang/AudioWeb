@@ -322,12 +322,18 @@
 }
 
 /** 表单验证 样式布局 **/
+.control-label.is-required:before {
+  content: '* ';
+  color: red;
+}
+
 label.error {
 	position: absolute;
 	right: 18px;
 	top: 10px;
 	color: #ef392b;
-	font-size: 12px
+    font-size: 12px;
+    z-index:99;
 }
 
 .input-group label.error {
