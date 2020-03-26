@@ -215,9 +215,14 @@ var table = {
             	$(optionsIds).off("click").on("click", '.img-circle', function() {
     			    var src = $(this).attr('src');
     			    var target = $(this).data('target');
-    			    var height = $(this).data('height');
-    			    var width = $(this).data('width');
     			    if($.common.equals("self", target)) {
+                        var height = $(this).data('height');
+                        var width = $(this).data('width');
+                        // 如果是移动端，就使用自适应大小弹窗
+                        if ($.common.isMobile()) {
+                            width = 'auto';
+                            height = 'auto';
+                        }
     			    	layer.open({
         			        title: false,
         			        type: 1,
@@ -359,7 +364,6 @@ var table = {
     			} else{
     				$("#" + table.options.id).bootstrapTable('refresh', params);
     			}
-                data = {};
     		},
     		// 导出数据
     		exportExcel: function(formId) {
@@ -731,7 +735,7 @@ var table = {
             // 弹出层指定宽度
             open: function (title, url, width, height, callback) {
             	//如果是移动端，就使用自适应大小弹窗
-            	if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+                if ($.common.isMobile()) {
             	    width = 'auto';
             	    height = 'auto';
             	}
@@ -803,7 +807,7 @@ var table = {
             // 弹出层全屏
             openFull: function (title, url, width, height) {
             	//如果是移动端，就使用自适应大小弹窗
-            	if (navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)) {
+                if ($.common.isMobile()) {
             	    width = 'auto';
             	    height = 'auto';
             	}
@@ -1032,8 +1036,17 @@ var table = {
             	if ($.common.isNotEmpty(id)) {
             	    url = table.options.updateUrl.replace("{id}", id);
             	} else {
-            	    var row = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
-            	    url = table.options.updateUrl.replace("{id}", row);
+                    if(table.options.type == table_type.bootstrapTreeTable) {
+                        var row = $("#" + table.options.id).bootstrapTreeTable('getSelections')[0];
+                        if ($.common.isEmpty(row)) {
+                            $.modal.alertWarning("请至少选择一条记录");
+                            return;
+                        }
+                        url = table.options.updateUrl.replace("{id}", row[table.options.uniqueId]);
+                    } else {
+                        var row = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+                        url = table.options.updateUrl.replace("{id}", row);
+                    }
             	}
             	$.modal.openFull("修改" + table.options.modalName, url);
             },
@@ -1523,7 +1536,11 @@ var table = {
                     }　　
                 }
                 return count;
-            }
+            },
+            // 判断移动端
+            isMobile: function () {
+                return navigator.userAgent.match(/(Android|iPhone|SymbianOS|Windows Phone|iPad|iPod)/i);
+            },
         }
     });
 })(jQuery);

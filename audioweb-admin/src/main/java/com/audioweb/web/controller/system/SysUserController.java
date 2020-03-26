@@ -22,6 +22,7 @@ import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.shiro.service.SysPasswordService;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysUser;
+import com.audioweb.system.domain.SysUserRole;
 import com.audioweb.system.service.ISysRoleService;
 import com.audioweb.system.service.ISysUserService;
 
@@ -196,6 +197,33 @@ public class SysUserController extends BaseController
         return error();
     }
 
+    /**
+     * 进入授权角色页
+     */
+    @GetMapping("/authRole/{userId}")
+    public String authRole(@PathVariable("userId") Long userId, ModelMap mmap)
+    {
+        SysUser user = userService.selectUserById(userId);
+        // 获取用户所属的角色列表
+        List<SysUserRole> userRoles = userService.selectUserRoleByUserId(userId);
+        mmap.put("user", user);
+        mmap.put("userRoles", userRoles);
+        return prefix + "/authRole";
+    }
+
+    /**
+     * 用户授权角色
+     */
+    @RequiresPermissions("system:user:add")
+    @Log(title = "用户管理", businessType = BusinessType.GRANT)
+    @PostMapping("/authRole/insertAuthRole")
+    @ResponseBody
+    public AjaxResult insertAuthRole(Long userId, Long[] roleIds)
+    {
+        userService.insertUserAuth(userId, roleIds);
+        return success();
+    }
+    
     @RequiresPermissions("system:user:remove")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @PostMapping("/remove")

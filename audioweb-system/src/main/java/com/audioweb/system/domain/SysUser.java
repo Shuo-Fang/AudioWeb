@@ -41,6 +41,9 @@ public class SysUser extends BaseEntity
     @Excel(name = "用户名称")
     private String userName;
 
+    /** 用户类型 */
+    private String userType;
+
     /** 用户邮箱 */
     @Excel(name = "用户邮箱")
     private String email;
@@ -175,7 +178,15 @@ public class SysUser extends BaseEntity
         this.userName = userName;
     }
 
-    @Email(message = "邮箱格式不正确")
+    public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+
+	@Email(message = "邮箱格式不正确")
     @Size(min = 0, max = 50, message = "邮箱长度不能超过50个字符")
     public String getEmail()
     {
@@ -319,6 +330,7 @@ public class SysUser extends BaseEntity
             .append("domainId", getDomainId())
             .append("loginName", getLoginName())
             .append("userName", getUserName())
+            .append("userType", getUserType())
             .append("email", getEmail())
             .append("phonenumber", getPhonenumber())
             .append("sex", getSex())
