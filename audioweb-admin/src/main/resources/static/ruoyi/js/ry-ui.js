@@ -253,7 +253,27 @@ var table = {
             		table.options.onLoadSuccess(data);
             	}
             	// 浮动提示框特效
-            	$("[data-toggle='tooltip']").tooltip();
+                $(".table [data-toggle='tooltip']").tooltip();
+                
+                // 气泡弹出框特效
+                $('.table [data-toggle="popover"]').each(function() {
+                    $(this).popover({ trigger: "manual", html: true, animation: false, container: "body", placement: "left" 
+                    }).on("mouseenter",
+                        function() {
+                            var _this = this;
+                            $(this).popover("show");
+                            $(".popover").on("mouseleave", function() {
+                                $(_this).popover('hide'); 
+                            });
+                    }).on("mouseleave",
+                        function() {
+                            var _this = this;
+                            setTimeout(function() {
+                                if (!$(".popover:hover").length)
+                                    $(_this).popover("hide");
+                        }, 100);
+                    });
+                });
             },
             // 表格销毁
             destroy: function (tableId) {
@@ -339,15 +359,20 @@ var table = {
     			} else{
     				$("#" + table.options.id).bootstrapTable('refresh', params);
     			}
+                data = {};
     		},
     		// 导出数据
     		exportExcel: function(formId) {
     			table.set();
     			$.modal.confirm("确定导出所有" + table.options.modalName + "吗？", function() {
 	    			var currentId = $.common.isEmpty(formId) ? $('form').attr('id') : formId;
+                    var params = $("#" + table.options.id).bootstrapTable('getOptions');
+                    var dataParam = $("#" + currentId).serializeArray();
+                    dataParam.push({ "name": "orderByColumn", "value": params.sortName });
+                    dataParam.push({ "name": "isAsc", "value": params.sortOrder });	    	
 	    			$.modal.loading("正在导出数据，请稍后...");
-	    			$.post(table.options.exportUrl, $("#" + currentId).serializeArray(), function(result) {
-	    				if (result.code == web_status.SUCCESS) {
+                    $.post(table.options.exportUrl, dataParam, function(result) {
+	    			if (result.code == web_status.SUCCESS) {
 	    			        window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
 	    				} else if (result.code == web_status.WARNING) {
 	                        $.modal.alertWarning(result.msg)
@@ -395,9 +420,7 @@ var table = {
             			}
             			var index = layer.load(2, {shade: false});
             			$.modal.disable();
-            			var formData = new FormData();
-                        formData.append("file", layero.find('#file')[0].files[0]);
-            			formData.append("updateSupport", $("input[name='updateSupport']").is(':checked'));
+                        var formData = new FormData(layero.find('form')[0]);
             			$.ajax({
             				url: table.options.importUrl,
             				data: formData,
@@ -559,12 +582,15 @@ var table = {
             	return $.common.uniqueFn(rows);
             },
             // 请求获取数据后处理回调函数，校验异常状态提醒
-            responseHandler: function(data) {
-            	if (data.code != undefined && data.code != 0) {
-            		$.modal.alertWarning(data.msg);
+            responseHandler: function(res) {
+                if (typeof table.options.responseHandler == "function") {
+                    table.options.responseHandler(res);
+                }
+                if (res.code != undefined && res.code != 0) {
+                    $.modal.alertWarning(res.msg);
             		return [];
                 } else {
-                    return data;
+                    return res;
                 }
             },
         },
@@ -581,6 +607,12 @@ var table = {
                 	} else{
                 	    $("#" + tableId).bootstrapTable('refresh');
                 	}
+                } else if (table.options.type == table_type.bootstrapTreeTable) {
+                    if($.common.isEmpty(tableId)){
+                        $("#" + table.options.id).bootstrapTreeTable('refresh', []);
+                    } else{
+                        $("#" + tableId).bootstrapTreeTable('refresh', []);
+                    }
             	}
             },
             // 获取选中复选框项

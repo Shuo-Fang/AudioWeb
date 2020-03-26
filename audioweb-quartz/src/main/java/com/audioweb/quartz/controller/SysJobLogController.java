@@ -9,15 +9,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.core.page.TableDataInfo;
 import com.audioweb.common.enums.BusinessType;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
+import com.audioweb.quartz.domain.SysJob;
 import com.audioweb.quartz.domain.SysJobLog;
 import com.audioweb.quartz.service.ISysJobLogService;
+import com.audioweb.quartz.service.ISysJobService;
 
 /**
  * 调度日志操作处理
@@ -31,12 +35,20 @@ public class SysJobLogController extends BaseController
     private String prefix = "monitor/job";
 
     @Autowired
+    private ISysJobService jobService;
+    
+    @Autowired
     private ISysJobLogService jobLogService;
 
     @RequiresPermissions("monitor:job:view")
     @GetMapping()
-    public String jobLog()
+    public String jobLog(@RequestParam(value = "jobId", required = false) Long jobId, ModelMap mmap)
     {
+        if (StringUtils.isNotNull(jobId))
+        {
+            SysJob job = jobService.selectJobById(jobId);
+            mmap.put("job", job);
+        }
         return prefix + "/jobLog";
     }
 
