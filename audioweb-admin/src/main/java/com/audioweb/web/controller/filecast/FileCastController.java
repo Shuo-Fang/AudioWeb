@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +53,7 @@ public class FileCastController extends BaseController
 	
     @RequiresPermissions("work:filecast:view")
     @GetMapping()
-    public String file()
+    public String file(ModelMap mmap)
     {
         return prefix + "/filecast";
     }
@@ -185,4 +186,6 @@ public class FileCastController extends BaseController
     	}
         return toAjax(workFileService.slowDeleteWorkFileByIds(ids));
     }*/
+    
+    
 }

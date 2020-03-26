@@ -2,6 +2,8 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
 	<th:block th:include="include :: header('文件广播')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
 </head>
 <body class="gray-bg">
 	 <div class="ui-layout-west">
@@ -23,7 +25,7 @@
 			</div>
 		</div>
 	 </div>
-     <div class="container-div">
+     <div class="ui-layout-center container-div">
 		<div class="row">
 			<div class="col-sm-12 select-table table-striped">
 			    <p class="select-title">按住表格拖拽</p>
@@ -35,6 +37,8 @@
 	</div>
     <div th:include="include :: footer"></div>
     <th:block th:include="include :: bootstrap-table-reorder-js" />
+	<th:block th:include="include :: layout-latest-js" />
+	<th:block th:include="include :: ztree-js" />
     <script th:inline="javascript">
         var prefix = ctx + "work/filecast";
         var datas = [[${@dict.getType('sys_normal_disable')}]];
@@ -44,10 +48,10 @@
 		        panehHidden = true;
 		    }
 		    $('body').layout({ initClosed: panehHidden, west__size: 185 });
-		    queryTerminalList();
+		    queryFileList();
 		    queryDomainTree();
 		});
-        $(function() {
+        function queryFileList(){
             var options = {
                 url: prefix + "/list",
 		        showSearch: false,
@@ -123,7 +127,47 @@
                 }]
             };
             $.table.init(options);
-        });
+        }
+        
+		$('#btnExpand').click(function() {
+			$._tree.expandAll(true);
+		    $(this).hide();
+		    $('#btnCollapse').show();
+		});
+		
+		$('#btnCollapse').click(function() {
+			$._tree.expandAll(false);
+		    $(this).hide();
+		    $('#btnExpand').show();
+		});
+		
+		$('#btnRefresh').click(function() {
+			queryDomainTree();
+		});
+
+		/* 终端管理-分区 */
+		$('#btnDomain').click(function() {
+			var url = ctx + "system/domain";
+			$.modal.openTab("分区管理", url);
+		});
+        
+        function queryDomainTree()
+		{
+			var url = ctx + "system/domain/treeData";
+			var options = {
+		        url: url,
+		        expandLevel: 2,
+		        onClick : zOnClick
+		    };
+			$.tree.init(options);
+			function zOnClick(event, treeId, treeNode) {debugger
+				$("#domainId").val(treeNode.id);
+				$("#parentId").val(treeNode.pId);
+				domainId = treeNode.id;
+				$.table.search();
+				queryFileList();
+			}
+		}
     </script>
 </body>
 </html>
