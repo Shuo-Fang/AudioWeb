@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.audioweb.system.domain.SysDictData;
 import com.audioweb.system.service.ISysDictDataService;
+import com.audioweb.system.service.ISysDictTypeService;
 
 /**
  * RuoYi首创 html调用 thymeleaf 实现字典读取
@@ -16,6 +17,9 @@ public class DictService
 {
     @Autowired
     private ISysDictDataService dictDataService;
+    
+    @Autowired
+    private ISysDictTypeService dictTypeService;
 
     /**
      * 根据字典类型查询字典数据信息
@@ -25,7 +29,7 @@ public class DictService
      */
     public List<SysDictData> getType(String dictType)
     {
-        return dictDataService.selectDictDataByType(dictType);
+        return dictTypeService.selectDictDataByType(dictType);
     }
 
     /**
