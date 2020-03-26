@@ -28,13 +28,13 @@
         <div class="nav-close">
             <i class="fa fa-times-circle"></i>
         </div>
+        <a th:href="@{/index}">
+            <li class="logo">
+				<span class="logo-lg">[[${user.userName}]]</span> 
+            </li>
+        </a>
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
-                <a th:href="@{/index}">
-                  <li class="logo">
-				    <span class="logo-lg">[[${user.userName}]]</span> 
-            	  </li>
-            	</a>
             	<li>
             		<div class="user-panel">
             			<a class="menuItem" title="个人中心" th:href="@{/system/user/profile}"> 
@@ -183,11 +183,11 @@
                     	<i class="fa fa-bars"></i>
                     </a>
                 </div>
-                <div class="navbar-header">
-                    <li class="minimalize-styl-2" style="width: 300px; color:#FFF;" title="系统时间">
+                <ul class="nav navbar-top-links navbar-left welcome-message">
+                    <li class="minimalize-styl-2" title="系统时间">
 						<font  color="yellow" id = "datetime" > </font>
                     </li>
-                </div>
+                </ul>
                 <ul class="nav navbar-top-links navbar-right welcome-message">
                     <!-- <li><a title="视频教程" href="http://doc.ruoyi.vip/ruoyi/document/spjc.html" target="_blank"><i class="fa fa-video-camera"></i> 视频教程</a></li>
                     --> <li><a title="开发文档" href="http://doc.ruoyi.vip" target="_blank"><i class="fa fa-question-circle"></i> 开发文档</a></li>
