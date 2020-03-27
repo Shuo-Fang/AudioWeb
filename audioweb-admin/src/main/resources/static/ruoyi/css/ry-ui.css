@@ -1088,7 +1088,19 @@ label {
 } */
 
 .icon-view .icon{
-  font-size: 24px;
+  font-size: 26px;
+  line-height: 27px;
+  margin: 10px 0;
+  color:#333;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.icon-view .icon:hover{
+  font-size: 32px;
+}
+.fa-view .fa{
+  font-size: 22px;
   line-height: 10px;
   margin: 6px 0;
   color:#333;
@@ -1096,18 +1108,6 @@ label {
   -moz-transition: font-size 0.25s ease-out 0s;
   transition: font-size 0.25s ease-out 0s;
 }
-.icon-view .icon:hover{
-  font-size: 30px;
-}
-.fa-view .fa{
-  font-size: 24px;
-  line-height: 10px;
-  margin: 10px 0;
-  color:#333;
-  -webkit-transition: font-size 0.25s ease-out 0s;
-  -moz-transition: font-size 0.25s ease-out 0s;
-  transition: font-size 0.25s ease-out 0s;
-}
 .fa-view .fa:hover{
-  font-size: 28px;
+  font-size: 26px;
 }
