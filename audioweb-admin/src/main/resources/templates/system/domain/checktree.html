@@ -28,7 +28,7 @@
 	<th:block th:include="include :: ztree-js" />
 	<script th:inline="javascript">
 		$(function() {
-			var domainIds = $("#treeIds").val()
+			var domainIds = $("#treeIds").val();
 			var url = ctx + "system/domain/treesData/"+domainIds;
 			var options = {
 		        url: url,

@@ -9,7 +9,13 @@ import java.io.Serializable;
  */
 public class Ztree implements Serializable
 {
-    private static final long serialVersionUID = 1L;
+	/**列表循环**/
+	public static final String TEXT_ICON_1 = "icon iconfont icon-liebiaoxunhuan";
+	/**音符**/
+	public static final String TEXT_ICON_2 = "icon iconfont icon-yinfu";
+    
+	
+	private static final long serialVersionUID = 1L;
 
     /** 节点ID */
     private Long id;
@@ -34,8 +40,8 @@ public class Ztree implements Serializable
     
     /** 节点类型  true 分区; false 终端*/
     private boolean dtype = true;
-    /** 节点皮肤  */
-    private String iconSkin = "";
+    /** 节点文字皮肤  */
+    private String textIcon = "";
 
     public Long getId()
     {
@@ -115,12 +121,11 @@ public class Ztree implements Serializable
 		this.dtype = dtype;
 	}
 
-	public String getIconSkin() {
-		return iconSkin;
+	public String getTextIcon() {
+		return textIcon;
 	}
 
-	public void setIconSkin(String iconSkin) {
-		this.iconSkin = iconSkin;
+	public void setTextIcon(String textIcon) {
+		this.textIcon = textIcon;
 	}
-	
 }

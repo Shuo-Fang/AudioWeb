@@ -1067,7 +1067,7 @@ label {
 	border-radius: 6px;
 	background-color: #999;
 }
-
+/* 
 .ztree li span.button.pIcon01_ico_open{
 	margin-right:2px; 
 	background: url(../../../ajax/libs/jquery-ztree/3.5/css/default/img/diy/1_open.png) no-repeat scroll 0 0 transparent; 
@@ -1082,7 +1082,32 @@ label {
 }
 .ztree li span.button.icon02_ico_docu{
 	margin-right:2px;
-	background: url(../../../ajax/libs/jquery-ztree/3.5/css/default/img/diy/12.png) no-repeat scroll 0 0 transparent; 
+	background: url(../../../ajax/libs/jquery-ztree/3.5/css/default/img/diy/10.png) no-repeat scroll 0 0 transparent; 
 	vertical-align:top; 
 	*vertical-align:middle
+} */
+
+.icon-view .icon{
+  font-size: 24px;
+  line-height: 10px;
+  margin: 6px 0;
+  color:#333;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.icon-view .icon:hover{
+  font-size: 30px;
+}
+.fa-view .fa{
+  font-size: 24px;
+  line-height: 10px;
+  margin: 10px 0;
+  color:#333;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.fa-view .fa:hover{
+  font-size: 28px;
 }

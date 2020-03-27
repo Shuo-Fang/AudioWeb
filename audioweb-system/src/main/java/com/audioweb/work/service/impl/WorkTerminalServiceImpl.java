@@ -299,22 +299,28 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
                 ztree.setpId(domain.getParentId());
                 ztree.setName(domain.getDomainName());
                 ztree.setTitle(domain.getDomainName());
-                for(String dom:doms) {
-                	if(dom.contains(String.valueOf(domain.getDomainId()))) {
-                		/**可能存在相同的ID*/
-                		ztree.setChecked(true);
-                		result.add(ztree);
-                		if(dom.contains("_")) {
-                			/**存在下划线为半选,需要进一步筛选*/
-                			result.addAll(getChildren(domain,ters,ISNOTCHECK));
-                		}else {
-                			result.addAll(getChildren(domain,ters,ISCHECK));
-                		}
-                	}else {
-                		/**未被选中*/
-                		result.addAll(getChildren(domain,ters,ISNOTCHECK));
-                	}
-                }
+        		result.add(ztree);
+        		if(doms.size() == 0) {
+        			result.addAll(getChildren(domain,ters,ISNOTCHECK));
+        		}else {
+        			for(String dom:doms) {
+                    	if(dom.contains(String.valueOf(domain.getDomainId()))) {
+                    		/**可能存在相同的ID*/
+                    		ztree.setChecked(true);
+                    		if(dom.contains("_")) {
+                    			/**存在下划线为半选,需要进一步筛选*/
+                    			result.addAll(getChildren(domain,ters,ISNOTCHECK));
+                    		}else {
+                    			result.addAll(getChildren(domain,ters,ISCHECK));
+                    		}
+                    		break;
+                    	}
+                    }
+            		/**未被选中*/
+        			if(!ztree.isChecked()) {
+        				result.addAll(getChildren(domain,ters,ISNOTCHECK));
+        			}
+        		}
 			}
 		}
 		return result;
@@ -336,6 +342,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		WorkTerminal terminal = new WorkTerminal();
 		terminal.setStatus(WorkConstants.NORMAL);
 		terminal.setDomain(domain);
+		terminal.setDomainId(domain.getDomainId());
 		/**获取当前分区下全部*/
 		List<WorkTerminal> terminals = workTerminalMapper.selectWorkTerminalList(terminal);
 		for(WorkTerminal ter:terminals) {
@@ -344,9 +351,9 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 			tree.setId(Long.parseLong(ter.getTerRealId()));
 			tree.setName(ter.getTerminalName());
 			tree.setTitle(ter.getTerminalId());
-			tree.setIconSkin("icon02");
+			tree.setTextIcon("icon iconfont icon-liebiaoxunhuan");
 			if("0".equals(checked)) {//非全选
-				if(terIds.contains(ter.getTerRealId())) {
+				if(terIds.size() > 0 && terIds.contains(ter.getTerRealId())) {
 					tree.setChecked(true);
 					terIds.remove(ter.getTerRealId());
 				}

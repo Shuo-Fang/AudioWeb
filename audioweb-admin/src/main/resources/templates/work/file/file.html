@@ -182,9 +182,9 @@
 		            width: '15%',
                     formatter: function(value, row, index) {
                         var actions = [];
-                         actions.push('<a class="btn btn-primary btn-xs '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="fa fa-bell-o"></i>试听</a>');
-                         actions.push('<a class="btn btn-success btn-xs '+ exportFlag +'" download  href="' + row.virPath + '"><i class="fa fa-file-audio-o"></i>下载</a>');
-                         actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="fa fa-remove"></i>删除</a>');
+                         actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
+                         actions.push('<a class="icon-view '+ exportFlag +'" download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
+                         actions.push('<a class="fa-view ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="fa fa-remove" title = "删除"></i></a>');
                          return actions.join('');
                     }
                 }]
