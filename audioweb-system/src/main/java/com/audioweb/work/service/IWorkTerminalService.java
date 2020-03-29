@@ -28,6 +28,13 @@ public interface IWorkTerminalService
      * @return 终端管理集合
      */
     public List<WorkTerminal> selectWorkTerminalList(WorkTerminal workTerminal);
+    /**
+     * 查询终端管理列表
+     * 
+     * @param domainId 分区ID
+     * @return 终端管理集合
+     */
+    public List<WorkTerminal> selectWorkTerminalListByDomId(Long domainId);
 
     /**
      * 新增终端管理

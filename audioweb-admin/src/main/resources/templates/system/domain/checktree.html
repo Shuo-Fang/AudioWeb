@@ -10,6 +10,7 @@
 </style>
 <body class="hold-transition box box-main">
 	<input id="treeIds"   name="treeIds"    type="hidden" th:value="${treeIds}"/>
+	<input id="treeNames"   name="treeNames"    type="hidden"/>
 	<div class="wrapper"><div class="treeShowHideButton" onclick="$.tree.toggleSearch();">
 		<label id="btnShow" title="显示搜索" style="display:none;">︾</label>
 		<label id="btnHide" title="隐藏搜索">︽</label>
@@ -33,7 +34,7 @@
 			var options = {
 		        url: url,
 		        expandLevel: 2,
-		        //onCheck : zOnClick,
+		        onCheck : zOnClick,
 				view: {
 			        selectedMulti: true      // 设置是否允许同时选中多个节点
 			    },
@@ -43,6 +44,34 @@
 		    };
 			$.tree.init(options);
 		});
+		
+		function zOnClick(){
+			var trees = tree.getCheckedNodes();
+			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
+				var ters = formatMulTree(tree.getCheckedNodes());
+				$("#treeIds").val(ters.treeIds);
+				$("#treeNames").val(ters.treeNames);
+			}else{
+				$("#treeIds").val("");
+				$("#treeNames").val("");
+			}
+		}
+		//选中节点处理
+		function formatMulTree(trees){debugger
+			var data = {
+					treeIds:"",
+					treeNames : ""
+			};
+			for(var i = trees.length-1;i>=0;i--){
+				data.treeIds += (trees[i].check_Child_State == 1?"_":"") + trees[i].id +",";
+				data.treeNames += trees[i].name +",";
+			}
+			if(!$.common.isEmpty(data.treeIds)){
+				data.treeIds = $.common.removeLast(data.treeIds);
+				data.treeNames = $.common.removeLast(data.treeNames);
+			}
+			return data;
+		}
 	</script>
 </body>
 </html>

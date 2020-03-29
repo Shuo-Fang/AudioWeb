@@ -191,6 +191,7 @@ public class SysDomainController extends BaseController
         List<Ztree> ztrees = domainService.selectDomainTree(new SysDomain());
         String[] ids = domainIds.split(",");
         for(String id:ids) {
+        	id = id.replace("_", "");//忽略半选符号
         	for(Ztree tree:ztrees) {
         		if(tree.getId().equals(Long.parseLong(id))) {
         			tree.setChecked(true);

@@ -2,9 +2,10 @@ package com.audioweb.work.service.impl;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.mapper.WorkTerminalMapper;
 import com.audioweb.work.service.IWorkTerminalService;
-import com.audioweb.common.annotation.DataScope;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.domain.Ztree;
@@ -290,7 +290,8 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		List<String> doms = Convert.strToList(domainIds);
 		List<String> ters = Convert.strToList(terIds);
 		List<SysDomain> father =domainService.selectDomainList(new SysDomain());
-		List<Ztree> result = new ArrayList<Ztree>();
+		List<Ztree> resultDoms = new ArrayList<Ztree>();
+		List<Ztree> resultTers = new ArrayList<Ztree>();
 		for(SysDomain domain:father) {
 			/**分区正常*/
 			if(UserConstants.DOMAIN_NORMAL.equals(domain.getStatus())) {
@@ -299,9 +300,9 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
                 ztree.setpId(domain.getParentId());
                 ztree.setName(domain.getDomainName());
                 ztree.setTitle(domain.getDomainName());
-        		result.add(ztree);
+                resultDoms.add(ztree);
         		if(doms.size() == 0) {
-        			result.addAll(getChildren(domain,ters,ISNOTCHECK));
+        			resultTers.addAll(getChildren(domain,ters,ISNOTCHECK));
         		}else {
         			for(String dom:doms) {
                     	if(dom.contains(String.valueOf(domain.getDomainId()))) {
@@ -309,21 +310,22 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
                     		ztree.setChecked(true);
                     		if(dom.contains("_")) {
                     			/**存在下划线为半选,需要进一步筛选*/
-                    			result.addAll(getChildren(domain,ters,ISNOTCHECK));
+                    			resultTers.addAll(getChildren(domain,ters,ISNOTCHECK));
                     		}else {
-                    			result.addAll(getChildren(domain,ters,ISCHECK));
+                    			resultTers.addAll(getChildren(domain,ters,ISCHECK));
                     		}
                     		break;
                     	}
                     }
             		/**未被选中*/
         			if(!ztree.isChecked()) {
-        				result.addAll(getChildren(domain,ters,ISNOTCHECK));
+        				resultTers.addAll(getChildren(domain,ters,ISNOTCHECK));
         			}
         		}
 			}
 		}
-		return result;
+		resultDoms.addAll(resultTers);
+		return resultDoms;
 	}
 	/**
 	 * 
@@ -344,14 +346,26 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		terminal.setDomain(domain);
 		terminal.setDomainId(domain.getDomainId());
 		/**获取当前分区下全部*/
-		List<WorkTerminal> terminals = workTerminalMapper.selectWorkTerminalList(terminal);
+		List<WorkTerminal> terminals = workTerminalMapper.selectWorkTerminalListByDomId(domain.getDomainId());
 		for(WorkTerminal ter:terminals) {
 			Ztree tree = new Ztree();
 			tree.setpId(ter.getDomainId());
 			tree.setId(Long.parseLong(ter.getTerRealId()));
 			tree.setName(ter.getTerminalName());
-			tree.setTitle(ter.getTerminalId());
-			tree.setTextIcon("icon iconfont icon-liebiaoxunhuan");
+			tree.setTitle("ID:"+ter.getTerminalId());
+			if(!Objects.equals(ter.getStatus(), WorkConstants.NORMAL)) {
+				tree.setNocheck(true);
+			}
+			/**寻呼话筒启用*/
+			if(Objects.equals(ter.getIsCmic(), WorkConstants.NORMAL)) {
+				tree.setTextIcon(Ztree.TEXT_ICON_5);
+			}else if(Objects.equals(ter.getIsAutoCast(), WorkConstants.NORMAL)){
+				/**终端采播启用*/
+				tree.setTextIcon(Ztree.TEXT_ICON_3);
+			}else {
+				/**普通终端*/
+				tree.setTextIcon(Ztree.TEXT_ICON_7);
+			}
 			if("0".equals(checked)) {//非全选
 				if(terIds.size() > 0 && terIds.contains(ter.getTerRealId())) {
 					tree.setChecked(true);
@@ -363,5 +377,15 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 			child.add(tree);
 		}
 		return child;
+	}
+	/**
+	 * 查询终端管理列表
+     * 
+     * @param domainId 分区ID
+     * @return 终端管理集合
+	 */
+	@Override
+	public List<WorkTerminal> selectWorkTerminalListByDomId(Long domainId) {
+		return workTerminalMapper.selectWorkTerminalListByDomId(domainId);
 	}
 }

@@ -1086,10 +1086,9 @@ label {
 	vertical-align:top; 
 	*vertical-align:middle
 } */
-
 .icon-view .icon{
   font-size: 26px;
-  line-height: 27px;
+  line-height: 26px;
   margin: 10px 0;
   color:#333;
   -webkit-transition: font-size 0.25s ease-out 0s;
@@ -1098,6 +1097,7 @@ label {
 }
 .icon-view .icon:hover{
   font-size: 32px;
+  font-weight:bold;
 }
 .fa-view .fa{
   font-size: 22px;

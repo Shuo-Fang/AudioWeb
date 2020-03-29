@@ -266,6 +266,8 @@ public class WorkTerminalController extends BaseController
         	if(StringUtils.isNotEmpty(names)) {
         		workTerminal.setDelFlag(names.substring(0, names.length()-1));
         	}
+        }else {
+        	workTerminal.setDelFlag("");
         }
         mmap.put("workTerminal", workTerminal);
         return prefix + "/edit";

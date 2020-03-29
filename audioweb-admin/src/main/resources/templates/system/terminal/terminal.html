@@ -306,9 +306,9 @@
         }
 		
         function setDomainIds(index, layero){
-			var tree = layero.find("iframe")[0].contentWindow.$._tree;
-			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
-				var ters = formatMulTree(tree.getCheckedNodes());
+        	var body = layer.getChildFrame('body', index);
+        	var ters = body.find('#treeIds').val();
+			if ($.common.isNotEmpty(ters)) {
 				var data ={
 					"terRealId": checkTerId,
 					"precinct": ters

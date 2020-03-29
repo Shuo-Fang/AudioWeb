@@ -61,6 +61,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
     </select>
+    <select id="selectWorkTerminalListByDomId" parameterType="Long" resultMap="WorkTerminalResult">
+        <include refid="selectWorkTerminalVo"/>
+        where
+        	t.del_flag = '0' AND t.status = '0' AND d.domain_id = #{domainId}
+    </select>
     
     <select id="selectWorkTerminalById" parameterType="String" resultMap="WorkTerminalResult">
         <include refid="selectWorkTerminalVo"/>

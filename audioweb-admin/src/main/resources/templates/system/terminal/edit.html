@@ -65,7 +65,7 @@
                 <label class="col-sm-3 control-label is-required">终端管理分区：</label>
                 <div class="col-sm-8">
                     <div class="input-group">
-                    	<input name="domainNames" onclick="selectDomainTrees()" id="domainNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" th:field="*{delFlag}" required>
+                    	<input name="domainNames" onclick="selectDomainTrees()" id="domainNames" type="text" placeholder="请选择管理的分区" class="form-control" readonly="true" th:value="*{delFlag}" required>
                         <span class="input-group-addon" onclick="selectDomainTrees()"><i class="fa fa-search"></i></span>
                     </div>
                 </div>
@@ -160,7 +160,7 @@
         /*选择分区树*/
         function selectDomainTree() {
         	var domainId = $("#domainId").val();
-        	domainId = $.common.isEmpty(domainId) ? "100" : $("#domainId").val();
+        	domainId = $.common.isEmpty(domainId) ? "0" : $("#domainId").val();
         	var url = ctx + "system/domain/selectDomainTree/" + domainId;
 			var options = {
 				title: '选择分区',
@@ -171,16 +171,14 @@
 			$.modal.openOptions(options);
 		}
 
-		function doSubmit(index, layero){
-			var tree = layero.find("iframe")[0].contentWindow.$._tree;
-			if ($.tree.notAllowSelect(tree)) {
-				var body = layer.getChildFrame('body', index);
-    			$("#domainId").val(body.find('#treeId').val());
-    			$("#treeName").val(body.find('#treeName').val());
-    			layer.close(index);
-			}
-		}
-		/*复选分区树*/
+        function doSubmit(index, layero){
+			//var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        	var body = layer.getChildFrame('body', index);
+			$("#precinct").val(body.find('#treeIds').val());
+			$("#domainNames").val(body.find('#treeNames').val());
+			layer.close(index);
+		}		
+        /*复选分区树*/
         function selectDomainTrees(){
         	var domainIds = $.common.isEmpty($("#precinct").val()) ? "0" : $("#precinct").val();
         	var url = ctx + "system/domain/selectDomainTrees/" + domainIds;
@@ -212,22 +210,6 @@
 			}else{
 				$("#domainSelect").hide();
 			}
-		}
-		//选中节点处理
-		function formatMulTree(trees){
-			var data = {
-					precinct:"",
-					domainNames : ""
-			};
-			for(var i = trees.length-1;i>=0;i--){
-				data.precinct += trees[i].id+",";
-				data.domainNames += trees[i].name +",";
-			}
-			if(!$.common.isEmpty(data.precinct)){
-				data.precinct = $.common.removeLast(data.precinct);
-				data.domainNames = $.common.removeLast(data.domainNames);
-			}
-			return data;
 		}
     </script>
 </body>

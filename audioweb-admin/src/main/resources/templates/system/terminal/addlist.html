@@ -188,7 +188,7 @@
         /*选择分区树*/
         function selectDomainTree() {
         	var treeId = $("#treeId").val();
-        	var domainId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        	var domainId = $.common.isEmpty(treeId) ? "0" : $("#treeId").val();
         	var url = ctx + "system/domain/selectDomainTree/" + domainId;
 			var options = {
 				title: '选择分区',
@@ -199,16 +199,12 @@
 			$.modal.openOptions(options);
 		}
         
-        function getDomainIds(index, layero){
-			var tree = layero.find("iframe")[0].contentWindow.$._tree;
-			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
-				var ters = formatMulTree(tree.getCheckedNodes());
-    			$("#precinct").val(ters.precinct);
-    			$("#domainNames").val(ters.domainNames);
-    			layer.close(index);
-			}else{
-				$.modal.msgError("请选择对应分区");
-			}
+        function getDomainIds(index, layero){debugger
+			//var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        	var body = layer.getChildFrame('body', index);
+			$("#precinct").val(body.find('#treeIds').val());
+			$("#domainNames").val(body.find('#treeNames').val());
+			layer.close(index);
 		}
         
 		function doSubmit(index, layero){
@@ -228,22 +224,6 @@
 			}else{
 				$("#domainSelect").hide();
 			}
-		}
-		//选中节点处理
-		function formatMulTree(trees){
-			var data = {
-					precinct:"",
-					domainNames : ""
-			};
-			for(var i = trees.length-1;i>=0;i--){
-				data.precinct += trees[i].id+",";
-				data.domainNames += trees[i].name +",";
-			}
-			if(!$.common.isEmpty(data.precinct)){
-				data.precinct = $.common.removeLast(data.precinct);
-				data.domainNames = $.common.removeLast(data.domainNames);
-			}
-			return data;
 		}
 		function saveCall(result){
 			if (result.code == web_status.SUCCESS) {

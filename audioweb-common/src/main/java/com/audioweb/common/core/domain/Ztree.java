@@ -13,6 +13,16 @@ public class Ztree implements Serializable
 	public static final String TEXT_ICON_1 = "icon iconfont icon-liebiaoxunhuan";
 	/**音符**/
 	public static final String TEXT_ICON_2 = "icon iconfont icon-yinfu";
+	/**收音机1**/
+	public static final String TEXT_ICON_3 = "icon iconfont icon-music_radio_ghettoblaster";
+	/**收音机2**/
+	public static final String TEXT_ICON_4 = "icon iconfont icon-music_radio_portable";
+	/**话筒**/
+	public static final String TEXT_ICON_5 = "icon iconfont icon-music_microphone";
+	/**播放器**/
+	public static final String TEXT_ICON_6 = "icon iconfont icon-music_recordplayer";
+	/**音箱**/
+	public static final String TEXT_ICON_7 = "icon iconfont icon-music_loudspeaker";
     
 	
 	private static final long serialVersionUID = 1L;
@@ -38,8 +48,9 @@ public class Ztree implements Serializable
     /** 是否能勾选 */
     private boolean nocheck = false;
     
-    /** 节点类型  true 分区; false 终端*/
-    private boolean dtype = true;
+    /** 节点实际ID,用于存储终端实际ID*/
+    private String realId;
+    
     /** 节点文字皮肤  */
     private String textIcon = "";
 
@@ -113,12 +124,12 @@ public class Ztree implements Serializable
         this.nocheck = nocheck;
     }
 
-	public boolean isDtype() {
-		return dtype;
+	public String getRealId() {
+		return realId;
 	}
 
-	public void setDtype(boolean dtype) {
-		this.dtype = dtype;
+	public void setRealId(String realId) {
+		this.realId = realId;
 	}
 
 	public String getTextIcon() {
