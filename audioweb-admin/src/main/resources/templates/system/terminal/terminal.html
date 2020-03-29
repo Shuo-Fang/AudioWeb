@@ -240,7 +240,7 @@
 		        onClick : zOnClick
 		    };
 			$.tree.init(options);
-			function zOnClick(event, treeId, treeNode) {debugger
+			function zOnClick(event, treeId, treeNode) {
 				$("#domainId").val(treeNode.id);
 				$("#parentId").val(treeNode.pId);
 				domainId = treeNode.id;
@@ -345,7 +345,7 @@
         		$.modal.alertWarning("请至少选择一条记录");
         		return;
         	}
-        	$.modal.confirm("确认要修改选中的" + rows.length + "条终端的分区信息么?", function() {debugger
+        	$.modal.confirm("确认要修改选中的" + rows.length + "条终端的分区信息么?", function() {
     			data = { "ids": rows.join() };
     			selectDomainTree();
     			//$.operate.submit(url, "post", "json", data);

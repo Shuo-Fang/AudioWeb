@@ -160,7 +160,7 @@
             focusCleanup: true
         });
         
-        function submitHandler() {debugger
+        function submitHandler() {
         	
             if ($.validate.form()) {
 	        	var data = $("#form-terminal-add").serializeArray();
@@ -199,7 +199,7 @@
 			$.modal.openOptions(options);
 		}
         
-        function getDomainIds(index, layero){debugger
+        function getDomainIds(index, layero){
 			//var tree = layero.find("iframe")[0].contentWindow.$._tree;
         	var body = layer.getChildFrame('body', index);
 			$("#precinct").val(body.find('#treeIds').val());
