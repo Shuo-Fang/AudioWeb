@@ -95,7 +95,6 @@
         var exportFlag = [[${@permission.hasPermi('work:file:export')}]];
         var prefix = ctx + "work/file";
         var openFlag = false;
-        console.log(ctx);
         $("#fileinput-demo-1").on("fileuploaded", function (event, data, previewId, index) {debugger
          	var result = data.response;
         	if(result.code == 0 || result.code == 200){
@@ -163,7 +162,7 @@
 		            width: '20%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "open");
+                    	return $.table.tooltip(value, 15, "");
                    	}
                 },
                 {

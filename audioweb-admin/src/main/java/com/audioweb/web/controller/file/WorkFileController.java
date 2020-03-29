@@ -82,6 +82,37 @@ public class WorkFileController extends BaseController
         List<WorkFile> list = workFileService.selectWorkFileList(workFile);
         return getDataTable(list);
     }
+    @RequiresPermissions("work:file:view")
+    @GetMapping("/filelist")
+    public String getfilelist()
+    {
+        return prefix + "/filelist";
+    }
+    /**
+     * 查询音频任务中所有音频的存储序列信息列表
+     */
+    @RequiresPermissions("work:file:list")
+    @PostMapping("/filelists")
+    @ResponseBody
+    public TableDataInfo filelists(WorkFile workFile)
+    {
+    	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+    	/**默认自动加载文件广播列表*/
+		try {
+			String filePath = Global.getFilePath();
+			if(StringUtils.isNotEmpty(workFile.getFilePath())) {
+				filePath = workFile.getFilePath();
+			}
+			File f = new File(filePath);
+			workFile.setFilePath(FileUtils.formatToLin(FileUtils.formatPath(f.getPath()).concat("/")));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("文件类型配置地址有误，请检查");
+		}
+        startPage();
+        List<WorkFile> list = workFileService.selectWorkFileList(workFile);
+        return getDataTable(list);
+    }
     
     /**
      * 查询音频任务中所有音频的存储序列信息列表

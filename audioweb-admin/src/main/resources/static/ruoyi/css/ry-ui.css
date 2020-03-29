@@ -1086,6 +1086,9 @@ label {
 	vertical-align:top; 
 	*vertical-align:middle
 } */
+.icon-view{
+  height : 32px;
+}
 .icon-view .icon{
   font-size: 26px;
   line-height: 26px;
@@ -1099,7 +1102,25 @@ label {
   font-size: 32px;
   font-weight:bold;
 }
+.icon-view-plus{
+  height : 36px;
+}
+.icon-view-plus .icon{
+  padding : 10px;
+  font-size: 30px;
+  line-height: 26px;
+  margin: 30px 0;
+  color:#ff8040;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.icon-view-plus .icon:hover{
+  font-size: 36px;
+  font-weight:bold;
+}
 .fa-view .fa{
+  height : 26px;"
   font-size: 22px;
   line-height: 10px;
   margin: 6px 0;

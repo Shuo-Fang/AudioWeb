@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.audioweb.work.mapper.SongListMapper">
+    
+    <resultMap type="SongList" id="SongListResult">
+        <result property="listId"    column="list_id"    />
+        <result property="listUserId"    column="list_user_id"    />
+        <result property="listName"    column="list_name"    />
+        <result property="status"    column="status"    />
+        <result property="songData"    column="song_data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSongListVo">
+        select list_id, list_user_id, list_name, status, song_data, create_by, create_time, update_by, update_time, remark from work_song_list
+    </sql>
+
+    <select id="selectSongListList" parameterType="SongList" resultMap="SongListResult">
+        <include refid="selectSongListVo"/>
+        <where>  
+            <if test="listUserId != null "> and list_user_id = #{listUserId}</if>
+            <if test="listName != null  and listName != ''"> and list_name like concat('%', #{listName}, '%')</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectSongListById" parameterType="Long" resultMap="SongListResult">
+        <include refid="selectSongListVo"/>
+        where list_id = #{listId}
+    </select>
+        
+    <insert id="insertSongList" parameterType="SongList" useGeneratedKeys="true" keyProperty="listId">
+        insert into work_song_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="listUserId != null ">list_user_id,</if>
+            <if test="listName != null  and listName != ''">list_name,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="songData != null  and songData != ''">song_data,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="listUserId != null ">#{listUserId},</if>
+            <if test="listName != null  and listName != ''">#{listName},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="songData != null  and songData != ''">#{songData},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSongList" parameterType="SongList">
+        update work_song_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="listUserId != null ">list_user_id = #{listUserId},</if>
+            <if test="listName != null  and listName != ''">list_name = #{listName},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="songData != null  and songData != ''">song_data = #{songData},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where list_id = #{listId}
+    </update>
+
+    <delete id="deleteSongListById" parameterType="Long">
+        delete from work_song_list where list_id = #{listId}
+    </delete>
+
+    <delete id="deleteSongListByIds" parameterType="String">
+        delete from work_song_list where list_id in 
+        <foreach item="listId" collection="array" open="(" separator="," close=")">
+            #{listId}
+        </foreach>
+    </delete>
+    
+</mapper>

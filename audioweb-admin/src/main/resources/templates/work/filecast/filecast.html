@@ -27,13 +27,19 @@
 		</div>
 	 </div>
      <div class="ui-layout-center container-div">
-		<div class="row">
-			<div class="col-sm-12 select-table table-striped">
-			    <p class="select-title">按住表格拖拽</p>
-				<table id="bootstrap-table"
-				 data-use-row-attr-func="true"
-				 data-reorderable-rows="true"></table>
-			</div>
+     	 <div class="icon-view-plus" id="toolbar" role="group">
+            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:list" title = "音频列表">
+            </a>
+            <a class="icon iconfont icon-yinyueset" onclick="showUpload()" shiro:hasPermission="work:filecast:add" title = "歌单导入">
+            </a>
+            <a class="icon iconfont icon-shanchu" onclick="showUpload()" title = "删除">
+            </a>
+        </div>
+		<div class="col-sm-12 select-table table-striped">
+		    <p class="select-title">已选音频</p>
+			<table id="bootstrap-table"
+			 data-use-row-attr-func="true"
+			 data-reorderable-rows="true"></table>
 		</div>
 	</div>
     <div th:include="include :: footer"></div>
@@ -47,7 +53,7 @@
 		    if ($(this).width() < 769) {
 		        panehHidden = true;
 		    }
-		    $('body').layout({ initClosed: panehHidden, west__size: 285 });
+		    $('body').layout({ initClosed: panehHidden, west__size: 245 });
 		    queryFileList();
 		    queryTerminalTree();
 		});
@@ -58,6 +64,7 @@
 		        showRefresh: false,
 		        showToggle: false,
 		        showColumns: false,
+		        striped:true,
 		        onReorderRow: function (data) {
 		        	 //当拖拽结束后，data为整个表格的数据
 		            console.log('拖拽结束' + JSON.stringify(data))
@@ -79,7 +86,7 @@
                     field : 'fileName', 
                     title : '音频名称',
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 30, "open");
+                    	return $.table.tooltip(value, 20, "open");
                    	}
                 },
                 {
@@ -87,7 +94,7 @@
                     field : 'songName', 
                     title : '歌曲名称',
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 20, "open");
+                    	return $.table.tooltip(value, 15, "open");
                    	}
                 },
                 {
@@ -95,14 +102,14 @@
                     field : 'artist', 
                     title : '歌手名称',
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "open");
+                    	return $.table.tooltip(value, 10, "open");
                    	}
                 },
                 {
                     field : 'album', 
                     title : '歌曲专辑',
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "open");
+                    	return $.table.tooltip(value, 10, "open");
                    	}
                 },
                 {
@@ -142,7 +149,7 @@
 		});
 		
 		$('#btnRefresh').click(function() {
-			queryDomainTree();
+			queryTerminalTree();
 		});
 
 		/* 终端管理 */

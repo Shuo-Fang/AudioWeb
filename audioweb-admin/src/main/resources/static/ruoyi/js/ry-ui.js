@@ -805,7 +805,7 @@ var table = {
                 });
             },
             // 弹出层全屏
-            openFull: function (title, url, width, height) {
+            openFull: function (title, url, width, height, callback) {
             	//如果是移动端，就使用自适应大小弹窗
                 if ($.common.isMobile()) {
             	    width = 'auto';
@@ -823,6 +823,12 @@ var table = {
                 if ($.common.isEmpty(height)) {
                 	height = ($(window).height() - 50);
                 }
+                if ($.common.isEmpty(callback)) {
+                    callback = function(index, layero) {
+                        var iframeWin = layero.find('iframe')[0];
+                        iframeWin.contentWindow.submitHandler(index, layero);
+                    }
+                }
                 var index = layer.open({
             		type: 2,
             		area: [width + 'px', height + 'px'],
@@ -835,10 +841,7 @@ var table = {
             		btn: ['确定', '关闭'],
             		// 弹层外区域关闭
             		shadeClose: true,
-            		yes: function(index, layero) {
-            	        var iframeWin = layero.find('iframe')[0];
-            	        iframeWin.contentWindow.submitHandler(index, layero);
-            	    },
+            		yes: callback,
             	    cancel: function(index) {
             	        return true;
             	    }

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('音频信息列表')" />
+	<th:block th:include="include :: bootstrap-fileinput-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse file-controller">
+                <form id="file-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>所属类型:</p>
+                                <select name="filePath">
+                                    <option th:value="${@config.getKey('work.file')}">文件广播</option>
+                                    <option th:value="${@config.getKey('work.point')}">终端点播</option>
+                                    <option th:value="${@config.getKey('work.word')}">文本广播</option>
+                                </select>
+	                        </li>
+                        	<li>
+                                <p>音频名称:</p>
+                                <input type="text" name="fileName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+            <!-- <div class="row">
+		        <div class="col-sm-offset-5 col-sm-10">
+		            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+		            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+		        </div>
+	    	</div> -->
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-fileinput-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "work/file";
+        var openFlag = false;
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "音频",
+                showSearch:false,
+                clickToSelect:true,
+                rememberSelected:true,
+                showToggle:false,
+                showRefresh:false,
+                showColumns:false,
+                striped:true,
+                uniqueId : "fileId",
+                columns: [{
+                	field: 'state',
+                    checkbox: true
+                },
+                {
+                    align: 'center',
+                    field : 'fileId', 
+                    title : '音频编号',
+                    visible: false
+                },
+                {
+                    field : 'fileName', 
+                    title : '音频名称',
+		            width: '30%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value);
+                   	}
+                },
+                {
+                    field : 'songName', 
+                    title : '歌曲名称',
+		            width: '25%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value);
+                   	}
+                },
+                {
+                    field : 'artist', 
+                    title : '歌手名称',
+		            width: '20%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value, 15, "");
+                   	}
+                },
+                {
+                    field : 'album', 
+                    title : '歌曲专辑',
+		            width: '20%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value, 15, "");
+                   	}
+                },
+                {
+                    field : 'duration', 
+                    title : '音频时长',
+		            width: '5%',
+                    align: 'center',
+                   	formatter: function(value, row, index) {
+                   		var num = Math.floor(value/1000);
+                   		return Math.floor(num/60)+":"+(num%60 >= 10?num%60:('0'+num%60));
+                   	}
+                }]
+            };
+            $.table.init(options);
+        });
+        
+        function submitHandler() {debugger
+           
+        }
+    </script>
+</body>
+</html>
