@@ -871,6 +871,9 @@ var table = {
             },
             // 打开遮罩层
             loading: function (message) {
+            	if($.common.isEmpty(message)){
+            		message = "加载中,请稍候";
+            	}
             	$.blockUI({ message: '<div class="loaderbox"><div class="loading-activity"></div> ' + message + '</div>' });
             },
             // 关闭遮罩层

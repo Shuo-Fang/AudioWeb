@@ -10,12 +10,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.druid.support.json.JSONUtils;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.enums.BusinessType;
+import com.audioweb.common.json.JSON;
 import com.audioweb.work.domain.SongList;
+import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.service.ISongListService;
+import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.common.core.page.TableDataInfo;
@@ -35,6 +41,9 @@ public class SongListController extends BaseController
     @Autowired
     private ISongListService songListService;
 
+    @Autowired
+    private IWorkFileService workFileService;
+
     @RequiresPermissions("work:songlist:view")
     @GetMapping()
     public String songlist()
@@ -50,7 +59,7 @@ public class SongListController extends BaseController
     @ResponseBody
     public TableDataInfo list(SongList songList)
     {
-    	songList.setListUserId(ShiroUtils.getSysUser().getUserId());
+    	songList.setListUserId(ShiroUtils.getUserId());
         startPage();
         List<SongList> list = songListService.selectSongListList(songList);
         return getDataTable(list);
@@ -88,6 +97,8 @@ public class SongListController extends BaseController
     @ResponseBody
     public AjaxResult addSave(SongList songList)
     {
+    	songList.setListUserId(ShiroUtils.getUserId());
+        songList.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(songListService.insertSongList(songList));
     }
 
@@ -111,6 +122,7 @@ public class SongListController extends BaseController
     @ResponseBody
     public AjaxResult editSave(SongList songList)
     {
+        songList.setUpdateBy(ShiroUtils.getLoginName());
         return toAjax(songListService.updateSongList(songList));
     }
 
@@ -124,5 +136,16 @@ public class SongListController extends BaseController
     public AjaxResult remove(String ids)
     {
         return toAjax(songListService.deleteSongListByIds(ids));
+    }
+    /**
+     * 查询歌单列表
+     */
+    @RequiresPermissions("work:songlist:list")
+    @PostMapping("/getListById")
+    @ResponseBody
+    public TableDataInfo getListById(SongList songList)
+    {
+        List<WorkFile> list = workFileService.selectWorkFileByIds(songList.getSongData());
+    	return getDataTable(list);
     }
 }

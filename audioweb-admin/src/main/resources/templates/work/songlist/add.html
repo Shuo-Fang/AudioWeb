@@ -2,18 +2,19 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('新增歌单')" />
+	<th:block th:include="include :: layout-latest-css" />
 </head>
 <body class="white-bg">
-    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content ui-layout-center">
         <div class="col-sm-12 select-table table-striped">
-        	<h4 class="form-header h4">基本信息</h4>
+        	<h4 class="form-header h5">基本信息</h4>
         	<form class="form-horizontal m" id="form-songlist-add">
 	        	<input name="listUserId" type="hidden">
 	        	<input name="songData" id="songData" type="hidden">
 	        	<div class="row">
 	            	<div class="col-sm-6">
 	                    <div class="form-group">
-	                        <label class="col-sm-3 control-label is-required">歌单名称：</label>
+	                        <label class="col-sm-4 control-label is-required">歌单名称：</label>
 	                        <div class="col-sm-8">
 	                        	<input name="listName" placeholder="请输入歌单名称" class="form-control" type="text" maxlength="50" required>
 	                        </div>
@@ -21,7 +22,7 @@
 	                </div>
 					<div class="col-sm-6">
 	                    <div class="form-group">
-	                        <label class="col-sm-3 control-label">状态：</label>
+	                        <label class="col-sm-4 control-label">状态：</label>
 	                        <div class="col-sm-8">
 	                            <label class="toggle-switch switch-solid">
 		                            <input type="checkbox" id="status" checked>
@@ -31,8 +32,26 @@
 	                    </div>
                 	</div>
             	</div>
+            	<div class="row">
+            		<div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">备注：</label>
+                        <div class="col-sm-9">
+                            <textarea name="remark" maxlength="500" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                	</div>
+            	</div>
 	        </form>
-		    <h4 class="form-header h4">已选音频</h4>
+	       </div>
+		<div class="row">
+	        <div class="col-sm-offset-5 col-sm-10">
+	            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+	            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	        </div>
+    	</div>
+	      <div class="col-sm-12 select-table table-striped">
+		    <h4 class="form-header h5">已选音频</h4>
             <div class="col-sm-12 search-collapse audio-controller" id="audio-div" style="display:none;">
                 <div class="ibox-title">
                     <h5>音频播放</h5>
@@ -55,18 +74,12 @@
 	            <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
 	            </a>
         	</div>
-        	 <div class = "row div-table">
+        	 <div class = "row">
 				<table id="bootstrap-table"
 				 data-use-row-attr-func="true"
 				 data-reorderable-rows="true"></table>
 			 </div>
 		</div>
-		<div class="row">
-        <div class="col-sm-offset-5 col-sm-10">
-            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
-            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
-        </div>
-    	</div>
     </div>
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: bootstrap-table-reorder-js" />
@@ -79,15 +92,15 @@
                 showSearch:false,
                 uniqueId : "fileId",
                 sidePagination : "client",
-                height : 400,
+                //height : 400,
+                pageSize:10000,
+                pageList:[10000],
                 showToggle:false,
                 showRefresh:false,
                 showColumns:false,
-                pagination:false,
-		        striped:true,
+                //pagination:false,
                 onReorderRow : saveRows,
                 columns: [{
-                	field: 'state',
                     checkbox: true
                 },
                 {
@@ -168,7 +181,10 @@
             		$.modal.msgError("已选音频为空！");
             		return;
             	}
-                $.operate.save(prefix + "/add", $('#form-songlist-add').serialize());
+            	var data = $("#form-songlist-add").serializeArray();
+	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
+	        	data.status = status;
+                $.operate.save(prefix + "/add", data);
             }
         }
         /**展示选择音频*/
@@ -190,10 +206,10 @@
         				add(selected[i]);
         			}
         		}
+        		putData();
         		layer.close(index);
-        	}else{
-        		$.modal.alertWarning("请至少选择一条记录或选取出错");
         	}
+        	
         }
         /**删除*/
         function remove(fileId){
@@ -213,6 +229,7 @@
 	    		for(var i = 0;i<size;i++){
 	    			remove(selectedRows[i].fileId);
 	    		}
+	    		putData();
         	});
 		}
         /**添加*/
@@ -250,7 +267,25 @@
 		});
 		/**拖拽方法*/
 		function saveRows(data){
-			
+			putData(data);
+		}
+		/**存放数据*/
+		function putData(data){debugger
+			if($.common.isEmpty(data)){
+				data = $("#" + table.options.id).bootstrapTable('getData');
+			}
+			var len = "";
+			if($.common.isNotEmpty(data)){
+				for(var i=0,size = data.length;i<size;i++){
+					len += data[i].fileId+",";
+				}
+				if($.common.isNotEmpty(len)){
+					len = $.common.removeLast(len);
+					$("#songData").val(len);
+				}
+			}else{
+				$("#songData").val("");
+			}
 		}
     </script>
 </body>

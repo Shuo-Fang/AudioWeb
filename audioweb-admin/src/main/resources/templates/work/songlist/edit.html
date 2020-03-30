@@ -1,54 +1,300 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <th:block th:include="include :: header('修改歌单')" />
+    <th:block th:include="include :: header('新增歌单')" />
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
-        <form class="form-horizontal m" id="form-songlist-edit" th:object="${songList}">
-            <input name="listId" th:field="*{listId}" type="hidden">
-            <div class="form-group">    
-                <label class="col-sm-3 control-label is-required">所属用户ID：</label>
-                <div class="col-sm-8">
-                    <input name="listUserId" th:field="*{listUserId}" class="form-control" type="text" required>
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">歌单名称：</label>
-                <div class="col-sm-8">
-                    <input name="listName" th:field="*{listName}" class="form-control" type="text">
-                </div>
-            </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">状态：</label>
-                <div class="col-sm-8">
-                    <div class="radio-box">
-                        <input type="radio" name="status" value="">
-                        <label th:for="status" th:text="未知"></label>
+        <div class="col-sm-12 select-table table-striped">
+        	<input name="listData" id="listData" type="hidden" th:value="${list}">
+	        <h4 class="form-header h5">基本信息</h4>
+        	<form class="form-horizontal m" id="form-songlist-edit" th:object="${songList}">
+	        	<input name="listId" type="hidden" th:field="*{listId}" >
+	        	<input name="listUserId" type="hidden" th:field="*{listUserId}" >
+	        	<input name="songData" id="songData" type="hidden" th:field="*{songData}">
+	        	<div class="row">
+	            	<div class="col-sm-6">
+	                    <div class="form-group">
+	                        <label class="col-sm-4 control-label is-required">歌单名称：</label>
+	                        <div class="col-sm-8">
+	                        	<input name="listName" placeholder="请输入歌单名称" class="form-control" type="text" maxlength="50" th:field="*{listName}" required>
+	                        </div>
+	                    </div>
+	                </div>
+					<div class="col-sm-6">
+	                    <div class="form-group">
+	                        <label class="col-sm-4 control-label">状态：</label>
+	                        <div class="col-sm-8">
+	                            <label class="toggle-switch switch-solid">
+		                            <input type="checkbox" id="status" th:checked="*{status == '0' ? true : false}">
+		                            <span></span>
+		                        </label>
+	                        </div>
+	                    </div>
+                	</div>
+            	</div>
+            	<div class="row">
+            		<div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">备注：</label>
+                        <div class="col-sm-9">
+                            <textarea name="remark" maxlength="500" class="form-control" rows="3" th:field="*{remark}"></textarea>
+                        </div>
                     </div>
-                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 代码生成请选择字典属性</span>
+                	</div>
+            	</div>
+	        </form>
+	       </div>
+			<div class="row">
+		        <div class="col-sm-offset-5 col-sm-10">
+		            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+		            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+		        </div>
+	    	</div>
+	      	<div class="col-sm-12 select-table table-striped">
+		    <h4 class="form-header h5">已选音频</h4>
+            <div class="col-sm-12 search-collapse audio-controller" id="audio-div" style="display:none;">
+                <div class="ibox-title">
+                    <h5>音频播放</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                	<audio class = "col-md-12" controls="controls" autoplay="autoplay" id = "audio" loop = "loop">
+            		</audio>
                 </div>
             </div>
-            <div class="form-group">    
-                <label class="col-sm-3 control-label">音频信息json字符串：</label>
-                <div class="col-sm-8">
-                    <input name="songData" th:field="*{songData}" class="form-control" type="text">
-                </div>
-            </div>
-        </form>
+		    <div class="icon-view-plus" id="toolbar" role="group">
+	            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:add" title = "音频列表">
+	            </a>
+	            <a class="icon iconfont icon-yinyueset" onclick="showUpload()" shiro:hasPermission="work:filecast:add" title = "其他歌单导入">
+	            </a>
+	            <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
+	            </a>
+        	</div>
+        	 <div class = "row div-table">
+				<table id="bootstrap-table"
+				 data-use-row-attr-func="true"
+				 data-reorderable-rows="true"></table>
+			 </div>
+		</div>
     </div>
     <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-table-reorder-js" />
     <script type="text/javascript">
         var prefix = ctx + "work/songlist";
+        var $div = $('.div-table');
+        $(function() {
+            var options = {
+                url: prefix + "/getListById?songData="+$("#songData").val(),
+                modalName: "音频",
+                showSearch:false,
+                uniqueId : "fileId",
+                sidePagination : "client",
+                //height : 400,
+                showToggle:false,
+                showRefresh:false,
+                showColumns:false,
+                pagination:false,
+                onReorderRow : saveRows,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    align: 'center',
+                    field : 'fileId', 
+                    title : '音频编号',
+                    visible: false
+                },
+                {
+                    field : 'fileName', 
+                    title : '音频名称',
+		            width: '25%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value);
+                   	}
+                },
+                {
+                    field : 'songName', 
+                    title : '歌曲名称',
+		            width: '20%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value);
+                   	}
+                },
+                {
+                    field : 'artist', 
+                    title : '歌手名称',
+		            width: '15%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value, 15, "");
+                   	}
+                },
+                {
+                    field : 'album', 
+                    title : '歌曲专辑',
+		            width: '20%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value, 15, "");
+                   	}
+                },
+                {
+                    field : 'duration', 
+                    title : '音频时长',
+		            width: '5%',
+                    align: 'center',
+                   	formatter: function(value, row, index) {
+                   		var num = Math.floor(value/1000);
+                   		return Math.floor(num/60)+":"+(num%60 >= 10?num%60:('0'+num%60));
+                   	}
+                } ,
+                {
+                    title: '操作',
+                    align: 'center',
+		            width: '15%',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
+                         actions.push('<a class="icon-view-small " download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
+                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+                         return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+            /* var list = $("#listData").val();
+            if($.common.isNotEmpty(list) && list.length > 0){debugger
+	    		for(var i = 0,size = list.length;i<size;i++){
+	    			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', list[i].fileId);
+	    			if($.common.isEmpty(data)){
+	    				add(list[i]);
+	    			}
+	    		}
+            } */
+        });
+        
         $("#form-songlist-edit").validate({
             focusCleanup: true
         });
-
+		
         function submitHandler() {
             if ($.validate.form()) {
-                $.operate.save(prefix + "/edit", $('#form-songlist-edit').serialize());
+            	if($.common.isEmpty($("#songData").val())){
+            		$.modal.msgError("已选音频为空！");
+            		return;
+            	}
+            	var data = $("#form-songlist-edit").serializeArray();
+	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
+	        	data.status = status;
+                $.operate.save(prefix + "/edit", data);
             }
         }
+        /**展示选择音频*/
+        function showFileList(){
+        	var url = ctx + "work/file/filelist";
+        	$.modal.openFull("音频列表",url,"","",setFiles);
+        }
+        function setFiles(index, layero){
+        	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+        	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
+        	if(selected){
+        		var size = selected.length;
+        		for(var i = 0;i<size;i++){
+        			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', selected[i].fileId);
+        			if($.common.isEmpty(data)){
+        				add(selected[i]);
+        			}else{
+        				remove(selected[i].fileId);
+        				add(selected[i]);
+        			}
+        		}
+        		putData();
+        		layer.close(index);
+        	}
+        }
+        /**删除*/
+        function remove(fileId){
+        	$("#" + table.options.id).bootstrapTable('removeByUniqueId', fileId);
+        }
+        /*批量删除*/
+        function removeAll(){
+			table.set();
+        	var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.affectedRowIds() : $.table.selectColumns(table.options.uniqueId);
+        	if (rows.length == 0) {
+        		$.modal.alertWarning("请至少选择一条记录");
+        		return;
+        	}
+        	$.modal.confirm("确认要删除选中的" + rows.length + "条音频吗?", function() {
+    			var selectedRows = $("#" + table.options.id).bootstrapTable('getAllSelections');
+	        	var size = selectedRows.length;
+	    		for(var i = 0;i<size;i++){
+	    			remove(selectedRows[i].fileId);
+	    		}
+	    		putData();
+        	});
+		}
+        /**添加*/
+        function add(data){
+        	$("#" + table.options.id).bootstrapTable('insertRow', {
+        		index: 0, // 你想插入到哪，0表示第一行
+                row: data
+        	});
+        }
+        /**试听*/
+		function toAudio(path){
+			if($('#audio-div').is(':hidden')){
+				$('.audio-controller').slideToggle(300);
+			}
+			$('#audio').attr('src',path);
+			var audio=$('#audio').get('0');
+			audio.load();
+		}
+		$(".collapse-link").click(function() {
+		       var div_ibox = $(this).closest("div.audio-controller"),
+		       e = $(this).find("i"),
+		       i = div_ibox.find("div.ibox-content");
+		       i.slideToggle(200),
+		       e.toggleClass("fa-chevron-up").toggleClass("fa-chevron-down"),
+		       div_ibox.toggleClass("").toggleClass("border-bottom"),
+		       setTimeout(function() {
+		       	div_ibox.resize();
+		       }, 50);
+		   }), $(".close-link").click(function () {
+			   if(!$('#audio-div').is(':hidden')){
+					$('.audio-controller').slideToggle(300);
+				}
+				var audio=$('#audio').get('0');
+				audio.pause();
+		});
+		/**拖拽方法*/
+		function saveRows(data){
+			putData(data);
+		}
+		/**存放数据*/
+		function putData(data){
+			if($.common.isEmpty(data)){
+				data = $("#" + table.options.id).bootstrapTable('getData');
+			}
+			var len = "";
+			if($.common.isNotEmpty(data)){
+				for(var i=0,size = data.length;i<size;i++){
+					len += data[i].fileId+",";
+				}
+				if($.common.isNotEmpty(len)){
+					len = $.common.removeLast(len);
+					$("#songData").val(len);
+				}
+			}else{
+				$("#songData").val("");
+			}
+		}
     </script>
 </body>
 </html>

@@ -58,6 +58,13 @@ public interface WorkFileMapper
      * @return 结果
      */
     public int deleteWorkFileByIds(String[] fileIds);
+    /**
+     * 批量查找音频的存储序列信息
+     * 
+     * @param fileIds 需要删除的数据ID
+     * @return 结果
+     */
+    public List<WorkFile> selectWorkFileByIds(String[] fileIds);
     
     /**
      * 批量更新删除音频任务中所有音频的存储序列信息

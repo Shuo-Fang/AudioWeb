@@ -78,14 +78,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteSongListById" parameterType="Long">
-        delete from work_song_list where list_id = #{listId}
+        update work_song_list set del_flag = '2' where list_id = #{listId}
     </delete>
 
     <delete id="deleteSongListByIds" parameterType="String">
-        delete from work_song_list where list_id in 
+        update work_song_list set del_flag = '2' where list_id in 
         <foreach item="listId" collection="array" open="(" separator="," close=")">
             #{listId}
         </foreach>
     </delete>
-    
 </mapper>

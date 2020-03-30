@@ -119,6 +119,16 @@ public class WorkFileServiceImpl implements IWorkFileService
     {
         return workFileMapper.deleteWorkFileById(fileId);
     }
+    
+    /**
+     * 批量查找音频的存储序列信息
+     * 
+     * @param fileIds 需要删除的数据ID
+     * @return 结果
+     */
+    public List<WorkFile> selectWorkFileByIds(String fileIds){
+    	return workFileMapper.selectWorkFileByIds(Convert.toStrArray(fileIds));
+    }
 
     /**
      * 批量修改音频任务中所有音频的存储序列信息
