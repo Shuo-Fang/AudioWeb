@@ -2,7 +2,6 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <th:block th:include="include :: header('音频信息列表')" />
-	<th:block th:include="include :: bootstrap-fileinput-css" />
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -43,7 +42,6 @@
         </div>
     </div>
     <th:block th:include="include :: footer" />
-    <th:block th:include="include :: bootstrap-fileinput-js" />
     <script th:inline="javascript">
         var prefix = ctx + "work/file";
         var openFlag = false;
@@ -118,9 +116,14 @@
             };
             $.table.init(options);
         });
-        
-        function submitHandler() {debugger
-           
+        function getChecked(){
+        	table.set();
+        	var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.affectedRowIds() : $.table.selectColumns(table.options.uniqueId);
+        	if (rows.length == 0) {
+        		$.modal.alertWarning("请至少选择一条记录");
+        		return;
+        	}
+        	return table.rememberSelecteds[table.options.id];
         }
     </script>
 </body>

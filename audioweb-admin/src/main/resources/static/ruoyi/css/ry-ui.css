@@ -1086,6 +1086,22 @@ label {
 	vertical-align:top; 
 	*vertical-align:middle
 } */
+.icon-view-small{
+  height : 24px;
+}
+.icon-view-small .icon{
+  font-size: 20px;
+  line-height: 20px;
+  margin: 10px 0;
+  color:#333;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.icon-view-small .icon:hover{
+  font-size: 24px;
+  font-weight:bold;
+}
 .icon-view{
   height : 32px;
 }

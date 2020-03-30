@@ -33,17 +33,33 @@
             	</div>
 	        </form>
 		    <h4 class="form-header h4">已选音频</h4>
+            <div class="col-sm-12 search-collapse audio-controller" id="audio-div" style="display:none;">
+                <div class="ibox-title">
+                    <h5>音频播放</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link"><i class="fa fa-times"></i></a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                	<audio class = "col-md-12" controls="controls" autoplay="autoplay" id = "audio" loop = "loop">
+            		</audio>
+                </div>
+            </div>
 		    <div class="icon-view-plus" id="toolbar" role="group">
 	            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:add" title = "音频列表">
 	            </a>
 	            <a class="icon iconfont icon-yinyueset" onclick="showUpload()" shiro:hasPermission="work:filecast:add" title = "其他歌单导入">
 	            </a>
-	            <a class="icon iconfont icon-shanchu" onclick="showUpload()" title = "删除">
+	            <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
 	            </a>
         	</div>
-			<table id="bootstrap-table"
-			 data-use-row-attr-func="true"
-			 data-reorderable-rows="true"></table>
+        	 <div class = "row div-table">
+				<table id="bootstrap-table"
+				 data-use-row-attr-func="true"
+				 data-reorderable-rows="true"></table>
+			 </div>
 		</div>
 		<div class="row">
         <div class="col-sm-offset-5 col-sm-10">
@@ -53,12 +69,99 @@
     	</div>
     </div>
     <th:block th:include="include :: footer" />
+    <th:block th:include="include :: bootstrap-table-reorder-js" />
     <script type="text/javascript">
-        var prefix = ctx + "work/songlist"
+        var prefix = ctx + "work/songlist";
+        var $div = $('.div-table');
+        $(function() {
+            var options = {
+                modalName: "音频",
+                showSearch:false,
+                uniqueId : "fileId",
+                sidePagination : "client",
+                height : 400,
+                showToggle:false,
+                showRefresh:false,
+                showColumns:false,
+                pagination:false,
+		        striped:true,
+                onReorderRow : saveRows,
+                columns: [{
+                	field: 'state',
+                    checkbox: true
+                },
+                {
+                    align: 'center',
+                    field : 'fileId', 
+                    title : '音频编号',
+                    visible: false
+                },
+                {
+                    field : 'fileName', 
+                    title : '音频名称',
+		            width: '25%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value);
+                   	}
+                },
+                {
+                    field : 'songName', 
+                    title : '歌曲名称',
+		            width: '20%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value);
+                   	}
+                },
+                {
+                    field : 'artist', 
+                    title : '歌手名称',
+		            width: '15%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value, 15, "");
+                   	}
+                },
+                {
+                    field : 'album', 
+                    title : '歌曲专辑',
+		            width: '20%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	return $.table.tooltip(value, 15, "");
+                   	}
+                },
+                {
+                    field : 'duration', 
+                    title : '音频时长',
+		            width: '5%',
+                    align: 'center',
+                   	formatter: function(value, row, index) {
+                   		var num = Math.floor(value/1000);
+                   		return Math.floor(num/60)+":"+(num%60 >= 10?num%60:('0'+num%60));
+                   	}
+                } ,
+                {
+                    title: '操作',
+                    align: 'center',
+		            width: '15%',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
+                         actions.push('<a class="icon-view-small " download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
+                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+                         return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+        
         $("#form-songlist-add").validate({
             focusCleanup: true
         });
-
+		
         function submitHandler() {
             if ($.validate.form()) {
             	if($.common.isEmpty($("#songData").val())){
@@ -74,8 +177,81 @@
         	$.modal.openFull("音频列表",url,"","",setFiles);
         }
         function setFiles(index, layero){
-        	
+        	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+        	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
+        	if(selected){
+        		var size = selected.length;
+        		for(var i = 0;i<size;i++){
+        			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', selected[i].fileId);
+        			if($.common.isEmpty(data)){
+        				add(selected[i]);
+        			}else{
+        				remove(selected[i].fileId);
+        				add(selected[i]);
+        			}
+        		}
+        		layer.close(index);
+        	}else{
+        		$.modal.alertWarning("请至少选择一条记录或选取出错");
+        	}
         }
+        /**删除*/
+        function remove(fileId){
+        	$("#" + table.options.id).bootstrapTable('removeByUniqueId', fileId);
+        }
+        /*批量删除*/
+        function removeAll(){
+			table.set();
+        	var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.affectedRowIds() : $.table.selectColumns(table.options.uniqueId);
+        	if (rows.length == 0) {
+        		$.modal.alertWarning("请至少选择一条记录");
+        		return;
+        	}
+        	$.modal.confirm("确认要删除选中的" + rows.length + "条音频吗?", function() {
+    			var selectedRows = $("#" + table.options.id).bootstrapTable('getAllSelections');
+	        	var size = selectedRows.length;
+	    		for(var i = 0;i<size;i++){
+	    			remove(selectedRows[i].fileId);
+	    		}
+        	});
+		}
+        /**添加*/
+        function add(data){
+        	$("#" + table.options.id).bootstrapTable('insertRow', {
+        		index: 0, // 你想插入到哪，0表示第一行
+                row: data
+        	});
+        }
+        /**试听*/
+		function toAudio(path){
+			if($('#audio-div').is(':hidden')){
+				$('.audio-controller').slideToggle(300);
+			}
+			$('#audio').attr('src',path);
+			var audio=$('#audio').get('0');
+			audio.load();
+		}
+		$(".collapse-link").click(function() {
+		       var div_ibox = $(this).closest("div.audio-controller"),
+		       e = $(this).find("i"),
+		       i = div_ibox.find("div.ibox-content");
+		       i.slideToggle(200),
+		       e.toggleClass("fa-chevron-up").toggleClass("fa-chevron-down"),
+		       div_ibox.toggleClass("").toggleClass("border-bottom"),
+		       setTimeout(function() {
+		       	div_ibox.resize();
+		       }, 50);
+		   }), $(".close-link").click(function () {
+			   if(!$('#audio-div').is(':hidden')){
+					$('.audio-controller').slideToggle(300);
+				}
+				var audio=$('#audio').get('0');
+				audio.pause();
+		});
+		/**拖拽方法*/
+		function saveRows(data){
+			
+		}
     </script>
 </body>
 </html>
