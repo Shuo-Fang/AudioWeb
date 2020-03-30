@@ -2,10 +2,9 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('新增歌单')" />
-	<th:block th:include="include :: layout-latest-css" />
 </head>
 <body class="white-bg">
-    <div class="wrapper wrapper-content animated fadeInRight ibox-content ui-layout-center">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <div class="col-sm-12 select-table table-striped">
         	<h4 class="form-header h5">基本信息</h4>
         	<form class="form-horizontal m" id="form-songlist-add">
@@ -67,9 +66,9 @@
                 </div>
             </div>
 		    <div class="icon-view-plus" id="toolbar" role="group">
-	            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:add" title = "音频列表">
+	            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:songlist:view" title = "音频列表">
 	            </a>
-	            <a class="icon iconfont icon-yinyueset" onclick="showUpload()" shiro:hasPermission="work:filecast:add" title = "其他歌单导入">
+	            <a class="icon iconfont icon-yinyueset" onclick="showSongList()" shiro:hasPermission="work:songlist:view" title = "其他歌单导入">
 	            </a>
 	            <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
 	            </a>
@@ -190,26 +189,44 @@
         /**展示选择音频*/
         function showFileList(){
         	var url = ctx + "work/file/filelist";
-        	$.modal.openFull("音频列表",url,"","",setFiles);
+        	$.modal.open("音频列表",url,"","",setFiles);
+        }
+        /**展示选择歌单*/
+        function showSongList(){
+        	var url = prefix + "/listselect";
+        	$.modal.open("歌单列表",url,"","",setLists);
         }
         function setFiles(index, layero){
         	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
         	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
         	if(selected){
         		var size = selected.length;
-        		for(var i = 0;i<size;i++){
-        			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', selected[i].fileId);
-        			if($.common.isEmpty(data)){
-        				add(selected[i]);
-        			}else{
-        				remove(selected[i].fileId);
-        				add(selected[i]);
-        			}
-        		}
-        		putData();
+        		$.modal.confirm("确认要导入选中的" + size + "条音频么?", function() {
+            		for(var i = 0;i<size;i++){
+            			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', selected[i].fileId);
+            			if($.common.isEmpty(data)){
+            				add(selected[i]);
+            			}else{
+            				remove(selected[i].fileId);
+            				add(selected[i]);
+            			}
+            		}
+            		putData();
+            	});
         		layer.close(index);
         	}
-        	
+        }
+        function setLists(index, layero){
+        	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+        	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
+        	if(selected){
+        		var size = selected.length;
+        		$.modal.confirm("确认要导入选中的" + size + "条歌单中的音频么?", function() {
+					
+            		//putData();
+            	});
+        		layer.close(index);
+        	}
         }
         /**删除*/
         function remove(fileId){

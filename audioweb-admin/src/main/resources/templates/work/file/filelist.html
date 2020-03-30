@@ -70,43 +70,22 @@
                 {
                     field : 'fileName', 
                     title : '音频名称',
-		            width: '30%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value);
+                    	return $.table.tooltip(value,30);
                    	}
                 },
                 {
                     field : 'songName', 
                     title : '歌曲名称',
-		            width: '25%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value);
-                   	}
-                },
-                {
-                    field : 'artist', 
-                    title : '歌手名称',
-		            width: '20%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "");
-                   	}
-                },
-                {
-                    field : 'album', 
-                    title : '歌曲专辑',
-		            width: '20%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "");
+                    	return $.table.tooltip(value,30);
                    	}
                 },
                 {
                     field : 'duration', 
                     title : '音频时长',
-		            width: '5%',
                     align: 'center',
                    	formatter: function(value, row, index) {
                    		var num = Math.floor(value/1000);

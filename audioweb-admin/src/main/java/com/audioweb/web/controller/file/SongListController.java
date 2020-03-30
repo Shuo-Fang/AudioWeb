@@ -50,6 +50,13 @@ public class SongListController extends BaseController
     {
         return prefix + "/songlist";
     }
+    
+    @RequiresPermissions("work:songlist:view")
+    @GetMapping("/listselect")
+    public String listselect()
+    {
+    	return prefix + "/listselect";
+    }
 
     /**
      * 查询歌单列表
