@@ -89,16 +89,17 @@
         var $div = $('.div-table');
         $(function() {
             var options = {
-                url: prefix + "/getListById?songData="+$("#songData").val(),
+                //url: prefix + "/getListById?songData="+$("#songData").val(),
                 modalName: "音频",
                 showSearch:false,
                 uniqueId : "fileId",
                 sidePagination : "client",
-                //height : 400,
+                height : 500,
+                pageSize:10000,
+                pageList:[10000],
                 showToggle:false,
                 showRefresh:false,
                 showColumns:false,
-                pagination:false,
                 onReorderRow : saveRows,
                 columns: [{
                     checkbox: true
@@ -169,15 +170,42 @@
                 }]
             };
             $.table.init(options);
-            /* var list = $("#listData").val();
-            if($.common.isNotEmpty(list) && list.length > 0){debugger
-	    		for(var i = 0,size = list.length;i<size;i++){
-	    			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', list[i].fileId);
-	    			if($.common.isEmpty(data)){
-	    				add(list[i]);
-	    			}
-	    		}
-            } */
+        });
+        /**初始化获取数据，不放在表格里面初始化是因为高度布局问题*/
+        $(function() {
+        	var url = prefix + "/getListById";
+        	var data = {"songData":$("#songData").val()};
+        	var callback = function(res){
+        		if (res.code == web_status.SUCCESS) {
+        			var rows = res.rows;
+        			for(var i = 0,size = rows.length;i<size;i++){
+	        			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', rows[i].fileId);
+	        			if($.common.isEmpty(data)){
+	        				add(rows[i]);
+	        			}else{
+	        				remove(rows[i].fileId);
+	        				add(rows[i]);
+	        			}
+	        		}
+	        		putData();
+        		}else if (res.code == web_status.WARNING) {
+                    $.modal.alertWarning(res.msg)
+                }  else {
+                	$.modal.alertError(res.msg);
+                }
+        	};
+        	var config = {
+        	        url: url,
+        	        type: "post",
+        	        dataType: "json",
+        	        data: data,
+        	        success: function(result) {
+        	        	if (typeof callback == "function") {
+        	        	    callback(result);
+        	        	}
+        	        }
+        	    };
+        	$.ajax(config)
         });
         
         $("#form-songlist-edit").validate({
@@ -244,10 +272,11 @@
 		}
         /**添加*/
         function add(data){
-        	$("#" + table.options.id).bootstrapTable('insertRow', {
-        		index: 0, // 你想插入到哪，0表示第一行
-                row: data
-        	});
+        	$("#" + table.options.id).bootstrapTable('prepend',data);
+        }
+        /**添加*/
+        function addLast(data){
+        	$("#" + table.options.id).bootstrapTable('append',data);
         }
         /**试听*/
 		function toAudio(path){
