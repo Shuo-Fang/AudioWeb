@@ -146,6 +146,7 @@ public class SysConfigServiceImpl implements ISysConfigService
     /**
      * 清空缓存数据
      */
+    @Override
     public void clearCache()
     {
         CacheUtils.removeAll(getCacheName());

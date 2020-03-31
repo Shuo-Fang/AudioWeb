@@ -135,6 +135,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @param userId 用户ID
      * @return 用户和角色关联列表
      */
+    @Override
     public List<SysUserRole> selectUserRoleByUserId(Long userId)
     {
         return userRoleMapper.selectUserRoleByUserId(userId);
@@ -232,6 +233,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @param userId 用户ID
      * @param roleIds 角色组
      */
+    @Override
     public void insertUserAuth(Long userId, Long[] roleIds)
     {
         userRoleMapper.deleteUserRoleByUserId(userId);
@@ -359,6 +361,7 @@ public class SysUserServiceImpl implements ISysUserService
      * 
      * @param user 用户信息
      */
+    @Override
     public void checkUserAllowed(SysUser user)
     {
         if (StringUtils.isNotNull(user.getUserId()) && user.isAdmin())
