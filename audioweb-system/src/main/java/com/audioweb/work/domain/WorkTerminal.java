@@ -27,7 +27,7 @@ public class WorkTerminal extends BaseEntity implements BaseRunning
 {
 	private static final long serialVersionUID = 1L;
 	/** 181 = 240*0.75+1 设定预定满载值为240*/
-	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>(128);
+	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>();
 
     /** 终端序号ID */
     private String terRealId;

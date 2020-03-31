@@ -232,6 +232,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	@Override
 	public int changeStatus(WorkTerminal workTerminal) 
 	{
+		workTerminal.setUpdateTime(DateUtils.getNowDate());
 		/**缓存同步*/
 		WorkTerminal terminal = WorkTerminal.getTerById(workTerminal);
 		if(StringUtils.isNotNull(terminal)) {

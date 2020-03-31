@@ -42,6 +42,13 @@ public interface ISongListService
      * @return 结果
      */
     public int updateSongList(SongList songList);
+    /**
+     * 修改歌单是否启用
+     * 
+     * @param songList 歌单
+     * @return 结果
+     */
+    public int changeStatus(SongList songList);
 
     /**
      * 批量删除歌单

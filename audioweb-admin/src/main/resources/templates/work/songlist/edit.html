@@ -6,6 +6,7 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <div class="col-sm-12 select-table table-striped">
+        	<input name="fileStatu" id="fileStatu" type="hidden" th:value="${fileStatu}">
         	<input name="listData" id="listData" type="hidden" th:value="${list}">
 	        <h4 class="form-header h5">基本信息</h4>
         	<form class="form-horizontal m" id="form-songlist-edit" th:object="${songList}">
@@ -70,7 +71,7 @@
 		    <div class="icon-view-plus" id="toolbar" role="group">
 	            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:songlist:view" title = "音频列表">
 	            </a>
-	            <a class="icon iconfont icon-yinyueset" onclick="showUpload()" shiro:hasPermission="work:songlist:view" title = "其他歌单导入">
+	            <a class="icon iconfont icon-yinyueset" onclick="showSongList()" shiro:hasPermission="work:songlist:view" title = "其他歌单导入">
 	            </a>
 	            <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
 	            </a>
@@ -86,15 +87,15 @@
     <th:block th:include="include :: bootstrap-table-reorder-js" />
     <script type="text/javascript">
         var prefix = ctx + "work/songlist";
-        var $div = $('.div-table');
+        var workSongDatas = JSON.parse($("#fileStatu").val());
         $(function() {
             var options = {
-                //url: prefix + "/getListById?songData="+$("#songData").val(),
+                url: prefix + "/getListById?songData="+$("#songData").val(),
                 modalName: "音频",
                 showSearch:false,
                 uniqueId : "fileId",
                 sidePagination : "client",
-                height : 500,
+                //height : 500,
                 pageSize:10000,
                 pageList:[10000],
                 showToggle:false,
@@ -120,6 +121,18 @@
                    	}
                 },
                 {
+                    field : 'delFlag', 
+                    title : '状态',
+		            width: '5%',
+                    align: "left",
+                    formatter: function(value, row, index) {
+                    	if(value == '2'){
+                    		value = '1';
+                    	}
+                       	return $.table.selectDictLabel(workSongDatas, value);
+                    },
+                },
+                {
                     field : 'songName', 
                     title : '歌曲名称',
 		            width: '20%',
@@ -140,7 +153,7 @@
                 {
                     field : 'album', 
                     title : '歌曲专辑',
-		            width: '20%',
+		            width: '15%',
                     align: "left",
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 15, "");
@@ -172,7 +185,7 @@
             $.table.init(options);
         });
         /**初始化获取数据，不放在表格里面初始化是因为高度布局问题*/
-        $(function() {
+       /*  $(function() {
         	var url = prefix + "/getListById";
         	var data = {"songData":$("#songData").val()};
         	var callback = function(res){
@@ -206,7 +219,7 @@
         	        }
         	    };
         	$.ajax(config)
-        });
+        }); */
         
         $("#form-songlist-edit").validate({
             focusCleanup: true
@@ -229,23 +242,66 @@
         	var url = ctx + "work/file/filelist";
         	$.modal.open("歌单列表",url,"","",setFiles);
         }
+        /**展示选择歌单*/
+        function showSongList(){
+        	var url = prefix + "/listselect";
+        	$.modal.open("歌单列表",url,"","",setLists);
+        }
         function setFiles(index, layero){
         	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
         	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
         	if(selected){
         		var size = selected.length;
         		$.modal.confirm("确认要导入选中的" + size + "条音频么?", function() {
-	        		for(var i = 0;i<size;i++){
-	        			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', selected[i].fileId);
-	        			if($.common.isEmpty(data)){
-	        				add(selected[i]);
-	        			}else{
-	        				remove(selected[i].fileId);
-	        				add(selected[i]);
-	        			}
-	        		}
-	        		putData();
+        			dataInTable(selected);
         		});
+        		layer.close(index);
+        	}
+        }
+        /**歌单导入数据*/
+        function setLists(index, layero){
+        	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
+        	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
+        	if(selected){
+        		var size = selected.length;
+        		$.modal.confirm("确认要导入选中的" + size + "条歌单中的音频么?", function() {
+        			var url = prefix + "/getListById";
+        			var songData = "";
+        			for(var i = 0,size = selected.length;i<size;i++){
+        				if($.common.isNotEmpty(selected[i].songData)){
+        					songData += selected[i].songData + ",";
+        				}
+        			}
+        			var data ={
+        					'songData': songData
+        			}
+        			var callback = function(result){//回调方法
+        				if (result.code == web_status.SUCCESS) {debugger
+                        	$.modal.msgSuccess("导入成功");
+                        	/**添加逻辑*/
+        					dataInTable(result.rows);
+                        }  else if (result.code == web_status.WARNING) {
+                            $.modal.alertWarning(result.msg)
+                        }  else {
+                        	$.modal.alertError(result.msg);
+                        }
+                    	$.modal.closeLoading();
+        			}
+        			var config = {
+                	        url: url,
+                	        type: "post",
+                	        dataType: "json",
+                	        data: data,
+                	        beforeSend: function () {
+                	        	$.modal.loading("正在处理中，请稍后...");
+                	        },
+                	        success: function(result) {
+                	        	callback(result);
+                	        }
+                	    };
+                	$.ajax(config);//ajax请求
+            		//putData();
+            	});
         		layer.close(index);
         	}
         }
@@ -325,6 +381,19 @@
 			}else{
 				$("#songData").val("");
 			}
+		}
+		/**table插入数据*/
+		function dataInTable(data){
+			for(var i = 0,size = data.length;i<size;i++){
+    			var res = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', data[i].fileId);
+    			if($.common.isEmpty(res)){
+    				add(data[i]);
+    			}else{
+    				remove(data[i].fileId);
+    				add(data[i]);
+    			}
+    		}
+    		putData();
 		}
     </script>
 </body>

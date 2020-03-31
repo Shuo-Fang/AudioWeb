@@ -2,11 +2,14 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
     <th:block th:include="include :: header('新增歌单')" />
+<style type="text/css">
+.table {table-layout:fixed;}
+</style>
 </head>
 <body class="white-bg">
     <div class="wrapper wrapper-content fadeInRight ibox-content">
         <div class="col-sm-12 select-table table-striped">
-        	<input name="fileStatu" id="fileStatu" type="hidden" th:value="${@dict.getType('work_song_status')}">
+        	<input name="fileStatu" id="fileStatu" type="hidden" th:value="${fileStatu}">
         	<h4 class="form-header h5">基本信息</h4>
         	<form class="form-horizontal m" id="form-songlist-add">
 	        	<input name="listUserId" type="hidden">
@@ -85,14 +88,14 @@
     <th:block th:include="include :: bootstrap-table-reorder-js" />
     <script type="text/javascript">
         var prefix = ctx + "work/songlist";
-        var workSongDatas = $("#fileStatu").val();debugger
+        var workSongDatas = JSON.parse($("#fileStatu").val());
         $(function() {
             var options = {
                 modalName: "音频",
                 showSearch:false,
                 uniqueId : "fileId",
                 sidePagination : "client",
-                height : 500,
+                //height : 500,
                 pageSize:10000,
                 pageList:[10000],
                 showToggle:false,
@@ -119,9 +122,9 @@
                    	}
                 },
                 {
-                    field : 'status', 
+                    field : 'delFlag', 
                     title : '状态',
-		            width: '25%',
+		            width: '5%',
                     align: "left",
                     formatter: function(value, row, index) {
                     	if(value == '2'){
@@ -216,28 +219,54 @@
         		var size = selected.length;
         		$.modal.confirm("确认要导入选中的" + size + "条音频么?", function() {
         			$.modal.loading("正在处理中，请稍后...");
-            		for(var i = 0;i<size;i++){
-            			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', selected[i].fileId);
-            			if($.common.isEmpty(data)){
-            				add(selected[i]);
-            			}else{
-            				remove(selected[i].fileId);
-            				add(selected[i]);
-            			}
-            		}
-            		putData();
+        			dataInTable(selected);
             		$.modal.closeLoading();
             	});
         		layer.close(index);
         	}
         }
+        /**歌单导入数据*/
         function setLists(index, layero){
         	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
         	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
         	if(selected){
         		var size = selected.length;
         		$.modal.confirm("确认要导入选中的" + size + "条歌单中的音频么?", function() {
-					
+        			var url = prefix + "/getListById";
+        			var songData = "";
+        			for(var i = 0,size = selected.length;i<size;i++){
+        				if($.common.isNotEmpty(selected[i].songData)){
+        					songData += selected[i].songData + ",";
+        				}
+        			}
+        			var data ={
+        					'songData': songData
+        			}
+        			var callback = function(result){//回调方法
+        				if (result.code == web_status.SUCCESS) {debugger
+                        	$.modal.msgSuccess("导入成功");
+                        	/**添加逻辑*/
+        					dataInTable(result.rows);
+                        }  else if (result.code == web_status.WARNING) {
+                            $.modal.alertWarning(result.msg)
+                        }  else {
+                        	$.modal.alertError(result.msg);
+                        }
+                    	$.modal.closeLoading();
+        			}
+        			var config = {
+                	        url: url,
+                	        type: "post",
+                	        dataType: "json",
+                	        data: data,
+                	        beforeSend: function () {
+                	        	$.modal.loading("正在处理中，请稍后...");
+                	        },
+                	        success: function(result) {
+                	        	callback(result);
+                	        }
+                	    };
+                	$.ajax(config);//ajax请求
             		//putData();
             	});
         		layer.close(index);
@@ -299,7 +328,7 @@
 			putData(data);
 		}
 		/**存放数据*/
-		function putData(data){debugger
+		function putData(data){
 			if($.common.isEmpty(data)){
 				data = $("#" + table.options.id).bootstrapTable('getData');
 			}
@@ -315,6 +344,19 @@
 			}else{
 				$("#songData").val("");
 			}
+		}
+		/**table插入数据*/
+		function dataInTable(data){
+			for(var i = 0,size = data.length;i<size;i++){
+    			var res = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', data[i].fileId);
+    			if($.common.isEmpty(res)){
+    				add(data[i]);
+    			}else{
+    				remove(data[i].fileId);
+    				add(data[i]);
+    			}
+    		}
+    		putData();
 		}
     </script>
 </body>

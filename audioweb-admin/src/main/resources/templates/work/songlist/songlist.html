@@ -105,22 +105,22 @@
         /* 状态显示 */
 		function statusTools(row) {
 		    if (row.status == 1) {
-    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.terRealId + '\')"></i> ';
+    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.listId + '\')"></i> ';
     		} else {
-    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.terRealId + '\')"></i> ';
+    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.listId + '\')"></i> ';
     		}
 		}
 		/* 管理-停用 */
-		function disable(terRealId) {
+		function disable(listId) {
 			$.modal.confirm("确认要禁用此歌单吗？", function() {
-				$.operate.post(prefix + "/changeStatus", { "terRealId": terRealId, "status": 1 });
+				$.operate.post(prefix + "/changeStatus", { "listId": listId, "status": 1 });
 		    })
 		}
 
 		/* 管理启用 */
-		function enable(terRealId) {
+		function enable(listId) {
 			$.modal.confirm("确认要启用此歌单吗？", function() {
-				$.operate.post(prefix + "/changeStatus", { "terRealId": terRealId, "status": 0 });
+				$.operate.post(prefix + "/changeStatus", { "listId": listId, "status": 0 });
 		    })
 		}
 		

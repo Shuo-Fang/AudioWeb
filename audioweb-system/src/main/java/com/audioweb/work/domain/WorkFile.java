@@ -21,7 +21,7 @@ public class WorkFile extends BaseEntity implements BaseRunning
 {
     private static final long serialVersionUID = 1L;
     /**默认最大音频加载值为1000 -> 1000*0.75+1 = 751*/
-	private static Map<String, WorkFile> fileMap = new ConcurrentHashMap<String, WorkFile>(512);
+	private static Map<String, WorkFile> fileMap = new ConcurrentHashMap<String, WorkFile>();
 
     /** 音频的路径md5值 */
     private String fileId;

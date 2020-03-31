@@ -76,7 +76,8 @@
         		$.modal.alertWarning("请至少选择一条记录");
         		return;
         	}
-        	return rows;
+        	var selectedRows = table.rememberSelecteds[table.options.id];
+        	return selectedRows;
         }
     </script>
 </body>

@@ -17,6 +17,7 @@ import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.json.JSON;
 import com.audioweb.work.domain.SongList;
 import com.audioweb.work.domain.WorkFile;
+import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.ISongListService;
 import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.controller.BaseController;
@@ -24,6 +25,8 @@ import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.system.domain.SysDictData;
+import com.audioweb.system.service.ISysDictTypeService;
 import com.audioweb.common.core.page.TableDataInfo;
 
 /**
@@ -36,6 +39,8 @@ import com.audioweb.common.core.page.TableDataInfo;
 @RequestMapping("/work/songlist")
 public class SongListController extends BaseController
 {
+	private static final String STATUS = "work_song_status";
+	
     private String prefix = "work/songlist";
 
     @Autowired
@@ -44,6 +49,9 @@ public class SongListController extends BaseController
     @Autowired
     private IWorkFileService workFileService;
 
+    @Autowired
+    private ISysDictTypeService dictTypeService;
+    
     @RequiresPermissions("work:songlist:view")
     @GetMapping()
     public String songlist()
@@ -73,25 +81,18 @@ public class SongListController extends BaseController
     }
 
     /**
-     * 导出歌单列表
-     */
-    @RequiresPermissions("work:songlist:export")
-    @Log(title = "歌单", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    @ResponseBody
-    public AjaxResult export(SongList songList)
-    {
-        List<SongList> list = songListService.selectSongListList(songList);
-        ExcelUtil<SongList> util = new ExcelUtil<SongList>(SongList.class);
-        return util.exportExcel(list, "songlist");
-    }
-
-    /**
      * 新增歌单
      */
     @GetMapping("/add")
-    public String add()
+    public String add(ModelMap mmap)
     {
+    	try {
+    		List<SysDictData> datas = dictTypeService.selectDictDataByType(STATUS);
+			mmap.put("fileStatu", JSON.marshal(datas));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return prefix + "/add";
     }
 
@@ -99,7 +100,7 @@ public class SongListController extends BaseController
      * 新增保存歌单
      */
     @RequiresPermissions("work:songlist:add")
-    @Log(title = "歌单", businessType = BusinessType.INSERT)
+    @Log(title = "歌单管理", businessType = BusinessType.INSERT)
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(SongList songList)
@@ -115,6 +116,13 @@ public class SongListController extends BaseController
     @GetMapping("/edit/{listId}")
     public String edit(@PathVariable("listId") Long listId, ModelMap mmap)
     {
+    	try {
+    		List<SysDictData> datas = dictTypeService.selectDictDataByType(STATUS);
+			mmap.put("fileStatu", JSON.marshal(datas));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         SongList songList = songListService.selectSongListById(listId);
         mmap.put("songList", songList);
         return prefix + "/edit";
@@ -124,7 +132,7 @@ public class SongListController extends BaseController
      * 修改保存歌单
      */
     @RequiresPermissions("work:songlist:edit")
-    @Log(title = "歌单", businessType = BusinessType.UPDATE)
+    @Log(title = "歌单管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(SongList songList)
@@ -137,7 +145,7 @@ public class SongListController extends BaseController
      * 删除歌单
      */
     @RequiresPermissions("work:songlist:remove")
-    @Log(title = "歌单", businessType = BusinessType.DELETE)
+    @Log(title = "歌单管理", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
     public AjaxResult remove(String ids)
@@ -155,4 +163,16 @@ public class SongListController extends BaseController
         List<WorkFile> list = workFileService.selectWorkFileByIds(songList.getSongData());
     	return getDataTable(list);
     }
+    /**
+     * 终端状态修改
+     */
+    @Log(title = "歌单管理", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("work:songlist:edit")
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeStatus(SongList songList)
+    {
+        return toAjax(songListService.changeStatus(songList));
+    }
+    
 }

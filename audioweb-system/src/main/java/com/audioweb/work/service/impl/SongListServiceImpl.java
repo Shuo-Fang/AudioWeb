@@ -70,6 +70,18 @@ public class SongListServiceImpl implements ISongListService
         songList.setUpdateTime(DateUtils.getNowDate());
         return songListMapper.updateSongList(songList);
     }
+    /**
+     * 修改歌单是否启用
+     * 
+     * @param songList 歌单
+     * @return 结果
+     */
+    @Override
+    public int changeStatus(SongList songList)
+    {
+    	songList.setUpdateTime(DateUtils.getNowDate());
+    	return songListMapper.updateSongList(songList);
+    }
 
     /**
      * 删除歌单对象
