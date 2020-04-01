@@ -84,15 +84,8 @@ public class SongListController extends BaseController
      * 新增歌单
      */
     @GetMapping("/add")
-    public String add(ModelMap mmap)
+    public String add()
     {
-    	try {
-    		List<SysDictData> datas = dictTypeService.selectDictDataByType(STATUS);
-			mmap.put("fileStatu", JSON.marshal(datas));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         return prefix + "/add";
     }
 
@@ -116,13 +109,6 @@ public class SongListController extends BaseController
     @GetMapping("/edit/{listId}")
     public String edit(@PathVariable("listId") Long listId, ModelMap mmap)
     {
-    	try {
-    		List<SysDictData> datas = dictTypeService.selectDictDataByType(STATUS);
-			mmap.put("fileStatu", JSON.marshal(datas));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         SongList songList = songListService.selectSongListById(listId);
         mmap.put("songList", songList);
         return prefix + "/edit";

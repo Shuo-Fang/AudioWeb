@@ -503,6 +503,25 @@ var table = {
             hideColumn: function(column, tableId) {
             	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
             	$("#" + currentId).bootstrapTable('hideColumn', column);
+            },
+            getData: function(tableId){
+            	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
+    			return $("#" + currentId).bootstrapTable('getData');
+            },
+            /**在表前方插入一条数据**/
+            addPrepend: function(data,tableId){
+            	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
+            	$("#" + currentId).bootstrapTable('prepend',data);
+            },
+            /**在表后方插入一条数据**/
+            addAppend: function(data,tableId){
+            	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
+            	$("#" + currentId).bootstrapTable('append',data);
+            },
+            /**根据数据的ID删除一条数据*/
+            remove : function(dataId,tableId){
+            	var currentId = $.common.isEmpty(tableId) ? table.options.id : tableId;
+            	$("#" + currentId).bootstrapTable('removeByUniqueId', dataId);
             }
         },
         // 表格树封装处理

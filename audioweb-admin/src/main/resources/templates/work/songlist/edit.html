@@ -6,7 +6,6 @@
 <body class="white-bg">
     <div class="wrapper wrapper-content animated fadeInRight ibox-content">
         <div class="col-sm-12 select-table table-striped">
-        	<input name="fileStatu" id="fileStatu" type="hidden" th:value="${fileStatu}">
         	<input name="listData" id="listData" type="hidden" th:value="${list}">
 	        <h4 class="form-header h5">基本信息</h4>
         	<form class="form-horizontal m" id="form-songlist-edit" th:object="${songList}">
@@ -87,120 +86,118 @@
     <th:block th:include="include :: bootstrap-table-reorder-js" />
     <script th:inline="javascript">
         var prefix = ctx + "work/songlist";
-        var workSongDatas = JSON.parse($("#fileStatu").val());
-        $(function() {
-            var options = {
-                url: prefix + "/getListById?songData="+$("#songData").val(),
-                modalName: "音频",
-                showSearch:false,
-                uniqueId : "fileId",
-                sidePagination : "client",
-                //height : 500,
-                pageSize:10000,
-                pageList:[10000],
-                showToggle:false,
-                showRefresh:false,
-                showColumns:false,
-                onReorderRow : saveRows,
-                columns: [{
-                    checkbox: true
-                },
-                {
-                    align: 'center',
-                    field : 'fileId', 
-                    title : '音频编号',
-                    visible: false
-                },
-                {
-                    field : 'fileName', 
-                    title : '音频名称',
-		            width: '25%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	return $.table.tooltip(value);
-                   	}
-                },
-                {
-                    field : 'delFlag', 
-                    title : '状态',
-		            width: '5%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	if(value == '2'){
-                    		value = '1';
-                    	}
-                       	return $.table.selectDictLabel(workSongDatas, value);
+        var workSongDatas = [[${@dict.getType('work_song_status')}]];
+        function initTable(data){
+        	if($.common.isEmpty(data)){
+        		data = [];
+        	}
+        	var options = {
+                    modalName: "音频",
+                    showSearch:false,
+                    uniqueId : "fileId",
+                    sidePagination : "client",
+                    height : 500,
+                    pageSize:10000,
+                    pageList:[10000],
+                    showToggle:false,
+                    showRefresh:false,
+                    showColumns:false,
+                    data:data,
+                    //pagination:false,
+                    onReorderRow : saveRows,
+                    columns: [{
+                        checkbox: true
                     },
-                },
-                {
-                    field : 'songName', 
-                    title : '歌曲名称',
-		            width: '20%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	return $.table.tooltip(value);
-                   	}
-                },
-                {
-                    field : 'artist', 
-                    title : '歌手名称',
-		            width: '15%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "");
-                   	}
-                },
-                {
-                    field : 'album', 
-                    title : '歌曲专辑',
-		            width: '15%',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "");
-                   	}
-                },
-                {
-                    field : 'duration', 
-                    title : '音频时长',
-		            width: '5%',
-                    align: 'center',
-                   	formatter: function(value, row, index) {
-                   		var num = Math.floor(value/1000);
-                   		return Math.floor(num/60)+":"+(num%60 >= 10?num%60:('0'+num%60));
-                   	}
-                } ,
-                {
-                    title: '操作',
-                    align: 'center',
-		            width: '15%',
-                    formatter: function(value, row, index) {
-                        var actions = [];
-                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
-                         actions.push('<a class="icon-view-small " download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
-                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
-                         return actions.join('');
-                    }
-                }]
-            };
-            $.table.init(options);
+                    {
+                        align: 'center',
+                        field : 'fileId', 
+                        title : '音频编号',
+                        visible: false
+                    },
+                    {
+                        field : 'fileName', 
+                        title : '音频名称',
+    		            width: '25%',
+                        align: "left",
+                        formatter: function(value, row, index) {
+                        	return $.table.tooltip(value);
+                       	}
+                    },
+                    {
+                        field : 'delFlag', 
+                        title : '状态',
+    		            width: '5%',
+                        align: "left",
+                        formatter: function(value, row, index) {
+                        	if(value == '2'){
+                        		value = '1';
+                        	}
+                           	return $.table.selectDictLabel(workSongDatas, value);
+                        },
+                    },
+                    {
+                        field : 'songName', 
+                        title : '歌曲名称',
+    		            width: '20%',
+                        align: "left",
+                        formatter: function(value, row, index) {
+                        	return $.table.tooltip(value);
+                       	}
+                    },
+                    {
+                        field : 'artist', 
+                        title : '歌手名称',
+    		            width: '15%',
+                        align: "left",
+                        formatter: function(value, row, index) {
+                        	return $.table.tooltip(value, 15, "");
+                       	}
+                    },
+                    {
+                        field : 'album', 
+                        title : '歌曲专辑',
+    		            width: '15%',
+                        align: "left",
+                        formatter: function(value, row, index) {
+                        	return $.table.tooltip(value, 15, "");
+                       	}
+                    },
+                    {
+                        field : 'duration', 
+                        title : '音频时长',
+    		            width: '5%',
+                        align: 'center',
+                       	formatter: function(value, row, index) {
+                       		var num = Math.floor(value/1000);
+                       		return Math.floor(num/60)+":"+(num%60 >= 10?num%60:('0'+num%60));
+                       	}
+                    } ,
+                    {
+                        title: '操作',
+                        align: 'center',
+    		            width: '15%',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
+                             actions.push('<a class="icon-view-small " download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
+                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="$.table.remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+                             return actions.join('');
+                        }
+                    }]
+                };
+                $.table.init(options);
+        }
+        $(function() {
+        	initTable();
         });
-        /**初始化获取数据，不放在表格里面初始化是因为高度布局问题*/
-       /*  $(function() {
+        
+        /**初始化获取数据，不放在表格里面初始化*/
+         $(function() {
         	var url = prefix + "/getListById";
         	var data = {"songData":$("#songData").val()};
         	var callback = function(res){
         		if (res.code == web_status.SUCCESS) {
-        			var rows = res.rows;
-        			for(var i = 0,size = rows.length;i<size;i++){
-	        			var data = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', rows[i].fileId);
-	        			if($.common.isEmpty(data)){
-	        				add(rows[i]);
-	        			}else{
-	        				remove(rows[i].fileId);
-	        				add(rows[i]);
-	        			}
-	        		}
-	        		putData();
+        			initTable(res.rows);
         		}else if (res.code == web_status.WARNING) {
                     $.modal.alertWarning(res.msg)
                 }  else {
@@ -219,7 +216,7 @@
         	        }
         	    };
         	$.ajax(config)
-        }); */
+        }); 
         
         $("#form-songlist-edit").validate({
             focusCleanup: true
@@ -305,10 +302,6 @@
         		layer.close(index);
         	}
         }
-        /**删除*/
-        function remove(fileId){
-        	$("#" + table.options.id).bootstrapTable('removeByUniqueId', fileId);
-        }
         /*批量删除*/
         function removeAll(){
 			table.set();
@@ -321,19 +314,11 @@
     			var selectedRows = $("#" + table.options.id).bootstrapTable('getAllSelections');
 	        	var size = selectedRows.length;
 	    		for(var i = 0;i<size;i++){
-	    			remove(selectedRows[i].fileId);
+	    			$.table.remove(selectedRows[i].fileId);
 	    		}
 	    		putData();
         	});
 		}
-        /**添加*/
-        function add(data){
-        	$("#" + table.options.id).bootstrapTable('prepend',data);
-        }
-        /**添加*/
-        function addLast(data){
-        	$("#" + table.options.id).bootstrapTable('append',data);
-        }
         /**试听*/
 		function toAudio(path){
 			if($('#audio-div').is(':hidden')){
@@ -367,7 +352,7 @@
 		/**存放数据*/
 		function putData(data){
 			if($.common.isEmpty(data)){
-				data = $("#" + table.options.id).bootstrapTable('getData');
+				data = $.table.getData();
 			}
 			var len = "";
 			if($.common.isNotEmpty(data)){
@@ -384,16 +369,28 @@
 		}
 		/**table插入数据*/
 		function dataInTable(data){
-			for(var i = 0,size = data.length;i<size;i++){
-    			var res = $("#" + table.options.id).bootstrapTable('getRowByUniqueId', data[i].fileId);
-    			if($.common.isEmpty(res)){
-    				add(data[i]);
-    			}else{
-    				remove(data[i].fileId);
-    				add(data[i]);
-    			}
-    		}
-    		putData();
+			var res = $.table.getData();
+			res.forEach(function(element) {
+				data.push(element);
+			});
+			uniqueFn(data);
+			//data.push.apply(data,res);
+			$.table.destroy();
+			initTable(data);
+			putData(data);
+		}
+		function uniqueFn(arr) {
+			  var ret = [];
+			  var hash = {};
+			  for (var i = 0; i < arr.length; i++) {
+			    var item = arr[i];
+			    var key = item.fileId;
+			    if (hash[key] !== 1) {
+			      ret.push(item);
+			      hash[key] = 1;
+			    }
+			  }
+			  return ret
 		}
     </script>
 </body>
