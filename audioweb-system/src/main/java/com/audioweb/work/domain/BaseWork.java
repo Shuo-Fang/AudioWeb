@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.audioweb.common.core.domain.BaseEntity;
 /** 缓存方法接口 */
-public interface BaseRunning {
+public interface BaseWork {
 	
 	/**将本对象放入缓存中*/
 	public boolean put();

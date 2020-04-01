@@ -17,7 +17,7 @@ import com.audioweb.common.utils.StringUtils;
  * @author shuofang
  * @date 2020-03-10
  */
-public class WorkFile extends BaseEntity implements BaseRunning
+public class WorkFile extends BaseEntity implements BaseWork
 {
     private static final long serialVersionUID = 1L;
     /**默认最大音频加载值为1000 -> 1000*0.75+1 = 751*/

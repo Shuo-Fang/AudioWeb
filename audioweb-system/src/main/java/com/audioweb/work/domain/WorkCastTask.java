@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020年3月2日 下午1:27:26  
  */
 @ApiModel("广播任务实体")
-public class WorkCastTask extends BaseEntity implements BaseRunning,Comparable<WorkCastTask> {
+public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<WorkCastTask> {
 	private static volatile long  realTaskId = 0;
 	
 	private static final long serialVersionUID = 1L;

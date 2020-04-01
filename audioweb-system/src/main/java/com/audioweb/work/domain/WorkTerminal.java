@@ -23,7 +23,7 @@ import javax.validation.constraints.Size;
  * @author shuofang
  * @date 2020-03-01
  */
-public class WorkTerminal extends BaseEntity implements BaseRunning
+public class WorkTerminal extends BaseEntity implements BaseWork
 {
 	private static final long serialVersionUID = 1L;
 	/** 181 = 240*0.75+1 设定预定满载值为240*/
