@@ -65,7 +65,9 @@ public class WorkFileController extends BaseController
     @ResponseBody
     public TableDataInfo list(WorkFile workFile)
     {
-    	workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+    	if(StringUtils.isEmpty(workFile.getDelFlag())) {
+    		workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
+    	}
     	/**默认自动加载文件广播列表*/
 		try {
 			String filePath = Global.getFilePath();
