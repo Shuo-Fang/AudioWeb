@@ -85,7 +85,7 @@
     </div>
     <th:block th:include="include :: footer" />
     <th:block th:include="include :: bootstrap-table-reorder-js" />
-    <script type="text/javascript">
+    <script th:inline="javascript">
         var prefix = ctx + "work/songlist";
         var workSongDatas = JSON.parse($("#fileStatu").val());
         $(function() {
