@@ -4,6 +4,7 @@
 	<th:block th:include="include :: header('文件广播')" />
 	<th:block th:include="include :: layout-latest-css" />
 	<th:block th:include="include :: ztree-css" />
+	<th:block th:include="include :: RangeSlider-css" />
 </head>
 <body class="gray-bg">
 	<input id="terIds"   name="terIds"    type="hidden" th:value="${terIds}"/>
@@ -26,7 +27,15 @@
 			</div>
 		</div>
 	 </div>
-     <div class="ui-layout-center container-div">
+     <div class="ui-layout-center">
+        <div class="ibox-content">
+        	<div id="test" class="col-sm-6">
+				<input type="range" class = "slider-normal"> 
+			</div>
+        	<div id="test" class="col-sm-6">
+				<input type="range" class = "slider-small"> 
+			</div>
+        </div>
      	 <div class="icon-view-plus" id="toolbar" role="group">
             <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:list" title = "音频列表">
             </a>
@@ -35,8 +44,15 @@
             <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
             </a>
         </div>
-		<div class="col-sm-12 select-table table-striped">
-		    <p class="select-title">已选音频</p>
+		<div class="col-sm-12 select-table table-striped" id="table-div">
+		<div class="ibox-title">
+           <h5>已选音频</h5>
+           <div class="ibox-tools">
+               <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+               </a>
+                <a class="close-link"><i class="fa fa-times"></i></a> 
+           </div>
+        </div>
 			<table id="bootstrap-table"
 			 data-use-row-attr-func="true"
 			 data-reorderable-rows="true"></table>
@@ -46,10 +62,17 @@
     <th:block th:include="include :: bootstrap-table-reorder-js" />
 	<th:block th:include="include :: layout-latest-js" />
 	<th:block th:include="include :: ztree-js" />
+	<th:block th:include="include :: RangeSlider-js" />
     <script th:inline="javascript">
         var prefix = ctx + "work/filecast";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
+        var returndata;
+		function test(){
+			$('.select-table').slideToggle(300);
+		}
 		$(function() {
+			$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 0.1, callback: change, finishedCallback:finished});
+			$('.slider-small').RangeSlider({ min: 0,   max: 100,  step: 0.1, callback: change, finishedCallback:finished});
 		    var panehHidden = false;
 		    if ($(this).width() < 769) {
 		        panehHidden = true;
@@ -57,7 +80,26 @@
 		    $('body').layout({ initClosed: panehHidden, west__size: 245 });
 		    queryFileList();
 		    queryTerminalTree();
+		    setValue();
 		});
+		function change(){
+			
+		}
+		function finished(){
+			
+		}
+		/**设置进度条位置*/
+		function setValue(value){
+			if($.common.isEmpty(value)){
+				value = 20;
+			}
+			var data = $(".slider-small" );
+			data[0].value = value;
+			var userAgent = navigator.userAgent.toLowerCase();
+			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
+				data.css( 'background-size', value + '% 100%' ); 
+			}
+		}
         function queryFileList(data){
         	$.table.destroy();
         	if($.common.isEmpty(data)){
@@ -78,7 +120,7 @@
 		        	putData(data);
 		        },
 		        uniqueId : "fileId",
-		        data,data,
+		        data : data,
 		        columns: [{
                 	field: 'state',
                     checkbox: true
@@ -187,11 +229,12 @@
         }
         function setFiles(index, layero){
         	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
-        	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
-        	if(selected){
-        		var size = selected.length;
+        	returnData = null;
+        	iframeWin.getChecked();//调用子页面的方法
+        	if(returnData){
+        		var size = returnData.length;
         		$.modal.confirm("确认要导入选中的" + size + "条音频么?", function() {
-        			dataInTable(selected);
+        			dataInTable(returnData);
             	});
         		layer.close(index);
         	}
@@ -199,22 +242,23 @@
         /**歌单导入数据*/
         function setLists(index, layero){
         	var iframeWin = window[layero.find('iframe')[0]['name']];//得到iframe页的窗口对象，执行iframe页的方法：
-        	var selected = iframeWin.getChecked();//调用子页面的方法，得到子页面返回的ids
-        	if(selected){
-        		var size = selected.length;
+        	returnData = null;
+        	iframeWin.getChecked();//调用子页面的方法
+        	if(returnData){
+        		var size = returnData.length;
         		$.modal.confirm("确认要导入选中的" + size + "条歌单中的音频么?", function() {
         			var url = ctx + "work/songlist/getListById";
         			var songData = "";
-        			for(var i = 0,size = selected.length;i<size;i++){
-        				if($.common.isNotEmpty(selected[i].songData)){
-        					songData += selected[i].songData + ",";
+        			for(var i = 0,size = returnData.length;i<size;i++){
+        				if($.common.isNotEmpty(returnData[i].songData)){
+        					songData += returnData[i].songData + ",";
         				}
         			}
         			var data ={
         					'songData': songData
         			}
         			var callback = function(result){//回调方法
-        				if (result.code == web_status.SUCCESS) {debugger
+        				if (result.code == web_status.SUCCESS) {
                         	$.modal.msgSuccess("导入成功");
                         	/**添加逻辑*/
         					dataInTable(result.rows);
@@ -325,6 +369,10 @@
 			}else{
 				$("#songData").val("");
 			}
+		}
+		
+		function putReturn(res){
+			returnData = JSON.parse(JSON.stringify(res));
 		}
     </script>
 </body>
