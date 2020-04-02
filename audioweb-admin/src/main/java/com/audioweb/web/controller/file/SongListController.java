@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.druid.support.json.JSONUtils;
 import com.audioweb.common.annotation.Log;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.json.JSON;
 import com.audioweb.work.domain.SongList;
@@ -23,6 +24,7 @@ import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.DateUtils;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysDictData;
@@ -74,6 +76,9 @@ public class SongListController extends BaseController
     @ResponseBody
     public TableDataInfo list(SongList songList)
     {
+    	if(StringUtils.isNull(songList.getStatus())) {
+    		songList.setStatus(WorkConstants.NORMAL);
+    	}
     	songList.setListUserId(ShiroUtils.getUserId());
         startPage();
         List<SongList> list = songListService.selectSongListList(songList);

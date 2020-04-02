@@ -43,7 +43,7 @@ public class IoNettyServer extends NettyBase{
     @Autowired
     private ISysConfigService configService;
     
-    private EventLoopGroup udpWorkerGroup = new NioEventLoopGroup(NUMBER_OF_CORES*3,io);
+    private EventLoopGroup udpWorkerGroup = new NioEventLoopGroup(NUMBER_OF_CORES,io);
 	
 	@Override
 	public Channel getChannel() {

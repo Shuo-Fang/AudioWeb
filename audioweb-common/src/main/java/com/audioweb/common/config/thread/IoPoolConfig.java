@@ -40,7 +40,7 @@ public class IoPoolConfig implements PoolConfig {
 	@Bean(name = "IoServiceExecutor")
     public ExecutorService ioServiceExecutor() {
         log.info("start IoServiceExecutor");
-        return new ThreadPoolExecutor(NUMBER_OF_CORES*2,
+        return new ThreadPoolExecutor(NUMBER_OF_CORES,
 				NUMBER_OF_CORES*8, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,
 				new LinkedBlockingQueue<Runnable>(1024),
 				new MyThreadFactory(2),

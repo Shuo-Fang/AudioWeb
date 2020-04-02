@@ -60,7 +60,7 @@ public class LoginNettyServer extends NettyBase{
                     .channel(NioDatagramChannel.class)
                     .option(ChannelOption.SO_BROADCAST, true)
                     .option(ChannelOption.SO_REUSEADDR, true)
-                    .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
+                    .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 20)
                     .localAddress(new InetSocketAddress(NettyConfig.getServerIp(),NettyConfig.getLoginPort()))
                     .handler(new ChannelInitializer<Channel>() {
                         @Override

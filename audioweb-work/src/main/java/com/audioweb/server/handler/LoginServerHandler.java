@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.thread.manager.AsyncManager;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.protocol.InterCMDProcess;
 import com.audioweb.server.service.impl.SpringBeanServiceImpl;
 import com.audioweb.work.domain.WorkTerminal;
@@ -58,29 +59,24 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 	
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx,final DatagramPacket msg) throws Exception {
-		/**终端登录实现*/
 		byte[] req = new byte[msg.content().readableBytes()];
 		msg.content().readBytes(req);
-		AsyncManager.me().ioExecute(new Runnable() {
-			@Override
-			public void run() {
+		/**终端登录实现*/
+        AsyncManager.me().ioExecute(new Runnable() {
+        	@Override
+        	public void run() {
 				String ip = msg.sender().getAddress().getHostAddress();
 				/**判断是否为登录命令*/
 				if(ClientCommand.CMD_LOGIN.getCmd().equals(req[1]) && req.length > 9) {
 					/**获取登录的ID号以及对应的校验IP地址*/
 					String terid = InterCMDProcess.getTeridFromLogin(req);
 					/**进行登录校验*/
-					WorkTerminal terminal = new WorkTerminal();
-					terminal.setTerminalIp(ip);
-					if(terminal.exist()) {
-						WorkTerminal me = terminal.get();
+					WorkTerminal terminal = WorkTerminal.getTerByIp(ip);
+					if(StringUtils.isNotNull(terminal)) {
 						/**IP验证*/
-						if(me.getTerminalId().equals(terid)) {
-							me.setLoginTime(new Date());
-							me.setIsOnline(0);//存储登录信息
-							terminal.setTerRealId(me.getTerRealId());
+						if(terminal.getTerminalId().equals(terid)) {
 							terminal.setLoginTime(new Date());
-							terminal.setIsOnline(0);
+							terminal.setIsOnline(0);//存储登录信息
 							log.info("终端登录成功："+terid);
 							ByteBuf buf = ctx.alloc().buffer();
 							buf.writeBytes(InterCMDProcess.returnLoginBytes());
@@ -93,9 +89,9 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 						log.info("登录终端配置不存在");
 					}
 				}
-				//log.info(msg.sender()+":"+req);
-				//ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));
-			}
-		});
+        	}
+        });
+		//log.info(msg.sender()+":"+req);
+		//ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));
 	}
 }
