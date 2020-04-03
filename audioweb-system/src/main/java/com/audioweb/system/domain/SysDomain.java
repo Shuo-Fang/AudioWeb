@@ -4,12 +4,14 @@ import javax.validation.constraints.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 分区表 sys_domain
  * 
  * @author shuofang
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class SysDomain extends BaseEntity
 {
     private static final long serialVersionUID = 1L;

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 歌单对象 work_song_list
@@ -12,6 +13,7 @@ import com.audioweb.common.core.domain.BaseEntity;
  * @author shuofang
  * @date 2020-03-29
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class SongList extends BaseEntity
 {
     private static final long serialVersionUID = 1L;

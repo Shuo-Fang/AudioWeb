@@ -9,12 +9,14 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 用户对象 sys_user
  * 
  * @author ruoyi
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class SysUser extends BaseEntity
 {
     private static final long serialVersionUID = 1L;

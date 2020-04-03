@@ -8,6 +8,7 @@ import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +24,7 @@ import javax.validation.constraints.Size;
  * @author shuofang
  * @date 2020-03-01
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class WorkTerminal extends BaseEntity implements BaseWork
 {
 	private static final long serialVersionUID = 1L;

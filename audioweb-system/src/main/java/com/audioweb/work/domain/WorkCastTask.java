@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,6 +35,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @date 2020年3月2日 下午1:27:26  
  */
 @ApiModel("广播任务实体")
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<WorkCastTask> {
 	private static volatile  AtomicLong atomicLong = new AtomicLong(0);
 	

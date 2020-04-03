@@ -2,6 +2,7 @@ package com.audioweb.common.enums;
 
 import com.alibaba.fastjson.annotation.JSONType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @JSONType(serializeEnumAsJavaBean = true)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -15,6 +16,7 @@ public enum CastWorkType{
 	private CastWorkType(String info) {
 		this.info = info;
 	}
+	@JsonValue
 	public String getInfo() {
 		return info;
 	}

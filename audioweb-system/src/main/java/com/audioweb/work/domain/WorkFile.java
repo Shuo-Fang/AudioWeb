@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 音频任务中所有音频的存储序列信息对象 work_file
@@ -17,6 +18,7 @@ import com.audioweb.common.utils.StringUtils;
  * @author shuofang
  * @date 2020-03-10
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class WorkFile extends BaseEntity implements BaseWork
 {
     private static final long serialVersionUID = 1L;
