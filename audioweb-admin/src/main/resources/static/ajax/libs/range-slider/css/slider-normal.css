@@ -1,7 +1,7 @@
 ﻿.slider-normal {
 	-webkit-appearance: none;
 	border-radius: 10px; /*这个属性设置使填充进度条时的图形为圆角*/
-	background: -webkit-linear-gradient(#059CFA, #059CFA) no-repeat;
+	background: -webkit-linear-gradient(#ee2104, #ee2104) no-repeat;
 	background-size: 0% 100%;
 }
 .slider-normal:focus {
@@ -9,15 +9,15 @@
 }
 
 .slider-normal::-webkit-slider-runnable-track {
-	height: 15px;
+	height: 12px;
 	border-radius: 10px; /*将轨道设为圆角的*/
 	box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112; /*轨道内置阴影效果*/
 }
 
 .slider-normal::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	height: 25px;
-	width: 25px;
+	height: 20px;
+	width: 20px;
 	margin-top: -5px; /*使滑块超出轨道部分的偏移量相等*/
 	background: #ffffff; 
 	border-radius: 50%; /*外观设置为圆形*/
@@ -26,15 +26,15 @@
 }
 
 .slider-normal::-moz-range-track {
-	height: 15px;
+	height: 12px;
 	border-radius: 10px; /*将轨道设为圆角的*/
 	box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112; /*轨道内置阴影效果*/
 }
 
 .slider-normal::-moz-range-thumb {
 	appearance: none;
-	height: 25px;
-	width: 25px;
+	height: 20px;
+	width: 20px;
 	margin-top: -5px; /*使滑块超出轨道部分的偏移量相等*/
 	background: #ffffff; 
 	border-radius: 50%; /*外观设置为圆形*/
@@ -43,13 +43,13 @@
 }
 
 .slider-normal::-moz-range-progress {
-	background: linear-gradient(#059CFA, #059CFA) no-repeat;
+	background: linear-gradient(#ee2104, #ee2104) no-repeat;
 	height: 13px;	 
 	border-radius: 10px;
 }
 
 .slider-normal::-ms-track {
-	height: 25px;
+	height: 20px;
 	border-radius: 10px;
 	box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112;
 	border-color: transparent; /*去除原有边框*/
@@ -58,8 +58,8 @@
 
 .slider-normal::-ms-thumb {
 	border: solid 0.125em rgba(205, 224, 230, 0.5);
-	height: 25px;
-	width: 25px;
+	height: 20px;
+	width: 20px;
 	border-radius: 50%;
 	background: #ffffff;
 	margin-top: -5px;
@@ -68,20 +68,20 @@
 
 .slider-normal::-ms-fill-lower {
 	/*进度条已填充的部分*/
-	height: 22px;
+	height: 16px;
 	border-radius: 10px;
-	background: linear-gradient(#059CFA, #059CFA) no-repeat;
+	background: linear-gradient(#ee2104, #ee2104) no-repeat;
 }
 
 .slider-normal::-ms-fill-upper {
 	/*进度条未填充的部分*/
-	height: 22px;
+	height: 16px;
 	border-radius: 10px;
 	background: #ffffff;
 }
 
 .slider-normal:focus::-ms-fill-lower {
-	background: linear-gradient(#059CFA, #059CFA) no-repeat;
+	background: linear-gradient(#ee2104, #ee2104) no-repeat;
 }
 
 .slider-normal:focus::-ms-fill-upper {
@@ -94,20 +94,20 @@
 
 
 .slider-normal.nuu::-webkit-slider-runnable-track {
-	height: 15px;
+	height: 12px;
 	border-radius: 10px; /*将轨道设为圆角的*/
 	box-shadow: 0 1px 1px #def3f8, inset 0 .125em .125em #0d1112; /*轨道内置阴影效果*/
 }
 
 .slider-normal.nuu::-moz-range-progress {
-	background: linear-gradient(to right, #059CFA, white 100%, white);
-	height: 13px;	 
+	background: linear-gradient(to right, #ee2104, white 100%, white);
+	height: 16px;	 
 	border-radius: 10px;
 }
 
 .slider-normal.nuu::-ms-fill-lower {
 	/*进度条已填充的部分*/
-	height: 22px;
+	height: 16px;
 	border-radius: 10px;
-	background: linear-gradient(to right, #059CFA, white 100%, white);
+	background: linear-gradient(to right, #ee2104, white 100%, white);
 }

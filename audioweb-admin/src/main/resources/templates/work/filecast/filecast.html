@@ -27,15 +27,88 @@
 			</div>
 		</div>
 	 </div>
-     <div class="ui-layout-center">
-        <div class="ibox-content">
-        	<div id="test" class="col-sm-6">
-				<input type="range" class = "slider-normal"> 
-			</div>
-        	<div id="test" class="col-sm-6">
-				<input type="range" class = "slider-small"> 
-			</div>
+	 <div class = "ui-layout-south">
+	 	<div class="box box-main">
+	 		<div class="ibox-content">
+		 		<div class = "col-xs-1">
+	        		<div class="text-center">
+	                  <p><img class="img-md" src="/profile/image/2020/03/25/1d62676d3a936b6465527acc9ec7f565.jpg"></p>
+	                </div>
+		        </div>
+	        	<div class = "col-xs-11">
+	        		<div calss = "row">
+		        		<div class="icon-view-play" role="group">
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_shuffle_button" onclick="showSongList()" title = "随机">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-danquxunhuan" onclick="showSongList()" title = "单曲循环">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_repeat_button" onclick="showSongList()" title = "列表循环">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_stop_button" onclick="showSongList()" title = "停止">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_rewind_button" onclick="showFileList()" title = "上一曲">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_pause_button" onclick="showSongList()" title = "暂停">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_fastforward_button" onclick="removeAll()" title = "下一曲">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_play_button" onclick="removeAll()" title = "播放">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_mute" onclick="removeAll()" title = "播放">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_volume_down" onclick="removeAll()" title = "播放">
+					            </a>
+				            </div>
+		        			<div class="col-xs-1">
+					            <a class="icon iconfont icon-music_volume_up" onclick="removeAll()" title = "播放">
+					            </a>
+				            </div>
+				            <div class="col-xs-1" style = "margin-top: 5px;">
+								<input type="range" class = "slider-small" title = "20">
+							</div>
+			        	</div>
+	        		</div>
+			 	</div>
+        		 <div class="footer" style = "height:57px">
+                    <div class="row">
+						<div class="col-xs-1">
+							<h4 style = "margin-top: 0px;"align ="right" id = "toDuration">0:00/5:00</h4>
+						</div>
+			        	<div class="col-xs-11">
+							<input type="range" class = "slider-normal"> 
+						</div>
+					</div>
+                    <div class="row">
+	                    <div style = "text-align:center;" >
+	                    	<h3>已选音频</h3>
+	                    </div>
+					</div>
+				</div>
+        		</div>
+        		</div>
+		 	</div>
         </div>
+	 </div>
+     <div class="ui-layout-center">
      	 <div class="icon-view-plus" id="toolbar" role="group">
             <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:list" title = "音频列表">
             </a>
@@ -44,18 +117,11 @@
             <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
             </a>
         </div>
-		<div class="col-sm-12 select-table table-striped" id="table-div">
-		<div class="ibox-title">
-           <h5>已选音频</h5>
-           <div class="ibox-tools">
-               <a class="collapse-link"><i class="fa fa-chevron-up"></i>
-               </a>
-                <a class="close-link"><i class="fa fa-times"></i></a> 
-           </div>
-        </div>
+		<div class="col-sm-12 select-table table-striped" id="table-div" style = "margin-top: 0px;">
+		    <p class="select-title">已选音频</p>
 			<table id="bootstrap-table"
 			 data-use-row-attr-func="true"
-			 data-reorderable-rows="true"></table>
+			 data-reorderable-rows="true" ></table>
 		</div>
 	</div>
     <div th:include="include :: footer"></div>
@@ -113,7 +179,7 @@
 		        showColumns: false,
 		        //striped:true,
                 sidePagination : "client",
-                height : 500,
+                height : 400,
                 pageSize:10000,
                 pageList:[10000],
 		        onReorderRow:function(data){

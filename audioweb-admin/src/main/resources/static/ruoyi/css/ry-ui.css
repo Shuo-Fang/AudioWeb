@@ -68,6 +68,10 @@
   width: 120px;
   height: 120px;
 }
+.img-hg {
+  width: 200px;
+  height: 200px;
+}
 .section-content {
     min-height: 250px;
     margin-right: auto;
@@ -1133,6 +1137,22 @@ label {
 }
 .icon-view-plus .icon:hover{
   font-size: 36px;
+  font-weight:bold;
+}
+.icon-view-play{
+  height : 32px;
+}
+.icon-view-play .icon{
+  padding : 10px;
+  font-size: 32px;
+  line-height: 26px;
+  margin: 30px 0;
+  color:#ee2104;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.icon-view-play .icon:hover{
   font-weight:bold;
 }
 .fa-view .fa{
