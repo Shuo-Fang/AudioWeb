@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--[if IE]> <th:block th:include="include :: RangeSlider-ie-css" /> <![endif]-->
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
 	<th:block th:include="include :: header('文件广播')" />
@@ -88,17 +89,17 @@
 			        	</div>
 	        		</div>
 			 	</div>
-        		 <div class="footer" style = "height:57px">
+        		 <div class="footer" style = "height:64px">
                     <div class="row">
-						<div class="col-xs-1">
-							<h4 style = "margin-top: 0px;"align ="right" id = "toDuration">0:00/5:00</h4>
+						<div class="col-sm-1">
+							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">0:00/5:00</h4>
 						</div>
-			        	<div class="col-xs-11">
+			        	<div class="col-sm-11">
 							<input type="range" class = "slider-normal"> 
 						</div>
 					</div>
-                    <div class="row">
-	                    <div style = "text-align:center;" >
+                    <div class="row" >
+	                    <div style = "text-align:center; margin-top: 0px;">
 	                    	<h3>已选音频</h3>
 	                    </div>
 					</div>
