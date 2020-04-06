@@ -662,6 +662,16 @@ var table = {
         	    }
         	    return icon;
             },
+            tips: function(type,color) {
+            	var tips = [];
+            	if(type != undefined){
+            		tips.push(type);
+            	}
+            	if(color != undefined){
+            		tips.push(color);
+            	}
+        	    return tips;
+            },
     		// 消息提示
             msg: function(content, type) {
             	if (type != undefined) {
@@ -681,6 +691,36 @@ var table = {
             // 警告消息
             msgWarning: function(content) {
             	$.modal.msg(content, modal_status.WARNING);
+            },
+            //tip
+            tip: function(dom,content,type,color) {
+        		if($.common.isEmpty(type)){
+        			type = tips_local.top;
+        		}
+        		if($.common.isEmpty(color)){
+        			color = tips_color.primary;
+        		}
+                layer.tips(content,dom, { tips: $.modal.tips(type,color), time: 1000});
+            },
+            // 错误tips
+            tipError: function(dom,content,local) {
+            	$.modal.tip(dom,content,local,tips_color.error);
+            },
+            // 成功tips
+            tipSuccess: function(dom,content,local) {
+            	$.modal.tip(dom,content,local,tips_color.success);
+            },
+            // 默认tips
+            tipPrimary: function(dom,content,local) {
+            	$.modal.tip(dom,content,local,tips_color.primary);
+            },
+            // 警告tips
+            tipWarning: function(dom,content,local) {
+            	$.modal.tip(dom,content,local,tips_color.warning);
+            },
+            // 信息tips
+            tipInfo: function(dom,content,local) {
+            	$.modal.tip(dom,content,local,tips_color.info);
             },
     		// 弹出提示
             alert: function(content, type) {
@@ -1549,6 +1589,14 @@ var table = {
             isMobile: function () {
                 return navigator.userAgent.match(/(Android|iPhone|SymbianOS|Windows Phone|iPad|iPod)/i);
             },
+            // 组件隐藏
+            toHide: function (id) {
+            	$("#"+id).hide();
+            },
+            // 组件显示
+            toShow: function (id) {
+            	$("#"+id).show();
+            }
         }
     });
 })(jQuery);
@@ -1571,4 +1619,19 @@ modal_status = {
     SUCCESS: "success",
     FAIL: "error",
     WARNING: "warning"
+};
+/** tips弹出位置 */
+tips_local = {
+		top: 1,
+		right: 2,
+		below: 3,
+		left: 4
+};
+/** tips颜色 */
+tips_color = {
+		info: "#1ab394",
+		primary: "#23c6c8",
+		error: "#ed5565",
+		success: "#1c84c6",
+		warning: "#f8ac59"
 };

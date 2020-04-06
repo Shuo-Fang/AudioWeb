@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -61,11 +62,13 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	
 	/**	广播地址 */
 	@ApiModelProperty("广播地址")
-	transient private String castAddress;
+	@JsonIgnore
+	private String castAddress;
 	
 	/**	广播端口 */
 	@ApiModelProperty("广播端口")
-	transient private Integer castPort;
+	@JsonIgnore
+	private Integer castPort;
 	
 	/**	广播级别 */
 	@ApiModelProperty("广播级别")
@@ -84,15 +87,21 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	private Boolean isStop;
 
     /**	广播初始化分区列表 */
-	@ApiModelProperty("广播初始化分区列表")
-	transient private List<String> domainidlist;
+	@ApiModelProperty("广播初始化分区列表，逗号分隔，未全选分区id前带_")
+	private String domainidlist;
+	
+	/**	广播初始化分区列表 */
+	@ApiModelProperty("广播初始化终端列表，id为realId，逗号分隔")
+	private String teridlist;
 	
 	/**	广播初始化终端列表 */
 	@ApiModelProperty("广播初始化终端列表")
-	transient private List<WorkTerminal> castTeridlist;
+	@JsonIgnore
+	private List<WorkTerminal> castTeridlist;
 
 	/**	正在广播终端列表 */
 	@ApiModelProperty("正在广播终端列表")
+	@JsonIgnore
 	transient private List<WorkTerminal> castlist;
     
     public Long getTaskId() {
@@ -144,12 +153,6 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 		this.remark = remark;
 	}
 	
-    public List<String> getDomainidlist() {
-		return domainidlist;
-	}
-	public void setDomainidlist(List<String> domainidlist) {
-		this.domainidlist = domainidlist;
-	}
 	public List<WorkTerminal> getCastTeridlist() {
 		return castTeridlist;
 	}
@@ -173,6 +176,18 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	}
 	public void setIsStop(Boolean isStop) {
 		this.isStop = isStop;
+	}
+	public String getDomainidlist() {
+		return domainidlist;
+	}
+	public void setDomainidlist(String domainidlist) {
+		this.domainidlist = domainidlist;
+	}
+	public String getTeridlist() {
+		return teridlist;
+	}
+	public void setTeridlist(String teridlist) {
+		this.teridlist = teridlist;
 	}
 	@Override
 	public int hashCode() {
@@ -254,6 +269,13 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 			if(task.exist()) {
 				task = task.get();
 			}
+		}
+	}
+	public static WorkCastTask find(Long taskId) {
+		if(StringUtils.isNotNull(taskId)) {
+			return taskMap.get(taskId);
+		}else {
+			return null;
 		}
 	}
 	@Override

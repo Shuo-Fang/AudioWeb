@@ -12,7 +12,10 @@ import java.io.BufferedInputStream;
 import java.util.List;
 import java.util.Timer;
 
+import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
+import com.audioweb.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -30,8 +33,12 @@ public class FileCastTask extends WorkCastTask{
 
 	private static final long serialVersionUID = 1L;
 	
+	/**文件广播发起者sessionId*/
+	private String sessionId;
+	
 	/**文件广播的timer定时器*/
-	transient  private Timer timer;
+	@JsonIgnore
+	private Timer timer;
 	
 	/** 正在广播的文件信息 */
 	@ApiModelProperty("正在广播的文件")
@@ -39,7 +46,12 @@ public class FileCastTask extends WorkCastTask{
 	
 	/** 需要广播的文件列表 */
 	@ApiModelProperty("需要广播的文件列表")
+	@JsonIgnore
 	private List<WorkFile> castFileList;
+	
+	/** 初始化时需要广播的文件列表id 逗号分隔 */
+	@ApiModelProperty("需要广播的文件列表id")
+	private String songData;
 	
 	/** 文件广播类型 */
 	@ApiModelProperty("广播的文件类型：0,顺序播放;1,列表循环;2,随机播放")
@@ -55,16 +67,19 @@ public class FileCastTask extends WorkCastTask{
 	
 	/** 是否音频播放完再停止 */
 	@ApiModelProperty("是否音频播放完再停止")
-	private Boolean completeClose;
+	private Boolean completeClose = false;
 	
 	/**文件广播中的音频文件分包大小*/
-	transient private int bitsize;
+	@JsonIgnore
+	private int bitsize;
 	
 	/**文件广播中每次广播的时间间隔*/
-	transient private int timesize;
+	@JsonIgnore
+	private int timesize;
 	
 	/**文件读取信息流*/
-	transient private BufferedInputStream in; 
+	@JsonIgnore
+	private BufferedInputStream in; 
 	
 	public WorkFile getRunFile() {
 		return runFile;
@@ -144,5 +159,34 @@ public class FileCastTask extends WorkCastTask{
 
 	public void setIn(BufferedInputStream in) {
 		this.in = in;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
+	}
+	
+	public String getSongData() {
+		return songData;
+	}
+
+	public void setSongData(String songData) {
+		this.songData = songData;
+	}
+
+	public static FileCastTask findRunningTask(String sessionId) {
+		List<WorkCastTask> wCastTasks = new WorkCastTask().export();
+		for(WorkCastTask task:wCastTasks) {
+			if(task.getCastType() == CastWorkType.FILE) {
+				FileCastTask fTask = (FileCastTask)task;
+				if(StringUtils.isNotEmpty(fTask.getSessionId()) && fTask.getSessionId().equals(sessionId)) {
+					return fTask;
+				}
+			}
+		}
+		return null;
 	}
 }

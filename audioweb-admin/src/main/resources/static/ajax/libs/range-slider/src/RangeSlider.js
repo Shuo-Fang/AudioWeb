@@ -36,7 +36,7 @@
 		.attr('max', max)
 		.attr('step', step)
 		.attr('value',value);
-	$input.css( 'background-size', value + '% 100%' ); 
+	$input.css( 'background-size', value/max*100 + '% 100%' ); 
 	var event = null;
 	if (isIE) {
 		event = "change";
@@ -48,7 +48,7 @@
 		$input.attr('value', this.value);
 		
 		if (isWebkit) {
-			$input.css( 'background-size', this.value + '% 100%' ); 
+			$input.css( 'background-size', this.value/max*100 + '% 100%' ); 
 		}
 		if ($.isFunction(callback)) {
 			callback(this);

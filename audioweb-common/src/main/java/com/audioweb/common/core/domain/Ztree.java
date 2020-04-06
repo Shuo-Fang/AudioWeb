@@ -48,8 +48,8 @@ public class Ztree implements Serializable
     /** 是否能勾选 */
     private boolean nocheck = false;
     
-    /** 节点实际ID,用于存储终端实际ID*/
-    private String realId;
+    /** 是否为终端节点 */
+    private boolean isTer = false;
     
     /** 节点文字皮肤  */
     private String textIcon = "";
@@ -124,12 +124,12 @@ public class Ztree implements Serializable
         this.nocheck = nocheck;
     }
 
-	public String getRealId() {
-		return realId;
+	public boolean isTer() {
+		return isTer;
 	}
 
-	public void setRealId(String realId) {
-		this.realId = realId;
+	public void setTer(boolean isTer) {
+		this.isTer = isTer;
 	}
 
 	public String getTextIcon() {

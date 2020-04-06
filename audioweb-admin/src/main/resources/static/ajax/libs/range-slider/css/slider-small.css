@@ -88,3 +88,11 @@
 .slider-small:focus::-ms-fill-upper {
 	background: #ffffff;
 }
+
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+.slider-small{
+	padding-top:0px;
+	padding-bottom:5px;
+}
+}

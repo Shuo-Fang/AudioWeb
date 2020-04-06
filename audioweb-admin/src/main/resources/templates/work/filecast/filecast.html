@@ -8,8 +8,10 @@
 	<th:block th:include="include :: RangeSlider-css" />
 </head>
 <body class="gray-bg">
-	<input id="terIds"   name="terIds"    type="hidden" th:value="${terIds}"/>
-	<input id="domainIds"   name="domainIds"    type="hidden" th:value="${domainIds}"/>
+	<input id="terIds"   name="terIds"    type="hidden"/>
+	<input id="domainIds"   name="domainIds"    type="hidden"/>
+	<input id="songData"   name="songData"    type="hidden"/>
+	<input id="taskId"   name="taskId"    type="hidden" th:value="${taskId}"/>
 	<div class="ui-layout-west">
 		<div class="box box-main">
 			<div class="box-header">
@@ -32,35 +34,37 @@
 	 	<div class="box box-main">
 	 		<div class="ibox-content">
 		 		<div class = "col-xs-1">
-	        		<div class="text-center">
-	                  <p><img class="img-md" src="/profile/image/2020/03/25/1d62676d3a936b6465527acc9ec7f565.jpg"></p>
+	        		<div class="text-center layui-layer-photos" id="layer-photos-demo">
+	                   <a onclick = "showLargeImg()"><img class="img-md" data-height='auto' data-width='auto' data-target='self' id = "showImg"/></a>
 	                </div>
 		        </div>
 	        	<div class = "col-xs-11">
 	        		<div calss = "row">
 		        		<div class="icon-view-play" role="group">
 		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_shuffle_button" onclick="showSongList()" title = "随机">
+					            <a class="icon iconfont icon-liebiao" id = "ORDER" onclick="fileCastType(this)" title = "顺序播放">
+					            </a>
+					            <a class="icon iconfont icon-music_repeat_button" id = "LIST" onclick="fileCastType(this)" title = "列表循环" style="display:none;">
+					            </a>
+					            <a class="icon iconfont icon-music_shuffle_button" id = "RANDOM" onclick="fileCastType(this)" title = "随机播放" style="display:none;">
+					            </a>
+					            <a class="icon iconfont icon-danquxunhuan" id = "SINGLE" onclick="fileCastType(this)" title = "单曲循环" style="display:none;">
 					            </a>
 				            </div>
-		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-danquxunhuan" onclick="showSongList()" title = "单曲循环">
-					            </a>
-				            </div>
-		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_repeat_button" onclick="showSongList()" title = "列表循环">
-					            </a>
-				            </div>
-		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_stop_button" onclick="showSongList()" title = "停止">
-					            </a>
-				            </div>
+				             <h4 class="col-xs-1">级别:</h4>
+				             <div class="col-xs-2">
+				                 <select name="castLevel" class="form-control m-b" th:with="type=${@dict.getType('work_priority')}">
+				                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'}"></option>
+				                 </select>
+				             </div>
 		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-music_rewind_button" onclick="showFileList()" title = "上一曲">
 					            </a>
 				            </div>
 		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_pause_button" onclick="showSongList()" title = "暂停">
+					            <a class="icon iconfont icon-music_pause_button" onclick="showSongList()" title = "暂停" style="display:none;">
+					            </a>
+					            <a class="icon iconfont icon-music_play_button" onclick="startCast()" title = "播放" >
 					            </a>
 				            </div>
 		        			<div class="col-xs-1">
@@ -68,40 +72,39 @@
 					            </a>
 				            </div>
 		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_play_button" onclick="removeAll()" title = "播放">
+					            <a class="icon iconfont icon-music_stop_button" onclick="showSongList()" title = "停止">
 					            </a>
 				            </div>
 		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_mute" onclick="removeAll()" title = "播放">
+					            <a class="icon iconfont icon-music_mute" id = "VOLMUTE" onclick="volChange(this)" title = "切换静音" style="display:none;">
+					            </a>
+					            <a class="icon iconfont icon-music_volume_down" id = "VOLDOWN"  onclick="volChange(this)" title = "切换静音" style="display:none;">
+					            </a>
+					            <a class="icon iconfont icon-music_volume_up" id = "VOLUP" onclick="volChange(this)" title = "切换静音" >
 					            </a>
 				            </div>
-		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_volume_down" onclick="removeAll()" title = "播放">
-					            </a>
-				            </div>
-		        			<div class="col-xs-1">
-					            <a class="icon iconfont icon-music_volume_up" onclick="removeAll()" title = "播放">
-					            </a>
-				            </div>
-				            <div class="col-xs-1" style = "margin-top: 5px;">
-								<input type="range" class = "slider-small" title = "20">
+				            <div class="col-xs-3" style = "margin-top: 5px;">
+								<input type="range" class = "slider-small" title = "30">
+								<h5 align ="center" id = "volNum" style = "margin-top: 0px;">30</h5>
 							</div>
 			        	</div>
 	        		</div>
 			 	</div>
         		 <div class="footer" style = "height:64px">
                     <div class="row">
-						<div class="col-sm-1">
-							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">0:00/5:00</h4>
+						<div class="col-xs-1">
+							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">0:00</h4>
 						</div>
-			        	<div class="col-sm-11">
+			        	<div class="col-xs-11">
 							<input type="range" class = "slider-normal"> 
 						</div>
 					</div>
                     <div class="row" >
-	                    <div style = "text-align:center; margin-top: 0px;">
-	                    	<h3>已选音频</h3>
+	                    <div class="col-xs-11" style = "text-align:center; margin-top: 0px;">
+	                    	<h3 id= "showTitle">已选音频</h3>
 	                    </div>
+                    	<div class="col-xs-1">
+				        </div>
 					</div>
 				</div>
         		</div>
@@ -111,12 +114,13 @@
 	 </div>
      <div class="ui-layout-center">
      	 <div class="icon-view-plus" id="toolbar" role="group">
-            <a class="icon iconfont icon-liebiao" onclick="showFileList()" shiro:hasPermission="work:filecast:list" title = "音频列表">
+            <a class="icon iconfont icon-yinyueset" onclick="showFileList()" shiro:hasPermission="work:filecast:list" title = "音频列表">
             </a>
-            <a class="icon iconfont icon-yinyueset" onclick="showSongList()" shiro:hasPermission="work:filecast:add" title = "歌单导入">
+            <a class="icon iconfont icon-music_playlist" onclick="showSongList()" shiro:hasPermission="work:filecast:add" title = "歌单导入">
             </a>
             <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
             </a>
+            
         </div>
 		<div class="col-sm-12 select-table table-striped" id="table-div" style = "margin-top: 0px;">
 		    <p class="select-title">已选音频</p>
@@ -134,37 +138,92 @@
         var prefix = ctx + "work/filecast";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
+        var isFileCast = false;
 		function test(){
 			$('.select-table').slideToggle(300);
 		}
 		$(function() {
-			$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 0.1, callback: change, finishedCallback:finished});
-			$('.slider-small').RangeSlider({ min: 0,   max: 100,  step: 0.1, callback: change, finishedCallback:finished});
 		    var panehHidden = false;
 		    if ($(this).width() < 769) {
 		        panehHidden = true;
 		    }
 		    $('body').layout({ initClosed: panehHidden, west__size: 245 });
-		    queryFileList();
-		    queryTerminalTree();
-		    setValue();
+		    /**广播列表,终端列表以及广播任务初始化**/
+			var url = prefix + "/findFileCast";
+        	var data = {taskId : $('#taskId').val()};
+        	var callback = function(res){
+        		if (res.code == web_status.SUCCESS) {
+					if($.common.isNotEmpty(res.data)){
+						/**有任务初始化*/
+						isFileCast = true;
+						
+					}else{
+						/**无任务初始化*/
+						queryFileList();
+					    queryTerminalTree();
+					    showImg("/profile/image/2020/03/25/1d62676d3a936b6465527acc9ec7f565.jpg");
+					    /**进度条初始化*/
+					    $('.slider-normal').RangeSlider({ min: 0,   max: 1,  step: 1, callback: volchange, finishedCallback: volfinished});
+						$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
+						$('.slider-normal').attr("disabled",true);
+					    setValue();
+					}
+
+        		}else if (res.code == web_status.WARNING) {
+                    $.modal.alertWarning(res.msg)
+                }  else {
+                	$.modal.alertError(res.msg);
+                }
+        	};
+        	var config = {
+        	        url: url,
+        	        type: "post",
+        	        dataType: "json",
+        	        data: data,
+        	        success: function(result) {
+        	        	if (typeof callback == "function") {
+        	        	    callback(result);
+        	        	}
+        	        }
+        	    };
+        	$.ajax(config);
+        	
 		});
-		function change(){
-			
+		function volchange($input){
+			$("#volNum").text($input.value);
+			if($input.valueAsNumber > 20){
+				if($("#VOLUP").is(':hidden')){
+					$.common.toHide("VOLMUTE");
+					$.common.toHide("VOLDOWN");
+					$.common.toShow("VOLUP");
+				}
+			}else if($input.valueAsNumber == 0){
+				if($("#VOLMUTE").is(':hidden')){
+					$.common.toHide("VOLUP");
+					$.common.toHide("VOLDOWN");
+					$.common.toShow("VOLMUTE");
+				}
+			}else if($input.valueAsNumber >0 && $input.valueAsNumber <= 20){
+				if($("#VOLDOWN").is(':hidden')){
+					$.common.toHide("VOLUP");
+					$.common.toHide("VOLMUTE");
+					$.common.toShow("VOLDOWN");
+				}
+			}
 		}
-		function finished(){
+		function volfinished(){
 			
 		}
 		/**设置进度条位置*/
 		function setValue(value){
 			if($.common.isEmpty(value)){
-				value = 20;
+				value = 30;
 			}
 			var data = $(".slider-small" );
 			data[0].value = value;
 			var userAgent = navigator.userAgent.toLowerCase();
 			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
-				data.css( 'background-size', value + '% 100%' ); 
+				data.css( 'background-size', value/40*100 + '% 100%' ); 
 			}
 		}
         function queryFileList(data){
@@ -180,7 +239,7 @@
 		        showColumns: false,
 		        //striped:true,
                 sidePagination : "client",
-                height : 400,
+                height : 500,
                 pageSize:10000,
                 pageList:[10000],
 		        onReorderRow:function(data){
@@ -255,7 +314,7 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                     	 var actions = [];
-                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="$.table.remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
                          return actions.join('');
                     }
                 }]
@@ -415,9 +474,12 @@
 	    		putData();
         	});
 		}
-		/**拖拽方法*/
-		function saveRows(data){
-			putData(data);
+        /*删除*/
+        function remove(fileId){
+        	$.modal.confirm("确认要删除选中的1条音频吗?", function() {
+	    		$.table.remove(fileId);
+	    		putData();
+        	});
 		}
 		/**存放数据*/
 		function putData(data){
@@ -437,10 +499,120 @@
 				$("#songData").val("");
 			}
 		}
-		
+		/**给子页面调用返回方法*/
 		function putReturn(res){
 			returnData = JSON.parse(JSON.stringify(res));
 		}
+		/**音量类型改变方法*/
+		function volChange(data){
+			if($.common.equals(data.id,"VOLMUTE")){//
+				$.common.toHide(data.id);
+			}
+		}
+		/**文件广播任务类型改变**/
+		function fileCastType(data){
+			if($.common.equals(data.id,"ORDER")){
+				$.common.toHide(data.id);
+				$.common.toShow("LIST");
+			}else if($.common.equals(data.id,"LIST")){
+				$.common.toHide(data.id);
+				$.common.toShow("RANDOM");
+			}else if($.common.equals(data.id,"RANDOM")){
+				$.common.toHide(data.id);
+				$.common.toShow("SINGLE");
+			}else if($.common.equals(data.id,"SINGLE")){
+				$.common.toHide(data.id);
+				$.common.toShow("ORDER");
+			}
+		}
+		/**设置图片**/
+		function showImg(src){
+			$("#showImg").attr("src",src);
+			$("#showImg").attr("layer-src",src);
+		}
+		/**初始化文件广播*/
+		function initFileCast(){
+			$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: change, finishedCallback:finished});
+		}
+		/**播放按钮触发**/
+		function startCast(){
+			if(isFileCast){
+				/**有任务触发，是暂停启动*/
+			}else{
+				/**无任务触发，是创建任务**/
+				if(!selectNode()){
+					$.modal.tipWarning('#tree',"请选择分区或终端");
+					return;
+				}
+				if($.common.isEmpty($("#songData").val())){
+					$.modal.tipWarning('#bootstrap-table',"请选择播放的音频",3);
+					return;
+				}
+				$.modal.tipSuccess('.slider-normal',"提示");
+			}
+		}
+		/**选中节点处理*/
+		function selectNode(){
+			var trees = tree.getCheckedNodes();
+			if (tree.getCheckedNodes() && tree.getCheckedNodes().length > 0) {
+				var ters = formatMulTree(tree.getCheckedNodes());
+				$("#terIds").val(ters.terIds);
+				$("#domainIds").val(ters.domainIds); 
+				return true;
+			}else{
+				$("#terIds").val("");
+				$("#domainIds").val("");
+				return false;
+			}
+		}
+		//选中节点处理
+		function formatMulTree(trees){
+			var data = {
+					terIds:"",
+					domainIds : ""
+			};
+			//分类
+			var doms = [],ters = []
+			for(var i = 0,size = trees.length;i<size;i++){
+				if(trees[i].ter){
+					ters.push(trees[i]);
+				}else{
+					doms.push(trees[i]);
+				}
+			}
+			//判断全选
+			for(var i = 0,size = doms.length;i<size;i++){
+				if(doms[i].check_Child_State != 1){//为全选
+					for(var j=ters.length-1;j>=0;j--){
+						if($.common.isNotEmpty(ters[j].pId) && ters[j].pId == doms[i].id){
+							ters.splice(j, 1);
+						}
+					}
+					data.terIds += doms[i].id + ",";
+				}else{
+					data.terIds += "_" +  doms[i].id + ",";
+				}
+			}
+			//终端遍历填充字符
+			for(var i=0,size = ters.length;i<size;i++){
+				data.domainIds += ters[i].id +",";
+			}
+			if(!$.common.isEmpty(data.terIds)){
+				data.terIds = $.common.removeLast(data.terIds);
+			}
+			if(!$.common.isEmpty(data.domainIds)){
+				data.domainIds = $.common.removeLast(data.domainIds);
+			}
+			return data;
+		}
+		/**大图显示**/
+		function showLargeImg(){debugger
+			layer.photos({
+				  photos: '#layer-photos-demo'
+				  ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+				}); 
+		}
+		/***/
     </script>
 </body>
 </html>

@@ -10,6 +10,7 @@ package com.audioweb.common.enums;
 
 import com.alibaba.fastjson.annotation.JSONType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /** 文件广播的类型
  * @ClassName: FileCastType 
@@ -21,10 +22,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @JSONType(serializeEnumAsJavaBean = true)
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum FileCastType{
-	ORDER("顺序播放"),LIST("列表循环"),RANDOM("随机播放");
+	ORDER("顺序播放"),LIST("列表循环"),RANDOM("随机播放"),SINGLE("单曲循环");
 	 /**
      * 枚举值码
      */
+	@JsonValue
     private final String code;
  
 	private FileCastType(String code) {

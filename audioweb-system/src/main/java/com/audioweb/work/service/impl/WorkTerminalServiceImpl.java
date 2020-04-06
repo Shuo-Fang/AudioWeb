@@ -354,6 +354,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 			tree.setId(Long.parseLong(ter.getTerRealId()));
 			tree.setName(ter.getTerminalName());
 			tree.setTitle("ID:"+ter.getTerminalId());
+			tree.setTer(true);
 			if(!Objects.equals(ter.getStatus(), WorkConstants.NORMAL)) {
 				tree.setNocheck(true);
 			}
