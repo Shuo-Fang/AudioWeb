@@ -18,10 +18,15 @@ import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.core.domain.Ztree;
 import com.audioweb.common.core.page.TableDataInfo;
 import com.audioweb.common.enums.BusinessType;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.system.domain.SysDictData;
 import com.audioweb.system.domain.SysDictType;
 import com.audioweb.system.service.ISysDictTypeService;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 数据字典信息
@@ -185,5 +190,27 @@ public class SysDictTypeController extends BaseController
     {
         List<Ztree> ztrees = dictTypeService.selectDictTree(new SysDictType());
         return ztrees;
+    }
+    
+    /**
+     * 根据字典类型查询字典数据信息
+     * 
+     * @param dictType 字典类型
+     * @return 参数键值
+     */
+    @GetMapping("/getType/{dictType}")
+    @ResponseBody
+    @ApiOperation("根据字典类型查询字典数据信息")
+    @ApiImplicitParam(name = "dictType", value = "字典键值名", required = true, dataType = "String", paramType = "path")
+    public AjaxResult getType(@PathVariable("dictType") String dictType)
+    {
+    	List<SysDictData> data = dictTypeService.selectDictDataByType(dictType);
+    	if(StringUtils.isNotEmpty(data)) {
+    		AjaxResult result = success();
+    		result.put(AjaxResult.DATA_TAG, data);
+    		return result;
+    	}else {
+    		return error("获取失败");
+    	}
     }
 }

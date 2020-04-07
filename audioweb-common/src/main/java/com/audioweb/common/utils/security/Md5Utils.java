@@ -63,4 +63,8 @@ public class Md5Utils
             return s;
         }
     }
+    
+    public static void main(String[] args) {
+    	System.out.println(hash(hash(hash("adminadmin123111111"))+"4e82bc182da741ae9bb5534f9718f5bd"));
+	}
 }
