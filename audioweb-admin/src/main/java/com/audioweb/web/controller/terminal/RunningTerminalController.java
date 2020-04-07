@@ -11,15 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.audioweb.common.annotation.DataScope;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
-import com.github.pagehelper.PageInfo;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -79,14 +75,8 @@ public class RunningTerminalController extends BaseController
     /**
      * 查询在线终端信息
      */
-    @ApiOperation("获取在线终端信息")
-    @ApiImplicitParams ({
-    	@ApiImplicitParam(name = "domainId", value = "需要获取的终端分区ID,默认就是获取的用户信息中的domainId,可以是这个分区下的下级分区", required = true, dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "pageSize", value = "本次请求的记录数(就是一次请求返回多少数据，默认10个,可以给一个极大的数实现查询全部)", required = true, dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "pageNum", value = "本次请求的分页数(就是第几次请求了默认从1开始)",   required = true, dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "orderByColumn", value = "本次请求查询的数据是以什么进行排序的(默认terminalId,可以为WorkTerminal其他属性)", required = true, dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "isAsc", value = "本次请求排序是升序(asc)还是降序(desc)", required = true, dataType = "String", paramType = "query"),
-    })
+    @ApiOperation("根据根分区获取分区下所有在线终端信息")
+    @ApiImplicitParam(name = "domainId", value = "需要获取的终端分区ID,默认就是获取的用户信息中的domainId,可以是这个分区下的下级分区", required = true, dataType = "String", paramType = "query")
     @GetMapping("/listAll")
     @RequiresPermissions("work:terminal:list")
     @ResponseBody
@@ -94,7 +84,6 @@ public class RunningTerminalController extends BaseController
         @ApiResponse(code=500,message="传参出错"),
         @ApiResponse(code=0,message="获取成功")
     })
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public AjaxResult listAll(@RequestParam String domainId)
     {
     	try {
@@ -104,18 +93,42 @@ public class RunningTerminalController extends BaseController
         	}else {
         		workTerminal.setDomainId(ShiroUtils.getSysUser().getDomainId());
         	}
-            startPage();
     		SysDomain domain = workTerminal.getDomain();
     		domain.setStatus(UserConstants.DOMAIN_NORMAL);
     		List<WorkTerminal> list = workTerminalService.selectWorkTerminalList(workTerminal);
     		WorkTerminal.loadAll(list);
     		AjaxResult result = success();
 	    	result.put(AjaxResult.DATA_TAG, list);
-	    	result.put("total", new PageInfo(list).getTotal());
 	    	return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+    	return error("传参出错");
+    }
+    /**
+     * 查询在线终端信息
+     */
+    @ApiOperation("根据分区获取当前分区下在线终端信息")
+    @ApiImplicitParam(name = "domainId", value = "需要获取的终端分区ID,只能获取当前分区下的终端，该分区下子分区终端无法获取", required = true, dataType = "String", paramType = "query")
+    @GetMapping("/listByDomainId")
+    @RequiresPermissions("work:terminal:list")
+    @ResponseBody
+    @ApiResponses({
+    	@ApiResponse(code=500,message="传参出错"),
+    	@ApiResponse(code=0,message="获取成功")
+    })
+    public AjaxResult listByDomainId(@RequestParam String domainId)
+    {
+    	try {
+    		Long id = Long.parseLong(domainId);
+    		List<WorkTerminal> list = workTerminalService.selectWorkTerminalListByDomId(id);
+    		WorkTerminal.loadAll(list);
+    		AjaxResult result = success();
+    		result.put(AjaxResult.DATA_TAG, list);
+    		return result;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
     	return error("传参出错");
     }
     /**

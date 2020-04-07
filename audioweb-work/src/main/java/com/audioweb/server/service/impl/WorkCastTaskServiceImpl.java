@@ -1,4 +1,4 @@
-package com.audioweb.work.service.impl;
+package com.audioweb.server.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.audioweb.work.domain.WorkCastTask;
-import com.audioweb.work.service.IWorkCastTaskService;
 import com.github.pagehelper.PageInfo;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.server.service.IWorkCastTaskService;
 
 /**
  * 广播任务Service业务层处理
@@ -30,7 +30,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public WorkCastTask selectWorkCastTaskById(Long taskId)
     {
-        return null;
+        return WorkCastTask.find(taskId);
     }
 
     /**
@@ -91,6 +91,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int insertWorkCastTask(WorkCastTask workCastTask)
     {
+    	
         return workCastTask.put()?1:0;
     }
 
@@ -115,7 +116,12 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int deleteWorkCastTaskByIds(String ids)
     {
-        return 0;
+    	WorkCastTask task = WorkCastTask.find(Long.parseLong(ids));
+    	if(StringUtils.isNotNull(task)) {
+    		return task.remove()?1:0;
+    	}else {
+    		return -1;
+    	}
     }
 
     /**

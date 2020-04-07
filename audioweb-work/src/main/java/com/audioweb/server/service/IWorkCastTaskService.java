@@ -1,4 +1,4 @@
-package com.audioweb.work.service;
+package com.audioweb.server.service;
 
 import com.audioweb.work.domain.WorkCastTask;
 import java.util.List;

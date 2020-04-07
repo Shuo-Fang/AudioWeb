@@ -101,7 +101,12 @@ public class FileCastController extends BaseController
     	if(StringUtils.isNotNull(taskId)) {
     		WorkCastTask castTask = WorkCastTask.find(taskId);
     		if(castTask.getCastType() == CastWorkType.FILE && StringUtils.isNotNull(castTask)) {
-    			task = (FileCastTask) castTask;
+    			try {
+        			task = (FileCastTask) castTask;
+				} catch (Exception e) {
+					e.printStackTrace();
+					task = null;
+				}
     		}
     	}else {
         	String sessionId = ShiroUtils.getSessionId();
@@ -139,6 +144,8 @@ public class FileCastController extends BaseController
     	task.setTeridlist(StringUtils.isNotEmpty(teridlist)?teridlist:"");
     	if(StringUtils.isNotEmpty(taskName)) {
     		task.setTaskName(taskName);
+    	}else {
+    		task.setTaskName(ShiroUtils.getSysUser().getUserName()+"_文件广播");
     	}
     	task.setCreateBy(ShiroUtils.getLoginName());
     	task.setCastType(CastWorkType.FILE);

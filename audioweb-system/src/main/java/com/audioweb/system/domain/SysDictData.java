@@ -7,12 +7,14 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.ColumnType;
 import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 字典数据表 sys_dict_data
  * 
  * @author ruoyi
  */
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class SysDictData extends BaseEntity
 {
     private static final long serialVersionUID = 1L;

@@ -55,7 +55,7 @@
 								<h4 align ="right" style = "margin-top: 8px; margin-bottom: 0px;">任务级别:</h4>
 							 </div>
 				             <div class="col-sm-2" style = "padding-right: 0px; padding-left: 0px;">
-				                 <select name="castLevel" class="form-control m-b" style="margin-bottom: 0px;" th:with="type=${@dict.getType('work_priority')}">
+				                 <select name="castLevel" id="castLevel" class="form-control m-b" style="margin-bottom: 0px;" th:with="type=${@dict.getType('work_priority')}">
 				                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'}"></option>
 				                 </select>
 				             </div>
@@ -141,6 +141,7 @@
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
         var isFileCast = false;
+        var fileCastType = "ORDER";
 		function test(){
 			$('.select-table').slideToggle(300);
 		}
@@ -191,8 +192,9 @@
         	$.ajax(config);
         	
 		});
-		function volchange($input){
+		function volchange($input){debugger
 			$("#volNum").text($input.value);
+			$input.title = $input.value;
 			if($input.valueAsNumber > 20){
 				if($("#VOLUP").is(':hidden')){
 					$.common.toHide("VOLMUTE");
@@ -516,15 +518,19 @@
 			if($.common.equals(data.id,"ORDER")){
 				$.common.toHide(data.id);
 				$.common.toShow("LIST");
+				fileCastType = "LIST";
 			}else if($.common.equals(data.id,"LIST")){
 				$.common.toHide(data.id);
 				$.common.toShow("RANDOM");
+				fileCastType = "RANDOM";
 			}else if($.common.equals(data.id,"RANDOM")){
 				$.common.toHide(data.id);
 				$.common.toShow("SINGLE");
+				fileCastType = "SINGLE";
 			}else if($.common.equals(data.id,"SINGLE")){
 				$.common.toHide(data.id);
 				$.common.toShow("ORDER");
+				fileCastType = "ORDER";
 			}
 		}
 		/**设置图片**/
@@ -542,6 +548,7 @@
 				/**有任务触发，是暂停启动*/
 			}else{
 				/**无任务触发，是创建任务**/
+				/**判断元素是否齐全*/
 				if(!selectNode()){
 					$.modal.tipWarning('#tree',"请选择分区或终端");
 					return;
@@ -550,7 +557,42 @@
 					$.modal.tipWarning('#bootstrap-table',"请选择播放的音频",3);
 					return;
 				}
-				$.modal.tipSuccess('.slider-normal',"提示");
+				/**创建任务*/
+				var url = prefix + "/startFileTask";
+    			var data ={
+    					'songData': $("#songData").val(),
+    					'fileCastType': fileCastType,
+    					'vol': $(".slider-small").val(),
+    					'castLevel': $("#castLevel").val(),
+    					'domainidlist': $("#domainIds").val(),
+    					'teridlist': $("#terIds").val()
+    			}
+    			var callback = function(result){//回调方法
+    				if (result.code == web_status.SUCCESS) {debugger
+                    	$.modal.msgSuccess("创建成功");
+                    	/**添加逻辑*/
+                    	
+                    }  else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    }  else {
+                    	$.modal.alertError(result.msg);
+                    }
+                	$.modal.closeLoading();
+    			}
+    			var config = {
+            	        url: url,
+            	        type: "post",
+            	        dataType: "json",
+            	        data: data,
+            	        beforeSend: function () {
+            	        	$.modal.loading("正在处理中，请稍后...");
+            	        },
+            	        success: function(result) {
+            	        	callback(result);
+            	        }
+            	    };
+            	$.ajax(config);//ajax请求
+				//$.modal.tipSuccess('.slider-normal',"提示");
 			}
 		}
 		/**选中节点处理*/
@@ -590,14 +632,14 @@
 							ters.splice(j, 1);
 						}
 					}
-					data.terIds += doms[i].id + ",";
+					data.domainIds += doms[i].id + ",";
 				}else{
-					data.terIds += "_" +  doms[i].id + ",";
+					data.domainIds += "_" +  doms[i].id + ",";
 				}
 			}
 			//终端遍历填充字符
 			for(var i=0,size = ters.length;i<size;i++){
-				data.domainIds += ters[i].id +",";
+				data.terIds += ters[i].id +",";
 			}
 			if(!$.common.isEmpty(data.terIds)){
 				data.terIds = $.common.removeLast(data.terIds);
@@ -608,7 +650,7 @@
 			return data;
 		}
 		/**大图显示**/
-		function showLargeImg(){debugger
+		function showLargeImg(){
 			layer.photos({
 				  photos: '#layer-photos-demo'
 				  ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）

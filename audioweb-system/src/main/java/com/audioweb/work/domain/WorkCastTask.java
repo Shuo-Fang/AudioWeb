@@ -278,6 +278,13 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 			return null;
 		}
 	}
+	public static WorkCastTask removeByTaskId(Long taskId) {
+		if(StringUtils.isNotNull(taskId)) {
+			return taskMap.remove(taskId);
+		}else {
+			return null;
+		}
+	}
 	@Override
 	public boolean remove() {
 		return StringUtils.isNotNull(taskMap.remove(taskId));
@@ -285,6 +292,10 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	
 	@Override
 	public int compareTo(WorkCastTask task) {           //重写Comparable接口的compareTo方法，
-		return Integer.parseInt(this.castLevel) - Integer.parseInt(task.castLevel);// 根据castLevel升序排列，降序修改相减顺序即可
+		try {
+			return Integer.parseInt(this.castLevel) - Integer.parseInt(task.castLevel);// 根据castLevel升序排列，降序修改相减顺序即可
+		} catch (Exception e) {
+			return 0;
+		}
 	}
 }
