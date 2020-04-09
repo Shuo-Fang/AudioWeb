@@ -76,6 +76,7 @@ public class IoNettyServer extends NettyBase{
                         }
                     });
             m = d.bind().sync();
+            channel = m.channel();
             log.info("======IOServer启动成功!!!=========");
         } catch (Exception e) {
             e.printStackTrace();

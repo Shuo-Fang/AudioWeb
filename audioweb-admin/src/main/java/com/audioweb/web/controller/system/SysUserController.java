@@ -1,6 +1,8 @@
 package com.audioweb.web.controller.system;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -188,7 +190,7 @@ public class SysUserController extends BaseController
         user.setPassword(passwordService.encryptPassword(user.getLoginName(), user.getPassword(), user.getSalt()));
         if (userService.resetUserPwd(user) > 0)
         {
-            if (ShiroUtils.getUserId() == user.getUserId())
+            if (Objects.equals(ShiroUtils.getUserId(), user.getUserId()))
             {
                 ShiroUtils.setSysUser(userService.selectUserById(user.getUserId()));
             }

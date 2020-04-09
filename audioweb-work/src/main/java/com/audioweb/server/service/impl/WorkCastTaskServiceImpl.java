@@ -78,7 +78,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	tInfo.setPageNum(pageNum);
     	tInfo.setPageSize(pageSize);
     	tInfo.setSize(result.size());
-    	tInfo.setPageSize((int)Math.ceil(list.size()));
+    	tInfo.setPages((int)Math.ceil(list.size()/pageSize*1.0));
         return tInfo.getList();
     }
 

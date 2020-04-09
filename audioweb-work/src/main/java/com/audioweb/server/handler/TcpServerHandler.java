@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.audioweb.common.utils.StringUtils;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
@@ -124,7 +126,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if (msg == null && msg == "") {
+        if (StringUtils.isNull(msg)) {
             log.info("服务端响应空的消息");
             return;
         }
