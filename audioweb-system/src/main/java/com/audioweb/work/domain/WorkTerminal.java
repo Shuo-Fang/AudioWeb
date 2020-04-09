@@ -9,11 +9,14 @@ import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.validation.constraints.Size;
@@ -324,8 +327,38 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 		}
 		return null;
 	}
+	/**通过realID组查询终端实际存储信息*/
+	public static List<WorkTerminal> getTerByIds(String terIds) {
+		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
+		List<String> tStrings = Arrays.asList(terIds.split(","));
+		List<WorkTerminal> tList = new ArrayList<>();
+		for(WorkTerminal t:terminals) {
+			if(tStrings.contains(t.getTerRealId())) {
+				tList.add(t);
+			}
+		}
+		return tList;
+	}
 	/**通过ip查询终端实际存储信息*/
 	public static WorkTerminal getTerByIp(String ip) {
 		return terminalMap.get(ip);
+	}
+	/**
+	 * 
+	 * @param DomainId
+	 * @return mytInfos
+	 * @throws Exception
+	 * TODO 获取指定分区的终端ID
+	 * 时间：2019年1月2日
+	 */
+	public static List<WorkTerminal> listTerByDomainId(Long DomainId) throws Exception {
+		//获取指定分区的终端ID
+		List<WorkTerminal> mytInfos = new ArrayList<>();
+		for(Map.Entry<String, WorkTerminal> tInfo:terminalMap.entrySet()) {
+			if(tInfo.getValue().getDomainId().equals(DomainId)) {
+				mytInfos.add(tInfo.getValue());
+			}
+		}
+		return mytInfos;
 	}
 }

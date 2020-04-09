@@ -2,14 +2,19 @@ package com.audioweb.server.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.audioweb.work.domain.WorkCastTask;
+import com.audioweb.work.domain.WorkTerminal;
 import com.github.pagehelper.PageInfo;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.service.IWorkCastTaskService;
+import com.audioweb.system.domain.SysDomain;
 
 /**
  * 广播任务Service业务层处理
@@ -83,7 +88,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     }
 
     /**
-     * 新增广播任务
+     * 新增与创建广播任务
      * 
      * @param workCastTask 广播任务
      * @return 结果
@@ -91,7 +96,26 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public int insertWorkCastTask(WorkCastTask workCastTask)
     {
-    	
+    	/**广播任务类型分类处理**/
+    	if(StringUtils.isNotNull(workCastTask.getCastType())) {
+        	switch (workCastTask.getCastType()) {
+    		case FILE://文件广播 需要组播、文件管理、分区终端树、用户关联
+    			initTerTree(workCastTask);//初始化分区终端树
+    			
+    			break;
+    		case TIME://定时广播 需要组播、文件管理、分区终端树、定时控制
+    			
+    			break;
+    		case REAL://实时广播 需要组播、分区终端树、WebSocket关联
+    			
+    			break;
+    		case PLUG://控件广播 需要组播、分区终端树、WebSocket关联(可能)
+    			
+    			break;
+    		default:
+    			break;
+    		}
+    	}
         return workCastTask.put()?1:0;
     }
 
@@ -134,5 +158,35 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     public int deleteWorkCastTaskById(Long taskId)
     {
         return 0;
+    }
+    /**
+     * 初始化任务分区终端树
+     * @Title: initTerTree 
+     * @Description: 初始化任务分区终端树
+     * @param castTask void 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年4月9日 下午3:42:50
+     */
+    private void initTerTree(WorkCastTask castTask) {
+    	Set<WorkTerminal> taskTers = new HashSet<>();
+    	if(StringUtils.isNotEmpty(castTask.getDomainidlist())) {
+    		String[] doms = castTask.getDomainidlist().split(",");
+    		for(String dom:doms) {
+    			if(StringUtils.isNotEmpty(dom)) {
+    				try {
+    					if(!dom.contains("_")) {//全选,获取全部终端
+    						taskTers.addAll(WorkTerminal.listTerByDomainId(Long.parseLong(dom)));
+    					}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+    			}
+    		}
+    	}
+    	if(StringUtils.isNotEmpty(castTask.getTeridlist())) {
+    		taskTers.addAll(WorkTerminal.getTerByIds(castTask.getTeridlist()));
+    	}
+    	castTask.setCastTeridlist(new ArrayList<WorkTerminal>(taskTers));
     }
 }
