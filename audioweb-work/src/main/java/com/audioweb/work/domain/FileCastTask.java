@@ -15,6 +15,7 @@ import java.util.Timer;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.server.GroupNettyServer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -80,6 +81,10 @@ public class FileCastTask extends WorkCastTask{
 	/**文件读取信息流*/
 	@JsonIgnore
 	private BufferedInputStream in; 
+	
+	/**组播对象*/
+	@JsonIgnore
+	private GroupNettyServer server;
 	
 	public WorkFile getRunFile() {
 		return runFile;
@@ -175,6 +180,14 @@ public class FileCastTask extends WorkCastTask{
 
 	public void setSongData(String songData) {
 		this.songData = songData;
+	}
+
+	public GroupNettyServer getServer() {
+		return server;
+	}
+
+	public void setServer(GroupNettyServer server) {
+		this.server = server;
 	}
 
 	public static FileCastTask findRunningTask(String sessionId) {

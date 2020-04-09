@@ -54,7 +54,7 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	
 	/** 广播音量 */
 	@ApiModelProperty("广播音量")
-	private Integer vol = -1;
+	private Integer vol;
 	
 	/**	广播类型 */
 	@ApiModelProperty("广播类型:0,文件广播;1,定时广播;2,实时采播;3,终端采播;4,终端点播;5,寻呼话筒;6,控件广播;7,文本广播")

@@ -24,14 +24,9 @@ public class AsyncManager
      * 异步操作任务调度线程池
      */
     private ScheduledExecutorService executor = SpringUtils.getBean("scheduledExecutorService");
-    
+     
     /**
-     * Boss操作任务调度线程池
-     */
-    private ExecutorService bossExecutor = SpringUtils.getBean("BossServiceExecutor");
-    
-    /**
-     * IO操作任务调度线程池
+     * UDP-IO操作任务调度线程池
      */
     private ExecutorService ioExecutor = SpringUtils.getBean("IoServiceExecutor");
     
@@ -79,12 +74,6 @@ public class AsyncManager
         Threads.shutdownAndAwaitTermination(executor);
     }
     
-    /**
-     *获取组播线程池 
-     */
-    public ExecutorService getBossThreads() {
-		return bossExecutor;
-	}
     /**
      * io异步调用
      * 

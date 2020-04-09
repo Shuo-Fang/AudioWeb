@@ -50,4 +50,7 @@ public class WorkConstants {
     /**默认需要刷新的页面ID*/
     public final static String WORK_TERMINAL = "2020";
     public final static String WORK_CASTTASK = "2021";
+    
+    /**默认初始组播地址**/
+    public final static String WORK_ADRESS = "224.0.1.1";
 }

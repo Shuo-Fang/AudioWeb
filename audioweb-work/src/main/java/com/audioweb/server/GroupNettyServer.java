@@ -1,43 +1,51 @@
 package com.audioweb.server;
 
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.util.concurrent.ExecutorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.audioweb.common.config.NettyConfig;
-import com.audioweb.common.constant.Constants;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.common.utils.Threads;
-import com.audioweb.server.handler.LoginServerHandler;
-import com.audioweb.system.service.ISysConfigService;
+import com.audioweb.work.domain.WorkCastTask;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.util.NetUtil;
 
-public class IoNettyServer extends NettyBase{
+public class GroupNettyServer extends NettyBase{
 	
 	private Channel channel;
+	private WorkCastTask task;
 	
+	/** 
+	 * <p>Title: </p> 
+	 * <p>Description: </p> 
+	 * @author ShuoFang
+	 * @date 2020年4月9日 下午4:26:20 
+	 */
+	public GroupNettyServer(WorkCastTask task) {
+		this.task = task;
+	}
 	/*
 	 * io线程池
 	 */
     @Autowired
     @Qualifier("IoServiceExecutor")
 	private ExecutorService io;
-
-    @Autowired
-    private ISysConfigService configService;
     
-    private EventLoopGroup udpWorkerGroup = new NioEventLoopGroup(NUMBER_OF_CORES,io);
+    private EventLoopGroup udpWorkerGroup = new NioEventLoopGroup(1,io);
 	
 	@Override
 	public Channel getChannel() {
@@ -46,32 +54,30 @@ public class IoNettyServer extends NettyBase{
 	
 	@Override
 	public void startServer() {
-	    /**初始化netty服务器绑定IP地址*/
-	    if(StringUtils.isEmpty(NettyConfig.getServerIp())) {
-		    NettyConfig.setServerIp(configService.selectConfigByKey(Constants.IP_CONFIG));
-	    }
 		ChannelFuture m = null;
         /*
-         * io udp server 配置
+         * group udp server 配置
          */
         try {
+			NetworkInterface ni = NetUtil.LOOPBACK_IF;
             Bootstrap d = new Bootstrap();
             d.group(udpWorkerGroup)
                     .channel(NioDatagramChannel.class)
-                    .option(ChannelOption.SO_BROADCAST, true)
-                    .option(ChannelOption.SO_REUSEADDR, true)
-                    .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 100)
+        			.option(ChannelOption.IP_MULTICAST_IF, ni)
+        			.option(ChannelOption.SO_REUSEADDR, true)
                     .localAddress(new InetSocketAddress(NettyConfig.getServerIp(),NettyConfig.getServerPort()))
-                    .handler(new ChannelInitializer<Channel>() {
+                    .handler(new ChannelInitializer<NioDatagramChannel>() {
                         @Override
-                        protected void initChannel(Channel channel) throws Exception {
-                            ChannelPipeline pipeline = channel.pipeline();
-                            pipeline.addLast(new LoginServerHandler());
+                        protected void initChannel(NioDatagramChannel channel) throws Exception {
+                        	channel.pipeline().addLast(new MulticastHandler());
                         }
                     });
             m = d.bind().sync();
             channel = m.channel();
-            log.info("======IOServer启动成功!!!=========");
+            if (m.isSuccess()) {
+            	log.debug("组播正常启动，任务编号："+task.getTaskId());
+				task.setIsCast(true);
+			}
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -85,10 +91,18 @@ public class IoNettyServer extends NettyBase{
 	
 	@Override
 	public void destory() {
-		log.info("Shutdown IoNetty Server...");
+		log.info("Shutdown GroupNetty Server...");
 		if(channel != null) { channel.close();}
         udpWorkerGroup.shutdownGracefully();
-        Threads.shutdownAndAwaitTermination(io);
-        log.info("Shutdown IoNetty Server Success!");
+        log.info("Shutdown GroupNetty Server Success!");
+	}
+}
+
+class MulticastHandler extends SimpleChannelInboundHandler<DatagramPacket> {
+
+	@Override
+	protected void channelRead0(ChannelHandlerContext arg0, DatagramPacket arg1) throws Exception {
+		// TODO Auto-generated method stub
+		
 	}
 }

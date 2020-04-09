@@ -43,7 +43,7 @@ public class IoPoolConfig implements PoolConfig {
         return new ThreadPoolExecutor(NUMBER_OF_CORES,
 				NUMBER_OF_CORES*8, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT,
 				new LinkedBlockingQueue<Runnable>(1024),
-				new MyThreadFactory(2),
+				new MyThreadFactory(),
 				new ThreadPoolExecutor.AbortPolicy()) {
         	@Override
             protected void afterExecute(Runnable r, Throwable t)
@@ -57,10 +57,6 @@ public class IoPoolConfig implements PoolConfig {
     private class MyThreadFactory implements ThreadFactory {
         private AtomicInteger threadNumberAtomicInteger = new AtomicInteger(1);
         private String name = "io-pool-";
-        public MyThreadFactory(int size) {
-			// TODO Auto-generated constructor stub
-        	threadNumberAtomicInteger = new AtomicInteger(size);
-		}
         @Override
         public Thread newThread(Runnable r) {
             Thread thread=  new Thread(r,String.format(Locale.CHINA,"%s%d",name,threadNumberAtomicInteger.getAndIncrement()));

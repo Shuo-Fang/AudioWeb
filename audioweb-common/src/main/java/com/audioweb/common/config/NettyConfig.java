@@ -8,8 +8,13 @@
  */ 
 package com.audioweb.common.config;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import com.audioweb.common.constant.WorkConstants;
+import com.audioweb.common.utils.IpUtils;
 
 /** 
  * @ClassName: NettyConfig 
@@ -28,6 +33,8 @@ public class NettyConfig {
 	
 	private static Integer qtClientPort;
 
+	private static AtomicLong adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
+	
 	public static String getServerIp() {
 		return serverIp;
 	}
@@ -58,5 +65,15 @@ public class NettyConfig {
 
 	public void setQtClientPort(Integer qtClientPort) {
 		NettyConfig.qtClientPort = qtClientPort;
+	}
+
+	public static Long getAdress() {
+		if(adress.get() >= 4009754623L) {//是否大于"238.255.255.255"
+			synchronized (adress) {
+				adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
+				return adress.getAndIncrement();
+			}
+		}
+		return adress.getAndIncrement();
 	}
 }
