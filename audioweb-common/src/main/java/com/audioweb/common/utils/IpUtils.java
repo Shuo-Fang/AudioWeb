@@ -336,7 +336,8 @@ public class IpUtils
     }
     public static void main(String[] args) {
 		System.out.println(long2IP(bytes2Long(textToNumericFormatV4(String.valueOf(ip2Long("0.0.0.0"))))));
-		System.out.println(ip2Long("238.255.255.255"));
+		System.out.println(ip2Long("224.0.1.1"));
+		System.out.println(ip2Long("231.255.255.255"));
     }
     
     /**

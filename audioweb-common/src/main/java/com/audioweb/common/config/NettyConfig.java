@@ -68,7 +68,7 @@ public class NettyConfig {
 	}
 
 	public static Long getAdress() {
-		if(adress.get() >= 4009754623L) {//是否大于"238.255.255.255"
+		if(adress.get() >= 3892314111L) {//是否大于"231.255.255.255"
 			synchronized (adress) {
 				adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
 				return adress.getAndIncrement();
