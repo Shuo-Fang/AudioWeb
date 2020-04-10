@@ -38,6 +38,7 @@ import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.framework.util.ShiroUtils;
+import com.audioweb.server.service.IWorkCastTaskService;
 import com.audioweb.system.service.ISysConfigService;
 import com.audioweb.system.service.ISysDomainService;
 
@@ -66,6 +67,9 @@ public class FileCastController extends BaseController
     
 	@Autowired
     private ISysConfigService configService;
+
+    @Autowired
+    private IWorkCastTaskService workCastTaskService;
 	
     @RequiresPermissions("work:filecast:view")
     @GetMapping()
@@ -150,7 +154,7 @@ public class FileCastController extends BaseController
     	task.setCreateBy(ShiroUtils.getLoginName());
     	task.setCastType(CastWorkType.FILE);
     	task.setSessionId(ShiroUtils.getSessionId());
-    	task.put();
+    	workCastTaskService.insertWorkCastTask(task);
     	AjaxResult result = success("创建成功（只有接口实现，未实现功能）");
     	result.put(AjaxResult.DATA_TAG, task);
     	return result;

@@ -10,6 +10,7 @@ import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.Threads;
+import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.server.handler.LoginServerHandler;
 import com.audioweb.system.service.ISysConfigService;
 
@@ -30,9 +31,7 @@ public class IoNettyServer extends NettyBase{
 	/*
 	 * io线程池
 	 */
-    @Autowired
-    @Qualifier("IoServiceExecutor")
-	private ExecutorService io;
+	private ExecutorService io = SpringUtils.getBean("IoServiceExecutor");;
 
     @Autowired
     private ISysConfigService configService;

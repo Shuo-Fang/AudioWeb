@@ -379,7 +379,7 @@ public class IpUtils
 	 * 时间：2019年1月13日
 	 */
 	@SuppressWarnings("rawtypes")
-	public static InetAddress getLocalHostLANAddress() throws Exception {
+	public static InetAddress getLocalHostLANAddress(){
 		try {
 			InetAddress candidateAddress = null;
 			// 遍历所有的网络接口

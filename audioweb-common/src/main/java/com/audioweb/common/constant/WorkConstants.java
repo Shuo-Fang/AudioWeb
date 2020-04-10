@@ -53,4 +53,7 @@ public class WorkConstants {
     
     /**默认初始组播地址**/
     public final static String WORK_ADRESS = "224.0.1.1";
+    
+    /**默认初始组播端口**/
+    public final static Integer WORK_PORT = 49153;
 }

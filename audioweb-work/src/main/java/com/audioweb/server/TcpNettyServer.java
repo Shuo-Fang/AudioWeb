@@ -3,11 +3,9 @@ package com.audioweb.server;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.utils.Threads;
+import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.server.handler.TcpServerHandler;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -28,9 +26,7 @@ public class TcpNettyServer extends NettyBase{
 	/*
 	 * tcp线程池
 	 */
-    @Autowired
-    @Qualifier("TcpServiceExecutor")
-	private ExecutorService tcp;
+	private ExecutorService tcp = SpringUtils.getBean("TcpServiceExecutor");;
     
 	private EventLoopGroup tcpWorkerGroup =	new NioEventLoopGroup(NUMBER_OF_CORES,tcp);
 	

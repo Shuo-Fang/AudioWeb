@@ -8,6 +8,7 @@
  */ 
 package com.audioweb.common.config;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,6 +35,8 @@ public class NettyConfig {
 	private static Integer qtClientPort;
 
 	private static AtomicLong adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
+	
+	private static AtomicInteger groupPort = new AtomicInteger(WorkConstants.WORK_PORT);
 	
 	public static String getServerIp() {
 		return serverIp;
@@ -67,13 +70,23 @@ public class NettyConfig {
 		NettyConfig.qtClientPort = qtClientPort;
 	}
 
-	public static Long getAdress() {
+	public static String getAdress() {
 		if(adress.get() >= 3892314111L) {//是否大于"231.255.255.255"
 			synchronized (adress) {
 				adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
-				return adress.getAndIncrement();
+				return IpUtils.long2IP(adress.getAndIncrement());
 			}
 		}
-		return adress.getAndIncrement();
+		return IpUtils.long2IP(adress.getAndIncrement());
+	}
+
+	public static Integer getGroupPort() {
+		if(groupPort.get() >= 65535) {
+			synchronized (groupPort) {
+				groupPort = new AtomicInteger(WorkConstants.WORK_PORT);
+				return groupPort.getAndIncrement();
+			}
+		}
+		return groupPort.getAndIncrement();
 	}
 }

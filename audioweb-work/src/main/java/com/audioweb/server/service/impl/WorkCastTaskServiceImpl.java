@@ -8,11 +8,15 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.domain.WorkTerminal;
 import com.github.pagehelper.PageInfo;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.server.GroupNettyServer;
+import com.audioweb.server.ServerManager;
 import com.audioweb.server.service.IWorkCastTaskService;
 import com.audioweb.system.domain.SysDomain;
 
@@ -26,6 +30,8 @@ import com.audioweb.system.domain.SysDomain;
 public class WorkCastTaskServiceImpl implements IWorkCastTaskService 
 {
 
+	@Autowired
+	ServerManager serverManager;
     /**
      * 查询广播任务
      * 
@@ -101,6 +107,9 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
         	switch (workCastTask.getCastType()) {
     		case FILE://文件广播 需要组播、文件管理、分区终端树、用户关联
     			initTerTree(workCastTask);//初始化分区终端树
+    			FileCastTask fileCastTask = (FileCastTask) workCastTask;
+    			fileCastTask.setServer(new GroupNettyServer(fileCastTask));
+    			
     			
     			break;
     		case TIME://定时广播 需要组播、文件管理、分区终端树、定时控制
