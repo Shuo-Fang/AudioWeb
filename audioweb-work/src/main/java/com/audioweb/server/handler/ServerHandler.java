@@ -49,6 +49,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx,final DatagramPacket msg) throws Exception {
 		ByteBuf content = msg.content();
+		content.retain();
 		AsyncManager.me().ioExecute(new Runnable() {
 			@Override
 			public void run() {

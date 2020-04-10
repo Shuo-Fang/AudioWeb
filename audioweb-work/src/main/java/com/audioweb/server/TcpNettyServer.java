@@ -3,9 +3,11 @@ package com.audioweb.server;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.utils.Threads;
-import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.server.handler.TcpServerHandler;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -26,7 +28,9 @@ public class TcpNettyServer extends NettyBase{
 	/*
 	 * tcp线程池
 	 */
-	private ExecutorService tcp = SpringUtils.getBean("TcpServiceExecutor");;
+    @Autowired
+    @Qualifier("TcpServiceExecutor")
+	private ExecutorService tcp;
     
 	private EventLoopGroup tcpWorkerGroup =	new NioEventLoopGroup(NUMBER_OF_CORES,tcp);
 	
@@ -56,7 +60,7 @@ public class TcpNettyServer extends NettyBase{
                     //此参数对于程序的连接数没影响，会影响正在准备建立连接的握手。
                     //.option(ChannelOption.SO_KEEPALIVE,true)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,30000)//连接超时30000毫秒
-                    .option(ChannelOption.SO_TIMEOUT,5000)//输入流的read方法被阻塞时，接受数据的等待超时时间5000毫秒，抛出SocketException
+                    //.option(ChannelOption.SO_TIMEOUT,5000)//输入流的read方法被阻塞时，接受数据的等待超时时间5000毫秒，抛出SocketException
                     //child是在客户端连接connect之后处理的handler，不带child的是在客户端初始化时需要进行处理的
                     .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)//缓冲池
                     .childHandler(new ChannelInitializer<SocketChannel>() {

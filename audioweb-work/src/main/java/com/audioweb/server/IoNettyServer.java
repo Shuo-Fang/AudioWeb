@@ -10,8 +10,7 @@ import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.Threads;
-import com.audioweb.common.utils.spring.SpringUtils;
-import com.audioweb.server.handler.LoginServerHandler;
+import com.audioweb.server.handler.ServerHandler;
 import com.audioweb.system.service.ISysConfigService;
 
 import io.netty.bootstrap.Bootstrap;
@@ -21,6 +20,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
@@ -31,7 +31,9 @@ public class IoNettyServer extends NettyBase{
 	/*
 	 * io线程池
 	 */
-	private ExecutorService io = SpringUtils.getBean("IoServiceExecutor");;
+    @Autowired
+    @Qualifier("IoServiceExecutor")
+    private ExecutorService io;
 
     @Autowired
     private ISysConfigService configService;
@@ -54,6 +56,7 @@ public class IoNettyServer extends NettyBase{
          * io udp server 配置
          */
         try {
+        	System.out.println("是否可用使用："+Epoll.isAvailable());
             Bootstrap d = new Bootstrap();
             d.group(udpWorkerGroup)
                     .channel(NioDatagramChannel.class)
@@ -65,7 +68,7 @@ public class IoNettyServer extends NettyBase{
                         @Override
                         protected void initChannel(Channel channel) throws Exception {
                             ChannelPipeline pipeline = channel.pipeline();
-                            pipeline.addLast(new LoginServerHandler());
+                            pipeline.addLast(new ServerHandler());
                         }
                     });
             m = d.bind().sync();

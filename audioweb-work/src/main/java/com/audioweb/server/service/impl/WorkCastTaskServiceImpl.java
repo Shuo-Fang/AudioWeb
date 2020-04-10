@@ -108,7 +108,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     		case FILE://文件广播 需要组播、文件管理、分区终端树、用户关联
     			initTerTree(workCastTask);//初始化分区终端树
     			FileCastTask fileCastTask = (FileCastTask) workCastTask;
-    			fileCastTask.setServer(new GroupNettyServer(fileCastTask));
+    			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
+    			/**初始化广播命令群发*/
     			
     			
     			break;

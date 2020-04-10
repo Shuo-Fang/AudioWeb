@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.audioweb.common.enums.ClientCommand;
-import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.protocol.InterCMDProcess;
 import com.audioweb.server.service.impl.SpringBeanServiceImpl;
@@ -61,10 +60,10 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 	protected void channelRead0(final ChannelHandlerContext ctx,final DatagramPacket msg) throws Exception {
 		byte[] req = new byte[msg.content().readableBytes()];
 		msg.content().readBytes(req);
-		/**终端登录实现*/
-        AsyncManager.me().ioExecute(new Runnable() {
+		/**终端登录实现 逻辑任务量不大，不采用线程池处理*/
+/*        AsyncManager.me().ioExecute(new Runnable() {
         	@Override
-        	public void run() {
+        	public void run() {*/
 				String ip = msg.sender().getAddress().getHostAddress();
 				/**判断是否为登录命令*/
 				if(ClientCommand.CMD_LOGIN.getCmd().equals(req[1]) && req.length > 9) {
@@ -77,11 +76,11 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 						if(terminal.getTerminalId().equals(terid)) {
 							terminal.setLoginTime(new Date());
 							terminal.setIsOnline(0);//存储登录信息
+							SpringBeanServiceImpl.loginTerminal(terminal);
 							log.info("终端登录成功："+terid);
 							ByteBuf buf = ctx.alloc().buffer();
 							buf.writeBytes(InterCMDProcess.returnLoginBytes());
 							ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
-							SpringBeanServiceImpl.loginTerminal(terminal);
 						}else {
 							log.info("登录终端IP配置有误："+terid);
 						}
@@ -89,8 +88,8 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 						log.info("登录终端配置不存在");
 					}
 				}
-        	}
-        });
+/*        	}
+        });*/
 		//log.info(msg.sender()+":"+req);
 		//ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer(req,CharsetUtil.UTF_8), msg.sender()));
 	}

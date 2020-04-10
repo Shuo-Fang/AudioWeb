@@ -167,7 +167,6 @@ public class FileUtils
 	public static Boolean findDir(String destDirName) {
 		File dir = new File(destDirName);
 		if(dir.exists() && dir.isDirectory()){				//判断是否为目录
-			System.out.println("存在路径");
 			return true;		//存在
 		}
 		return false;

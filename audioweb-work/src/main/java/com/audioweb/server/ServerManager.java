@@ -1,10 +1,7 @@
 package com.audioweb.server;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.audioweb.work.domain.WorkCastTask;
 /**
  * netty服务启动与调用类
  * @ClassName: ServerManager 

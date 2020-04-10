@@ -8,15 +8,13 @@ import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.validation.constraints.Size;
@@ -83,7 +81,11 @@ public class WorkTerminal extends BaseEntity implements BaseWork
     private SysDomain domain;
     
     /** 广播信息 */
-    private WorkCastTask castTask; 
+    private WorkCastTask castTask;
+    
+    /** 备选广播组广播信息 */
+	@JsonIgnore
+    private List<WorkCastTask> castTaskList;
     
     /** 是否在线	0为在线(刚刚通信过),1为在线(即将离线),2为离线*/
     private Integer isOnline; 
@@ -210,6 +212,12 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	}
 	public void setIsOnline(Integer isOnline) {
 		this.isOnline = isOnline;
+	}
+	public List<WorkCastTask> getCastTaskList() {
+		return castTaskList;
+	}
+	public void setCastTaskList(List<WorkCastTask> castTaskList) {
+		this.castTaskList = castTaskList;
 	}
 	public static Map<String, WorkTerminal> getTerminalMap() {
 		return terminalMap;
