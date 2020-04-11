@@ -14,6 +14,7 @@ import com.audioweb.server.handler.LoginServerHandler;
 import com.audioweb.system.service.ISysConfigService;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -61,6 +62,7 @@ public class LoginNettyServer extends NettyBase{
                     .option(ChannelOption.SO_BROADCAST, true)
                     .option(ChannelOption.SO_REUSEADDR, true)
                     .option(ChannelOption.SO_RCVBUF, 1024 * 1024 * 20)
+                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                     .localAddress(new InetSocketAddress(NettyConfig.getServerIp(),NettyConfig.getLoginPort()))
                     .handler(new ChannelInitializer<Channel>() {
                         @Override

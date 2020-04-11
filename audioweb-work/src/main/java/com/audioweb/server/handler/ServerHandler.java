@@ -65,7 +65,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 					byte[] req = new byte[msg.content().readableBytes()];
 					msg.content().readBytes(req);
 					/**为命令包，进行判断**/
-					switch(cmd){
+					switch(cmd){ 
 					/**终端心跳包*/
 					case CMD_NETHEART:
 						WorkTerminal terminal = WorkTerminal.getTerByIp(ip);

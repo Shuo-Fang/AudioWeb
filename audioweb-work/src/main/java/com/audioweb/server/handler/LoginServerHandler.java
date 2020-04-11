@@ -9,17 +9,26 @@
 package com.audioweb.server.handler;
 
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.audioweb.common.enums.ClientCommand;
+import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.protocol.InterCMDProcess;
+import com.audioweb.server.service.WorkServerService;
 import com.audioweb.server.service.impl.SpringBeanServiceImpl;
 import com.audioweb.work.domain.WorkTerminal;
+
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
@@ -76,11 +85,19 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 						if(terminal.getTerminalId().equals(terid)) {
 							terminal.setLoginTime(new Date());
 							terminal.setIsOnline(0);//存储登录信息
-							SpringBeanServiceImpl.loginTerminal(terminal);
 							log.info("终端登录成功："+terid);
-							ByteBuf buf = ctx.alloc().buffer();
+							ByteBuf buf = ctx.alloc().directBuffer();
 							buf.writeBytes(InterCMDProcess.returnLoginBytes());
-							ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
+							//WorkServerService.getService().sendCommand(InterCMDProcess.returnLoginBytes(), msg.sender());
+							InetSocketAddress address = null;
+							try {
+								address = new InetSocketAddress(InetAddress.getByName("127.0.0.1"), 10001);
+							} catch (UnknownHostException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							ctx.writeAndFlush(new DatagramPacket(buf, address));
+							SpringBeanServiceImpl.loginTerminal(terminal);
 						}else {
 							log.info("登录终端IP配置有误："+terid);
 						}
