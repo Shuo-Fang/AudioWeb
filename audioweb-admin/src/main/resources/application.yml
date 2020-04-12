@@ -22,6 +22,8 @@ netty:
   serverPort: 6970
   #qt端通信端口
   qtClientPort: 6977
+  #终端接收命令端口
+  terRecPort: 4000
   #是否为linux端
   #islinux: 0   弃用
 # 开发环境配置

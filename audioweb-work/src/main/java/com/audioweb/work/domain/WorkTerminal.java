@@ -6,17 +6,21 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.validation.constraints.Size;
 
 /**
@@ -85,10 +89,19 @@ public class WorkTerminal extends BaseEntity implements BaseWork
     
     /** 备选广播组广播信息 */
 	@JsonIgnore
-    private List<WorkCastTask> castTaskList;
+    private List<WorkCastTask> castTaskList = new LinkedList<WorkCastTask>();
+	
+	/** 终端对象地址信息 */
+	@JsonIgnore
+	private InetSocketAddress adress;
+	
+	/** 终端通信回复确认,0为确认，1及以上为未确认*/
+	@JsonIgnore
+	private volatile AtomicInteger retry = new AtomicInteger(0);
     
     /** 是否在线	0为在线(刚刚通信过),1为在线(即将离线),2为离线*/
-    private Integer isOnline; 
+    private Integer isOnline = 2; 
+    
     public WorkTerminal() {
     	
 	}
@@ -222,6 +235,22 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	public static Map<String, WorkTerminal> getTerminalMap() {
 		return terminalMap;
 	}
+	public InetSocketAddress getAdress() {
+		return adress;
+	}
+	public void setAdress(InetSocketAddress adress) {
+		this.adress = adress;
+	}
+	public int addAndGetRetry() {
+		return retry.incrementAndGet();
+	}
+	public int getRetry() {
+		return retry.get();
+	}
+	public void resetRetry() {
+		this.retry.set(0);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -251,6 +280,7 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	public boolean put() {
 		if(StringUtils.isNotEmpty(terminalIp)) {
 			terminalMap.put(terminalIp, this);
+			setAdress(IpUtils.getTerAdress(terminalIp));
 			return true;
 		}else {
 			return false;

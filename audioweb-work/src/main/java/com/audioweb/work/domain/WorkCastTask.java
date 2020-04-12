@@ -38,7 +38,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("广播任务实体")
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<WorkCastTask> {
-	private static volatile  AtomicLong atomicLong = new AtomicLong(0);
+	private static volatile AtomicLong atomicLong = new AtomicLong(0);
 	
 	private static final long serialVersionUID = 1L;
 	/**默认16宽度即可，一般达不到满载*/
@@ -72,7 +72,7 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	
 	/**	广播级别 */
 	@ApiModelProperty("广播级别")
-	private String castLevel;
+	private Integer castLevel;
 	
     /** 备注 */
 	@ApiModelProperty("备注")
@@ -100,9 +100,9 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	private List<WorkTerminal> castTeridlist;
 
 	/**	正在广播终端列表 */
-	@ApiModelProperty("正在广播终端列表")
+/*	@ApiModelProperty("正在广播终端列表")
 	@JsonIgnore
-	transient private List<WorkTerminal> castlist;
+	private List<WorkTerminal> castlist;*/
     
     public Long getTaskId() {
 		return taskId;
@@ -140,10 +140,10 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	public void setCastPort(Integer castPort) {
 		this.castPort = castPort;
 	}
-	public String getCastLevel() {
+	public Integer getCastLevel() {
 		return castLevel;
 	}
-	public void setCastLevel(String castLevel) {
+	public void setCastLevel(Integer castLevel) {
 		this.castLevel = castLevel;
 	}
 	public String getRemark() {
@@ -159,12 +159,12 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	public void setCastTeridlist(List<WorkTerminal> castTeridlist) {
 		this.castTeridlist = castTeridlist;
 	}
-	public List<WorkTerminal> getCastlist() {
+/*	public List<WorkTerminal> getCastlist() {
 		return castlist;
 	}
 	public void setCastlist(List<WorkTerminal> castlist) {
 		this.castlist = castlist;
-	}
+	}*/
 	public Boolean getIsCast() {
 		return isCast;
 	}
@@ -293,7 +293,7 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	@Override
 	public int compareTo(WorkCastTask task) {           //重写Comparable接口的compareTo方法，
 		try {
-			return Integer.parseInt(this.castLevel) - Integer.parseInt(task.castLevel);// 根据castLevel升序排列，降序修改相减顺序即可
+			return this.castLevel - task.castLevel;// 根据castLevel升序排列，降序修改相减顺序即可
 		} catch (Exception e) {
 			return 0;
 		}

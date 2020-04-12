@@ -13,12 +13,11 @@ import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.domain.WorkTerminal;
 import com.github.pagehelper.PageInfo;
-import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.GroupNettyServer;
 import com.audioweb.server.ServerManager;
 import com.audioweb.server.service.IWorkCastTaskService;
-import com.audioweb.system.domain.SysDomain;
+import com.audioweb.server.service.WorkServerService;
 
 /**
  * 广播任务Service业务层处理
@@ -29,7 +28,7 @@ import com.audioweb.system.domain.SysDomain;
 @Service
 public class WorkCastTaskServiceImpl implements IWorkCastTaskService 
 {
-
+	
 	@Autowired
 	ServerManager serverManager;
     /**
@@ -70,9 +69,9 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			}
     		}
     	}
-    	if(StringUtils.isNotEmpty(workCastTask.getCastLevel())) {
+    	if(StringUtils.isNotNull(workCastTask.getCastLevel())) {
     		for(int i = list.size()-1 ;i>=0 ;i--) {
-    			if(Integer.parseInt(list.get(i).getCastLevel()) > Integer.parseInt(workCastTask.getCastLevel()) ) {
+    			if(list.get(i).getCastLevel() > workCastTask.getCastLevel() ) {
     				list.remove(i);
     			}
     		}
@@ -109,8 +108,10 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			initTerTree(workCastTask);//初始化分区终端树
     			FileCastTask fileCastTask = (FileCastTask) workCastTask;
     			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
-    			/**初始化广播命令群发*/
+    			/**初始化文件管理及文件广播**/
     			
+    			/**初始化广播命令群发*/
+    			WorkServerService.AddAltTasks(fileCastTask);
     			
     			break;
     		case TIME://定时广播 需要组播、文件管理、分区终端树、定时控制
@@ -199,4 +200,5 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	}
     	castTask.setCastTeridlist(new ArrayList<WorkTerminal>(taskTers));
     }
+	
 }

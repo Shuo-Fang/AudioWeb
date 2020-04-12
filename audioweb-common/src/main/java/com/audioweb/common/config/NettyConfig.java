@@ -33,6 +33,8 @@ public class NettyConfig {
 	private static Integer loginPort;
 	
 	private static Integer qtClientPort;
+	
+	private static Integer terRecPort;
 
 	private static AtomicLong adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
 	
@@ -88,5 +90,13 @@ public class NettyConfig {
 			}
 		}
 		return groupPort.getAndIncrement();
+	}
+
+	public static Integer getTerRecPort() {
+		return terRecPort;
+	}
+
+	public void setTerRecPort(Integer terRecPort) {
+		NettyConfig.terRecPort = terRecPort;
 	}
 }

@@ -41,7 +41,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer returnLoginBytes(){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		encoded.put(ClientCommand.CMD_LOGIN.getCmd());
 		encoded.put((byte)18);
@@ -56,7 +56,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer returnNetHeart(){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		encoded.put(ClientCommand.CMD_NETHEART.getCmd());
 		for(int i=2;i<6;i++){
@@ -70,7 +70,7 @@ public class InterCMDProcess {
 	 */
 	/*public static ByteBuffer vodFileList(String path){
 		byte[] imot = TerminalUnicast.getFilesName(path);
-		ByteBuffer encoded = ByteBuffer.allocateDirect(imot.length+7);
+		ByteBuffer encoded = ByteBuffer.allocate(imot.length+7);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		if(path == null) {
 			encoded.put(ClientCommand.CMD_VODFILELIST.getCmd());
@@ -91,9 +91,9 @@ public class InterCMDProcess {
 		byte[] imot = TerminalUnicast.Unicastdomain(tInfo,domain);
 		ByteBuffer encoded;
 		if(imot != null)
-			encoded = ByteBuffer.allocateDirect(imot.length+ClientCommand.CMD_NORMAL.getCmd());
+			encoded = ByteBuffer.allocate(imot.length+ClientCommand.CMD_NORMAL.getCmd());
 		else
-			encoded = ByteBuffer.allocateDirect(ClientCommand.CMD_NORMAL.getCmd());
+			encoded = ByteBuffer.allocate(ClientCommand.CMD_NORMAL.getCmd());
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		if(domain == null)
 			encoded.put(ClientCommand.CMD_CMICCAST.getCmd());
@@ -115,7 +115,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer getEnable(int num){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(ClientCommand.CMD_NORMAL.getCmd());
+		ByteBuffer encoded = ByteBuffer.allocate(ClientCommand.CMD_NORMAL.getCmd());
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_CMICREPLY.getCmd());
 		encoded.put(ClientCommand.CMD_NORMAL.getCmd());//音频包长度
@@ -130,7 +130,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer reply(String groupip,String groupPort){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		encoded.put(ClientCommand.CMD_CMICENABLE.getCmd());
 		for(int i=0;i<4;i++){
@@ -151,7 +151,7 @@ public class InterCMDProcess {
 	 * @date 2020年3月18日 下午9:42:51
 	 */
 	public static ByteBuffer vodFileCast(ClientCommand type,String imot){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
 		if(type == ClientCommand.CMD_STOPVOD && imot.equals("1")){//点播停止
 			encoded.put(0, ClientCommand.CMDTYPE_TERCONTROL.getCmd());
@@ -175,27 +175,19 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer sendCast(Boolean isstart,String multiCastIp, int targetPort,int vol,CastWorkType type){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		switch(type) {
 		case FILE:
+		case REAL:
+		case PLUG:
+		case WORD:
 			encoded.put(ClientCommand.CMD_FILECAST.getCmd());
 			break;
 		case TIME:
 			encoded.put(ClientCommand.CMD_TIMINGCAST.getCmd());
 			break;
-		case REAL:
-			encoded.put(ClientCommand.CMD_FILECAST.getCmd()/*CMD_PIC_SEND*/);
-			break;
-		case PLUG:
-			encoded.put(ClientCommand.CMD_FILECAST.getCmd());
-			break;
 		case CLIENT:
-			encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
-			break;
-		/*case "终端点播":
-			encoded.put(Convert.toByte(CMD_FILECAST));
-			break;*/
 		case PAGING:
 			encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 			break;
@@ -259,7 +251,7 @@ public class InterCMDProcess {
 	 * @return 需要发送的ByteBuffer
 	 */
 	public static ByteBuffer sendMainTermCast(Boolean isstart,String ipOrCmd, int targetPort,CastWorkType type){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 		/*switch(type) {
@@ -301,7 +293,7 @@ public class InterCMDProcess {
 	 * @return
 	 */
 /*	public static byte[] sendTerReset(Terminals terminals){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(40);
+		ByteBuffer encoded = ByteBuffer.allocate(40);
 		encoded.put(Convert.hexStringToBytes(CMDTYPE_TERCONTROL));
 		encoded.put(Convert.toByte(IP_REQUEST));
 		encoded.put((byte)26);
@@ -361,7 +353,7 @@ public class InterCMDProcess {
 	 * @return
 	 */
 	public static ByteBuffer sendVolSet(int vol,Boolean issave){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_VOLSET.getCmd());
 		for(int i=2;i<6;i++){
@@ -382,7 +374,7 @@ public class InterCMDProcess {
 	 * @return
 	 */
 	public static ByteBuffer sendTerReboot(){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(NORMALSIZE);
+		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.REQUEST_RESTART.getCmd());
 		for(int i=2;i<6;i++){
@@ -398,7 +390,7 @@ public class InterCMDProcess {
 	 * @return
 	 */
 	public static ByteBuffer sendAudioDataPackt(byte[] audiodata){
-		ByteBuffer encoded = ByteBuffer.allocateDirect(audiodata.length+16);
+		ByteBuffer encoded = ByteBuffer.allocate(audiodata.length+16);
 		encoded.put((byte)11);
 		for(int i=1;i<7;i++){
 			encoded.put((byte)0);

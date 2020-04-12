@@ -133,16 +133,19 @@ public class FileCastController extends BaseController
     	@ApiImplicitParam(name = "songData", value = "需要广播的音频id，逗号分隔，例如“1,2,3”,其中第一个为最开始播放的音频", required = true, dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "fileCastType", value = "文件广播的模式:ORDER(顺序播放),LIST(列表循环),RANDOM(随机播放),SINGLE(单曲循环);例如传值：LIST 表示列表循环", required = true, dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "vol", value = "本次文件广播初始化音量值,默认为30", required = true, dataType = "int", paramType = "query"),
-    	@ApiImplicitParam(name = "castLevel", value = "本次文件广播的级别,值为0-5之间,0最高优先级,5最低,可以参考字典键值任务优先级", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "castLevel", value = "本次文件广播的级别,值为0-5之间,0最高优先级,5最低,可以参考字典键值任务优先级", required = true, dataType = "int", paramType = "query"),
     	@ApiImplicitParam(name = "domainidlist", value = "本次文件广播的分区id列表,逗号分隔,例如“_100,101,102”，其中下划线表示当前分区并未全选，处于半选状态，就是说此分区下存在子分区或终端未选择", required = true, dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "teridlist", value = "本次文件广播的终端realId列表,逗号分隔,可为空,例如“100000,100001,100002”，其中若此终端所处的分区为全选，则无需写入此列表,就是说这个列表里终端一定是处于半选的分区下的", dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "taskName", value = "本次文件广播任务名称，默认可以为空", dataType = "String", paramType = "query"),
     })
-    public AjaxResult startFileTask(String songData,String fileCastType,Integer vol,String castLevel,String domainidlist,String teridlist,String taskName) {
+    public AjaxResult startFileTask(String songData,String fileCastType,Integer vol,Integer castLevel,String domainidlist,String teridlist,String taskName) {
     	FileCastTask task = new FileCastTask();
     	task.setSongData(songData);
     	task.setFileCastType(FileCastType.valueOf(fileCastType));
     	task.setVol(vol);
+    	if(StringUtils.isNull(castLevel)) {
+    		castLevel = 5;
+    	}
     	task.setCastLevel(castLevel);
     	task.setDomainidlist(domainidlist);
     	task.setTeridlist(StringUtils.isNotEmpty(teridlist)?teridlist:"");

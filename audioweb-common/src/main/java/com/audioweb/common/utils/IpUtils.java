@@ -2,6 +2,7 @@ package com.audioweb.common.utils;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -10,6 +11,8 @@ import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.audioweb.common.config.NettyConfig;
 
 /**
  * 获取IP方法
@@ -406,6 +409,19 @@ public class IpUtils
 			InetAddress jdkSuppliedAddress = InetAddress.getLocalHost();
 			return jdkSuppliedAddress;
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/**
+	 * 更新配置地址与端口获取socket对象
+	 * @param ip
+	 * @return
+	 */
+	public static InetSocketAddress getTerAdress(String ip) {
+		try {
+			return new InetSocketAddress(InetAddress.getByName(ip), NettyConfig.getTerRecPort());
+		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
 		return null;

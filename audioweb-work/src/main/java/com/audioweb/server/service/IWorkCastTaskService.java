@@ -58,5 +58,4 @@ public interface IWorkCastTaskService
      * @return 结果
      */
     public int deleteWorkCastTaskById(Long taskId);
-    
 }
