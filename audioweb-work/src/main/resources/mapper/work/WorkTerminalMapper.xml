@@ -126,16 +126,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where ter_real_id = #{terRealId}
     </update>
-
-    <delete id="deleteWorkTerminalById" parameterType="String">
-    	update work_terminal set del_flag = '2' where ter_real_id = #{terRealId}
-    </delete>
-
-    <delete id="deleteWorkTerminalByIds" parameterType="String">
-        update work_terminal set del_flag = '2' where ter_real_id in 
-        <foreach item="terRealId" collection="array" open="(" separator="," close=")">
+    
+    <update id="updateTerminalOnline" parameterType="WorkTerminal">
+        update work_terminal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="loginTime != null ">login_time = #{loginTime},</if>
+            <if test="isOnline != null">is_online = #{isOnline},</if>
+        </trim>
+        where ter_real_id = #{terRealId}
+    </update>
+    
+    <update id="updateTerminalOnlineByIds" parameterType="Map">
+        update work_terminal set is_online = #{domainId} where ter_real_id in 
+        <foreach item="terRealId" collection="ids" open="(" separator="," close=")">
             #{terRealId}
         </foreach>
+    </update>
+    
+    <delete id="deleteWorkTerminalById" parameterType="String">
+    	update work_terminal set del_flag = '2' where ter_real_id = #{terRealId}
     </delete>
     
     <update id="updateTerminalDomainByIds" parameterType="Map">

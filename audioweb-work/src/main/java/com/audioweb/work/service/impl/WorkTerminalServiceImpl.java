@@ -100,6 +100,17 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     	}
         return workTerminalMapper.updateWorkTerminal(workTerminal);
     }
+    /**
+     * 修改终端在线状态管理
+     * 
+     * @param workTerminal 终端管理
+     * @return 结果
+     */
+    @Override
+    public int updateTerminalOnline(WorkTerminal workTerminal)
+    {
+    	return workTerminalMapper.updateTerminalOnline(workTerminal);
+    }
 
     /**
      * 批量更新终端最后登录时间

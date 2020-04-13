@@ -12,12 +12,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 
+import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.GroupNettyServer;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -52,7 +55,7 @@ public class FileCastTask extends WorkCastTask{
 	
 	/** 初始化时需要广播的文件列表id 逗号分隔 */
 	@ApiModelProperty("需要广播的文件列表id")
-	private String songData;
+	private List<String> songData;
 	
 	/** 广播文件历史列表 */
 	@ApiModelProperty("广播文件历史列表")
@@ -134,12 +137,24 @@ public class FileCastTask extends WorkCastTask{
 		this.sessionId = sessionId;
 	}
 	
+	/**获取字符串格式的音频播放列表*/
+	@JsonGetter("songData")
 	public String getSongData() {
+		return Convert.listToStr(songData);
+	}
+	
+	public List<String> findSongDataList() {
 		return songData;
 	}
-
+	
+	/**字符串格式的音频播放列表存储为list*/
+	@JsonSetter("songData")
 	public void setSongData(String songData) {
-		this.songData = songData;
+		this.songData = new LinkedList<>(Convert.strToList(songData));
+	}
+	
+	public void putSongDataList(List<String> songDataList) {
+		this.songData = songDataList;
 	}
 
 	public GroupNettyServer getServer() {

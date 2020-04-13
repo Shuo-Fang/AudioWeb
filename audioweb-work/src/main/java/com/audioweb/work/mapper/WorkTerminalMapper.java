@@ -52,6 +52,13 @@ public interface WorkTerminalMapper
      */
     public int updateWorkTerminal(WorkTerminal workTerminal);
     /**
+     * 修改终端在线状态管理
+     * 
+     * @param workTerminal 终端管理
+     * @return 结果
+     */
+    public int updateTerminalOnline(WorkTerminal workTerminal);
+    /**
      * 批量更新终端最后登录时间
      * 
      * @param List<WorkTerminal> 终端管理

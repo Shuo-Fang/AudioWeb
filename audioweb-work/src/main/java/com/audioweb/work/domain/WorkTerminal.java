@@ -9,6 +9,7 @@ import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -96,11 +97,10 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	private InetSocketAddress adress;
 	
 	/** 终端通信回复确认,0为确认，1及以上为未确认*/
-	@JsonIgnore
 	private volatile AtomicInteger retry = new AtomicInteger(0);
     
     /** 是否在线	0为在线(刚刚通信过),1为在线(即将离线),2为离线*/
-    private Integer isOnline = 2; 
+    private Integer isOnline;
     
     public WorkTerminal() {
     	
@@ -162,11 +162,11 @@ public class WorkTerminal extends BaseEntity implements BaseWork
         this.domainId = domainId;
     }
 
-    public Long getDomainId() 
+    public Long getDomainId()
     {
         return domainId;
     }
-    public void setStatus(String status) 
+    public void setStatus(String status)
     {
         this.status = status;
     }
@@ -244,6 +244,8 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	public int addAndGetRetry() {
 		return retry.incrementAndGet();
 	}
+	
+	@JsonGetter("retry")
 	public int getRetry() {
 		return retry.get();
 	}

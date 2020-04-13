@@ -14,7 +14,7 @@ public class SpringBeanServiceImpl {
 			
 			@Override
 			public void run() {
-				service.getTerminalServiceImpl().updateWorkTerminal(terminal);
+				service.getTerminalServiceImpl().updateTerminalOnline(terminal);
 			}
 		},0);
 	}

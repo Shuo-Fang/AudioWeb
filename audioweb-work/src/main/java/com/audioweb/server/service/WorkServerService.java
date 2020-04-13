@@ -338,6 +338,7 @@ public class WorkServerService {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}finally {
+				lock.notify();
 				lock.decrementAndGet();
 			}
 		}

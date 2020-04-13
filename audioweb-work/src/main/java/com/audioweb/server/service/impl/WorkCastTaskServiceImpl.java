@@ -214,8 +214,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      */
     private void initFile(FileCastTask castTask) {
     	List<WorkFile> taskFiles = new LinkedList<>();
-    	if(StringUtils.isNotEmpty(castTask.getSongData())) {
-    		String[] songs = castTask.getSongData().split(",");
+    	if(StringUtils.isNotEmpty(castTask.findSongDataList())) {
+    		List<String> songs = castTask.findSongDataList();
     		for(String song:songs) {
     			if(StringUtils.isNotEmpty(song)) {
     				WorkFile file = WorkFile.getFileById(song);
