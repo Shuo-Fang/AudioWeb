@@ -124,7 +124,5 @@ public class ResourcesConfig implements WebMvcConfigurer
 				workFileService.initWorkFiles(paths);
 			}
 		},initDelay,oneDay,TimeUnit.MILLISECONDS);
-        
-        /**端口监听服务器启动服务**/
     }
 }

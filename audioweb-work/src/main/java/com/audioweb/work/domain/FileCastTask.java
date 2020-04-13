@@ -8,7 +8,7 @@
  */ 
 package com.audioweb.work.domain;
 
-import java.io.BufferedInputStream;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 
@@ -43,24 +43,28 @@ public class FileCastTask extends WorkCastTask{
 	
 	/** 正在广播的文件信息 */
 	@ApiModelProperty("正在广播的文件")
-	private WorkFile runFile;
+	private RunningFile runFile;
 	
 	/** 需要广播的文件列表 */
 	@ApiModelProperty("需要广播的文件列表")
 	@JsonIgnore
-	private List<WorkFile> castFileList;
+	private List<WorkFile> castFileList = new LinkedList<WorkFile>();;
 	
 	/** 初始化时需要广播的文件列表id 逗号分隔 */
 	@ApiModelProperty("需要广播的文件列表id")
 	private String songData;
+	
+	/** 广播文件历史列表 */
+	@ApiModelProperty("广播文件历史列表")
+	private List<String> playHistory = new LinkedList<String>();
 	
 	/** 文件广播类型 */
 	@ApiModelProperty("广播的文件类型：0,顺序播放;1,列表循环;2,随机播放")
 	private FileCastType fileCastType;
 	
 	/** 音频播放位置*/
-	@ApiModelProperty("音频播放位置，单位byte")
-	private volatile Long fileSign;
+/*	@ApiModelProperty("音频播放位置，单位byte")
+	private volatile Long fileSign;*/
 	
 	/** 定时剩余时长 */
 	@ApiModelProperty("定时剩余时长，单位ms")
@@ -70,27 +74,15 @@ public class FileCastTask extends WorkCastTask{
 	@ApiModelProperty("是否音频播放完再停止")
 	private Boolean completeClose = false;
 	
-	/**文件广播中的音频文件分包大小*/
-	@JsonIgnore
-	private int bitsize;
-	
-	/**文件广播中每次广播的时间间隔*/
-	@JsonIgnore
-	private int timesize;
-	
-	/**文件读取信息流*/
-	@JsonIgnore
-	private BufferedInputStream in; 
-	
 	/**组播对象*/
 	@JsonIgnore
 	private GroupNettyServer server;
 	
-	public WorkFile getRunFile() {
+	public RunningFile getRunFile() {
 		return runFile;
 	}
 
-	public void setRunFile(WorkFile runFile) {
+	public void setRunFile(RunningFile runFile) {
 		this.runFile = runFile;
 	}
 
@@ -110,14 +102,6 @@ public class FileCastTask extends WorkCastTask{
 		this.fileCastType = fileCastType;
 	}
 
-	public Long getFileSign() {
-		return fileSign;
-	}
-
-	public void setFileSign(Long fileSign) {
-		this.fileSign = fileSign;
-	}
-
 	public Long getTiming() {
 		return timing;
 	}
@@ -134,36 +118,12 @@ public class FileCastTask extends WorkCastTask{
 		this.completeClose = completeClose;
 	}
 
-	public int getBitsize() {
-		return bitsize;
-	}
-
-	public void setBitsize(int bitsize) {
-		this.bitsize = bitsize;
-	}
-
-	public int getTimesize() {
-		return timesize;
-	}
-
-	public void setTimesize(int timesize) {
-		this.timesize = timesize;
-	}
-
 	public Timer getTimer() {
 		return timer;
 	}
 
 	public void setTimer(Timer timer) {
 		this.timer = timer;
-	}
-
-	public BufferedInputStream getIn() {
-		return in;
-	}
-
-	public void setIn(BufferedInputStream in) {
-		this.in = in;
 	}
 
 	public String getSessionId() {
@@ -188,6 +148,14 @@ public class FileCastTask extends WorkCastTask{
 
 	public void setServer(GroupNettyServer server) {
 		this.server = server;
+	}
+	
+	public List<String> getPlayHistory() {
+		return playHistory;
+	}
+
+	public void setPlayHistory(List<String> playHistory) {
+		this.playHistory = playHistory;
 	}
 
 	public static FileCastTask findRunningTask(String sessionId) {

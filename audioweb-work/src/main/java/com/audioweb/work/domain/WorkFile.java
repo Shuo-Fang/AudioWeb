@@ -343,8 +343,19 @@ public class WorkFile extends BaseEntity implements BaseWork
 			}
 		}
 	}
+	
+	/**通过id获取缓存音频信息**/
+	public static WorkFile getFileById(String key) {
+		return fileMap.get(key);
+	}
+	
 	@Override
 	public boolean remove() {
 		return StringUtils.isNotNull(fileMap.remove(fileId));
+	}
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return (WorkFile)super.clone();
 	}
 }

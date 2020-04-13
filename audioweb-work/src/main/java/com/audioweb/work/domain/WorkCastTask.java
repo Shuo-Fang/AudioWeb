@@ -42,11 +42,11 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	
 	private static final long serialVersionUID = 1L;
 	/**默认16宽度即可，一般达不到满载*/
-	private static Map<Long, WorkCastTask> taskMap = new ConcurrentHashMap<Long, WorkCastTask>();
+	protected static Map<Long, WorkCastTask> taskMap = new ConcurrentHashMap<Long, WorkCastTask>();
 
 	/** 广播编号ID */
 	@ApiModelProperty("广播编号ID")
-	private Long taskId = atomicLong.incrementAndGet();
+	protected Long taskId = atomicLong.incrementAndGet();
 	
 	/** 广播任务名称 */
 	@ApiModelProperty("广播任务名称")

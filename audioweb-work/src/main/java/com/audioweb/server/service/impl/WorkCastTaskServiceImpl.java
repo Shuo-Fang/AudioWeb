@@ -3,6 +3,7 @@ package com.audioweb.server.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.WorkCastTask;
+import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.domain.WorkTerminal;
 import com.github.pagehelper.PageInfo;
 import com.audioweb.common.utils.StringUtils;
@@ -109,6 +111,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			FileCastTask fileCastTask = (FileCastTask) workCastTask;
     			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
     			/**初始化文件管理及文件广播**/
+    			initFile(fileCastTask);
     			
     			/**初始化广播命令群发*/
     			WorkServerService.AddAltTasks(fileCastTask);
@@ -199,6 +202,30 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     		taskTers.addAll(WorkTerminal.getTerByIds(castTask.getTeridlist()));
     	}
     	castTask.setCastTeridlist(new ArrayList<WorkTerminal>(taskTers));
+    }
+    /**
+     * 初始化任务广播文件列表
+     * @Title: initFile 
+     * @Description: 初始化任务广播文件列表
+     * @param castTask void 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年4月13日 下午1:53:32
+     */
+    private void initFile(FileCastTask castTask) {
+    	List<WorkFile> taskFiles = new LinkedList<>();
+    	if(StringUtils.isNotEmpty(castTask.getSongData())) {
+    		String[] songs = castTask.getSongData().split(",");
+    		for(String song:songs) {
+    			if(StringUtils.isNotEmpty(song)) {
+    				WorkFile file = WorkFile.getFileById(song);
+    				if(StringUtils.isNotNull(file)) {
+    					taskFiles.add(file);
+    				}
+    			}
+    		}
+    	}
+    	castTask.setCastFileList(taskFiles);
     }
 	
 }
