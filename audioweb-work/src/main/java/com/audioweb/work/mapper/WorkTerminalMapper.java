@@ -59,6 +59,12 @@ public interface WorkTerminalMapper
      */
     public int updateTerminalOnline(WorkTerminal workTerminal);
     /**
+     * 修改所有终端为离线
+     * 
+     * @return 结果
+     */
+    public int updateAllTerminalOnline();
+    /**
      * 批量更新终端最后登录时间
      * 
      * @param List<WorkTerminal> 终端管理

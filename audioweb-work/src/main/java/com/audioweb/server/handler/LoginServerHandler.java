@@ -9,9 +9,6 @@
 package com.audioweb.server.handler;
 
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -19,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.protocol.InterCMDProcess;
-import com.audioweb.server.service.WorkServerService;
 import com.audioweb.server.service.impl.SpringBeanServiceImpl;
 import com.audioweb.work.domain.WorkTerminal;
 
@@ -35,7 +31,7 @@ import io.netty.channel.socket.DatagramPacket;
  * @date 2020年1月20日 下午3:36:20  
  */
 public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
-	private static final Logger  log = LoggerFactory.getLogger(TcpServerHandler.class);
+	private static final Logger  log = LoggerFactory.getLogger(LoginServerHandler.class);
 	/**
      * 在读取操作期间，有异常抛出时会调用。
      * @param ctx

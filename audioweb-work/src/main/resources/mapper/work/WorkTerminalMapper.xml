@@ -136,6 +136,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where ter_real_id = #{terRealId}
     </update>
     
+    <update id="updateAllTerminalOnline">
+        update work_terminal set is_online = 2 
+    </update>
+    
     <update id="updateTerminalOnlineByIds" parameterType="Map">
         update work_terminal set is_online = #{domainId} where ter_real_id in 
         <foreach item="terRealId" collection="ids" open="(" separator="," close=")">

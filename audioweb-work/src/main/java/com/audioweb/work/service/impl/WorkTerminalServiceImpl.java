@@ -285,6 +285,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 
 	@Override
 	public void initWorkTerminals() {
+		workTerminalMapper.updateAllTerminalOnline();//重置所有终端为离线
 		WorkTerminal terminal = new WorkTerminal();
 		terminal.getDomain().setStatus(UserConstants.DOMAIN_NORMAL);
 		terminal.setStatus(WorkConstants.NORMAL);
