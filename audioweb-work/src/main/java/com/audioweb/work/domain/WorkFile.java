@@ -353,9 +353,4 @@ public class WorkFile extends BaseEntity implements BaseWork
 	public boolean remove() {
 		return StringUtils.isNotNull(fileMap.remove(fileId));
 	}
-	
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
 }

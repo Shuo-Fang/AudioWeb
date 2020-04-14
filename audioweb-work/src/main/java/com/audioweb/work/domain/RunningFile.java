@@ -107,7 +107,7 @@ public class RunningFile extends WorkFile{
 		}
 	}
 
-	/**克隆获取新的正在广播音频文件信息
+	/**获取新的正在广播音频文件信息
 	 * @throws IOException */
 	public static RunningFile getRunningFile(WorkFile file) throws IOException{
 		RunningFile runningFile = null;
