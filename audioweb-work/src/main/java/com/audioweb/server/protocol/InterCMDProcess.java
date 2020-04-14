@@ -400,6 +400,7 @@ public class InterCMDProcess {
 			encoded.put((byte)0);
 		}
 		encoded.put(audiodata);
+		encoded.flip();
 		return encoded;
 	}
 	/**

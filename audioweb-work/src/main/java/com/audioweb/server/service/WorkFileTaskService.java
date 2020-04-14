@@ -8,6 +8,13 @@
  */ 
 package com.audioweb.server.service;
 
+import java.util.Objects;
+import java.util.Random;
+
+import com.audioweb.common.utils.StringUtils;
+import com.audioweb.work.domain.FileCastTask;
+import com.audioweb.work.domain.RunningFile;
+
 /** 广播中文件管理静态方法
  * @ClassName: WorkFileTaskService 
  * @Description: 广播中文件管理静态方法
@@ -15,5 +22,80 @@ package com.audioweb.server.service;
  * @date 2020年4月13日 下午1:50:18  
  */
 public class WorkFileTaskService {
-	
+	/**初始化正在播放文件信息*/
+	public static boolean initFileRead(FileCastTask task) {
+		try {
+			/**若正在播放文件不为空*/
+			if(StringUtils.isNotNull(task.getRunFile())) {
+				/**表示为自动播放完成后结束调用，先判断播放类型*/
+				switch (task.getFileCastType()) {
+					case ORDER://顺序播放
+						//判断正在播放音频是否为最后一个音频
+						synchronized (task.findSongDataList()) {
+							if(Objects.equals(task.getRunFile().getFileId(), task.findSongDataList().get(task.findSongDataList().size()-1))) {
+								//停止广播
+								
+							}else {
+								//下一曲并继续播放
+								int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
+								synchronized (task.getRunFile()) {
+									RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
+									task.setRunFile(file);
+								}
+							}
+						}
+						break;
+					case LIST://列表循环
+						//下一曲并继续播放
+						synchronized (task.findSongDataList()) {
+							int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
+							if(step >= task.findSongDataList().size()-1) {
+								step = -1;
+							}
+							synchronized (task.getRunFile()) {
+								RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
+								task.setRunFile(file);
+							}
+						}
+						break;
+					case SINGLE://单曲循环
+						//重复一曲
+						synchronized (task.getRunFile()) {
+							task.getRunFile().initBufferedInputStream();
+						}
+						break;
+					case RANDOM://随机播放
+						//下一曲并继续播放
+						synchronized (task.findSongDataList()) {
+							Random random = new Random();
+							int size = task.findSongDataList().size();
+							int step = -1;
+							if(size > 1) {//列表文件数大于1，才有随机的必要
+								int location = task.findSongDataList().indexOf(task.getRunFile().getFileId());
+								step = random.nextInt(task.findSongDataList().size());
+								while(location == step) {//去除重复播放
+									step = random.nextInt(task.findSongDataList().size());
+								}
+							}
+							synchronized (task.getRunFile()) {
+								RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
+								task.setRunFile(file);
+							}
+						}
+						break;
+					default:
+						//数据有误，停止播放
+						
+						break;
+				}
+			}else{
+				RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(0));
+				task.setRunFile(file);
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

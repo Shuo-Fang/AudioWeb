@@ -86,7 +86,7 @@ public class WorkCastTaskController extends BaseController
     @ResponseBody
     public AjaxResult addSave(WorkCastTask workCastTask)
     {
-        return toAjax(workCastTaskService.insertWorkCastTask(workCastTask));
+        return workCastTaskService.insertWorkCastTask(workCastTask);
     }
 
     /**

@@ -11,14 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.audioweb.work.domain.FileCastTask;
+import com.audioweb.work.domain.RunningFile;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.domain.WorkTerminal;
 import com.github.pagehelper.PageInfo;
+import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.GroupNettyServer;
 import com.audioweb.server.ServerManager;
 import com.audioweb.server.service.IWorkCastTaskService;
+import com.audioweb.server.service.TimeFileCast;
+import com.audioweb.server.service.WorkFileTaskService;
 import com.audioweb.server.service.WorkServerService;
 
 /**
@@ -101,21 +105,32 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @return 结果
      */
     @Override
-    public int insertWorkCastTask(WorkCastTask workCastTask)
+    public AjaxResult insertWorkCastTask(WorkCastTask workCastTask)
     {
+    	AjaxResult result = null;
     	/**广播任务类型分类处理**/
     	if(StringUtils.isNotNull(workCastTask.getCastType())) {
         	switch (workCastTask.getCastType()) {
     		case FILE://文件广播 需要组播、文件管理、分区终端树、用户关联
-    			initTerTree(workCastTask);//初始化分区终端树
+    			/**初始化文件管理**/
     			FileCastTask fileCastTask = (FileCastTask) workCastTask;
-    			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
-    			/**初始化文件管理及文件广播**/
-    			initFile(fileCastTask);
-    			
-    			/**初始化广播命令群发*/
-    			WorkServerService.AddAltTasks(fileCastTask);
-    			
+    			if(initFile(fileCastTask)) {
+        			initTerTree(fileCastTask);//初始化分区终端树
+        			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
+        			/**初始化正在广播文件**/
+    				if(WorkFileTaskService.initFileRead(fileCastTask)) {
+            			/**初始化定时分发音频任务线程**/
+    					fileCastTask.setTimer(new TimeFileCast(fileCastTask));
+            			/**初始化广播命令群发*/
+            			WorkServerService.AddAltTasks(fileCastTask);
+    				}else {
+    					result = AjaxResult.error("初始化正在播放音频格式有误！");
+    				}
+    			}else {
+    				/**没有文件**/
+    				result = AjaxResult.error("播放列表为空！");
+    			}
+    			fileCastTask.put();
     			break;
     		case TIME://定时广播 需要组播、文件管理、分区终端树、定时控制
     			
@@ -130,7 +145,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			break;
     		}
     	}
-        return workCastTask.put()?1:0;
+        return result;
     }
 
     /**
@@ -212,7 +227,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @author ShuoFang 
      * @date 2020年4月13日 下午1:53:32
      */
-    private void initFile(FileCastTask castTask) {
+    private boolean initFile(FileCastTask castTask) {
     	List<WorkFile> taskFiles = new LinkedList<>();
     	if(StringUtils.isNotEmpty(castTask.findSongDataList())) {
     		List<String> songs = castTask.findSongDataList();
@@ -226,6 +241,11 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     		}
     	}
     	castTask.setCastFileList(taskFiles);
+    	if(taskFiles.size() > 0) {
+    		return true;
+    	}else {
+    		return false;
+    	}
     }
 	
 }

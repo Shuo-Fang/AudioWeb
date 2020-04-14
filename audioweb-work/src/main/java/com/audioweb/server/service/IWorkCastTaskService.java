@@ -1,5 +1,6 @@
 package com.audioweb.server.service;
 
+import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.work.domain.WorkCastTask;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public interface IWorkCastTaskService
      * @param workCastTask 广播任务
      * @return 结果
      */
-    public int insertWorkCastTask(WorkCastTask workCastTask);
+    public AjaxResult insertWorkCastTask(WorkCastTask workCastTask);
 
     /**
      * 修改广播任务

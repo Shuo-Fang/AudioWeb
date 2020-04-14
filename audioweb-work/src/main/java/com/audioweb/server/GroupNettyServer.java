@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -13,6 +14,8 @@ import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.work.domain.WorkCastTask;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -29,6 +32,7 @@ public class GroupNettyServer extends NettyBase{
 	
 	private Channel channel;
 	private WorkCastTask task;
+	private InetSocketAddress target;
 	
 	/** 
 	 * <p>Title: </p> 
@@ -62,6 +66,7 @@ public class GroupNettyServer extends NettyBase{
             InetSocketAddress address = verifyBindHost();
             task.setCastPort(address.getPort());
             task.setCastAddress(NettyConfig.getAdress());
+            target = new InetSocketAddress(task.getCastAddress(),task.getCastPort());
 			NetworkInterface ni = NetUtil.LOOPBACK_IF;
             Bootstrap d = new Bootstrap();
             d.group(udpWorkerGroup)
@@ -81,7 +86,7 @@ public class GroupNettyServer extends NettyBase{
             e.printStackTrace();
         } finally {
             if (m != null && m.isSuccess()) {
-            	log.info("组播正常启动，任务编号："+task.getTaskId());
+            	log.info("组播正常启动，任务编号："+task.getTaskId()+"地址:"+target);
 				task.setIsCast(true);
             } else {
                 log.error("组播启动失败，任务编号："+task.getTaskId()+"	-Netty server start up Error!");
@@ -97,6 +102,16 @@ public class GroupNettyServer extends NettyBase{
         log.info("Shutdown GroupNetty Server Success!");
 	}
 	
+	/**发送组播数据*/
+	public void sendData(ByteBuffer buffer) {
+		try {
+			ByteBuf buf = channel.alloc().buffer(buffer.remaining());
+			buf.writeBytes(buffer);
+			channel.writeAndFlush(new DatagramPacket(buf,target)).sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	/**获取并校验端口可用性*/
 	private InetSocketAddress verifyBindHost() {
 		int multicastport = NettyConfig.getGroupPort();

@@ -17,6 +17,7 @@ import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.GroupNettyServer;
+import com.audioweb.server.service.TimeFileCast;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -42,7 +43,7 @@ public class FileCastTask extends WorkCastTask{
 	
 	/**文件广播的timer定时器*/
 	@JsonIgnore
-	private Timer timer;
+	private TimeFileCast timer;
 	
 	/** 正在广播的文件信息 */
 	@ApiModelProperty("正在广播的文件")
@@ -112,6 +113,14 @@ public class FileCastTask extends WorkCastTask{
 	public void setTiming(Long timing) {
 		this.timing = timing;
 	}
+	
+	/**文件广播倒计时播放调用步进*/
+	public void stepTiming() {
+		timing -= runFile.getTimesize();
+		if(timing <= 0) {
+			timing = 0L;
+		}
+	}
 
 	public Boolean getCompleteClose() {
 		return completeClose;
@@ -120,12 +129,12 @@ public class FileCastTask extends WorkCastTask{
 	public void setCompleteClose(Boolean completeClose) {
 		this.completeClose = completeClose;
 	}
-
-	public Timer getTimer() {
+	
+	public TimeFileCast getTimer() {
 		return timer;
 	}
 
-	public void setTimer(Timer timer) {
+	public void setTimer(TimeFileCast timer) {
 		this.timer = timer;
 	}
 
@@ -165,14 +174,26 @@ public class FileCastTask extends WorkCastTask{
 		this.server = server;
 	}
 	
-	public List<String> getPlayHistory() {
+	/**获取字符串格式的历史音频播放列表*/
+	@JsonGetter("playHistory")
+	public String getPlayHistory() {
+		return Convert.listToStr(playHistory);
+	}
+
+	public List<String> findPlayHistoryList() {
 		return playHistory;
 	}
-
-	public void setPlayHistory(List<String> playHistory) {
-		this.playHistory = playHistory;
+	
+	/**字符串格式的历史音频播放列表存储为list*/
+	@JsonSetter("playHistory")
+	public void setPlayHistory(String playHistory) {
+		this.playHistory = new LinkedList<>(Convert.strToList(playHistory));
 	}
 
+	public void putPlayHistoryList(List<String> playHistory) {
+		this.playHistory = playHistory;
+	}
+	
 	public static FileCastTask findRunningTask(String sessionId) {
 		List<WorkCastTask> wCastTasks = new WorkCastTask().export();
 		for(WorkCastTask task:wCastTasks) {

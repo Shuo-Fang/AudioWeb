@@ -13,7 +13,7 @@ public class TimeReloady extends TimerTask{
 		// TODO Auto-generated constructor stub
 		this.tInfo = tInfo;
 		if(StringUtils.isNotNull(tInfo.getCastTask())) {
-			AsyncManager.me().execute(this, tInfo.getRetry());
+			AsyncManager.me().execute(this, tInfo.getRetry()*1000);
 		}
 	}
 	public TimeReloady(List<WorkTerminal> WorkTerminals) {

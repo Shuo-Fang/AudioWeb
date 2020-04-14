@@ -356,6 +356,6 @@ public class WorkFile extends BaseEntity implements BaseWork
 	
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return (WorkFile)super.clone();
+		return super.clone();
 	}
 }

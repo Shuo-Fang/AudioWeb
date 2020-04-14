@@ -80,7 +80,7 @@ public class WorkServerService {
 		try {
 			ByteBuf buf = ioNettyServer.getChannel().alloc().directBuffer();
 			buf.writeBytes(buffer);
-			ioNettyServer.getChannel().writeAndFlush(new DatagramPacket(Unpooled.wrappedBuffer(buffer), address));
+			ioNettyServer.getChannel().writeAndFlush(new DatagramPacket(buf, address));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -318,7 +318,7 @@ public class WorkServerService {
 	 * 
 	 * @param tiInfo
 	 * @param taskinfo
-	 * TODO 添加备用任务入终端信息
+	 * TODO 添加备用任务入终端信息 添加对象锁，同一时间只能有一个线程调用此方法
 	 * 时间：2019年1月2日
 	 */
 	public static void AddAltTasks(WorkCastTask taskinfo) {

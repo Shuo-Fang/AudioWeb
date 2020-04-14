@@ -80,11 +80,11 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
     
     /** 是否正在广播 */
 	@ApiModelProperty("是否正在广播")
-	private Boolean isCast = false;
+	private boolean isCast = false;
 	
 	/** 是否暂停广播 */
 	@ApiModelProperty("是否暂停广播")
-	private Boolean isStop;
+	private boolean isStop = false;
 
     /**	广播初始化分区列表 */
 	@ApiModelProperty("广播初始化分区列表，逗号分隔，未全选分区id前带_")
@@ -165,16 +165,16 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	public void setCastlist(List<WorkTerminal> castlist) {
 		this.castlist = castlist;
 	}*/
-	public Boolean getIsCast() {
+	public boolean getIsCast() {
 		return isCast;
 	}
-	public void setIsCast(Boolean isCast) {
+	public void setIsCast(boolean isCast) {
 		this.isCast = isCast;
 	}
-	public Boolean getIsStop() {
+	public boolean getIsStop() {
 		return isStop;
 	}
-	public void setIsStop(Boolean isStop) {
+	public void setIsStop(boolean isStop) {
 		this.isStop = isStop;
 	}
 	public String getDomainidlist() {

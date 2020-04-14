@@ -9,8 +9,12 @@
 package com.audioweb.work.domain;
 
 import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.audioweb.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /** 正在广播音频文件信息
@@ -20,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @date 2020年4月13日 下午2:38:38  
  */
 public class RunningFile extends WorkFile{
-
+	public static final short DATA_LENGTH = 800;//每次数据包发送文件最大长度
 	/**
 	 * 
 	 */
@@ -28,7 +32,7 @@ public class RunningFile extends WorkFile{
 	
 	/**文件广播中的音频文件分包大小*/
 	@JsonIgnore
-	private int bitsize;
+	private int  bitsize;
 	
 	/**文件广播中每次广播的时间间隔*/
 	@JsonIgnore
@@ -41,50 +45,74 @@ public class RunningFile extends WorkFile{
 	/**正在播放文件时间节点*/
 	private AtomicLong palySite = new AtomicLong(0);
 	
-	private RunningFile() {}
+	/**初始化继承父类信息*/
+	private RunningFile(WorkFile file) {
+		this.setAlbum(file.getAlbum());
+		this.setArtist(file.getArtist());
+		this.setBitRate(file.getBitRate());
+		this.setCreateBy(file.getCreateBy());
+		this.setCreateTime(file.getCreateTime());
+		this.setDelFlag(file.getDelFlag());
+		this.setDuration(file.getDuration());
+		this.setFileId(file.getFileId());
+		this.setFileName(file.getFileName());
+		this.setFilePath(file.getFilePath());
+		this.setFileType(file.getFileType());
+		this.setFormat(file.getFormat());
+		this.setImagePath(file.getImagePath());
+		this.setImageVirPath(file.getImageVirPath());
+		this.setMusicLength(file.getMusicLength());
+		this.setRemark(file.getRemark());
+		this.setSampleRate(file.getSampleRate());
+		this.setSongName(file.getSongName());
+		this.setStartByte(file.getStartByte());
+		this.setUpdateBy(file.getUpdateBy());
+		this.setUpdateTime(file.getUpdateTime());
+		this.setVirPath(file.getVirPath());
+	}
 	
-	public int getBitsize() {
+	public final int getBitsize() {
 		return bitsize;
 	}
 
-	public void setBitsize(int bitsize) {
-		this.bitsize = bitsize;
-	}
-
-	public int getTimesize() {
+	public final int getTimesize() {
 		return timesize;
 	}
 
-	public void setTimesize(int timesize) {
-		this.timesize = timesize;
-	}
-
-	public BufferedInputStream getIn() {
+	public final BufferedInputStream getIn() {
 		return in;
 	}
 
-	public void setIn(BufferedInputStream in) {
-		this.in = in;
-	}
-
-	public long getPalySite() {
+	public final long getPalySite() {
 		return palySite.get();
 	}
 
-	public void setPalySite(long palySite) {
+	public final void setPalySite(long palySite) {
 		this.palySite.set(palySite);
 	}
 	
 	/**正在播放文件发送一次*/
-	public long runStep() {
+	public final long runStep() {
 		return this.palySite.addAndGet(timesize);
 	}
 	
-	
+	/**初始化文件读取信息*/
+	public void initBufferedInputStream() throws IOException {
+		timesize = (DATA_LENGTH*8)/super.getBitRate();
+		bitsize = super.getBitRate()*timesize/8;
+		FileInputStream file = new FileInputStream(super.getFilePath());
+		synchronized (in != null? in:this) {
+			in  = new BufferedInputStream(file,file.available());
+			in.skip(super.getStartByte());
+		}
+	}
 
-	/**克隆获取新的正在广播音频文件信息*/
-	public static RunningFile getRunningFile(WorkFile file) throws CloneNotSupportedException {
-		RunningFile runningFile = (RunningFile) file.clone();
+	/**克隆获取新的正在广播音频文件信息
+	 * @throws IOException */
+	public static RunningFile getRunningFile(WorkFile file) throws IOException{
+		RunningFile runningFile = null;
+		runningFile = new RunningFile(file);
+		runningFile.initBufferedInputStream();
 		return runningFile;
 	}
 
