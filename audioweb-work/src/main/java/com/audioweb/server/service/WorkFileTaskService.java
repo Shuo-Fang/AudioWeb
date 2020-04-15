@@ -36,7 +36,7 @@ public class WorkFileTaskService {
 						synchronized (task.findSongDataList()) {
 							if(Objects.equals(task.getRunFile().getFileId(), task.findSongDataList().get(task.findSongDataList().size()-1))) {
 								//停止广播
-								
+								WorkServerService.closeTask(task);
 							}else {
 								//下一曲并继续播放
 								int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
@@ -78,7 +78,7 @@ public class WorkFileTaskService {
 						break;
 					default:
 						//数据有误，停止播放
-						
+						WorkServerService.closeTask(task);
 						break;
 				}
 			}else{

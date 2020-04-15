@@ -136,8 +136,8 @@ public class TimeFileCast extends TimerTask{
 	}
 	/**发送音频信息*/
 	private void send(byte[] data) {
-		byte[] data1 = InterCMDProcess.sendDataPackt(data);
-		task.getServer().sendData(data1);
+		InterCMDProcess.sendDataPackt(data);
+		task.getServer().sendData(data);
 	}
 	/**读取音频信息**/
 	private int read(byte[] data) throws IOException {
