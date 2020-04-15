@@ -27,12 +27,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
+import com.audioweb.common.annotation.Log;
 import com.audioweb.common.config.Global;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.core.domain.Ztree;
 import com.audioweb.common.core.page.TableDataInfo;
+import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.utils.StringUtils;
@@ -138,6 +140,7 @@ public class FileCastController extends BaseController
     	@ApiImplicitParam(name = "teridlist", value = "本次文件广播的终端realId列表,逗号分隔,可为空,例如“100000,100001,100002”，其中若此终端所处的分区为全选，则无需写入此列表,就是说这个列表里终端一定是处于半选的分区下的", dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "taskName", value = "本次文件广播任务名称，默认可以为空", dataType = "String", paramType = "query"),
     })
+    @Log(title = "文件广播任务", businessType = BusinessType.INSERT)
     public AjaxResult startFileTask(String songData,String fileCastType,Integer vol,Integer castLevel,String domainidlist,String teridlist,String taskName) {
     	FileCastTask task = new FileCastTask();
     	task.setSongData(songData);
@@ -157,9 +160,6 @@ public class FileCastController extends BaseController
     	task.setCreateBy(ShiroUtils.getLoginName());
     	task.setCastType(CastWorkType.FILE);
     	task.setSessionId(ShiroUtils.getSessionId());
-    	workCastTaskService.insertWorkCastTask(task);
-    	AjaxResult result = success("创建成功（只有接口实现，未实现功能）");
-    	result.put(AjaxResult.DATA_TAG, task);
-    	return result;
+    	return workCastTaskService.insertWorkCastTask(task);
     }
 }

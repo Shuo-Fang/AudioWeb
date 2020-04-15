@@ -93,7 +93,12 @@ public class Threads
         }
         if (t != null)
         {
-            logger.error(t.getMessage(), t);
+        	if(t instanceof CancellationException) {
+        		/**取消定时任务无需报错*/
+        		//logger.debug("已取消定时任务");
+        	}else {
+        		logger.error(t.getMessage(), t);
+        	}
         }
     }
 }

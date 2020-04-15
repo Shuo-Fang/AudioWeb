@@ -107,7 +107,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public AjaxResult insertWorkCastTask(WorkCastTask workCastTask)
     {
-    	AjaxResult result = null;
+    	AjaxResult result = AjaxResult.success();
     	/**广播任务类型分类处理**/
     	if(StringUtils.isNotNull(workCastTask.getCastType())) {
         	switch (workCastTask.getCastType()) {
@@ -122,15 +122,16 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
             			/**初始化定时分发音频任务线程**/
     					fileCastTask.setTimer(new TimeFileCast(fileCastTask));
             			/**初始化广播命令群发*/
-            			WorkServerService.AddAltTasks(fileCastTask);
+            			WorkServerService.addAltTasks(fileCastTask);
     				}else {
     					result = AjaxResult.error("初始化正在播放音频格式有误！");
     				}
+        			fileCastTask.put();
+        			result.put(AjaxResult.DATA_TAG, fileCastTask);
     			}else {
     				/**没有文件**/
     				result = AjaxResult.error("播放列表为空！");
     			}
-    			fileCastTask.put();
     			break;
     		case TIME://定时广播 需要组播、文件管理、分区终端树、定时控制
     			
@@ -171,7 +172,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     {
     	WorkCastTask task = WorkCastTask.find(Long.parseLong(ids));
     	if(StringUtils.isNotNull(task)) {
-    		return task.remove()?1:0;
+    		WorkServerService.closeTask(task);
+    		return 1;
     	}else {
     		return -1;
     	}

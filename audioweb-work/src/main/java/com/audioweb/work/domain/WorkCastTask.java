@@ -80,7 +80,7 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
     
     /** 是否正在广播 */
 	@ApiModelProperty("是否正在广播")
-	private boolean isCast = false;
+	private volatile boolean isCast = false;
 	
 	/** 是否暂停广播 */
 	@ApiModelProperty("是否暂停广播")

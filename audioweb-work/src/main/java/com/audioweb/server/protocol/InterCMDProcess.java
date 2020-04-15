@@ -404,6 +404,18 @@ public class InterCMDProcess {
 		return encoded;
 	}
 	/**
+	 * 将要发送的音频数据包加上头标志.点播
+	 * @param audiodata
+	 * @return
+	 */
+	public static byte[] sendDataPackt(byte[] audiodata){
+		/**数据标识**/
+		audiodata[0] = (byte)11;
+		/**音频长度标识**/
+		System.arraycopy(Convert.intToBytes(audiodata.length-ClientCommand.CMD_HEADER_SIZE.getCmd(), 2), 0, audiodata, 7, 2);
+		return audiodata;
+	}
+	/**
 	 * 将content编码放入ByteBuffer中并转化成byte[]返回
 	 * @param bb
 	 * @param content 没有则设置为""

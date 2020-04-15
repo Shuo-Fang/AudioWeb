@@ -8,6 +8,8 @@
  */ 
 package com.audioweb.server.service;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Random;
 
@@ -38,10 +40,7 @@ public class WorkFileTaskService {
 							}else {
 								//下一曲并继续播放
 								int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
-								synchronized (task.getRunFile()) {
-									RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
-									task.setRunFile(file);
-								}
+								FileRead(task,step);
 							}
 						}
 						break;
@@ -52,16 +51,13 @@ public class WorkFileTaskService {
 							if(step >= task.findSongDataList().size()-1) {
 								step = -1;
 							}
-							synchronized (task.getRunFile()) {
-								RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
-								task.setRunFile(file);
-							}
+							FileRead(task,step);
 						}
 						break;
 					case SINGLE://单曲循环
 						//重复一曲
 						synchronized (task.getRunFile()) {
-							task.getRunFile().initBufferedInputStream();
+							task.getRunFile().resetIn();
 						}
 						break;
 					case RANDOM://随机播放
@@ -77,10 +73,7 @@ public class WorkFileTaskService {
 									step = random.nextInt(task.findSongDataList().size());
 								}
 							}
-							synchronized (task.getRunFile()) {
-								RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
-								task.setRunFile(file);
-							}
+							FileRead(task,step);
 						}
 						break;
 					default:
@@ -96,6 +89,18 @@ public class WorkFileTaskService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		task.setIsCast(false);
 		return false;
+	}
+	
+	/**文件初始化读取
+	 * @throws IOException */
+	private static void FileRead(FileCastTask task,int step) throws IOException {
+		synchronized (task.getRunFile()) {
+			task.getRunFile().destory();//关闭原文件读取信息
+			RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step+1));
+			task.setRunFile(file);
+			task.getTimer().reloadTimer();//重置定时器
+		}
 	}
 }

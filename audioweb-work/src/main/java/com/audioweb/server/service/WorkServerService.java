@@ -11,6 +11,7 @@ package com.audioweb.server.service;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.server.IoNettyServer;
 import com.audioweb.server.protocol.InterCMDProcess;
 import com.audioweb.server.service.impl.WorkCastTaskServiceImpl;
+import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.domain.WorkTerminal;
 import io.netty.buffer.ByteBuf;
@@ -274,16 +276,15 @@ public class WorkServerService {
     /**
      *  结束任务时批量结束并更新指定广播任务所管辖的终端任务信息
      */
-	public static void endTerCastTask(WorkCastTask workCastTask) {
+	private static void endTerCastTask(WorkCastTask workCastTask) {
 		for (WorkTerminal tInfo:workCastTask.getCastTeridlist()) {
 			try {
 				if(workCastTask.equals(tInfo.getCastTask())) {//正在广播此任务的终端
 					//结束正在广播的任务
-					endCast(tInfo);
+					//endCast(tInfo);
 					//后续补上
 					if(tInfo.getCastTaskList().size() > 0) {//后续存在任务
 						tInfo.setCastTask(tInfo.getCastTaskList().remove(0));
-						
 					}else {//后续没有任务
 						tInfo.setCastTask(null);
 					}
@@ -307,7 +308,7 @@ public class WorkServerService {
 	/**
 	 * 结束任务时开启分组终端广播
 	 */
-	public static void endStartTerCastTask(WorkCastTask workCastTask) {
+	private static void endStartTerCastTask(WorkCastTask workCastTask) {
 		for (WorkTerminal ter:workCastTask.getCastTeridlist()) {
 			if(StringUtils.isNotNull(ter.getCastTask())) {
 				startCast(ter,ter.getCastTask());
@@ -321,7 +322,7 @@ public class WorkServerService {
 	 * TODO 添加备用任务入终端信息 添加对象锁，同一时间只能有一个线程调用此方法
 	 * 时间：2019年1月2日
 	 */
-	public static void AddAltTasks(WorkCastTask taskinfo) {
+	public static void addAltTasks(WorkCastTask taskinfo) {
 		synchronized (lock) {
 			if(lock.get() != 0) {
 				try {
@@ -341,6 +342,65 @@ public class WorkServerService {
 				lock.notify();
 				lock.decrementAndGet();
 			}
+		}
+	}
+	/**
+	 * 
+	 * @param tiInfo
+	 * @param taskinfo
+	 * TODO 结束任务并通知备用任务入终端信息 添加对象锁，同一时间只能有一个线程调用此方法
+	 * 时间：2019年1月2日
+	 */
+	private static void endTerTasks(WorkCastTask taskinfo) {
+		AsyncManager.me().execute(new TimerTask() {
+			@Override
+			public void run() {
+				synchronized (lock) {
+					if(lock.get() != 0) {
+						try {
+							lock.wait(500);//最多等待500ms
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					lock.incrementAndGet();
+					try {
+						endTerCastTask(taskinfo);//停止对应终端现在的任务
+						endStartTerCastTask(taskinfo);//开始组播命令批量发送
+						new TimeReloady(taskinfo.getCastTeridlist());//定时检测终端入组情况
+					} catch (Exception e) {
+						e.printStackTrace();
+					}finally {
+						lock.notify();
+						lock.decrementAndGet();
+					}
+				}
+			}
+		});
+	}
+	/**
+	 * 停止任务
+	 */
+	public static void closeTask(WorkCastTask taskinfo) {
+		switch (taskinfo.getCastType()) {//做类型判断
+			case FILE://文件广播
+				FileCastTask task = (FileCastTask)taskinfo;
+				//task.setIsCast(false);//将广播标识设置为停止广播,防止形成关闭死循环
+				/**发送广播停止命令以及停止定时器*/
+				task.setIsCast(false);
+				task.getTimer().destoryTimer();
+				/**关闭文件读取*/
+				task.getRunFile().destory();
+				/**关闭组播线程**/
+				task.getServer().destory();
+				/**清理终端广播相关信息*/
+				endTerTasks(task);
+				/**从任务中删除**/
+				task.remove();
+				break;
+				
+			default:
+				break;
 		}
 	}
 }

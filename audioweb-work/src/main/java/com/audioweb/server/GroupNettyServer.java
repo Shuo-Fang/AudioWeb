@@ -15,6 +15,8 @@ import com.audioweb.common.utils.spring.SpringUtils;
 import com.audioweb.work.domain.WorkCastTask;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.CompositeByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -73,6 +75,7 @@ public class GroupNettyServer extends NettyBase{
                     .channel(NioDatagramChannel.class)
         			.option(ChannelOption.IP_MULTICAST_IF, ni)
         			.option(ChannelOption.SO_REUSEADDR, true)
+                    .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                     .localAddress(address)
                     .handler(new ChannelInitializer<NioDatagramChannel>() {
                         @Override
@@ -97,15 +100,37 @@ public class GroupNettyServer extends NettyBase{
 	@Override
 	public void destory() {
 		log.info("Shutdown GroupNetty Server...");
-		if(channel != null) { channel.close();}
-        udpWorkerGroup.shutdownGracefully();
+		if(channel != null) { 
+			channel.close();
+		}
+		udpWorkerGroup.shutdownGracefully();
         log.info("Shutdown GroupNetty Server Success!");
 	}
 	
 	/**发送组播数据*/
 	public void sendData(ByteBuffer buffer) {
 		try {
-			ByteBuf buf = channel.alloc().buffer(buffer.remaining());
+			ByteBuf buf = channel.alloc().directBuffer(buffer.remaining());
+			buf.writeBytes(buffer);
+			channel.writeAndFlush(new DatagramPacket(buf,target)).sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**发送组播数据*/
+	public void sendData(ByteBuf... buffers) {
+		try {
+			CompositeByteBuf buf = channel.alloc().compositeBuffer();
+			buf.addComponents(buffers);
+			channel.writeAndFlush(new DatagramPacket(buf,target)).sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	/**发送组播数据*/
+	public void sendData(byte[] buffer) {
+		try {
+			ByteBuf buf = channel.alloc().directBuffer();
 			buf.writeBytes(buffer);
 			channel.writeAndFlush(new DatagramPacket(buf,target)).sync();
 		} catch (Exception e) {

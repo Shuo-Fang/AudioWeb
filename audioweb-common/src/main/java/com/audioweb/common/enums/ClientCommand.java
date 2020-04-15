@@ -53,6 +53,8 @@ public enum ClientCommand {
 	CMD_CMICELIST((byte)96),
 	/**	寻呼话筒对讲或传输填充命令 */
 	CMD_PAD((byte)0xAA),
+	/**	16位发包数据用作数据头 */
+	CMD_HEADER_SIZE((byte)16),
 	;
 	private Byte cmd;
 	private ClientCommand(Byte b) {

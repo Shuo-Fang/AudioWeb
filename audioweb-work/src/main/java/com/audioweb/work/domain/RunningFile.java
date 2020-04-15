@@ -38,6 +38,10 @@ public class RunningFile extends WorkFile{
 	@JsonIgnore
 	private int timesize;
 	
+	/**文件广播中文件是否销毁,*/
+	@JsonIgnore
+	private boolean isNotDestory = true;
+	
 	/**文件读取信息流*/
 	@JsonIgnore
 	private BufferedInputStream in;
@@ -50,8 +54,6 @@ public class RunningFile extends WorkFile{
 		this.setAlbum(file.getAlbum());
 		this.setArtist(file.getArtist());
 		this.setBitRate(file.getBitRate());
-		this.setCreateBy(file.getCreateBy());
-		this.setCreateTime(file.getCreateTime());
 		this.setDelFlag(file.getDelFlag());
 		this.setDuration(file.getDuration());
 		this.setFileId(file.getFileId());
@@ -62,12 +64,9 @@ public class RunningFile extends WorkFile{
 		this.setImagePath(file.getImagePath());
 		this.setImageVirPath(file.getImageVirPath());
 		this.setMusicLength(file.getMusicLength());
-		this.setRemark(file.getRemark());
 		this.setSampleRate(file.getSampleRate());
 		this.setSongName(file.getSongName());
 		this.setStartByte(file.getStartByte());
-		this.setUpdateBy(file.getUpdateBy());
-		this.setUpdateTime(file.getUpdateTime());
 		this.setVirPath(file.getVirPath());
 	}
 	
@@ -81,6 +80,19 @@ public class RunningFile extends WorkFile{
 
 	public final BufferedInputStream getIn() {
 		return in;
+	}
+	
+	public final boolean isNotDestory() {
+		return isNotDestory;
+	}
+
+	/**重置标记至起始**/
+	public final void resetIn() {
+		try {
+			in.reset();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public final long getPalySite() {
@@ -104,6 +116,7 @@ public class RunningFile extends WorkFile{
 		synchronized (in != null? in:this) {
 			in  = new BufferedInputStream(file,file.available());
 			in.skip(super.getStartByte());
+			in.mark((int) (super.getMusicLength()-super.getStartByte()));//标记起始字节，用于回滚
 		}
 	}
 
@@ -115,5 +128,14 @@ public class RunningFile extends WorkFile{
 		runningFile.initBufferedInputStream();
 		return runningFile;
 	}
-
+	
+	public final void destory() {
+		try {
+			isNotDestory = false;
+			in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
