@@ -6,16 +6,18 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
+import com.audioweb.work.domain.serializer.WorkCastTaskSerializer;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +87,8 @@ public class WorkTerminal extends BaseEntity implements BaseWork
     })
     private SysDomain domain;
     
-    /** 广播信息 */
+    /** 广播信息  采用自定义序列化方法*/
+    @JsonSerialize(using = WorkCastTaskSerializer.class)
     private WorkCastTask castTask;
     
     /** 备选广播组广播信息 */
@@ -335,11 +338,14 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	
 	/**将全部的对象更新替换为缓存中存储的对象**/
 	public static void loadAll(List<WorkTerminal> entity) {
+		List<WorkTerminal> terminals = new ArrayList<>();
 		for(WorkTerminal task : entity) {
 			if(task.exist()) {
-				task = task.get();
+				terminals.add(task.get());
 			}
 		}
+		entity.removeAll(terminals);
+		entity.addAll(terminals);
 	}
 	
 	@Override
@@ -370,7 +376,7 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	/**通过realID组查询终端实际存储信息*/
 	public static List<WorkTerminal> getTerByIds(String terIds) {
 		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
-		List<String> tStrings = Arrays.asList(terIds.split(","));
+		List<String> tStrings = Convert.strToList(terIds);
 		List<WorkTerminal> tList = new ArrayList<>();
 		for(WorkTerminal t:terminals) {
 			if(tStrings.contains(t.getTerRealId())) {

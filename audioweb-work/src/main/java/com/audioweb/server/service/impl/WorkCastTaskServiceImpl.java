@@ -198,7 +198,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @date 2020年4月9日 下午3:42:50
      */
     private void initTerTree(WorkCastTask castTask) {
-    	Set<WorkTerminal> taskTers = new HashSet<>();
+    	ArrayList<WorkTerminal> taskTers = new ArrayList<>();
     	if(StringUtils.isNotEmpty(castTask.getDomainidlist())) {
     		String[] doms = castTask.getDomainidlist().split(",");
     		for(String dom:doms) {
@@ -216,7 +216,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	if(StringUtils.isNotEmpty(castTask.getTeridlist())) {
     		taskTers.addAll(WorkTerminal.getTerByIds(castTask.getTeridlist()));
     	}
-    	castTask.setCastTeridlist(new ArrayList<WorkTerminal>(taskTers));
+    	castTask.setCastTeridlist(taskTers);
     }
     /**
      * 初始化任务广播文件列表
