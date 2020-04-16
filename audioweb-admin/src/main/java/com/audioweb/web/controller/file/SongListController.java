@@ -15,12 +15,21 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.enums.BusinessType;
+import com.audioweb.common.enums.OperatorType;
 import com.audioweb.common.json.JSON;
 import com.audioweb.work.domain.SongList;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.ISongListService;
 import com.audioweb.work.service.IWorkFileService;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.DateUtils;
@@ -37,6 +46,7 @@ import com.audioweb.common.core.page.TableDataInfo;
  * @author shuofang
  * @date 2020-03-29
  */
+@Api("歌单信息管理")
 @Controller
 @RequestMapping("/work/songlist")
 public class SongListController extends BaseController
@@ -84,6 +94,38 @@ public class SongListController extends BaseController
         List<SongList> list = songListService.selectSongListList(songList);
         return getDataTable(list);
     }
+    /**
+     * 查询歌单列表
+     */
+    @ApiOperation("查询歌单列表")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "statu", value = "歌单状态,0为查询启用的歌单,1为查询停用的歌单,为空则查询全部", dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "listId", value = "查询的指定歌单id，为空则默认查询全部", dataType = "String", paramType = "query"),
+    })
+    @RequiresPermissions("work:songlist:list")
+    @GetMapping("/listAll")
+    @ResponseBody
+    public AjaxResult listAll(String statu,Long listId)
+    {
+    	SongList songList = new SongList();
+    	try {
+
+        	if(StringUtils.isNotEmpty(statu)) {
+        		songList.setStatus(statu);
+        	}
+        	if(StringUtils.isNotNull(listId)) {
+        		songList.setListId(listId);
+        	}
+        	songList.setListUserId(ShiroUtils.getUserId());
+        	List<SongList> list = songListService.selectSongListList(songList);
+        	AjaxResult result = success();
+        	result.put(AjaxResult.DATA_TAG, list);
+        	return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error();
+    }
 
     /**
      * 新增歌单
@@ -107,6 +149,37 @@ public class SongListController extends BaseController
         songList.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(songListService.insertSongList(songList));
     }
+    /**
+     * 新增保存歌单
+     */
+    @ApiOperation("新增保存歌单")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "listName", value = "歌单名称", required = true,  dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "status", value = "歌单状态，0，启用，1，停用", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "songData", value = "歌单包含音频ID组，逗号隔开", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "remark", value = "备注，可为空",dataType = "String", paramType = "query"),
+    })
+    @RequiresPermissions("work:songlist:add")
+    @Log(title = "歌单管理", businessType = BusinessType.INSERT, operatorType = OperatorType.MOBILE)
+    @PostMapping("/addSongList")
+    @ResponseBody
+    public AjaxResult addSongList(String listName,String status,String songData,String remark)
+    {
+    	try {
+
+        	SongList songList = new SongList();
+        	songList.setListName(listName);
+        	songList.setStatus(status);
+        	songList.setSongData(songData);
+        	songList.setRemark(remark);
+        	songList.setListUserId(ShiroUtils.getUserId());
+        	songList.setCreateBy(ShiroUtils.getLoginName());
+        	return toAjax(songListService.insertSongList(songList));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error();
+    }
 
     /**
      * 修改歌单
@@ -122,20 +195,51 @@ public class SongListController extends BaseController
     /**
      * 修改保存歌单
      */
+    @ApiOperation("修改保存歌单")
+    @ApiImplicitParams({
+    	@ApiImplicitParam(name = "listId", value = "修改的歌单ID", required = true,  dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "listName", value = "歌单名称", required = true,  dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "status", value = "歌单状态，0，启用，1，停用", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "songData", value = "歌单包含音频ID组，逗号隔开", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "remark", value = "备注，可为空",dataType = "String", paramType = "query"),
+    })
+    @RequiresPermissions("work:songlist:edit")
+    @Log(title = "歌单管理", businessType = BusinessType.UPDATE, operatorType = OperatorType.MOBILE)
+    @PostMapping("/editSongList")
+    @ResponseBody
+    public AjaxResult editSongList(String listId,String listName,String status,String songData,String remark)
+    {
+    	try {
+    		SongList songList = new SongList();
+    		songList.setListId(Long.parseLong(listId));
+    		songList.setListName(listName);
+    		songList.setStatus(status);
+    		songList.setSongData(songData);
+    		songList.setRemark(remark);
+    		songList.setUpdateBy(ShiroUtils.getLoginName());
+    		return toAjax(songListService.updateSongList(songList));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error();
+    }
+    /**
+     * 修改保存歌单
+     */
     @RequiresPermissions("work:songlist:edit")
     @Log(title = "歌单管理", businessType = BusinessType.UPDATE)
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(SongList songList)
     {
-        songList.setUpdateBy(ShiroUtils.getLoginName());
-        return toAjax(songListService.updateSongList(songList));
+    	songList.setUpdateBy(ShiroUtils.getLoginName());
+    	return toAjax(songListService.updateSongList(songList));
     }
 
     /**
      * 删除歌单
      */
-    @RequiresPermissions("work:songlist:remove")
+	@RequiresPermissions("work:songlist:remove")
     @Log(title = "歌单管理", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
@@ -143,8 +247,23 @@ public class SongListController extends BaseController
     {
         return toAjax(songListService.deleteSongListByIds(ids));
     }
+    @ApiOperation("删除歌单")
+    @ApiImplicitParam(name = "ids", value = "需要删除的歌单id或者是id组,逗号隔开", required = true,  dataType = "String", paramType = "query")
+    @RequiresPermissions("work:songlist:remove")
+    @Log(title = "歌单管理", businessType = BusinessType.DELETE, operatorType = OperatorType.MOBILE)
+    @PostMapping( "/removeSongList")
+    @ResponseBody
+    public AjaxResult removeSongList(String ids)
+    {
+    	try {
+    		return toAjax(songListService.deleteSongListByIds(ids));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error();
+    }
     /**
-     * 查询歌单列表
+     * 查询歌单下音频列表
      */
     @RequiresPermissions("work:songlist:list")
     @PostMapping("/getListById")
@@ -153,6 +272,26 @@ public class SongListController extends BaseController
     {
         List<WorkFile> list = workFileService.selectWorkFileByIds(songList.getSongData());
     	return getDataTable(list);
+    }
+    /**
+     * 查询歌单下音频列表
+     */
+    @ApiOperation("查询歌单下音频列表")
+    @ApiImplicitParam(name = "songData", value = "需要具体音频信息的id组，由逗号分隔，例如：‘1,2,3,4,’（最后一位逗号无影响） 可以直接将歌单种的songData作为查询条件，也可以自行拼接获取", required = true, dataType = "String", paramType = "query")
+    @RequiresPermissions("work:songlist:list")
+    @GetMapping("/getSongByData")
+    @ResponseBody
+    public AjaxResult getSongByData(String songData)
+    {
+    	try {
+    		List<WorkFile> list = workFileService.selectWorkFileByIds(songData);
+    		AjaxResult result = success();
+    		result.put(AjaxResult.DATA_TAG, list);
+    		return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error();
     }
     /**
      * 终端状态修改
