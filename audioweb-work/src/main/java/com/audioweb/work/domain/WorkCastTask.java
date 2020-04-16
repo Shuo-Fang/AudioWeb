@@ -210,9 +210,11 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	public void setCastLevel(Integer castLevel) {
 		this.castLevel = castLevel;
 	}
+	@Override
 	public String getRemark() {
 		return remark;
 	}
+	@Override
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
@@ -223,12 +225,7 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	public void setCastTeridlist(List<WorkTerminal> castTeridlist) {
 		this.castTeridlist = castTeridlist;
 	}
-/*	public List<WorkTerminal> getCastlist() {
-		return castlist;
-	}
-	public void setCastlist(List<WorkTerminal> castlist) {
-		this.castlist = castlist;
-	}*/
+	
 	public boolean getIsCast() {
 		return isCast;
 	}
@@ -262,18 +259,23 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		WorkCastTask other = (WorkCastTask) obj;
 		if (taskId == null) {
-			if (other.taskId != null)
+			if (other.taskId != null) {
 				return false;
-		} else if (!taskId.equals(other.taskId))
+			}
+		} else if (!taskId.equals(other.taskId)) {
 			return false;
+		}
 		return true;
 	}
 	
@@ -291,10 +293,12 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
             .toString();
     }
 	
+	/**重写Comparable接口的compareTo方法*/
 	@Override
-	public int compareTo(WorkCastTask task) {           //重写Comparable接口的compareTo方法，
+	public int compareTo(WorkCastTask task) {           
 		try {
-			return this.castLevel - task.castLevel;// 根据castLevel升序排列，降序修改相减顺序即可
+			// 根据castLevel升序排列，降序修改相减顺序即可
+			return this.castLevel - task.castLevel;
 		} catch (Exception e) {
 			return 0;
 		}

@@ -118,6 +118,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
      * @param List<WorkTerminal> 终端管理
      * @return 结果
      */
+    @Override
     public int updateTerminalDateList(List<WorkTerminal> workTerminal) 
     {
     	return workTerminalMapper.updateTerminalDateList(workTerminal);

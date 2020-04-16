@@ -63,6 +63,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @param user 用户信息
      * @return 用户信息集合信息
      */
+    @Override
     @DataScope(domainAlias = "d", userAlias = "u")
     public List<SysUser> selectAllocatedList(SysUser user)
     {
@@ -75,6 +76,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @param user 用户信息
      * @return 用户信息集合信息
      */
+    @Override
     @DataScope(domainAlias = "d", userAlias = "u")
     public List<SysUser> selectUnallocatedList(SysUser user)
     {
@@ -181,7 +183,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 结果
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public int insertUser(SysUser user)
     {
         // 新增用户信息
@@ -200,7 +202,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 结果
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public int updateUser(SysUser user)
     {
         Long userId = user.getUserId();
@@ -307,7 +309,6 @@ public class SysUserServiceImpl implements ISysUserService
      * 校验登录名称是否唯一
      * 
      * @param loginName 用户名
-     * @return
      */
     @Override
     public String checkLoginNameUnique(String loginName)
@@ -416,7 +417,6 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 导入用户数据
-     * 
      * @param userList 用户数据列表
      * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
      * @param operName 操作用户

@@ -81,6 +81,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @param genTable 业务信息
      * @return 数据库表集合
      */
+    @Override
     public List<GenTable> selectDbTableList(GenTable genTable)
     {
         return genTableMapper.selectDbTableList(genTable);
@@ -92,6 +93,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @param tableNames 表名称组
      * @return 数据库表集合
      */
+    @Override
     public List<GenTable> selectDbTableListByNames(String[] tableNames)
     {
         return genTableMapper.selectDbTableListByNames(tableNames);
@@ -104,7 +106,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 结果
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void updateGenTable(GenTable genTable)
     {
         String options = JSON.toJSONString(genTable.getParams());
@@ -126,7 +128,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @return 结果
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void deleteGenTableByIds(String ids)
     {
         genTableMapper.deleteGenTableByIds(Convert.toLongArray(ids));
@@ -140,7 +142,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @param operName 操作人员
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public void importGenTable(List<GenTable> tableList, String operName)
     {
         for (GenTable table : tableList)
@@ -164,6 +166,7 @@ public class GenTableServiceImpl implements IGenTableService
             catch (Exception e)
             {
                 log.error("表名 " + table.getTableName() + " 导入失败：", e);
+                throw e;
             }
         }
     }
@@ -174,6 +177,7 @@ public class GenTableServiceImpl implements IGenTableService
      * @param tableId 表编号
      * @return 预览数据列表
      */
+    @Override
     public Map<String, String> previewCode(Long tableId)
     {
         Map<String, String> dataMap = new LinkedHashMap<>();
@@ -278,6 +282,7 @@ public class GenTableServiceImpl implements IGenTableService
      * 
      * @param genTable 业务信息
      */
+    @Override
     public void validateEdit(GenTable genTable)
     {
         if (GenConstants.TPL_TREE.equals(genTable.getTplCategory()))

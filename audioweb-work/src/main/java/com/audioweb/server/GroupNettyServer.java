@@ -29,8 +29,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.NetUtil;
-
-public class GroupNettyServer extends NettyBase{
+/**
+ * 组播监听与发送器
+ * @ClassName: GroupNettyServer 
+ * @Description: 组播监听与发送器
+ * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @date 2020年4月16日 下午7:33:22
+ */
+public class GroupNettyServer extends BaseNetty{
 	
 	private Channel channel;
 	private WorkCastTask task;
@@ -46,7 +52,7 @@ public class GroupNettyServer extends NettyBase{
 		this.task = task;
 		startServer();
 	}
-	/*
+	/**
 	 * io线程池
 	 */
 	private ExecutorService io = SpringUtils.getBean("IoServiceExecutor");
@@ -147,13 +153,11 @@ public class GroupNettyServer extends NettyBase{
 	    	if(ip != null && list.contains(ip)) {
 				localAddress = InetAddress.getByName(ip);
 	    	}else {
-				localAddress = IpUtils.getLocalHostLANAddress();
+				localAddress = IpUtils.getLocalHostLanAddress();
 	    	}
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	while(!bindPort(localAddress,multicastport)) {
@@ -190,7 +194,6 @@ class MulticastHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext arg0, DatagramPacket arg1) throws Exception {
-		// TODO Auto-generated method stub
 		
 	}
 }

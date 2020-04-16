@@ -281,11 +281,11 @@ public class WorkFile extends BaseEntity implements BaseWork
 	public void setVirPath(String virPath) {
 		this.virPath = virPath;
 	}
-
+	@Override
 	public String getRemark() {
 		return remark;
 	}
-
+	@Override
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
@@ -315,18 +315,23 @@ public class WorkFile extends BaseEntity implements BaseWork
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		WorkFile other = (WorkFile) obj;
 		if (fileId == null) {
-			if (other.fileId != null)
+			if (other.fileId != null) {
 				return false;
-		} else if (!fileId.equals(other.fileId))
+			}
+		} else if (!fileId.equals(other.fileId)) {
 			return false;
+		}
 		return true;
 	}
 	

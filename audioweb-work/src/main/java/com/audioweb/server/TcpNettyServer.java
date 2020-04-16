@@ -21,11 +21,18 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class TcpNettyServer extends NettyBase{
+/***
+ * TCP监听服务
+ * @ClassName: TcpNettyServer 
+ * @Description: TCP监听服务
+ * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @date 2020年4月16日 下午7:37:03
+ */
+public class TcpNettyServer extends BaseNetty{
 	
 	private Channel channel;
 	
-	/*
+	/**
 	 * tcp线程池
 	 */
     @Autowired
@@ -59,10 +66,12 @@ public class TcpNettyServer extends NettyBase{
                     // 当服务端从队列B中按照FIFO的原则获取到连接并且建立连接[ServerSocket.accept()]后，B中对应的连接会被移除，这样A+B的数值就会变小
                     //此参数对于程序的连接数没影响，会影响正在准备建立连接的握手。
                     //.option(ChannelOption.SO_KEEPALIVE,true)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,30000)//连接超时30000毫秒
+                    //连接超时30000毫秒
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS,30000)
                     //.option(ChannelOption.SO_TIMEOUT,5000)//输入流的read方法被阻塞时，接受数据的等待超时时间5000毫秒，抛出SocketException
                     //child是在客户端连接connect之后处理的handler，不带child的是在客户端初始化时需要进行处理的
-                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)//缓冲池
+                    //缓冲池
+                    .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {

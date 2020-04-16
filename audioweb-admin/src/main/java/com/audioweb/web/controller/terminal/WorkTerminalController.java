@@ -165,7 +165,7 @@ public class WorkTerminalController extends BaseController
     			//2.批量新增终端
     			for(int i = 0;i<terNum;i++) {
     				WorkTerminal terminal = new WorkTerminal();
-    				terminal.setTerminalIp(IpUtils.long2IP(ip+i));
+    				terminal.setTerminalIp(IpUtils.long2Ip(ip+i));
     				if (WorkConstants.TERMINAL_IP_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(terminal)))
     		    	{
         				terminal.setTerminalId(StringUtils.formatToTerId(terId+i));
@@ -208,7 +208,7 @@ public class WorkTerminalController extends BaseController
     		    		errorNum++;
     		    	}else {
     		    		terminal = new WorkTerminal();
-        				terminal.setTerminalIp(IpUtils.long2IP(ip+i));
+        				terminal.setTerminalIp(IpUtils.long2Ip(ip+i));
     		    		if (WorkConstants.TERMINAL_IP_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(terminal)))
 	    		    	{
 	        				terminal.setTerminalName(terPrefix+(terNameNum+i)+terSuffix);

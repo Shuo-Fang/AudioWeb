@@ -170,7 +170,7 @@ public class CommonController {
 						}else {
 							String fileName = FileUploadUtils.upload(filePath, item, false);
 							if(Mp3Utils.isMp3(fileName)){
-								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, value.equals("work.file")?"0":"1",ShiroUtils.getLoginName(),remark);
+								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, "work.file".equals(value)?"0":"1",ShiroUtils.getLoginName(),remark);
 								if(StringUtils.isNotNull(fWorkFile)) {
 									String url = fWorkFile.getVirPath();
 									AjaxResult ajax = AjaxResult.success();

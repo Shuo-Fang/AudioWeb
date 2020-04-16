@@ -24,12 +24,18 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-
-public class IoNettyServer extends NettyBase{
+/***
+ * 终端交互监听服务
+ * @ClassName: IoNettyServer 
+ * @Description: 终端交互监听服务
+ * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @date 2020年4月16日 下午7:38:47
+ */
+public class IoNettyServer extends BaseNetty{
 	
 	private Channel channel;
 	
-	/*
+	/**
 	 * io线程池
 	 */
     @Autowired

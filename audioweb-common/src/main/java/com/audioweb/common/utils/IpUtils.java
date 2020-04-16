@@ -136,8 +136,9 @@ public class IpUtils
             {
                 case 1:
                     l = Long.parseLong(elements[0]);
-                    if ((l < 0L) || (l > 4294967295L))
-                        return null;
+                    if ((l < 0L) || (l > 4294967295L)) {
+                    	return null;
+                    }
                     bytes[0] = (byte) (int) (l >> 24 & 0xFF);
                     bytes[1] = (byte) (int) ((l & 0xFFFFFF) >> 16 & 0xFF);
                     bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
@@ -145,12 +146,14 @@ public class IpUtils
                     break;
                 case 2:
                     l = Integer.parseInt(elements[0]);
-                    if ((l < 0L) || (l > 255L))
-                        return null;
+                    if ((l < 0L) || (l > 255L)) {
+                    	return null;
+                    }
                     bytes[0] = (byte) (int) (l & 0xFF);
                     l = Integer.parseInt(elements[1]);
-                    if ((l < 0L) || (l > 16777215L))
-                        return null;
+                    if ((l < 0L) || (l > 16777215L)) {
+                    	return null;
+                    }
                     bytes[1] = (byte) (int) (l >> 16 & 0xFF);
                     bytes[2] = (byte) (int) ((l & 0xFFFF) >> 8 & 0xFF);
                     bytes[3] = (byte) (int) (l & 0xFF);
@@ -159,13 +162,15 @@ public class IpUtils
                     for (i = 0; i < 2; ++i)
                     {
                         l = Integer.parseInt(elements[i]);
-                        if ((l < 0L) || (l > 255L))
-                            return null;
+                        if ((l < 0L) || (l > 255L)) {
+                        	return null;
+                        }
                         bytes[i] = (byte) (int) (l & 0xFF);
                     }
                     l = Integer.parseInt(elements[2]);
-                    if ((l < 0L) || (l > 65535L))
-                        return null;
+                    if ((l < 0L) || (l > 65535L)) {
+                    	return null;
+                    }
                     bytes[2] = (byte) (int) (l >> 8 & 0xFF);
                     bytes[3] = (byte) (int) (l & 0xFF);
                     break;
@@ -173,8 +178,9 @@ public class IpUtils
                     for (i = 0; i < 4; ++i)
                     {
                         l = Integer.parseInt(elements[i]);
-                        if ((l < 0L) || (l > 255L))
-                            return null;
+                        if ((l < 0L) || (l > 255L)) {
+                        	return null;
+                        }
                         bytes[i] = (byte) (int) (l & 0xFF);
                     }
                     break;
@@ -289,7 +295,7 @@ public class IpUtils
      * @date 2019年12月18日 上午9:09:32
      * @throws Exception 转换出错
      */
-    public static String long2IP(Long lip) {
+    public static String long2Ip(Long lip) {
 		if(lip >= 0) {
 			try {
 				StringBuffer sb = new StringBuffer("");
@@ -338,7 +344,7 @@ public class IpUtils
         return ip;
     }
     public static void main(String[] args) {
-		System.out.println(long2IP(bytes2Long(textToNumericFormatV4(String.valueOf(ip2Long("0.0.0.0"))))));
+		System.out.println(long2Ip(bytes2Long(textToNumericFormatV4(String.valueOf(ip2Long("0.0.0.0"))))));
 		System.out.println(ip2Long("224.0.1.1"));
 		System.out.println(ip2Long("231.255.255.255"));
     }
@@ -382,7 +388,7 @@ public class IpUtils
 	 * 时间：2019年1月13日
 	 */
 	@SuppressWarnings("rawtypes")
-	public static InetAddress getLocalHostLANAddress(){
+	public static InetAddress getLocalHostLanAddress(){
 		try {
 			InetAddress candidateAddress = null;
 			// 遍历所有的网络接口
@@ -391,7 +397,8 @@ public class IpUtils
 				// 在所有的接口下再遍历IP
 				for (Enumeration inetAddrs = iface.getInetAddresses(); inetAddrs.hasMoreElements(); ) {
 					InetAddress inetAddr = (InetAddress) inetAddrs.nextElement();
-					if (!inetAddr.isLoopbackAddress()) {// 排除loopback类型地址
+					// 排除loopback类型地址
+					if (!inetAddr.isLoopbackAddress()) {
 						if (inetAddr.isSiteLocalAddress()) {
 							// 如果是site-local地址，就是它了
 							return inetAddr;

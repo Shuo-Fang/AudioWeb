@@ -209,18 +209,17 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	}
 	
 	/**
-	 * 
+	 * 获取指定分区的终端ID
 	 * @param DomainId
 	 * @return mytInfos
 	 * @throws Exception
-	 * TODO 获取指定分区的终端ID
 	 * 时间：2019年1月2日
 	 */
-	public static List<WorkTerminal> listTerByDomainId(Long DomainId) throws Exception {
+	public static List<WorkTerminal> listTerByDomainId(Long domainId) throws Exception {
 		//获取指定分区的终端ID
 		List<WorkTerminal> mytInfos = new ArrayList<>();
 		terminalMap.forEach((key, value) -> {
-			if(value.getDomainId().equals(DomainId)) {
+			if(value.getDomainId().equals(domainId)) {
 				mytInfos.add(value);
 			}
 		});
@@ -377,18 +376,23 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		WorkTerminal other = (WorkTerminal) obj;
 		if (terminalId == null) {
-			if (other.terminalId != null)
+			if (other.terminalId != null) {
 				return false;
-		} else if (!terminalId.equals(other.terminalId))
+			}
+		} else if (!terminalId.equals(other.terminalId)) {
 			return false;
+		}
 		return true;
 	}
 	

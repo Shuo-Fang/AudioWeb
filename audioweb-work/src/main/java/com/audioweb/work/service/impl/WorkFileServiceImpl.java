@@ -126,6 +126,7 @@ public class WorkFileServiceImpl implements IWorkFileService
      * @param fileIds 需要删除的数据ID
      * @return 结果
      */
+    @Override
     public List<WorkFile> selectWorkFileByIds(String fileIds){
     	return workFileMapper.selectWorkFileByIds(Convert.toStrArray(fileIds));
     }
@@ -188,7 +189,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 			List<WorkFile> addFiles = new ArrayList<WorkFile>();
 			/**需要删除的文件信息*/
 			String deleteIds = "";
-			Map<String, WorkFile> fileMap = new HashMap<String, WorkFile>();
+			Map<String, WorkFile> fileMap = new HashMap<String, WorkFile>(376);
 			for(WorkFile file:workFiles) {
 				fileMap.put(file.getFileId(), file);
 			}
@@ -321,7 +322,6 @@ public class WorkFileServiceImpl implements IWorkFileService
 				return file;
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

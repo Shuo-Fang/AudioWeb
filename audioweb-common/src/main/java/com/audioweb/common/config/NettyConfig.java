@@ -73,13 +73,14 @@ public class NettyConfig {
 	}
 
 	public static String getAdress() {
-		if(adress.get() >= 3892314111L) {//是否大于"231.255.255.255"
+		//是否大于"231.255.255.255"
+		if(adress.get() >= 3892314111L) {
 			synchronized (adress) {
 				adress = new AtomicLong(IpUtils.ip2Long(WorkConstants.WORK_ADRESS));
-				return IpUtils.long2IP(adress.getAndIncrement());
+				return IpUtils.long2Ip(adress.getAndIncrement());
 			}
 		}
-		return IpUtils.long2IP(adress.getAndIncrement());
+		return IpUtils.long2Ip(adress.getAndIncrement());
 	}
 
 	public static Integer getGroupPort() {

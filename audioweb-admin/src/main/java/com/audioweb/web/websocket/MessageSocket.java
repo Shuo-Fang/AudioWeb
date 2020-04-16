@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import com.audioweb.common.json.JSONObject;
 import com.audioweb.common.utils.spring.SpringUtils;
-import com.audioweb.server.NettyBase;
 import com.audioweb.system.domain.SysUser;
 import com.audioweb.system.service.impl.SysUserServiceImpl;
 import com.audioweb.work.global.WebsocketGlobal;
