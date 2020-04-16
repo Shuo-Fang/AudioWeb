@@ -52,8 +52,9 @@ public class TimeReloady extends TimerTask{
 		try {
 			if(StringUtils.isNotNull(tInfo.getCastTask()) && tInfo.getIsOnline() < 2 && tInfo.getRetry() > 0) {
 				//重新对指定终端发送入组命令
-				WorkServerService.startCast(tInfo,tInfo.getCastTask());
-				new TimeReloady(tInfo);
+				if(WorkServerService.startCast(tInfo)) {
+					new TimeReloady(tInfo);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

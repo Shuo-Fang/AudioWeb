@@ -103,7 +103,71 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 /*	@ApiModelProperty("正在广播终端列表")
 	@JsonIgnore
 	private List<WorkTerminal> castlist;*/
-    
+	
+	@Override
+	public boolean put() {
+		if(StringUtils.isNotNull(taskId)) {
+			taskMap.put(taskId, this);
+			return true;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean exist() {
+		return taskMap.containsKey(taskId);
+	}
+	@Override
+	public WorkCastTask get() {
+		if(StringUtils.isNotNull(taskId)) {
+			return taskMap.get(taskId);
+		}else {
+			return null;
+		}
+	}
+	@Override
+	public void clear() {
+		taskMap.clear();
+	}
+	
+	@Override
+	public List<WorkCastTask> export() {
+		List<WorkCastTask> returnResult = new ArrayList<WorkCastTask>();
+        Set<Entry<Long, WorkCastTask>> eSet  =  taskMap.entrySet();
+        Iterator<Entry<Long, WorkCastTask>> it = eSet.iterator();
+        while(it.hasNext()) {
+            returnResult.add(it.next().getValue());
+        }
+		return returnResult;
+	}
+	
+	/**将全部的对象更新替换为缓存中存储的对象**/
+	public static void loadAll(List<WorkCastTask> entity) {
+		for(WorkCastTask task : entity) {
+			if(task.exist()) {
+				task = task.get();
+			}
+		}
+	}
+	public static WorkCastTask find(Long taskId) {
+		if(StringUtils.isNotNull(taskId)) {
+			return taskMap.get(taskId);
+		}else {
+			return null;
+		}
+	}
+	public static WorkCastTask removeByTaskId(Long taskId) {
+		if(StringUtils.isNotNull(taskId)) {
+			return taskMap.remove(taskId);
+		}else {
+			return null;
+		}
+	}
+	@Override
+	public boolean remove() {
+		return StringUtils.isNotNull(taskMap.remove(taskId));
+	}
+	
     public Long getTaskId() {
 		return taskId;
 	}
@@ -226,69 +290,6 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
             .append("remark", getRemark())
             .toString();
     }
-	@Override
-	public boolean put() {
-		if(StringUtils.isNotNull(taskId)) {
-			taskMap.put(taskId, this);
-			return true;
-		}else {
-			return false;
-		}
-	}
-	@Override
-	public boolean exist() {
-		return taskMap.containsKey(taskId);
-	}
-	@Override
-	public WorkCastTask get() {
-		if(StringUtils.isNotNull(taskId)) {
-			return taskMap.get(taskId);
-		}else {
-			return null;
-		}
-	}
-	@Override
-	public void clear() {
-		taskMap.clear();
-	}
-	
-	@Override
-	public List<WorkCastTask> export() {
-		List<WorkCastTask> returnResult = new ArrayList<WorkCastTask>();
-        Set<Entry<Long, WorkCastTask>> eSet  =  taskMap.entrySet();
-        Iterator<Entry<Long, WorkCastTask>> it = eSet.iterator();
-        while(it.hasNext()) {
-            returnResult.add(it.next().getValue());
-        }
-		return returnResult;
-	}
-	
-	/**将全部的对象更新替换为缓存中存储的对象**/
-	public static void loadAll(List<WorkCastTask> entity) {
-		for(WorkCastTask task : entity) {
-			if(task.exist()) {
-				task = task.get();
-			}
-		}
-	}
-	public static WorkCastTask find(Long taskId) {
-		if(StringUtils.isNotNull(taskId)) {
-			return taskMap.get(taskId);
-		}else {
-			return null;
-		}
-	}
-	public static WorkCastTask removeByTaskId(Long taskId) {
-		if(StringUtils.isNotNull(taskId)) {
-			return taskMap.remove(taskId);
-		}else {
-			return null;
-		}
-	}
-	@Override
-	public boolean remove() {
-		return StringUtils.isNotNull(taskMap.remove(taskId));
-	}
 	
 	@Override
 	public int compareTo(WorkCastTask task) {           //重写Comparable接口的compareTo方法，

@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.validation.constraints.Size;
@@ -37,7 +38,7 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 {
 	private static final long serialVersionUID = 1L;
 	/** 181 = 240*0.75+1 设定预定满载值为240*/
-	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>();
+	private static Map<String, WorkTerminal> terminalMap = new ConcurrentHashMap<String, WorkTerminal>(181);
 
     /** 终端序号ID */
     private String terRealId;
@@ -111,7 +112,121 @@ public class WorkTerminal extends BaseEntity implements BaseWork
     public WorkTerminal(String id) {
     	terminalId = id;
     }
-    
+
+	/** 将终端信息存入维护 */
+	@Override
+	public boolean put() {
+		if(StringUtils.isNotEmpty(terminalIp)) {
+			terminalMap.put(terminalIp, this);
+			setAdress(IpUtils.getTerAdress(terminalIp));
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	/** 查询终端信息是否存在  */
+	@Override
+	public boolean exist() {
+		return terminalMap.containsKey(terminalIp);
+	}
+	
+	/**获取维护的指定终端信息*/
+	@Override
+	public WorkTerminal get() {
+		if(StringUtils.isNotEmpty(terminalIp)) {
+			return terminalMap.get(terminalIp);
+		}else {
+			return null;
+		}
+	}
+	
+	@Override
+	public void clear() {
+		terminalMap.clear();
+	}
+	
+	@Override
+	public List<WorkTerminal> export() {
+		return new ArrayList<WorkTerminal>(terminalMap.values());
+	}
+	
+	/**将全部的对象更新替换为缓存中存储的对象**/
+	public static void loadAll(List<WorkTerminal> entity) {
+		List<WorkTerminal> terminals = new ArrayList<>();
+		for(WorkTerminal task : entity) {
+			if(task.exist()) {
+				terminals.add(task.get());
+			}
+		}
+		entity.removeAll(terminals);
+		entity.addAll(terminals);
+	}
+	
+	@Override
+	public boolean remove() {
+		return StringUtils.isNotNull(terminalMap.remove(terminalIp));
+	}
+	
+	/**通过realID查询终端是否缓存*/
+	public static boolean isExist(WorkTerminal workTerminal) {
+		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
+		for(WorkTerminal t:terminals) {
+			if(t.getTerRealId().equals(workTerminal.getTerRealId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**通过realID查询终端实际存储信息*/
+	public static WorkTerminal getTerById(WorkTerminal workTerminal) {
+		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
+		for(WorkTerminal t:terminals) {
+			if(t.getTerRealId().equals(workTerminal.getTerRealId())) {
+				return t;
+			}
+		}
+		return null;
+	}
+	
+	/**通过realID组查询终端实际存储信息*/
+	public static List<WorkTerminal> getTerByIds(String terIds) {
+		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
+		Set<String> tStrings = Convert.strToSet(terIds);
+		List<WorkTerminal> tList = new ArrayList<>();
+		for(WorkTerminal t:terminals) {
+			if(tStrings.contains(t.getTerRealId())) {
+				tList.add(t);
+			}
+		}
+		return tList;
+	}
+	
+	/**通过ip查询终端实际存储信息*/
+	public static WorkTerminal getTerByIp(String ip) {
+		return terminalMap.get(ip);
+	}
+	
+	/**
+	 * 
+	 * @param DomainId
+	 * @return mytInfos
+	 * @throws Exception
+	 * TODO 获取指定分区的终端ID
+	 * 时间：2019年1月2日
+	 */
+	public static List<WorkTerminal> listTerByDomainId(Long DomainId) throws Exception {
+		//获取指定分区的终端ID
+		List<WorkTerminal> mytInfos = new ArrayList<>();
+		terminalMap.forEach((key, value) -> {
+			if(value.getDomainId().equals(DomainId)) {
+				mytInfos.add(value);
+			}
+		});
+		return mytInfos;
+	}
+	
     public String getTerRealId() {
 		return terRealId;
 	}
@@ -235,9 +350,6 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	public void setCastTaskList(List<WorkCastTask> castTaskList) {
 		this.castTaskList = castTaskList;
 	}
-	public static Map<String, WorkTerminal> getTerminalMap() {
-		return terminalMap;
-	}
 	public InetSocketAddress getAdress() {
 		return adress;
 	}
@@ -280,34 +392,6 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 		return true;
 	}
 	
-	/** 将终端信息存入维护 */
-	@Override
-	public boolean put() {
-		if(StringUtils.isNotEmpty(terminalIp)) {
-			terminalMap.put(terminalIp, this);
-			setAdress(IpUtils.getTerAdress(terminalIp));
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	/** 查询终端信息是否存在  */
-	@Override
-	public boolean exist() {
-		return terminalMap.containsKey(terminalIp);
-	}
-	
-	/**获取维护的指定终端信息*/
-	@Override
-	public WorkTerminal get() {
-		if(StringUtils.isNotEmpty(terminalIp)) {
-			return terminalMap.get(terminalIp);
-		}else {
-			return null;
-		}
-	}
-	
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -326,85 +410,4 @@ public class WorkTerminal extends BaseEntity implements BaseWork
             .append("remark", getRemark())
             .toString();
     }
-	@Override
-	public void clear() {
-		terminalMap.clear();
-	}
-	
-	@Override
-	public List<WorkTerminal> export() {
-		return new ArrayList<WorkTerminal>(terminalMap.values());
-	}
-	
-	/**将全部的对象更新替换为缓存中存储的对象**/
-	public static void loadAll(List<WorkTerminal> entity) {
-		List<WorkTerminal> terminals = new ArrayList<>();
-		for(WorkTerminal task : entity) {
-			if(task.exist()) {
-				terminals.add(task.get());
-			}
-		}
-		entity.removeAll(terminals);
-		entity.addAll(terminals);
-	}
-	
-	@Override
-	public boolean remove() {
-		return StringUtils.isNotNull(terminalMap.remove(terminalIp));
-	}
-	
-	/**通过realID查询终端是否缓存*/
-	public static boolean isExist(WorkTerminal workTerminal) {
-		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
-		for(WorkTerminal t:terminals) {
-			if(t.getTerRealId().equals(workTerminal.getTerRealId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-	/**通过realID查询终端实际存储信息*/
-	public static WorkTerminal getTerById(WorkTerminal workTerminal) {
-		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
-		for(WorkTerminal t:terminals) {
-			if(t.getTerRealId().equals(workTerminal.getTerRealId())) {
-				return t;
-			}
-		}
-		return null;
-	}
-	/**通过realID组查询终端实际存储信息*/
-	public static List<WorkTerminal> getTerByIds(String terIds) {
-		ArrayList<WorkTerminal> terminals = new ArrayList<WorkTerminal>(terminalMap.values());
-		List<String> tStrings = Convert.strToList(terIds);
-		List<WorkTerminal> tList = new ArrayList<>();
-		for(WorkTerminal t:terminals) {
-			if(tStrings.contains(t.getTerRealId())) {
-				tList.add(t);
-			}
-		}
-		return tList;
-	}
-	/**通过ip查询终端实际存储信息*/
-	public static WorkTerminal getTerByIp(String ip) {
-		return terminalMap.get(ip);
-	}
-	/**
-	 * 
-	 * @param DomainId
-	 * @return mytInfos
-	 * @throws Exception
-	 * TODO 获取指定分区的终端ID
-	 * 时间：2019年1月2日
-	 */
-	public static List<WorkTerminal> listTerByDomainId(Long DomainId) throws Exception {
-		//获取指定分区的终端ID
-		List<WorkTerminal> mytInfos = new ArrayList<>();
-		for(Map.Entry<String, WorkTerminal> tInfo:terminalMap.entrySet()) {
-			if(tInfo.getValue().getDomainId().equals(DomainId)) {
-				mytInfos.add(tInfo.getValue());
-			}
-		}
-		return mytInfos;
-	}
 }

@@ -12,7 +12,8 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.domain.WorkTerminal;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.DatagramPacket;
 
 /** 业务层管理终端静态方法实现类
@@ -41,7 +41,7 @@ import io.netty.channel.socket.DatagramPacket;
 public class WorkServerService {
 	private static final Logger  logger = LoggerFactory.getLogger(WorkCastTaskServiceImpl.class);
 	private static IoNettyServer ioNettyServer = SpringUtils.getBean(IoNettyServer.class);
-	private static AtomicInteger lock = new AtomicInteger(0);
+	private static Lock lock = new ReentrantLock();
 	/**
 	 * 发送命令 后续方法都是复写方法
 	 * @Title: sendCommand 
@@ -142,16 +142,16 @@ public class WorkServerService {
 		if(tInfo.getIsOnline() < 2 && StringUtils.isNotNull(tInfo.getCastTask())) {//在线并且有任务
 			ByteBuffer endbs =InterCMDProcess.sendCast(false,"", 0,0,tInfo.getCastTask().getCastType());
 			sendCommand(tInfo.getAdress(),0,endbs);//发送停止广播命令
-			try {
+			//try {
 				if(tInfo.getCastTask().getCastType() == CastWorkType.POINT) {//如果为点播则直接停止点播
 					//tInfo.getOrderCastInfo().get(0).getMct().close();
 				}else if(tInfo.getCastTask().getCastType() == CastWorkType.CLIENT || tInfo.getCastTask().getCastType() == CastWorkType.PAGING) {
 					
 					//tInfo.getOrderCastInfo().get(0).getMct().close();//如果为被动终端采播则直接停止采播
 				}
-			} catch (Exception e) {
+			/*} catch (Exception e) {
 				e.printStackTrace();
-			}
+			}*/
 		}
 	}
 	/**
@@ -166,8 +166,24 @@ public class WorkServerService {
 				sendCastCMD(tInfo,
 					castTaskInfo);
 			}else {
-				delTerTask(tInfo,castTaskInfo);
+				delTerTask(tInfo,castTaskInfo,false);
 			}
+		}
+	}
+	/**
+	 * 
+	 * @param tInfo
+	 * TODO 终端与所给任务进行对比（若为第一任务）并开始广播
+	 * 时间：2019年1月2日
+	 */
+	public static boolean startCast(WorkTerminal tInfo) {
+		if(tInfo.getCastTask().getIsCast()) {
+			sendCastCMD(tInfo,
+					tInfo.getCastTask());
+			return true;
+		}else {
+			delTerTask(tInfo,tInfo.getCastTask(),true);
+			return false;
 		}
 	}
 	/**
@@ -204,19 +220,25 @@ public class WorkServerService {
 		sendCommand(tInfo.getAdress(),0,senddata);//发送入组广播命令
 	}
 	/**
-	 * 
-	 * @param tInfo castTaskInfo
-	 * TODO 从单一终端删除指定任务信息
+	 * 从单一终端删除指定任务信息 
+	 * @param tInfo终端信息 
+	 * @param castTaskInfo 任务信息
+	 * @param isSync是否调用同步
 	 */
-	public static void delTerTask(WorkTerminal tInfo,WorkCastTask castTaskInfo) {
+	public static void delTerTask(WorkTerminal tInfo, WorkCastTask castTaskInfo, boolean isSync) {
 		if(StringUtils.isNotNull(tInfo.getCastTask()) && tInfo.getCastTask().equals(castTaskInfo)) {
 			endCast(tInfo);
 			//后续补上
-			if(tInfo.getCastTaskList().size() > 0) {//后续存在任务
+			if(tInfo.getCastTaskList().size() > 0) {
+				//后续存在任务
 				tInfo.setCastTask(tInfo.getCastTaskList().remove(0));
-				startCast(tInfo,tInfo.getCastTask());//第一任务删除后第二任务自动开始广播
-				new TimeReloady(tInfo);//检测是否入组
-			}else {//后续没有任务
+				//第一任务删除后第二任务自动开始广播
+				if(startCast(tInfo) && isSync) {
+					//检测是否入组
+					new TimeReloady(tInfo);
+				};
+			}else {
+				//后续没有任务
 				tInfo.setCastTask(null);
 			}
 		}else {
@@ -311,7 +333,7 @@ public class WorkServerService {
 	private static void endStartTerCastTask(WorkCastTask workCastTask) {
 		for (WorkTerminal ter:workCastTask.getCastTeridlist()) {
 			if(StringUtils.isNotNull(ter.getCastTask())) {
-				startCast(ter,ter.getCastTask());
+				startCast(ter);
 			}
 		}
 	}
@@ -323,15 +345,7 @@ public class WorkServerService {
 	 * 时间：2019年1月2日
 	 */
 	public static void addAltTasks(WorkCastTask taskinfo) {
-		synchronized (lock) {
-			if(lock.get() != 0) {
-				try {
-					lock.wait(500);//最多等待500ms
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			lock.incrementAndGet();
+			lock.lock();
 			try {
 				startEndTerCastTask(taskinfo);//停止对应终端现在的任务
 				startTerCastTask(taskinfo);//开始组播命令批量发送
@@ -339,10 +353,8 @@ public class WorkServerService {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}finally {
-				lock.notify();
-				lock.decrementAndGet();
+				lock.unlock();
 			}
-		}
 	}
 	/**
 	 * 
@@ -355,25 +367,15 @@ public class WorkServerService {
 		AsyncManager.me().execute(new TimerTask() {
 			@Override
 			public void run() {
-				synchronized (lock) {
-					if(lock.get() != 0) {
-						try {
-							lock.wait(500);//最多等待500ms
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					lock.incrementAndGet();
-					try {
-						endTerCastTask(taskinfo);//停止对应终端现在的任务
-						endStartTerCastTask(taskinfo);//开始组播命令批量发送
-						new TimeReloady(taskinfo.getCastTeridlist());//定时检测终端入组情况
-					} catch (Exception e) {
-						e.printStackTrace();
-					}finally {
-						lock.notify();
-						lock.decrementAndGet();
-					}
+				lock.lock();
+				try {
+					endTerCastTask(taskinfo);//停止对应终端现在的任务
+					endStartTerCastTask(taskinfo);//开始组播命令批量发送
+					new TimeReloady(taskinfo.getCastTeridlist());//定时检测终端入组情况
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally {
+					lock.unlock();
 				}
 			}
 		});

@@ -7,6 +7,8 @@ import java.nio.charset.Charset;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -380,10 +382,24 @@ public class Convert
     public static List<String> strToList(String str)
     {
     	if(StringUtils.isNotEmpty(str)) {
-    		return Arrays.asList(toStrArray(",", str));
+    		return new LinkedList<>(Arrays.asList(toStrArray(",", str)));
     	}else {
 			return new ArrayList<>();
 		}
+    }
+    /**
+     * 转换为String数组<br>
+     * 
+     * @param str 被转换的值
+     * @return 结果
+     */
+    public static Set<String> strToSet(String str)
+    {
+    	if(StringUtils.isNotEmpty(str)) {
+    		return new HashSet<>(Arrays.asList(toStrArray(",", str)));
+    	}else {
+    		return new HashSet<>();
+    	}
     }
     /**
      * 转换为String数组<br>

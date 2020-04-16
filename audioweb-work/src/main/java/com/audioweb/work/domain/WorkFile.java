@@ -22,66 +22,66 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class WorkFile extends BaseEntity implements BaseWork
 {
     private static final long serialVersionUID = 1L;
-    /**默认最大音频加载值为1000 -> 1000*0.75+1 = 751*/
-	private static Map<String, WorkFile> fileMap = new ConcurrentHashMap<String, WorkFile>();
+    /**默认最大音频加载值为376 -> 500*0.75+1 = 376*/
+    protected static Map<String, WorkFile> fileMap = new ConcurrentHashMap<String, WorkFile>(376);
 
     /** 音频的路径md5值 */
-    private String fileId;
+    protected String fileId;
 
     /** 音频名称 */
     @Excel(name = "音频名称")
-    private String fileName;
+    protected String fileName;
     /** 音频所属类型  */
-    private String fileType;
+    protected String fileType;
 
     /** 音频根路径 */
-    private String filePath;
+    protected String filePath;
     
     /** 音频虚拟路径 */
-    private String virPath;
+    protected String virPath;
     
     /** 图像根路径 */
-    private String imagePath;
+    protected String imagePath;
     
     /** 图像虚拟路径 */
-    private String imageVirPath;
+    protected String imageVirPath;
 
     /** 歌曲名称(歌源) */
     @Excel(name = "歌曲名称(歌源)")
-    private String songName;
+    protected String songName;
 
     /** 歌手名称(歌源) */
     @Excel(name = "歌手名称(歌源)")
-    private String artist;
+    protected String artist;
 
     /** 歌曲专辑(歌源) */
     @Excel(name = "歌曲专辑(歌源)")
-    private String album;
+    protected String album;
 
     /** 音轨时长长度(ms) */
     @Excel(name = "音轨时长长度(ms)")
-    private Long duration;
+    protected Long duration;
 
     /** 音频格式 */
-    private String format;
+    protected String format;
 
     /** 音频比特率 */
-    private Integer bitRate;
+    protected Integer bitRate;
 
     /** 音频采样率 */
-    private Integer sampleRate;
+    protected Integer sampleRate;
 
     /** 音频开始字节(byte) */
-    private Long startByte;
+    protected Long startByte;
 
     /** 音频总长度(byte,包括开始前) */
-    private Long musicLength;
+    protected Long musicLength;
 
     /** 删除标志（0代表存在 1代表搜索不到 2代表删除） */
-    private String delFlag;
+    protected String delFlag;
     
     /** 备注(或文字转语音中的文字信息) */
-    private String remark;
+    protected String remark;
     
     public WorkFile() {
     	
@@ -90,7 +90,58 @@ public class WorkFile extends BaseEntity implements BaseWork
     public WorkFile(String id) {
 		fileId = id;
 	}
-    
+
+	@Override
+	public boolean put() {
+		if(StringUtils.isNotEmpty(fileId)) {
+			fileMap.put(fileId, this);
+			return true;
+		}else {
+			return false;
+		}
+	}
+	@Override
+	public boolean exist() {
+		return fileMap.containsKey(fileId);
+	}
+	@Override
+	public WorkFile get() {
+		if(StringUtils.isNotEmpty(fileId)) {
+			return fileMap.get(fileId);
+		}else {
+			return null;
+		}
+	}
+
+	@Override
+	public void clear() {
+		fileMap.clear();
+	}
+	
+	@Override
+	public List<WorkFile> export() {
+		return new ArrayList<WorkFile>(fileMap.values());
+	}
+	
+	/**将全部的对象更新替换为缓存中存储的对象**/
+	public static void loadAll(List<WorkFile> entity) {
+		for(WorkFile task : entity) {
+			if(task.exist()) {
+				task = task.get();
+			}
+		}
+	}
+	
+	/**通过id获取缓存音频信息**/
+	public static WorkFile getFileById(String key) {
+		return fileMap.get(key);
+	}
+	
+	@Override
+	public boolean remove() {
+		return StringUtils.isNotNull(fileMap.remove(fileId));
+	}
+	
     /** 
 	 * <p>Title: </p> 
 	 * <p>Description: </p> 
@@ -302,55 +353,4 @@ public class WorkFile extends BaseEntity implements BaseWork
             .append("remark", getUpdateTime())
             .toString();
     }
-
-	@Override
-	public boolean put() {
-		if(StringUtils.isNotEmpty(fileId)) {
-			fileMap.put(fileId, this);
-			return true;
-		}else {
-			return false;
-		}
-	}
-	@Override
-	public boolean exist() {
-		return fileMap.containsKey(fileId);
-	}
-	@Override
-	public WorkFile get() {
-		if(StringUtils.isNotEmpty(fileId)) {
-			return fileMap.get(fileId);
-		}else {
-			return null;
-		}
-	}
-
-	@Override
-	public void clear() {
-		fileMap.clear();
-	}
-	
-	@Override
-	public List<WorkFile> export() {
-		return new ArrayList<WorkFile>(fileMap.values());
-	}
-	
-	/**将全部的对象更新替换为缓存中存储的对象**/
-	public static void loadAll(List<WorkFile> entity) {
-		for(WorkFile task : entity) {
-			if(task.exist()) {
-				task = task.get();
-			}
-		}
-	}
-	
-	/**通过id获取缓存音频信息**/
-	public static WorkFile getFileById(String key) {
-		return fileMap.get(key);
-	}
-	
-	@Override
-	public boolean remove() {
-		return StringUtils.isNotNull(fileMap.remove(fileId));
-	}
 }

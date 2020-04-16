@@ -64,7 +64,7 @@ public class TimeFileCast extends TimerTask{
 							if (read == -1) {//文件已读完
 								WorkFileTaskService.initFileRead(task);
 							}
-						} else if(task.getTiming() == 0 && task.getCompleteClose()){//是否播放完再停止
+						} else if(task.getTiming() <= 0 && task.getCompleteClose()){//是否播放完再停止
 							int read = read(data);//读取音频数据
 							send(data);// 继续发送音频
 							if (read == -1) {//文件已读完

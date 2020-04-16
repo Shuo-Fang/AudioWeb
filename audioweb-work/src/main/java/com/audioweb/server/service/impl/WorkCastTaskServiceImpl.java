@@ -17,6 +17,7 @@ import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.domain.WorkTerminal;
 import com.github.pagehelper.PageInfo;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.GroupNettyServer;
 import com.audioweb.server.ServerManager;
@@ -202,7 +203,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     private void initTerTree(WorkCastTask castTask) {
     	ArrayList<WorkTerminal> taskTers = new ArrayList<>();
     	if(StringUtils.isNotEmpty(castTask.getDomainidlist())) {
-    		String[] doms = castTask.getDomainidlist().split(",");
+    		List<String> doms = Convert.strToList(castTask.getDomainidlist());
     		for(String dom:doms) {
     			if(StringUtils.isNotEmpty(dom)) {
     				try {
