@@ -117,18 +117,22 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			FileCastTask fileCastTask = (FileCastTask) workCastTask;
     			if(initFile(fileCastTask)) {
         			initTerTree(fileCastTask);//初始化分区终端树
-        			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
-        			/**初始化正在广播文件**/
-    				if(WorkFileTaskService.initFileRead(fileCastTask)) {
-            			/**初始化定时分发音频任务线程**/
-    					fileCastTask.setTimer(new TimeFileCast(fileCastTask));
-            			/**初始化广播命令群发*/
-            			WorkServerService.addAltTasks(fileCastTask);
-    				}else {
-    					result = AjaxResult.error("初始化正在播放音频格式有误！");
-    				}
-        			fileCastTask.put();
-        			result.put(AjaxResult.DATA_TAG, fileCastTask);
+        			if(fileCastTask.getCastTeridlist().size() > 0) {
+	        			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
+	        			/**初始化正在广播文件**/
+	    				if(WorkFileTaskService.initFileRead(fileCastTask)) {
+	            			/**初始化定时分发音频任务线程**/
+	    					fileCastTask.setTimer(new TimeFileCast(fileCastTask));
+	            			/**初始化广播命令群发*/
+	            			WorkServerService.addAltTasks(fileCastTask);
+	    				}else {
+	    					result = AjaxResult.error("初始化正在播放音频格式有误！");
+	    				}
+	        			fileCastTask.put();
+	        			result.put(AjaxResult.DATA_TAG, fileCastTask);
+        			}else {
+        				result = AjaxResult.error("选中终端列表为空！");
+        			}
     			}else {
     				/**没有文件**/
     				result = AjaxResult.error("播放列表为空！");

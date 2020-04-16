@@ -148,7 +148,8 @@ public class WorkTerminalController extends BaseController
     	String error = "";
     	int errorNum = 0;
     	try {
-    		int terNum = workTerminal.getIsOnline();//需要添加的终端数量
+    		//需要添加的终端数量
+    		int terNum = workTerminal.getIsOnline();
     		int terNameNum = Integer.parseInt(workTerminal.getTerRealId());
     		String terPrefix = StringUtils.isEmpty(workTerminal.getTerminalName())?"":workTerminal.getTerminalName();
     		String terSuffix = StringUtils.isEmpty(workTerminal.getDomain().getDomainName())?"":workTerminal.getDomain().getDomainName();

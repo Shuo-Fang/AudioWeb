@@ -42,13 +42,13 @@
 	        		<div calss = "row">
 		        		<div class="icon-view-play" role="group">
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-liebiao" id = "ORDER" onclick="fileCastType(this)" title = "顺序播放">
+					            <a class="icon iconfont icon-liebiao" id = "ORDER" onclick="fileCastTypeChange(this)" title = "顺序播放">
 					            </a>
-					            <a class="icon iconfont icon-music_repeat_button" id = "LIST" onclick="fileCastType(this)" title = "列表循环" style="display:none;">
+					            <a class="icon iconfont icon-music_repeat_button" id = "LIST" onclick="fileCastTypeChange(this)" title = "列表循环" style="display:none;">
 					            </a>
-					            <a class="icon iconfont icon-music_shuffle_button" id = "RANDOM" onclick="fileCastType(this)" title = "随机播放" style="display:none;">
+					            <a class="icon iconfont icon-music_shuffle_button" id = "RANDOM" onclick="fileCastTypeChange(this)" title = "随机播放" style="display:none;">
 					            </a>
-					            <a class="icon iconfont icon-danquxunhuan" id = "SINGLE" onclick="fileCastType(this)" title = "单曲循环" style="display:none;">
+					            <a class="icon iconfont icon-danquxunhuan" id = "SINGLE" onclick="fileCastTypeChange(this)" title = "单曲循环" style="display:none;">
 					            </a>
 				            </div>
 				             <div class="col-sm-1">
@@ -164,7 +164,7 @@
 						/**无任务初始化*/
 						queryFileList();
 					    queryTerminalTree();
-					    showImg("/profile/image/2020/03/25/1d62676d3a936b6465527acc9ec7f565.jpg");
+					    showImg("/img/default.jpg");
 					    /**进度条初始化*/
 					    $('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: volchange, finishedCallback: volfinished});
 						$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
@@ -192,7 +192,7 @@
         	$.ajax(config);
         	
 		});
-		function volchange($input){debugger
+		function volchange($input){
 			$("#volNum").text($input.value);
 			$input.title = $input.value;
 			if($input.valueAsNumber > 20){
@@ -480,10 +480,15 @@
 		}
         /*删除*/
         function remove(fileId){
-        	$.modal.confirm("确认要删除选中的1条音频吗?", function() {
+        	if(isFileCast){
+            	$.modal.confirm("确认要删除选中的1条音频吗?", function() {
+    	    		$.table.remove(fileId);
+    	    		putData();
+            	});
+        	}else{
 	    		$.table.remove(fileId);
 	    		putData();
-        	});
+        	}
 		}
 		/**存放数据*/
 		function putData(data){
@@ -514,7 +519,7 @@
 			}
 		}
 		/**文件广播任务类型改变**/
-		function fileCastType(data){
+		function fileCastTypeChange(data){
 			if($.common.equals(data.id,"ORDER")){
 				$.common.toHide(data.id);
 				$.common.toShow("LIST");
@@ -558,7 +563,7 @@
 					return;
 				}
 				/**创建任务*/
-				var url = prefix + "/startFileTask";
+				var url = prefix + "/startFile";
     			var data ={
     					'songData': $("#songData").val(),
     					'fileCastType': fileCastType,
@@ -568,7 +573,7 @@
     					'teridlist': $("#terIds").val()
     			}
     			var callback = function(result){//回调方法
-    				if (result.code == web_status.SUCCESS) {debugger
+    				if (result.code == web_status.SUCCESS) {
                     	$.modal.msgSuccess("创建成功");
                     	/**添加逻辑*/
                     	

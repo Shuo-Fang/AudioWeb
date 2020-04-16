@@ -37,6 +37,7 @@ import com.audioweb.common.core.page.TableDataInfo;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
+import com.audioweb.common.enums.OperatorType;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.framework.util.ShiroUtils;
@@ -140,7 +141,7 @@ public class FileCastController extends BaseController
     	@ApiImplicitParam(name = "teridlist", value = "本次文件广播的终端realId列表,逗号分隔,可为空,例如“100000,100001,100002”，其中若此终端所处的分区为全选，则无需写入此列表,就是说这个列表里终端一定是处于半选的分区下的", dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "taskName", value = "本次文件广播任务名称，默认可以为空", dataType = "String", paramType = "query"),
     })
-    @Log(title = "文件广播任务", businessType = BusinessType.INSERT)
+    @Log(title = "文件广播任务", businessType = BusinessType.INSERT, operatorType = OperatorType.MOBILE)
     public AjaxResult startFileTask(String songData,String fileCastType,Integer vol,Integer castLevel,String domainidlist,String teridlist,String taskName) {
     	FileCastTask task = new FileCastTask();
     	task.setSongData(songData);
@@ -155,6 +156,20 @@ public class FileCastController extends BaseController
     	if(StringUtils.isNotEmpty(taskName)) {
     		task.setTaskName(taskName);
     	}else {
+    		task.setTaskName(ShiroUtils.getSysUser().getUserName()+"_文件广播");
+    	}
+    	task.setCreateBy(ShiroUtils.getLoginName());
+    	task.setCastType(CastWorkType.FILE);
+    	task.setSessionId(ShiroUtils.getSessionId());
+    	return workCastTaskService.insertWorkCastTask(task);
+    }
+
+    @RequiresPermissions("work:filecast:add")
+    @PostMapping("/startFile")
+    @Log(title = "文件广播任务", businessType = BusinessType.INSERT)
+    @ResponseBody
+    public AjaxResult startFileTask(FileCastTask task) {
+    	if(StringUtils.isEmpty(task.getTaskName())) {
     		task.setTaskName(ShiroUtils.getSysUser().getUserName()+"_文件广播");
     	}
     	task.setCreateBy(ShiroUtils.getLoginName());

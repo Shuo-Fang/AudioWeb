@@ -54,23 +54,6 @@ public class SysIndexController extends BaseController
         mmap.put("copyrightYear", Global.getCopyrightYear());
         mmap.put("demoEnabled", Global.isDemoEnabled());
         mmap.put("systemtime",df.format(new Date()));
-        
-        /*clientService.execute(new Runnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				try {
-					while(true) {
-						clientService.executeAsync();
-						Thread.sleep(1000);
-					}
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});*/
         return "index";
     }
 
