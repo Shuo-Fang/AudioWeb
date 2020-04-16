@@ -115,13 +115,22 @@
         var prefix = ctx + "system/terminal";
 		var domainId = 0;
 		var checkTerId,data;
-
+		/**layout变动时刷新表格样式*/
+		function refreshTable(){
+			$("#"+table.options.id).bootstrapTable('resetView');
+		}
 		$(function() {
 		    var panehHidden = false;
 		    if ($(this).width() < 769) {
 		        panehHidden = true;
 		    }
-		    $('body').layout({ initClosed: panehHidden, west__size: 185 });
+		    $('body').layout({ initClosed: panehHidden, west__size: 185,
+		    	onopen_end : function() {
+		    		refreshTable();
+		    	},
+		    	onclose_end : function() {
+		    		refreshTable();
+		    	} });
 		    queryTerminalList();
 		    queryDomainTree();
 		});
@@ -136,7 +145,6 @@
                 modalName: "终端管理",
 		        sortName: "loginTime",
 		        sortOrder: "desc",
-		        height: 400,
                 clickToSelect:true,
                 rememberSelected:true,
                 uniqueId : "terRealId",

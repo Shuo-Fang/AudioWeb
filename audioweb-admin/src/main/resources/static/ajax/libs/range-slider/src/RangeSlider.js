@@ -55,7 +55,6 @@
 		}
 	});
 	$input.bind("mouseup", function(e){
-		console.log("up");
 		if ($.isFunction(callback)) {
 			finishedCallback(this.value);
 		}

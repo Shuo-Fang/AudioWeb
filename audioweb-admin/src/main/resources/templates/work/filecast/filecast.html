@@ -60,29 +60,29 @@
 				                 </select>
 				             </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_rewind_button" onclick="showFileList()" title = "上一曲">
+					            <a class="icon iconfont icon-music_rewind_button" id = "palyPrev" onclick="showFileList()" title = "上一曲" style="display:none;">
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_pause_button" onclick="showSongList()" title = "暂停" style="display:none;">
+					            <a class="icon iconfont icon-music_pause_button" id = "palyPause" onclick="showSongList()" title = "暂停" style="display:none;">
 					            </a>
-					            <a class="icon iconfont icon-music_play_button" onclick="startCast()" title = "播放" >
-					            </a>
-				            </div>
-		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_fastforward_button" onclick="removeAll()" title = "下一曲">
+					            <a class="icon iconfont icon-music_play_button" id = "palyBack" onclick="startCast()" title = "播放" >
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_stop_button" onclick="showSongList()" title = "停止">
+					            <a class="icon iconfont icon-music_fastforward_button" id = "palyNext" onclick="removeAll()" title = "下一曲" style="display:none;">
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_mute" id = "VOLMUTE" onclick="volChange(this)" title = "切换静音" style="display:none;">
+					            <a class="icon iconfont icon-music_stop_button" id = "palyStop" onclick="showSongList()" title = "停止" style="display:none;">
 					            </a>
-					            <a class="icon iconfont icon-music_volume_down" id = "VOLDOWN"  onclick="volChange(this)" title = "切换静音" style="display:none;">
+				            </div>
+		        			<div class="col-sm-1">
+					            <a class="icon iconfont icon-music_mute" id = "VOLMUTE" onclick="volTypeChange(this)" title = "切换静音" style="display:none;">
 					            </a>
-					            <a class="icon iconfont icon-music_volume_up" id = "VOLUP" onclick="volChange(this)" title = "切换静音" >
+					            <a class="icon iconfont icon-music_volume_down" id = "VOLDOWN"  onclick="volTypeChange(this)" title = "切换静音" style="display:none;">
+					            </a>
+					            <a class="icon iconfont icon-music_volume_up" id = "VOLUP" onclick="volTypeChange(this)" title = "切换静音" >
 					            </a>
 				            </div>
 				            <div class="col-sm-3" style = "margin-top: 5px;">
@@ -95,7 +95,7 @@
         		 <div class="footer" style = "height:64px">
                     <div class="row">
 						<div class="col-xs-1">
-							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">0:00</h4>
+							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">120:00/120:00</h4>
 						</div>
 			        	<div class="col-xs-11">
 							<input type="range" class = "slider-normal"> 
@@ -138,19 +138,36 @@
 	<th:block th:include="include :: RangeSlider-js" />
     <script th:inline="javascript">
         var prefix = ctx + "work/filecast";
+        var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
         var isFileCast = false;
         var fileCastType = "ORDER";
+        var castInfo;//广播信息
+        var filelength;
 		function test(){
-			$('.select-table').slideToggle(300);
+			//console.log("test");
+			$('.ui-layout-toggler-west-open').click();
+		}
+        /**layout变动时刷新表格样式*/
+		function refreshTable(){
+			$("#"+table.options.id).bootstrapTable('resetView');
 		}
 		$(function() {
 		    var panehHidden = false;
 		    if ($(this).width() < 769) {
 		        panehHidden = true;
 		    }
-		    $('body').layout({ initClosed: panehHidden, west__size: 245 });
+		    $('body').layout({ 
+		    	initClosed: panehHidden, 
+		    	west__size: 245,
+		    	onopen_end : function() {
+		    		refreshTable();
+		    	},
+		    	onclose_end : function() {
+		    		refreshTable();
+		    	},
+		    });
 		    /**广播列表,终端列表以及广播任务初始化**/
 			var url = prefix + "/findFileCast";
         	var data = {taskId : $('#taskId').val()};
@@ -158,20 +175,17 @@
         		if (res.code == web_status.SUCCESS) {
 					if($.common.isNotEmpty(res.data)){
 						/**有任务初始化*/
-						isFileCast = true;
-						
+						castInfo = res.data;
+						isFileCast = castInfo.isCast;
+						if(isFileCast){
+							initFileCast(false);//初始化文件广播
+						}else{
+							$.modal.alertWarning("任务已创建但未开始广播,请前往任务管理检查！");
+							initNoFileCast();
+						}
 					}else{
-						/**无任务初始化*/
-						queryFileList();
-					    queryTerminalTree();
-					    showImg("/img/default.jpg");
-					    /**进度条初始化*/
-					    $('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: volchange, finishedCallback: volfinished});
-						$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
-						//$('.slider-normal').attr("disabled",true);
-					    setValue();
+						initNoFileCast();
 					}
-
         		}else if (res.code == web_status.WARNING) {
                     $.modal.alertWarning(res.msg)
                 }  else {
@@ -192,44 +206,6 @@
         	$.ajax(config);
         	
 		});
-		function volchange($input){
-			$("#volNum").text($input.value);
-			$input.title = $input.value;
-			if($input.valueAsNumber > 20){
-				if($("#VOLUP").is(':hidden')){
-					$.common.toHide("VOLMUTE");
-					$.common.toHide("VOLDOWN");
-					$.common.toShow("VOLUP");
-				}
-			}else if($input.valueAsNumber == 0){
-				if($("#VOLMUTE").is(':hidden')){
-					$.common.toHide("VOLUP");
-					$.common.toHide("VOLDOWN");
-					$.common.toShow("VOLMUTE");
-				}
-			}else if($input.valueAsNumber >0 && $input.valueAsNumber <= 20){
-				if($("#VOLDOWN").is(':hidden')){
-					$.common.toHide("VOLUP");
-					$.common.toHide("VOLMUTE");
-					$.common.toShow("VOLDOWN");
-				}
-			}
-		}
-		function volfinished(){
-			
-		}
-		/**设置进度条位置*/
-		function setValue(value){
-			if($.common.isEmpty(value)){
-				value = 30;
-			}
-			var data = $(".slider-small" );
-			data[0].value = value;
-			var userAgent = navigator.userAgent.toLowerCase();
-			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
-				data.css( 'background-size', value/40*100 + '% 100%' ); 
-			}
-		}
         function queryFileList(data){
         	$.table.destroy();
         	if($.common.isEmpty(data)){
@@ -325,7 +301,6 @@
             };
             $.table.init(options);
         }
-        
 		$('#btnExpand').click(function() {
 			$._tree.expandAll(true);
 		    $(this).hide();
@@ -513,7 +488,7 @@
 			returnData = JSON.parse(JSON.stringify(res));
 		}
 		/**音量类型改变方法*/
-		function volChange(data){
+		function volTypeChange(data){
 			if($.common.equals(data.id,"VOLMUTE")){//
 				$.common.toHide(data.id);
 			}
@@ -543,10 +518,6 @@
 			$("#showImg").attr("src",src);
 			$("#showImg").attr("layer-src",src);
 		}
-		/**初始化文件广播*/
-		function initFileCast(){
-			$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: change, finishedCallback:finished});
-		}
 		/**播放按钮触发**/
 		function startCast(){
 			if(isFileCast){
@@ -574,11 +545,21 @@
     			}
     			var callback = function(result){//回调方法
     				if (result.code == web_status.SUCCESS) {
-                    	$.modal.msgSuccess("创建成功");
                     	/**添加逻辑*/
-                    	
+                    	if($.common.isNotEmpty(result.data)){
+							castInfo = result.data;
+							isFileCast = castInfo.isCast;
+							if(isFileCast){
+								initFileCast(true);//初始化文件广播
+							}else{
+								$.modal.alertWarning("任务已创建但未开始广播，请前往任务管理查看");
+							}
+                    	}else{
+                    		 $.modal.alertWarning("任务已创建但无信息，请前往任务管理查看");
+                    	}
+                    	$.modal.msgSuccess("创建成功");
                     }  else if (result.code == web_status.WARNING) {
-                        $.modal.alertWarning(result.msg)
+                        $.modal.alertWarning(result.msg);
                     }  else {
                     	$.modal.alertError(result.msg);
                     }
@@ -661,7 +642,97 @@
 				  ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
 				}); 
 		}
-		/***/
+		/**初始化文件广播  isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新*/
+		function initFileCast(isStart){
+			/**信息上同步**/
+			//1、图标
+		    if($.common.isNotEmpty(castInfo.runFile.imageVirPath)){
+				showImg(castInfo.runFile.imageVirPath);
+		    }else{
+		    	showImg(defaultPath);
+		    }
+			//2、显示广播状态
+			$.common.toShow("palyPrev");
+			$.common.toShow("palyNext");
+			$.common.toShow("palyStop");
+			if(castInfo.isStop){
+				//暂停
+				$.common.toHide("palyPause");
+				$.common.toShow("palyBack");
+			}else{
+				$.common.toHide("palyBack");
+				$.common.toShow("palyPause");
+			}
+			//3、初始化进度条
+			filelength = parseInt(castInfo.runFile.duration/1000);
+			$('.slider-normal').RangeSlider({ min: 0,   max: filelength,  step: 1, callback: castchange, finishedCallback: castfinished});
+			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
+			$('.slider-normal').attr("disabled",false);
+			setValue(castInfo.vol);
+			//隐藏树
+			test();
+			if(isStart){
+				
+			}else{
+				
+			}
+			//$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: change, finishedCallback:finished});
+		}
+		function initNoFileCast(){
+			/**无任务初始化*/
+			queryFileList();
+		    queryTerminalTree();
+		    showImg(defaultPath);
+		    /**进度条初始化*/
+		    $('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: castchange, finishedCallback: castfinished});
+			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
+			$('.slider-normal').attr("disabled",true);
+		    setValue();
+		}
+		function castfinished(value){
+			console.log("cast:"+value);
+		}
+		function castchange($input){
+			console.log("cast:"+$input.value);
+		}
+		function volfinished(value){
+			console.log("vol:"+value);
+		}
+		function volchange($input){
+			$("#volNum").text($input.value);
+			$input.title = $input.value;
+			if($input.valueAsNumber > 20){
+				if($("#VOLUP").is(':hidden')){
+					$.common.toHide("VOLMUTE");
+					$.common.toHide("VOLDOWN");
+					$.common.toShow("VOLUP");
+				}
+			}else if($input.valueAsNumber == 0){
+				if($("#VOLMUTE").is(':hidden')){
+					$.common.toHide("VOLUP");
+					$.common.toHide("VOLDOWN");
+					$.common.toShow("VOLMUTE");
+				}
+			}else if($input.valueAsNumber >0 && $input.valueAsNumber <= 20){
+				if($("#VOLDOWN").is(':hidden')){
+					$.common.toHide("VOLUP");
+					$.common.toHide("VOLMUTE");
+					$.common.toShow("VOLDOWN");
+				}
+			}
+		}
+		/**设置进度条位置*/
+		function setValue(value){
+			if($.common.isEmpty(value)){
+				value = 30;
+			}
+			var data = $(".slider-small" );
+			data[0].value = value;
+			var userAgent = navigator.userAgent.toLowerCase();
+			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
+				data.css( 'background-size', value/40*100 + '% 100%' ); 
+			}
+		}
     </script>
 </body>
 </html>
