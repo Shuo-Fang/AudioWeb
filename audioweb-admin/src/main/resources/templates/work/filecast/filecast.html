@@ -95,7 +95,7 @@
         		 <div class="footer" style = "height:64px">
                     <div class="row">
 						<div class="col-xs-1">
-							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">120:00/120:00</h4>
+							<h4 align ="right" id = "toDuration" style = "margin-top: 0px;">0:00/0:00</h4>
 						</div>
 			        	<div class="col-xs-11">
 							<input type="range" class = "slider-normal"> 
@@ -116,9 +116,9 @@
 	 </div>
      <div class="ui-layout-center">
      	 <div class="icon-view-plus" id="toolbar" role="group">
-            <a class="icon iconfont icon-yinyueset" onclick="showFileList()" shiro:hasPermission="work:filecast:list" title = "音频列表">
+            <a class="icon iconfont icon-yinyueset" onclick="showFileList()" title = "音频列表">
             </a>
-            <a class="icon iconfont icon-music_playlist" onclick="showSongList()" shiro:hasPermission="work:filecast:add" title = "歌单导入">
+            <a class="icon iconfont icon-music_playlist" onclick="showSongList()" title = "歌单导入">
             </a>
             <a class="icon iconfont icon-shanchu" onclick="removeAll()" title = "删除">
             </a>
@@ -141,11 +141,12 @@
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
-        var isFileCast = false;
+        var isFileCast = false,isDestroy = false,isMove = false;
         var fileCastType = "ORDER";
         var castInfo;//广播信息
         var filelength;
-		function test(){
+        /**隐藏左侧面板*/
+		function hideLeft(){
 			//console.log("test");
 			$('.ui-layout-toggler-west-open').click();
 		}
@@ -467,12 +468,16 @@
 		}
 		/**存放数据*/
 		function putData(data){
+			isDestroy = false;
 			if($.common.isEmpty(data)){
 				data = $.table.getData();
 			}
 			var len = "";
 			if($.common.isNotEmpty(data)){
 				for(var i=0,size = data.length;i<size;i++){
+					if(data[i].delFlag != 0){
+						isDestroy = true;
+					}
 					len += data[i].fileId+",";
 				}
 				if($.common.isNotEmpty(len)){
@@ -527,6 +532,10 @@
 				/**判断元素是否齐全*/
 				if(!selectNode()){
 					$.modal.tipWarning('#tree',"请选择分区或终端");
+					return;
+				}
+				if(isDestroy){
+					$.modal.tipWarning('#bootstrap-table',"请移除已无效的音频");
 					return;
 				}
 				if($.common.isEmpty($("#songData").val())){
@@ -643,7 +652,7 @@
 				}); 
 		}
 		/**初始化文件广播  isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新*/
-		function initFileCast(isStart){
+		function initFileCast(isStart){debugger
 			/**信息上同步**/
 			//1、图标
 		    if($.common.isNotEmpty(castInfo.runFile.imageVirPath)){
@@ -670,11 +679,17 @@
 			$('.slider-normal').attr("disabled",false);
 			setValue(castInfo.vol);
 			//隐藏树
-			test();
+			hideLeft();
 			if(isStart){
 				
 			}else{
-				
+				/**初始化已选音频*/
+				$("#songData").val(castInfo.songData);
+				getFileData();
+				/**初始化分区树*/
+				$("#terIds").val(castInfo.teridlist);
+				$("#domainIds").val(castInfo.domainidlist);
+				queryTerminalTree();
 			}
 			//$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: change, finishedCallback:finished});
 		}
@@ -690,10 +705,10 @@
 		    setValue();
 		}
 		function castfinished(value){
-			console.log("cast:"+value);
+			isMove = false;
 		}
 		function castchange($input){
-			console.log("cast:"+$input.value);
+			isMove = true;
 		}
 		function volfinished(value){
 			console.log("vol:"+value);
@@ -732,6 +747,32 @@
 			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
 				data.css( 'background-size', value/40*100 + '% 100%' ); 
 			}
+		}
+
+		function getFileData(){
+			var url = "songlist/getListById";
+			var data = {"songData":$("#songData").val()};
+			var callback = function(res){
+				if (res.code == web_status.SUCCESS) {
+					queryFileList(res.rows);
+				}else if (res.code == web_status.WARNING) {
+					$.modal.alertWarning(res.msg)
+				}  else {
+					$.modal.alertError(res.msg);
+				}
+			};
+			var config = {
+				url: url,
+				type: "post",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (typeof callback == "function") {
+						callback(result);
+					}
+				}
+			};
+			$.ajax(config)
 		}
     </script>
 </body>

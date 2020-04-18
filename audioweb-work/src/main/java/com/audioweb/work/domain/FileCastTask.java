@@ -159,7 +159,7 @@ public class FileCastTask extends WorkCastTask{
 	/**字符串格式的音频播放列表存储为list*/
 	@JsonSetter("songData")
 	public void setSongData(String songData) {
-		this.songData = new LinkedList<>(Convert.strToList(songData));
+		this.songData = Convert.strToList(songData);
 	}
 	
 	public void putSongDataList(List<String> songDataList) {
@@ -187,7 +187,7 @@ public class FileCastTask extends WorkCastTask{
 	/**字符串格式的历史音频播放列表存储为list*/
 	@JsonSetter("playHistory")
 	public void setPlayHistory(String playHistory) {
-		this.playHistory = new LinkedList<>(Convert.strToList(playHistory));
+		this.playHistory = Convert.strToList(playHistory);
 	}
 
 	public void putPlayHistoryList(List<String> playHistory) {

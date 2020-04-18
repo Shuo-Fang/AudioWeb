@@ -50,6 +50,17 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     {
         return workTerminalMapper.selectWorkTerminalById(terRealId);
     }
+    /**
+     * 查询终端管理
+     * 
+     * @param terminalIds 终端管理ID
+     * @return 终端管理
+     */
+    @Override
+    public List<WorkTerminal> selectWorkTerminalByIds(String terRealIds)
+    {
+    	return workTerminalMapper.selectWorkTerminalByIds(Convert.toStrArray(terRealIds));
+    }
 
     /**
      * 查询终端管理列表
@@ -72,9 +83,12 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     @Override
     public int insertWorkTerminal(WorkTerminal workTerminal)
     {
-        workTerminal.setCreateTime(DateUtils.getNowDate());
-        workTerminal.put();
-        return workTerminalMapper.insertWorkTerminal(workTerminal);
+    	workTerminal.setCreateTime(DateUtils.getNowDate());
+    	int result = workTerminalMapper.insertWorkTerminal(workTerminal);
+    	if(result > 0) {
+    		workTerminal.put();
+    	}
+        return result;
     }
 
     /**
@@ -132,7 +146,12 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     @Override
     public int deleteWorkTerminalByIds(String ids)
     {
-        return workTerminalMapper.deleteWorkTerminalByIds(Convert.toStrArray(ids));
+		/**同步内存中终端的分区信息*/
+		List<WorkTerminal> terminals = selectWorkTerminalByIds(ids);
+		for(WorkTerminal ter:terminals) {
+			ter.remove();
+		}
+		return workTerminalMapper.deleteWorkTerminalByIds(Convert.toStrArray(ids));
     }
 
     /**
@@ -144,6 +163,13 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     @Override
     public int deleteWorkTerminalById(String terRealId)
     {
+    	/**删除缓存**/
+    	WorkTerminal terminal = new WorkTerminal();
+    	terminal.setTerRealId(terRealId);
+    	WorkTerminal ter = WorkTerminal.getTerById(terminal);
+    	if(StringUtils.isNotNull(ter)) {
+    		ter.remove();
+    	}
         return workTerminalMapper.deleteWorkTerminalById(terRealId);
     }
 
@@ -281,7 +307,21 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("domainId", domainId);
 		map.put("ids", Convert.toStrArray(ids));
-		return workTerminalMapper.updateTerminalDomainByIds(map);
+		int result = workTerminalMapper.updateTerminalDomainByIds(map);
+		if(result > 0) {
+			/**同步内存中终端的分区信息*/
+			List<WorkTerminal> terminals = selectWorkTerminalByIds(ids);
+			for(WorkTerminal ter:terminals) {
+				WorkTerminal terminal = ter.get();
+				if(StringUtils.isNull(terminal)) {
+					ter.put();
+				}else {
+					terminal.setDomainId(ter.getDomainId());
+					terminal.setDomain(ter.getDomain());
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -303,40 +343,43 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	public List<Ztree> roleTerminalTreeData(String domainIds,String terIds) {
 		List<String> doms = Convert.strToList(domainIds);
 		List<String> ters = Convert.strToList(terIds);
-		List<SysDomain> father =domainService.selectDomainList(new SysDomain());
 		List<Ztree> resultDoms = new ArrayList<Ztree>();
 		List<Ztree> resultTers = new ArrayList<Ztree>();
+		SysDomain sysDomain = new SysDomain();
+		sysDomain.setStatus(WorkConstants.NORMAL);
+		List<SysDomain> father =domainService.selectDomainList(sysDomain);
+		/**获取分区字段*/
+		String idString = getDomainIds(father);
+		/**获取当前分区下全部*/
+		List<WorkTerminal> terminals = selectWorkTerminalListByDomIds(idString);
 		for(SysDomain domain:father) {
-			/**分区正常*/
-			if(UserConstants.DOMAIN_NORMAL.equals(domain.getStatus())) {
-                Ztree ztree = new Ztree();
-                ztree.setId(domain.getDomainId());
-                ztree.setpId(domain.getParentId());
-                ztree.setName(domain.getDomainName());
-                ztree.setTitle(domain.getDomainName());
-                resultDoms.add(ztree);
-        		if(doms.size() == 0) {
-        			resultTers.addAll(getChildren(domain,ters,ISNOTCHECK));
-        		}else {
-        			for(String dom:doms) {
-                    	if(dom.contains(String.valueOf(domain.getDomainId()))) {
-                    		/**可能存在相同的ID*/
-                    		ztree.setChecked(true);
-                    		if(dom.contains("_")) {
-                    			/**存在下划线为半选,需要进一步筛选*/
-                    			resultTers.addAll(getChildren(domain,ters,ISNOTCHECK));
-                    		}else {
-                    			resultTers.addAll(getChildren(domain,ters,ISCHECK));
-                    		}
-                    		break;
-                    	}
-                    }
-            		/**未被选中*/
-        			if(!ztree.isChecked()) {
-        				resultTers.addAll(getChildren(domain,ters,ISNOTCHECK));
-        			}
-        		}
-			}
+            Ztree ztree = new Ztree();
+            ztree.setId(domain.getDomainId());
+            ztree.setpId(domain.getParentId());
+            ztree.setName(domain.getDomainName());
+            ztree.setTitle(domain.getDomainName());
+            resultDoms.add(ztree);
+    		if(doms.size() == 0) {
+    			resultTers.addAll(getChildren(terminals,domain,ters,ISNOTCHECK));
+    		}else {
+    			for(String dom:doms) {
+                	if(dom.contains(String.valueOf(domain.getDomainId()))) {
+                		/**可能存在相同的ID*/
+                		ztree.setChecked(true);
+                		if(dom.contains("_")) {
+                			/**存在下划线为半选,需要进一步筛选*/
+                			resultTers.addAll(getChildren(terminals,domain,ters,ISNOTCHECK));
+                		}else {
+                			resultTers.addAll(getChildren(terminals,domain,ters,ISCHECK));
+                		}
+                		break;
+                	}
+                }
+        		/**未被选中*/
+    			if(!ztree.isChecked()) {
+    				resultTers.addAll(getChildren(terminals,domain,ters,ISNOTCHECK));
+    			}
+    		}
 		}
 		resultDoms.addAll(resultTers);
 		return resultDoms;
@@ -353,43 +396,39 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	 * @author 10155 
 	 * @date 2020年3月25日 下午10:59:38
 	 */
-	private List<Ztree> getChildren(SysDomain domain,List<String> terIds,String checked) {
+	private List<Ztree> getChildren(List<WorkTerminal> childs,SysDomain domain,List<String> terIds,String checked) {
 		List<Ztree> child = new ArrayList<Ztree>();
-		WorkTerminal terminal = new WorkTerminal();
-		terminal.setStatus(WorkConstants.NORMAL);
-		terminal.setDomain(domain);
-		terminal.setDomainId(domain.getDomainId());
-		/**获取当前分区下全部*/
-		List<WorkTerminal> terminals = workTerminalMapper.selectWorkTerminalListByDomId(domain.getDomainId());
-		for(WorkTerminal ter:terminals) {
-			Ztree tree = new Ztree();
-			tree.setpId(ter.getDomainId());
-			tree.setId(Long.parseLong(ter.getTerRealId()));
-			tree.setName(ter.getTerminalName());
-			tree.setTitle("ID:"+ter.getTerminalId());
-			tree.setTer(true);
-			if(!Objects.equals(ter.getStatus(), WorkConstants.NORMAL)) {
-				tree.setNocheck(true);
-			}
-			/**寻呼话筒启用*/
-			if(Objects.equals(ter.getIsCmic(), WorkConstants.NORMAL)) {
-				tree.setTextIcon(Ztree.TEXT_ICON_5);
-			}else if(Objects.equals(ter.getIsAutoCast(), WorkConstants.NORMAL)){
-				/**终端采播启用*/
-				tree.setTextIcon(Ztree.TEXT_ICON_3);
-			}else {
-				/**普通终端*/
-				tree.setTextIcon(Ztree.TEXT_ICON_7);
-			}
-			if("0".equals(checked)) {//非全选
-				if(terIds.size() > 0 && terIds.contains(ter.getTerRealId())) {
-					tree.setChecked(true);
-					terIds.remove(ter.getTerRealId());
+		Long domainId = domain.getDomainId();
+		for(WorkTerminal ter:childs) {
+			if(Objects.equals(domainId, ter.getDomainId())) {
+				Ztree tree = new Ztree();
+				tree.setpId(ter.getDomainId());
+				tree.setId(Long.parseLong(ter.getTerRealId()));
+				tree.setName(ter.getTerminalName());
+				tree.setTitle("ID:"+ter.getTerminalId());
+				tree.setTer(true);
+				if(!Objects.equals(ter.getStatus(), WorkConstants.NORMAL)) {
+					tree.setNocheck(true);
 				}
-			}else{
-				tree.setChecked(true);
+				/**寻呼话筒启用*/
+				if(Objects.equals(ter.getIsCmic(), WorkConstants.NORMAL)) {
+					tree.setTextIcon(Ztree.TEXT_ICON_5);
+				}else if(Objects.equals(ter.getIsAutoCast(), WorkConstants.NORMAL)){
+					/**终端采播启用*/
+					tree.setTextIcon(Ztree.TEXT_ICON_3);
+				}else {
+					/**普通终端*/
+					tree.setTextIcon(Ztree.TEXT_ICON_7);
+				}
+				if(ISNOTCHECK.equals(checked)) {//非全选
+					if(terIds.size() > 0 && terIds.remove(ter.getTerRealId())) {
+						tree.setChecked(true);
+					}
+				}else{
+					tree.setChecked(true);
+				}
+				child.add(tree);
 			}
-			child.add(tree);
 		}
 		return child;
 	}
@@ -402,5 +441,34 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	@Override
 	public List<WorkTerminal> selectWorkTerminalListByDomId(Long domainId) {
 		return workTerminalMapper.selectWorkTerminalListByDomId(domainId);
+	}
+	/**
+	 * 批量查询终端管理列表
+	 * 
+	 * @param domainId 分区ID
+	 * @return 终端管理集合
+	 */
+	@Override
+	public List<WorkTerminal> selectWorkTerminalListByDomIds(String domainIds) {
+		return workTerminalMapper.selectWorkTerminalListByDomIds(Convert.toStrArray(domainIds));
+	}
+	
+	/***
+	 * 获取分区字段
+	 * @Title: removeBlockDomain 
+	 * @Description: 获取分区字段
+	 * @param list void 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月18日 下午7:08:13
+	 */
+	private String getDomainIds(List<SysDomain> list){
+		String idString = "";
+		for(SysDomain domain:list) {
+			if(UserConstants.DOMAIN_NORMAL.equals(domain.getStatus())) {
+				idString += domain.getDomainId() + ",";
+			}
+		}
+		return idString;
 	}
 }

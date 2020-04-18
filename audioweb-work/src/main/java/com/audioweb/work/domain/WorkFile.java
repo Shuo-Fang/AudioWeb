@@ -137,6 +137,11 @@ public class WorkFile extends BaseEntity implements BaseWork
 		return fileMap.get(key);
 	}
 	
+	/**通过id删除缓存音频信息**/
+	public static WorkFile removeFileById(String key) {
+		return fileMap.remove(key);
+	}
+	
 	@Override
 	public boolean remove() {
 		return StringUtils.isNotNull(fileMap.remove(fileId));

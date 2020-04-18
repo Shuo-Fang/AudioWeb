@@ -25,6 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSongListVo"/>
         <where>  
             <if test="listUserId != null "> and list_user_id = #{listUserId}</if>
+            <if test="listId != null "> and list_id = #{listId}</if>
             <if test="listName != null  and listName != ''"> and list_name like concat('%', #{listName}, '%')</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
         </where>

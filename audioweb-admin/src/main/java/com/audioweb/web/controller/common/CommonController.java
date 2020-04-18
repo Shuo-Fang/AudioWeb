@@ -172,6 +172,7 @@ public class CommonController {
 							if(Mp3Utils.isMp3(fileName)){
 								WorkFile fWorkFile = workFileService.insertWorkFile(filePath, fileName, "work.file".equals(value)?"0":"1",ShiroUtils.getLoginName(),remark);
 								if(StringUtils.isNotNull(fWorkFile)) {
+									fWorkFile.put();//文件信息存入缓存中
 									String url = fWorkFile.getVirPath();
 									AjaxResult ajax = AjaxResult.success();
 									Map<String, String> data = new HashMap<String, String>();

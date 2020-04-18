@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.audioweb.common.constant.UserConstants;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.service.IWorkTerminalService;
 import io.swagger.annotations.Api;
@@ -23,7 +24,6 @@ import io.swagger.annotations.ApiResponses;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.system.domain.SysDomain;
 import com.audioweb.system.service.ISysDomainService;
 import com.audioweb.common.core.page.TableDataInfo;
@@ -76,7 +76,7 @@ public class RunningTerminalController extends BaseController
      * 查询在线终端信息
      */
     @ApiOperation("根据根分区获取分区下所有在线终端信息")
-    @ApiImplicitParam(name = "domainId", value = "需要获取的终端分区ID,默认就是获取的用户信息中的domainId,可以是这个分区下的下级分区", required = true, dataType = "String", paramType = "query")
+    @ApiImplicitParam(name = "domainId", value = "需要获取的终端分区ID,默认就是获取的用户信息中的domainId,可以是这个分区下的下级分区", dataType = "String", paramType = "query")
     @GetMapping("/listAll")
     @RequiresPermissions("work:terminal:list")
     @ResponseBody
@@ -84,18 +84,23 @@ public class RunningTerminalController extends BaseController
         @ApiResponse(code=500,message="传参出错"),
         @ApiResponse(code=0,message="获取成功")
     })
-    public AjaxResult listAll(@RequestParam String domainId)
+    public AjaxResult listAll(String domainId)
     {
     	try {
-    		WorkTerminal workTerminal = new WorkTerminal();
+    		List<SysDomain> domains;
+			SysDomain domain = new SysDomain();
+			domain.setStatus(WorkConstants.NORMAL);
     		if(StringUtils.isNotEmpty(domainId)) {
-        		workTerminal.setDomainId(Long.parseLong(domainId));
+    			domain.setDomainId(Long.parseLong(domainId));
+    			domains = domainService.selectDomainList(domain);
         	}else {
-        		workTerminal.setDomainId(ShiroUtils.getSysUser().getDomainId());
+    			domains = domainService.selectDomainList(domain);
         	}
-    		SysDomain domain = workTerminal.getDomain();
-    		domain.setStatus(UserConstants.DOMAIN_NORMAL);
-    		List<WorkTerminal> list = workTerminalService.selectWorkTerminalList(workTerminal);
+    		String idString = "";
+    		for(SysDomain sysDomain:domains) {
+    			idString += sysDomain.getDomainId() + ",";
+    		}
+    		List<WorkTerminal> list = workTerminalService.selectWorkTerminalListByDomIds(idString);
     		WorkTerminal.loadAll(list);
     		AjaxResult result = success();
 	    	result.put(AjaxResult.DATA_TAG, list);

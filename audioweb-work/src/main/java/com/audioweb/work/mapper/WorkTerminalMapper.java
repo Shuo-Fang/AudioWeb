@@ -20,6 +20,13 @@ public interface WorkTerminalMapper
      * @return 终端管理
      */
     public WorkTerminal selectWorkTerminalById(String terminalId);
+    /**
+     * 查询终端管理
+     * 
+     * @param terminalId 终端管理ID
+     * @return 终端管理
+     */
+    public List<WorkTerminal> selectWorkTerminalByIds(String[] terminalId);
 
     /**
      * 查询终端管理列表
@@ -35,6 +42,13 @@ public interface WorkTerminalMapper
      * @return 终端管理集合
      */
     public List<WorkTerminal> selectWorkTerminalListByDomId(Long domainId);
+    /**
+     * 批量查询终端管理列表
+     * 
+     * @param domainId 终端管理
+     * @return 终端管理集合
+     */
+    public List<WorkTerminal> selectWorkTerminalListByDomIds(String[] domainId);
 
     /**
      * 新增终端管理

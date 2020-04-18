@@ -38,6 +38,9 @@ public class Global
 
     /** 获取地址开关 */
     private static boolean addressEnabled;
+    
+    /** 删除或丢失音频文件保存记录天数 */
+    private static Integer lostFile;
    
     public static String getName()
     {
@@ -154,5 +157,13 @@ public class Global
 
 	public static void setWordPath(String wordPath) {
 		Global.wordPath = wordPath;
+	}
+
+	public static Integer getLostFile() {
+		return lostFile;
+	}
+
+	public void setLostFile(Integer lostFile) {
+		Global.lostFile = lostFile;
 	}
 }

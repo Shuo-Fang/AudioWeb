@@ -12,6 +12,8 @@ ruoyi:
   #profile: /home/audioweb/uploadPath 已经给予数据库进行配置
   # 获取ip地址开关
   addressEnabled: true
+  # 删除或丢失音频文件保存记录天数
+  lostFile: 30
 # 通信线程池配置
 netty:
   #绑定IP地址 已经给予数据库进行配置

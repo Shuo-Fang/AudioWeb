@@ -88,6 +88,9 @@
                 <a class="btn btn-danger multiple disabled" onclick="removeAll()" shiro:hasPermission="work:file:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
+                <a class="btn btn-primary" onclick="reloadAll()" shiro:hasPermission="work:file:edit">
+                    <i class="fa fa-refresh"></i> 重新扫描
+                </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
@@ -332,6 +335,10 @@
             	    $.operate.submit(url, "post", "json", data);
                 }
         	});
+		}
+		function reloadAll(){
+		    var url = prefix + '/reloadAll';
+            $.operate.post(url);
 		}
     </script>
 </body>

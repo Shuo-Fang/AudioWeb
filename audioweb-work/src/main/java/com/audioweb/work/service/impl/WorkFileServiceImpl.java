@@ -105,7 +105,12 @@ public class WorkFileServiceImpl implements IWorkFileService
     @Override
     public int slowDeleteWorkFileByIds(String ids)
     {
-    	return workFileMapper.slowDeleteWorkFileByIds(Convert.toStrArray(ids));
+    	String[] fileIds = Convert.toStrArray(ids);
+    	for(String id:fileIds) {
+    		/**清理内存中缓存的音频信息*/
+    		WorkFile.removeFileById(id);
+    	}
+    	return workFileMapper.slowDeleteWorkFileByIds(fileIds);
     }
 
     /**
@@ -230,7 +235,7 @@ public class WorkFileServiceImpl implements IWorkFileService
 						file.setDelFlag(WorkConstants.AUDIOFILENOTFOND);
 						upDataFiles.add(file);
 					}else if(file.getUpdateTime().getTime() < (time - WorkConstants.AUDIOFILENOTFONDDATE)){
-						/** 删除或丢失文件存储时间超过了7天*/
+						/** 删除或丢失文件存储时间超过了指定时间*/
 						deleteIds += file.getFileId()+",";
 						/**删除对应的文件图像信息*/
 						if(StringUtils.isNotEmpty(file.getImagePath())) {

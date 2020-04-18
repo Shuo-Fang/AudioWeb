@@ -1,7 +1,10 @@
 package com.audioweb.web.controller.file;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -191,16 +194,22 @@ public class WorkFileController extends BaseController
     }*/
 
     /**
-     * 修改保存音频任务中所有音频的存储序列信息
+     * 重新扫描全部音频
      */
-/*    @RequiresPermissions("work:file:edit")
-    @Log(title = "音频任务中所有音频的存储序列信息", businessType = BusinessType.UPDATE)
-    @PostMapping("/edit")
+    @RequiresPermissions("work:file:edit")
+    @Log(title = "重新扫描全部音频", businessType = BusinessType.UPDATE)
+    @PostMapping("/reloadAll")
     @ResponseBody
-    public AjaxResult editSave(WorkFile workFile)
+    public AjaxResult reloadAll()
     {
-        return toAjax(workFileService.updateWorkFile(workFile));
-    }*/
+        /** 初始化路径信息 */
+		Map<String, String> paths = new HashMap<String, String>();
+		paths.put(WorkConstants.AUDIOFILETYPE, Global.getFilePath());
+		paths.put(WorkConstants.AUDIOPOINTTYPE, Global.getPointPath());
+		paths.put(WorkConstants.AUDIOWORDTYPE, Global.getWordPath());
+		workFileService.initWorkFiles(paths);
+        return success();
+    }
 
     /**
      * 删除音频任务中所有音频的存储序列信息

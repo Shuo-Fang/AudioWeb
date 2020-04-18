@@ -8,6 +8,8 @@
  */ 
 package com.audioweb.common.constant;
 
+import com.audioweb.common.config.Global;
+
 /** 
  * @ClassName: TerminalConstants 
  * @Description: 终端常量信息
@@ -36,8 +38,8 @@ public class WorkConstants {
     public final static String AUDIOFILENOTFOND = "1";
     public final static String AUDIOFILEDESTOY = "2";
     
-    /** 丢失文件的最长存留信息 默认为7天 */
-    public final static Long AUDIOFILENOTFONDDATE = (long) (7*24*60*60*1000);
+    /** 丢失文件的最长存留信息 默认为30天 */
+    public final static Long AUDIOFILENOTFONDDATE = (long) (Global.getLostFile()*24*60*60*1000);
     
     /** 音频文件所属类型的状态码 0为文件广播,1为终端点播,2为文字转语音*/
     public final static String AUDIOFILETYPE = "0";

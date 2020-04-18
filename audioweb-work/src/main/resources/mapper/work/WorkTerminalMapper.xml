@@ -61,15 +61,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
     </select>
+    
     <select id="selectWorkTerminalListByDomId" parameterType="Long" resultMap="WorkTerminalResult">
         <include refid="selectWorkTerminalVo"/>
         where
         	t.del_flag = '0' AND t.status = '0' AND d.domain_id = #{domainId}
     </select>
     
+    <select id="selectWorkTerminalListByDomIds" parameterType="String" resultMap="WorkTerminalResult">
+        <include refid="selectWorkTerminalVo"/>
+        	where t.del_flag = '0' AND t.status = '0' AND d.domain_id in 
+        <foreach item="domainId" collection="array" open="(" separator="," close=")">
+            #{domainId}
+        </foreach>
+    </select>
+    
     <select id="selectWorkTerminalById" parameterType="String" resultMap="WorkTerminalResult">
         <include refid="selectWorkTerminalVo"/>
         where ter_real_id = #{terRealId}
+    </select>
+    
+    <select id="selectWorkTerminalByIds" parameterType="String" resultMap="WorkTerminalResult">
+        <include refid="selectWorkTerminalVo"/>
+        where t.del_flag = '0' AND t.status = '0' AND ter_real_id in
+        <foreach item="terRealId" collection="array" open="(" separator="," close=")">
+            #{terRealId}
+        </foreach>
     </select>
         
     <insert id="insertWorkTerminal" parameterType="WorkTerminal" useGeneratedKeys="true">

@@ -99,19 +99,22 @@ public class SongListController extends BaseController
      */
     @ApiOperation("查询歌单列表")
     @ApiImplicitParams({
-    	@ApiImplicitParam(name = "statu", value = "歌单状态,0为查询启用的歌单,1为查询停用的歌单,为空则查询全部", dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "listName", value = "查询的歌单名称，支持模糊查询，为空默认查询全部", dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "listId", value = "查询的指定歌单id，为空则默认查询全部", dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "statu", value = "歌单状态,0为查询启用的歌单,1为查询停用的歌单,为空则查询全部", dataType = "String", paramType = "query"),
     })
     @RequiresPermissions("work:songlist:list")
     @GetMapping("/listAll")
     @ResponseBody
-    public AjaxResult listAll(String statu,Long listId)
+    public AjaxResult listAll(String listName, String statu,Long listId)
     {
     	SongList songList = new SongList();
     	try {
-
         	if(StringUtils.isNotEmpty(statu)) {
         		songList.setStatus(statu);
+        	}
+        	if(StringUtils.isNotEmpty(listName)) {
+        		songList.setListName(listName);
         	}
         	if(StringUtils.isNotNull(listId)) {
         		songList.setListId(listId);
@@ -155,8 +158,8 @@ public class SongListController extends BaseController
     @ApiOperation("新增保存歌单")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "listName", value = "歌单名称", required = true,  dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "status", value = "歌单状态，0，启用，1，停用", required = true, dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "songData", value = "歌单包含音频ID组，逗号隔开", required = true, dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "status", value = "歌单状态，0，启用，1，停用, 为空则默认启用", dataType = "String", paramType = "query"),
     	@ApiImplicitParam(name = "remark", value = "备注，可为空",dataType = "String", paramType = "query"),
     })
     @RequiresPermissions("work:songlist:add")
@@ -166,10 +169,14 @@ public class SongListController extends BaseController
     public AjaxResult addSongList(String listName,String status,String songData,String remark)
     {
     	try {
-
         	SongList songList = new SongList();
+        	if(StringUtils.isEmpty(listName)) {
+        		return error("歌单名称为空！");
+        	}
         	songList.setListName(listName);
-        	songList.setStatus(status);
+        	if(StringUtils.isNotEmpty(status) && "01".contains(status)) {
+        		songList.setStatus(status);
+        	}
         	songList.setSongData(songData);
         	songList.setRemark(remark);
         	songList.setListUserId(ShiroUtils.getUserId());
@@ -198,10 +205,10 @@ public class SongListController extends BaseController
     @ApiOperation("修改保存歌单")
     @ApiImplicitParams({
     	@ApiImplicitParam(name = "listId", value = "修改的歌单ID", required = true,  dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "listName", value = "歌单名称", required = true,  dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "status", value = "歌单状态，0，启用，1，停用", required = true, dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "songData", value = "歌单包含音频ID组，逗号隔开", required = true, dataType = "String", paramType = "query"),
-    	@ApiImplicitParam(name = "remark", value = "备注，可为空",dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "listName", value = "歌单名称,为空则默认不修改", dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "status", value = "歌单状态，0，启用，1，停用，为空则默认不修改", dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "songData", value = "歌单包含音频ID组，逗号隔开，为空则不然不修改", dataType = "String", paramType = "query"),
+    	@ApiImplicitParam(name = "remark", value = "备注，可为空，为空则不然不修改",dataType = "String", paramType = "query"),
     })
     @RequiresPermissions("work:songlist:edit")
     @Log(title = "歌单管理", businessType = BusinessType.UPDATE, operatorType = OperatorType.MOBILE)
@@ -211,11 +218,22 @@ public class SongListController extends BaseController
     {
     	try {
     		SongList songList = new SongList();
+        	if(StringUtils.isEmpty(listId) && StringUtils.isNull(Long.parseLong(listId))) {
+        		return error("歌单ID为空！");
+        	}
     		songList.setListId(Long.parseLong(listId));
-    		songList.setListName(listName);
-    		songList.setStatus(status);
-    		songList.setSongData(songData);
-    		songList.setRemark(remark);
+    		if(StringUtils.isNotEmpty(listName)){
+    			songList.setListName(listName);
+    		}
+    		if(StringUtils.isNotEmpty(status) && "01".contains(status)){
+    			songList.setListName(status);
+    		}
+    		if(StringUtils.isNotEmpty(songData)){
+    			songList.setSongData(songData);
+    		}
+    		if(StringUtils.isNotEmpty(remark)){
+    			songList.setRemark(remark);
+    		}
     		songList.setUpdateBy(ShiroUtils.getLoginName());
     		return toAjax(songListService.updateSongList(songList));
 		} catch (Exception e) {
