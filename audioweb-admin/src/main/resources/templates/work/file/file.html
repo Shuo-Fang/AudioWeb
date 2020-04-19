@@ -312,26 +312,26 @@
     			var selectedRows = table.rememberSelecteds[table.options.id];
     			var url = table.options.removeUrl;
     			var data = { "ids": rows.join() };
-    			var paths = [],imagePaths = [];
+    			var paths = "",imagePaths = "";
     			for(var i = 0,limit = selectedRows.length;i < limit;i++){
-    				paths.push(selectedRows[i].filePath);
-    				imagePaths.push(selectedRows[i].imagePath);
+                    paths += selectedRows[i].filePath + "|";
+    				imagePaths += selectedRows[i].imagePath + ",";
     			}
     			data.paths = paths;
     			data.imagePaths = imagePaths;
     			$.operate.submit(url, "post", "json", data);
         	});
 		}
-		function remove(id,path,imagePath){
+		function remove(id,path,imagePath){debugger
 			table.set();
         	$.modal.confirm("确定删除该条" + table.options.modalName + "信息吗？", function() {
                 var url = $.common.isEmpty(id) ? table.options.removeUrl : table.options.removeUrl.replace("{id}", id);
                 if(table.options.type == table_type.bootstrapTreeTable) {
                 	$.operate.get(url);
                 } else {
-            	    var data = { "ids": id,"paths":[],"imagePaths":[]};
-            	    data.paths.push(path);
-            	    data.imagePaths.push(imagePath);
+            	    var data = { "ids": id};
+            	    data.paths = path;
+            	    data.imagePaths = imagePath;
             	    $.operate.submit(url, "post", "json", data);
                 }
         	});

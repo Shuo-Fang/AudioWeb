@@ -33,6 +33,7 @@ import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.system.service.ISysConfigService;
 import com.audioweb.common.core.page.TableDataInfo;
+import com.audioweb.common.core.text.Convert;
 
 /**
  * 音频任务中所有音频的存储序列信息Controller
@@ -218,13 +219,19 @@ public class WorkFileController extends BaseController
     @Log(title = "音频信息", businessType = BusinessType.DELETE)
     @PostMapping( "/remove")
     @ResponseBody
-    public AjaxResult remove(@RequestParam("ids")String ids,@RequestParam(value = "paths[]") String[] paths,@RequestParam(value = "imagePaths[]") String[] imagePaths)
+    public AjaxResult remove(@RequestParam("ids")String ids,@RequestParam(value = "paths") String paths,@RequestParam(value = "imagePaths") String imagePaths)
     {
-    	for(String path :paths) {
-    		FileUtils.deleteFile(path);
+    	String[] sPath = Convert.toStrArray("\\|",paths);
+    	for(String path :sPath) {
+    		if(StringUtils.isNotEmpty(path)) {
+    			FileUtils.deleteFile(path);
+    		}
     	}
-    	for(String path :imagePaths) {
-    		FileUtils.deleteFile(path);
+    	String[] iPath = Convert.toStrArray(imagePaths);
+    	for(String path :iPath) {
+    		if(StringUtils.isNotEmpty(path)) {
+    			FileUtils.deleteFile(path);
+    		}
     	}
         return toAjax(workFileService.slowDeleteWorkFileByIds(ids));
     }

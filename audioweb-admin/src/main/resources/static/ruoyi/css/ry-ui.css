@@ -72,6 +72,9 @@
   width: 200px;
   height: 200px;
 }
+.img-radius {
+	border-radius:10px;
+}
 .section-content {
     min-height: 250px;
     margin-right: auto;

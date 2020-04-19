@@ -10,7 +10,7 @@ package com.audioweb.work.domain;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Timer;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.enums.CastWorkType;
@@ -58,9 +58,15 @@ public class FileCastTask extends WorkCastTask{
 	@ApiModelProperty("需要广播的文件列表id")
 	private List<String> songData;
 	
-	/** 广播文件历史列表 */
+	/** 广播文件历史列表,随机播放用到的 */
 	@ApiModelProperty("广播文件历史列表")
+	@JsonIgnore
 	private List<String> playHistory = new LinkedList<String>();
+	
+	/** 广播文件播放历史节点,随机播放用到的 */
+	@ApiModelProperty("广播文件历史节点")
+	@JsonIgnore
+	private AtomicInteger playHistorySite = new AtomicInteger(0);;
 	
 	/** 文件广播类型 */
 	@ApiModelProperty("广播的文件类型：0,顺序播放;1,列表循环;2,随机播放")
@@ -174,24 +180,42 @@ public class FileCastTask extends WorkCastTask{
 		this.server = server;
 	}
 	
-	/**获取字符串格式的历史音频播放列表*/
-	@JsonGetter("playHistory")
-	public String getPlayHistory() {
-		return Convert.listToStr(playHistory);
-	}
-
-	public List<String> findPlayHistoryList() {
-		return playHistory;
+	public void clearPlayHistory() {
+		playHistory.clear();
+		playHistorySite = new AtomicInteger(0);
 	}
 	
-	/**字符串格式的历史音频播放列表存储为list*/
-	@JsonSetter("playHistory")
-	public void setPlayHistory(String playHistory) {
-		this.playHistory = Convert.strToList(playHistory);
+	public List<String> getPlayHistory() {
+		return playHistory;
 	}
 
-	public void putPlayHistoryList(List<String> playHistory) {
-		this.playHistory = playHistory;
+	public void putPlayHistory(String playHistory) {
+		this.playHistory.add(playHistory);
+		if(this.playHistory.size() > 100) {
+			this.playHistory.remove(0);
+		}
+	}
+	
+	public void putPrevPlayHistory(String playHistory) {
+		this.playHistory.add(0,playHistory);
+		if(this.playHistory.size() > 100) {
+			this.playHistory.remove(this.playHistory.size()-1);
+		}
+	}
+
+	public int getPlayHistorySite() {
+		return playHistorySite.get();
+	}
+	public void setPlayHistorySite(int playHistorySite) {
+		this.playHistorySite.set(playHistorySite);
+	}
+
+	public int prevPlayHistorySite() {
+		return this.playHistorySite.decrementAndGet();
+	}
+	
+	public int nextPlayHistorySite() {
+		return this.playHistorySite.getAndIncrement();
 	}
 	
 	public static FileCastTask findRunningTask(String sessionId) {

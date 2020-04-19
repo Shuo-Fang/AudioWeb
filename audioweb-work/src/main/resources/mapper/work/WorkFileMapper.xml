@@ -148,6 +148,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="fileId" collection="array" open="(" separator="," close=")">
             #{fileId}
         </foreach>
+        ORDER BY field(file_id,
+        <foreach item="fileId" collection="array" separator="," close=")">
+            #{fileId}
+        </foreach>
     </select>
     
     <update id="updateWorkFileList" parameterType="java.util.List" >

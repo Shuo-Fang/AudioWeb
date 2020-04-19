@@ -226,7 +226,7 @@ public class SongListController extends BaseController
     			songList.setListName(listName);
     		}
     		if(StringUtils.isNotEmpty(status) && "01".contains(status)){
-    			songList.setListName(status);
+    			songList.setStatus(status);
     		}
     		if(StringUtils.isNotEmpty(songData)){
     			songList.setSongData(songData);

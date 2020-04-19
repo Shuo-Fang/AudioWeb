@@ -36,7 +36,9 @@
 		.attr('max', max)
 		.attr('step', step)
 		.attr('value',value);
-	$input.css( 'background-size', value/max*100 + '% 100%' ); 
+	if (isWebkit) {
+		$input.css('background-size', value / max * 100 + '% 100%');
+	}
 	var event = null;
 	if (isIE) {
 		event = "change";

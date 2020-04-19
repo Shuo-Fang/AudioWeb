@@ -1,15 +1,9 @@
 package com.audioweb.work.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.core.domain.BaseEntity;
-import com.audioweb.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -19,11 +13,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * @date 2020-03-10
  */
 @JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
-public class WorkFile extends BaseEntity implements BaseWork
+public class WorkFile extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
-    /**默认最大音频加载值为376 -> 500*0.75+1 = 376*/
-    protected static Map<String, WorkFile> fileMap = new ConcurrentHashMap<String, WorkFile>(376);
 
     /** 音频的路径md5值 */
     protected String fileId;
@@ -91,62 +83,6 @@ public class WorkFile extends BaseEntity implements BaseWork
 		fileId = id;
 	}
 
-	@Override
-	public boolean put() {
-		if(StringUtils.isNotEmpty(fileId)) {
-			fileMap.put(fileId, this);
-			return true;
-		}else {
-			return false;
-		}
-	}
-	@Override
-	public boolean exist() {
-		return fileMap.containsKey(fileId);
-	}
-	@Override
-	public WorkFile get() {
-		if(StringUtils.isNotEmpty(fileId)) {
-			return fileMap.get(fileId);
-		}else {
-			return null;
-		}
-	}
-
-	@Override
-	public void clear() {
-		fileMap.clear();
-	}
-	
-	@Override
-	public List<WorkFile> export() {
-		return new ArrayList<WorkFile>(fileMap.values());
-	}
-	
-	/**将全部的对象更新替换为缓存中存储的对象**/
-	public static void loadAll(List<WorkFile> entity) {
-		for(WorkFile task : entity) {
-			if(task.exist()) {
-				task = task.get();
-			}
-		}
-	}
-	
-	/**通过id获取缓存音频信息**/
-	public static WorkFile getFileById(String key) {
-		return fileMap.get(key);
-	}
-	
-	/**通过id删除缓存音频信息**/
-	public static WorkFile removeFileById(String key) {
-		return fileMap.remove(key);
-	}
-	
-	@Override
-	public boolean remove() {
-		return StringUtils.isNotNull(fileMap.remove(fileId));
-	}
-	
     /** 
 	 * <p>Title: </p> 
 	 * <p>Description: </p> 

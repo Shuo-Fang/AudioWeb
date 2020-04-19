@@ -935,7 +935,7 @@ var table = {
         // 操作封装处理
         operate: {
         	// 提交数据
-        	submit: function(url, type, dataType, data, callback) {
+        	submit: function(url, type, dataType, data, callback,noRefresh) {
             	var config = {
         	        url: url,
         	        type: type,
@@ -945,17 +945,17 @@ var table = {
         	        	$.modal.loading("正在处理中，请稍后...");
         	        },
         	        success: function(result) {
-        	        	if (typeof callback == "function") {
-        	        	    callback(result);
-        	        	}
-        	        	$.operate.ajaxSuccess(result);
-        	        }
+						if (typeof callback == "function") {
+							callback(result);
+						}
+						$.operate.ajaxSuccess(result,noRefresh);
+					}
         	    };
         	    $.ajax(config)
             },
             // post请求传输
-            post: function(url, data, callback) {
-            	$.operate.submit(url, "post", "json", data, callback);
+            post: function(url, data, callback, noRefresh) {
+            	$.operate.submit(url, "post", "json", data, callback, noRefresh);
             },
             // get请求传输
             get: function(url, callback) {
@@ -1179,13 +1179,17 @@ var table = {
         	    $.ajax(config)
             },
             // 保存结果弹出msg刷新table表格
-            ajaxSuccess: function (result) {
+            ajaxSuccess: function (result, noRefresh) {
             	if (result.code == web_status.SUCCESS && table.options.type == table_type.bootstrapTable) {
                 	$.modal.msgSuccess(result.msg);
-            		$.table.refresh();
+                	if(!noRefresh){
+						$.table.refresh();
+					}
                 } else if (result.code == web_status.SUCCESS && table.options.type == table_type.bootstrapTreeTable) {
                 	$.modal.msgSuccess(result.msg);
-                	$.treeTable.refresh();
+					if(!noRefresh) {
+						$.treeTable.refresh();
+					}
                 } else if (result.code == web_status.SUCCESS && table.option.type == undefined) {
                     $.modal.msgSuccess(result.msg)
                 }  else if (result.code == web_status.WARNING) {

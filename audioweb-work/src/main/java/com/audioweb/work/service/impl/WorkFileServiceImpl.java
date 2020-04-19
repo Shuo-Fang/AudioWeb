@@ -105,12 +105,7 @@ public class WorkFileServiceImpl implements IWorkFileService
     @Override
     public int slowDeleteWorkFileByIds(String ids)
     {
-    	String[] fileIds = Convert.toStrArray(ids);
-    	for(String id:fileIds) {
-    		/**清理内存中缓存的音频信息*/
-    		WorkFile.removeFileById(id);
-    	}
-    	return workFileMapper.slowDeleteWorkFileByIds(fileIds);
+    	return workFileMapper.slowDeleteWorkFileByIds(Convert.toStrArray(ids));
     }
 
     /**
@@ -271,15 +266,14 @@ public class WorkFileServiceImpl implements IWorkFileService
 			}
 		}
 		log.info("完成音频扫描");
-		WorkFile workFile = new WorkFile();
+/*		WorkFile workFile = new WorkFile();
 		workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
-		workFile.clear();
-		/**数据库中存储的文件信息*/
+		*//**数据库中存储的文件信息*//*
 		List<WorkFile> workFiles = selectWorkFileList(workFile);
-		/**将文件存入缓存中维护*/
+		*//**将文件存入缓存中维护*//*
 		for(WorkFile file:workFiles) {
 			file.put();
-		}
+		}*/
 	}
 	private String getVirPath(String type) {
 		String result = "";

@@ -34,8 +34,8 @@
 	 	<div class="box box-main">
 	 		<div class="ibox-content">
 		 		<div class = "col-sm-1">
-	        		<div class="text-center layui-layer-photos" id="layer-photos-demo">
-	                   <a onclick = "showLargeImg()"><img class="img-md" data-height='auto' data-width='auto' data-target='self' id = "showImg"/></a>
+	        		<div class="img-radius text-center layui-layer-photos" id="layer-photos-demo">
+	                   <a onclick = "showLargeImg()"><img class="img-md " data-height='auto' data-width='auto' data-target='self' id = "showImg"/></a>
 	                </div>
 		        </div>
 	        	<div class = "col-sm-11">
@@ -51,30 +51,34 @@
 					            <a class="icon iconfont icon-danquxunhuan" id = "SINGLE" onclick="fileCastTypeChange(this)" title = "单曲循环" style="display:none;">
 					            </a>
 				            </div>
-				             <div class="col-sm-1">
-								<h4 align ="right" style = "margin-top: 8px; margin-bottom: 0px;">级别:</h4>
-							 </div>
-				             <div class="col-sm-2" style = "padding-right: 0px; padding-left: 0px;">
-				                 <select name="castLevel" id="castLevel" class="form-control m-b" style="margin-bottom: 0px;" th:with="type=${@dict.getType('work_priority')}">
-				                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'}"></option>
-				                 </select>
-				             </div>
+				            <div class="col-sm-3">
+					             <div id = "castLevelGroup">
+						             <div class="col-sm-5">
+										<h4 align ="right" style = "margin-top: 8px; margin-bottom: 0px;">广播级别:</h4>
+									 </div>
+						             <div class="col-sm-7" style = "padding-right: 0px; padding-left: 0px;">
+						                 <select name="castLevel" id="castLevel" class="form-control m-b" style="margin-bottom: 0px;" th:with="type=${@dict.getType('work_priority')}">
+						                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:selected="${dict.isDefault == 'Y'}"></option>
+						                 </select>
+						             </div>
+					             </div>
+				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_rewind_button" id = "palyPrev" onclick="showFileList()" title = "上一曲" style="display:none;">
+					            <a class="icon iconfont icon-music_rewind_button" id = "PREV" onclick="fileCastControl(this)" title = "上一曲" style="display:none;">
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_pause_button" id = "palyPause" onclick="showSongList()" title = "暂停" style="display:none;">
+					            <a class="icon iconfont icon-music_pause_button" id = "PAUSE" onclick="fileCastControl(this)" title = "暂停" style="display:none;">
 					            </a>
-					            <a class="icon iconfont icon-music_play_button" id = "palyBack" onclick="startCast()" title = "播放" >
-					            </a>
-				            </div>
-		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_fastforward_button" id = "palyNext" onclick="removeAll()" title = "下一曲" style="display:none;">
+					            <a class="icon iconfont icon-music_play_button" id = "RESUME" onclick="fileCastControl(this)" title = "播放" >
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_stop_button" id = "palyStop" onclick="showSongList()" title = "停止" style="display:none;">
+					            <a class="icon iconfont icon-music_fastforward_button" id = "NEXT" onclick="fileCastControl(this)" title = "下一曲" style="display:none;">
+					            </a>
+				            </div>
+		        			<div class="col-sm-1">
+					            <a class="icon iconfont icon-music_stop_button" id = "STOP" onclick="showSongList()" title = "停止" style="display:none;">
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
@@ -141,10 +145,11 @@
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
-        var isFileCast = false,isDestroy = false,isMove = false;
+        var isFileCast = false,isDestroy = false,isMove = false,oldSite = false;
+        var startTime,timeSite = 0,isComplete = 0;
         var fileCastType = "ORDER";
         var castInfo;//广播信息
-        var filelength;
+        var fileLength,filePlaySite,fileLengthText;//广播节点信息
         /**隐藏左侧面板*/
 		function hideLeft(){
 			//console.log("test");
@@ -153,6 +158,45 @@
         /**layout变动时刷新表格样式*/
 		function refreshTable(){
 			$("#"+table.options.id).bootstrapTable('resetView');
+		}
+		//isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新
+		function loadFileCast(isStart){
+			/**广播列表,终端列表以及广播任务初始化**/
+			var url = prefix + "/findFileCast";
+			var data = {taskId : $('#taskId').val()};
+			var callback = function(res){
+				if (res.code == web_status.SUCCESS) {
+					if($.common.isNotEmpty(res.data)){
+							/**有任务初始化*/
+							castInfo = res.data;
+							isFileCast = castInfo.isCast;
+							if(isFileCast){
+								initFileCast(isStart);//初始化文件广播
+							}else{
+								$.modal.alertWarning("任务已创建但未开始广播,请前往任务管理检查！");
+								initNoFileCast();
+							}
+					}else{
+						initNoFileCast();
+					}
+				}else if (res.code == web_status.WARNING) {
+					$.modal.alertWarning(res.msg)
+				}  else {
+					$.modal.alertError(res.msg);
+				}
+			};
+			var config = {
+				url: url,
+				type: "post",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (typeof callback == "function") {
+						callback(result);
+					}
+				}
+			};
+			$.ajax(config);
 		}
 		$(function() {
 		    var panehHidden = false;
@@ -169,43 +213,7 @@
 		    		refreshTable();
 		    	},
 		    });
-		    /**广播列表,终端列表以及广播任务初始化**/
-			var url = prefix + "/findFileCast";
-        	var data = {taskId : $('#taskId').val()};
-        	var callback = function(res){
-        		if (res.code == web_status.SUCCESS) {
-					if($.common.isNotEmpty(res.data)){
-						/**有任务初始化*/
-						castInfo = res.data;
-						isFileCast = castInfo.isCast;
-						if(isFileCast){
-							initFileCast(false);//初始化文件广播
-						}else{
-							$.modal.alertWarning("任务已创建但未开始广播,请前往任务管理检查！");
-							initNoFileCast();
-						}
-					}else{
-						initNoFileCast();
-					}
-        		}else if (res.code == web_status.WARNING) {
-                    $.modal.alertWarning(res.msg)
-                }  else {
-                	$.modal.alertError(res.msg);
-                }
-        	};
-        	var config = {
-        	        url: url,
-        	        type: "post",
-        	        dataType: "json",
-        	        data: data,
-        	        success: function(result) {
-        	        	if (typeof callback == "function") {
-        	        	    callback(result);
-        	        	}
-        	        }
-        	    };
-        	$.ajax(config);
-        	
+			loadFileCast(false);
 		});
         function queryFileList(data){
         	$.table.destroy();
@@ -498,6 +506,18 @@
 				$.common.toHide(data.id);
 			}
 		}
+		function initFileCastType(value){
+			$.common.toHide("ORDER");
+			if(value =="顺序播放"){
+				$.common.toShow("ORDER");
+			}else if(value =="列表循环"){
+				$.common.toShow("LIST");
+			}else if(value =="随机播放"){
+				$.common.toShow("RANDOM");
+			}else if(value =="单曲循环"){
+				$.common.toShow("SINGLE");
+			}
+		}
 		/**文件广播任务类型改变**/
 		function fileCastTypeChange(data){
 			if($.common.equals(data.id,"ORDER")){
@@ -517,78 +537,106 @@
 				$.common.toShow("ORDER");
 				fileCastType = "ORDER";
 			}
+			if(isFileCast){
+				AjaxFileCastType();
+			}
+		}
+		/**发送文件广播任务类型改变命令**/
+		function AjaxFileCastType(){
+			var url = prefix + "/controlFileType";
+			var data = {"taskId":castInfo.taskId,"type":fileCastType};
+			var callback = function(res){
+				if (res.code == web_status.SUCCESS) {
+					$.modal.tipInfo('#'+fileCastType,"修改成功");
+				}else if (res.code == web_status.WARNING) {
+					$.modal.alertWarning(res.msg)
+				}  else {
+					$.modal.alertError(res.msg);
+				}
+			};
+			var config = {
+				url: url,
+				type: "post",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (typeof callback == "function") {
+						callback(result);
+					}
+				}
+			};
+			$.ajax(config)
 		}
 		/**设置图片**/
 		function showImg(src){
 			$("#showImg").attr("src",src);
 			$("#showImg").attr("layer-src",src);
 		}
+		/**设置标题**/
+		function showTitle(title){
+			$("#showTitle").text(title);
+		}
 		/**播放按钮触发**/
 		function startCast(){
-			if(isFileCast){
-				/**有任务触发，是暂停启动*/
-			}else{
-				/**无任务触发，是创建任务**/
-				/**判断元素是否齐全*/
-				if(!selectNode()){
-					$.modal.tipWarning('#tree',"请选择分区或终端");
-					return;
-				}
-				if(isDestroy){
-					$.modal.tipWarning('#bootstrap-table',"请移除已无效的音频");
-					return;
-				}
-				if($.common.isEmpty($("#songData").val())){
-					$.modal.tipWarning('#bootstrap-table',"请选择播放的音频",3);
-					return;
-				}
-				/**创建任务*/
-				var url = prefix + "/startFile";
-    			var data ={
-    					'songData': $("#songData").val(),
-    					'fileCastType': fileCastType,
-    					'vol': $(".slider-small").val(),
-    					'castLevel': $("#castLevel").val(),
-    					'domainidlist': $("#domainIds").val(),
-    					'teridlist': $("#terIds").val()
-    			}
-    			var callback = function(result){//回调方法
-    				if (result.code == web_status.SUCCESS) {
-                    	/**添加逻辑*/
-                    	if($.common.isNotEmpty(result.data)){
-							castInfo = result.data;
-							isFileCast = castInfo.isCast;
-							if(isFileCast){
-								initFileCast(true);//初始化文件广播
-							}else{
-								$.modal.alertWarning("任务已创建但未开始广播，请前往任务管理查看");
-							}
-                    	}else{
-                    		 $.modal.alertWarning("任务已创建但无信息，请前往任务管理查看");
-                    	}
-                    	$.modal.msgSuccess("创建成功");
-                    }  else if (result.code == web_status.WARNING) {
-                        $.modal.alertWarning(result.msg);
-                    }  else {
-                    	$.modal.alertError(result.msg);
-                    }
-                	$.modal.closeLoading();
-    			}
-    			var config = {
-            	        url: url,
-            	        type: "post",
-            	        dataType: "json",
-            	        data: data,
-            	        beforeSend: function () {
-            	        	$.modal.loading("正在处理中，请稍后...");
-            	        },
-            	        success: function(result) {
-            	        	callback(result);
-            	        }
-            	    };
-            	$.ajax(config);//ajax请求
-				//$.modal.tipSuccess('.slider-normal',"提示");
+			/**无任务触发，是创建任务**/
+			/**判断元素是否齐全*/
+			if(!selectNode()){
+				$.modal.tipWarning('#tree',"请选择分区或终端");
+				return;
 			}
+			if(isDestroy){
+				$.modal.tipWarning('#bootstrap-table',"请移除已无效的音频");
+				return;
+			}
+			if($.common.isEmpty($("#songData").val())){
+				$.modal.tipWarning('#bootstrap-table',"请选择播放的音频",3);
+				return;
+			}
+			/**创建任务*/
+			var url = prefix + "/startFile";
+			var data ={
+					'songData': $("#songData").val(),
+					'fileCastType': fileCastType,
+					'vol': $(".slider-small").val(),
+					'castLevel': $("#castLevel").val(),
+					'domainidlist': $("#domainIds").val(),
+					'teridlist': $("#terIds").val()
+			}
+			var callback = function(result){//回调方法
+				if (result.code == web_status.SUCCESS) {
+					/**添加逻辑*/
+					if($.common.isNotEmpty(result.data)){
+						castInfo = result.data;
+						isFileCast = castInfo.isCast;
+						if(isFileCast){
+							initFileCast(true);//初始化文件广播
+						}else{
+							$.modal.alertWarning("任务已创建但未开始广播，请前往任务管理查看");
+						}
+					}else{
+						 $.modal.alertWarning("任务已创建但无信息，请前往任务管理查看");
+					}
+					$.modal.msgSuccess("创建成功");
+				}  else if (result.code == web_status.WARNING) {
+					$.modal.alertWarning(result.msg);
+				}  else {
+					$.modal.alertError(result.msg);
+				}
+				$.modal.closeLoading();
+			}
+			var config = {
+					url: url,
+					type: "post",
+					dataType: "json",
+					data: data,
+					beforeSend: function () {
+						$.modal.loading("正在处理中，请稍后...");
+					},
+					success: function(result) {
+						callback(result);
+					}
+				};
+			$.ajax(config);//ajax请求
 		}
 		/**选中节点处理*/
 		function selectNode(){
@@ -654,35 +702,42 @@
 		/**初始化文件广播  isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新*/
 		function initFileCast(isStart){debugger
 			/**信息上同步**/
+			showTitle(castInfo.runFile.fileName);
 			//1、图标
 		    if($.common.isNotEmpty(castInfo.runFile.imageVirPath)){
 				showImg(castInfo.runFile.imageVirPath);
 		    }else{
 		    	showImg(defaultPath);
 		    }
+			initFileCastType(castInfo.fileCastType);
 			//2、显示广播状态
-			$.common.toShow("palyPrev");
-			$.common.toShow("palyNext");
-			$.common.toShow("palyStop");
+			$.common.toShow("PREV");
+			$.common.toShow("NEXT");
+			$.common.toShow("STOP");
 			if(castInfo.isStop){
 				//暂停
-				$.common.toHide("palyPause");
-				$.common.toShow("palyBack");
+				$.common.toHide("PAUSE");
+				$.common.toShow("RESUME");
 			}else{
-				$.common.toHide("palyBack");
-				$.common.toShow("palyPause");
+				$.common.toHide("RESUME");
+				$.common.toShow("PAUSE");
 			}
-			//3、初始化进度条
-			filelength = parseInt(castInfo.runFile.duration/1000);
-			$('.slider-normal').RangeSlider({ min: 0,   max: filelength,  step: 1, callback: castchange, finishedCallback: castfinished});
-			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
+			//3/隐藏广播级别
+			$.common.toHide("castLevelGroup");
+			//4、初始化进度条
+			fileLength = parseInt(castInfo.runFile.duration/1000);
+			filePlaySite = parseInt(castInfo.runFile.palySite/1000);
+			fileLengthText = parseInt(fileLength/60)+':'+(parseInt(fileLength%60)>9?parseInt(fileLength%60):('0'+parseInt(fileLength%60)));
+			$('.slider-normal').RangeSlider({ min: 0,   max: fileLength,  step: 1, callback: castchange, finishedCallback: castfinished});
+			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1,  callback: volchange, finishedCallback: volfinished});
 			$('.slider-normal').attr("disabled",false);
 			setValue(castInfo.vol);
-			//隐藏树
+			setCastValue(filePlaySite);
+			isMove = false;
+			initTimeCast();
+			//5、隐藏树
 			hideLeft();
-			if(isStart){
-				
-			}else{
+			if(!isStart){
 				/**初始化已选音频*/
 				$("#songData").val(castInfo.songData);
 				getFileData();
@@ -705,10 +760,11 @@
 		    setValue();
 		}
 		function castfinished(value){
-			isMove = false;
+			isMove = true;
 		}
 		function castchange($input){
 			isMove = true;
+			setCastValue($input.value);
 		}
 		function volfinished(value){
 			console.log("vol:"+value);
@@ -736,7 +792,7 @@
 				}
 			}
 		}
-		/**设置进度条位置*/
+		/**设置音量进度条位置*/
 		function setValue(value){
 			if($.common.isEmpty(value)){
 				value = 30;
@@ -748,6 +804,18 @@
 				data.css( 'background-size', value/40*100 + '% 100%' ); 
 			}
 		}
+		/**设置音频进度条位置*/
+		function setCastValue(value){
+			/**设置进度条位置**/
+			var data = $(".slider-normal" );
+			data[0].value = value;
+			var userAgent = navigator.userAgent.toLowerCase();
+			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
+				data.css( 'background-size', value/fileLength*100 + '% 100%' );
+			}
+			/**设置时间显示**/
+			$("#toDuration").text(parseInt(value/60)+':'+(parseInt(value%60)>9?parseInt(value%60):('0'+parseInt(value%60)))+'/'+fileLengthText);
+		}
 
 		function getFileData(){
 			var url = "songlist/getListById";
@@ -755,6 +823,93 @@
 			var callback = function(res){
 				if (res.code == web_status.SUCCESS) {
 					queryFileList(res.rows);
+				}else if (res.code == web_status.WARNING) {
+					$.modal.alertWarning(res.msg)
+				}  else {
+					$.modal.alertError(res.msg);
+				}
+			};
+			var config = {
+				url: url,
+				type: "post",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (typeof callback == "function") {
+						callback(result);
+					}
+				}
+			};
+			$.ajax(config)
+		}
+		
+		function progressBar() {
+			if(!isMove && !oldSite){
+				timeSite++;
+				var offset = new Date().getTime() - (startTime + timeSite * 1000);
+				var nextTime = 1000 - offset;
+				if (nextTime < 0){
+					nextTime = 0;
+					isComplete++;
+				}
+				if(isComplete < 2){
+					setTimeout(progressBar, nextTime);
+					parsec();
+				}
+			}else{
+				oldSite = false;
+			}
+		}
+		function parsec(){
+			if(!isMove){
+				if(filePlaySite < fileLength){
+					filePlaySite++;
+					setCastValue(filePlaySite);
+				}else if(isComplete == 1){
+					loadFileCast(true);
+					isComplete++;
+				}else{
+					isComplete++;
+				}
+			}
+		}
+		function initTimeCast(){
+			startTime = new Date().getTime();
+			timeSite = 0;
+			if(castInfo.isCast && !castInfo.isStop && !isMove){
+				setTimeout(progressBar, 1000);
+			}
+		}
+		/**控制广播任务**/
+		function fileCastControl(data){
+			if(isFileCast){
+				AjaxFileCastControl(data.id);
+			}else{
+				if($.common.equals(data.id,"RESUME")){
+					return startCast();
+				}
+			}
+		}
+		/**发送文件广播控制命令**/
+		function AjaxFileCastControl(value){
+			isMove = true;
+			oldSite = true;
+			var url = prefix + "/controlFileCast";
+			var data = {"taskId":castInfo.taskId,"command":value};
+			var callback = function(res){
+				if (res.code == web_status.SUCCESS) {debugger
+					$.modal.tipPrimary('#'+value,"修改成功");
+					if($.common.isNotEmpty(res.data)){
+						castInfo = res.data;
+						isFileCast = castInfo.isCast;
+						if(isFileCast){
+							initFileCast(true);//初始化文件广播
+						}else{
+							$.modal.alertWarning("任务已创建但未开始广播，请前往任务管理查看");
+						}
+					}else{
+						$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
+					}
 				}else if (res.code == web_status.WARNING) {
 					$.modal.alertWarning(res.msg)
 				}  else {

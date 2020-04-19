@@ -1,6 +1,9 @@
 package com.audioweb.server.service;
 
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.enums.FileCastCommand;
+import com.audioweb.common.enums.FileCastType;
+import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.WorkCastTask;
 import java.util.List;
 
@@ -59,4 +62,52 @@ public interface IWorkCastTaskService
      * @return 结果
      */
     public int deleteWorkCastTaskById(Long taskId);
+    /**
+     * 控制广播任务,上下一曲,暂停启动
+     * @Title: controlFileCastTask 
+     * @Description: 控制广播任务 
+     * @param taskId 任务ID
+     * @param command 控制类型
+     * @return AjaxResult 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年4月19日 下午9:12:13
+     */
+	public AjaxResult controlFileCast(Long taskId, FileCastCommand command);
+	/**
+	 * 控制广播任务播放进度
+	 * @Title: controlFileCastTask 
+	 * @Description: 控制广播任务 
+	 * @param taskId 任务ID
+	 * @param playSite 控制进度
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月19日 下午9:12:13
+	 */
+	public AjaxResult controlFileCast(Long taskId, Long playSite);
+	/**
+	 * 控制广播任务模式
+	 * @Title: controlFileCastTask 
+	 * @Description: 控制广播任务 
+	 * @param taskId 任务ID
+	 * @param type 
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月19日 下午9:12:13
+	 */
+	public AjaxResult controlFileCast(Long taskId, FileCastType type);
+	/**
+	 * 控制广播任务音量
+	 * @Title: controlFileCastTask 
+	 * @Description: 控制广播任务 
+	 * @param taskId 任务ID
+	 * @param vol 音量
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月19日 下午9:12:13
+	 */
+	public AjaxResult controlFileCast(Long taskId, Integer vol);
 }

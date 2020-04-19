@@ -36,6 +36,7 @@ import com.audioweb.common.core.domain.Ztree;
 import com.audioweb.common.core.page.TableDataInfo;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.enums.CastWorkType;
+import com.audioweb.common.enums.FileCastCommand;
 import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.enums.OperatorType;
 import com.audioweb.common.utils.StringUtils;
@@ -164,6 +165,7 @@ public class FileCastController extends BaseController
     	return workCastTaskService.insertWorkCastTask(task);
     }
 
+    
     @RequiresPermissions("work:filecast:add")
     @PostMapping("/startFile")
     @Log(title = "文件广播任务", businessType = BusinessType.INSERT)
@@ -176,5 +178,59 @@ public class FileCastController extends BaseController
     	task.setCastType(CastWorkType.FILE);
     	task.setSessionId(ShiroUtils.getSessionId());
     	return workCastTaskService.insertWorkCastTask(task);
+    }
+
+    @ApiOperation("控制文件广播任务")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "command", value = "需要修改的文件广播的命令如下：PREV(上一曲),PAUSE(暂停),RESUME(继续),NEXT(下一曲)", required = true, dataType = "String", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/controlFileCast")
+    @Log(title = "控制文件广播任务", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult controlFileCast(Long taskId,String command) {
+    	FileCastCommand castCommand = FileCastCommand.valueOf(command);
+    	return workCastTaskService.controlFileCast(taskId, castCommand);
+    }
+    
+    @ApiOperation("控制文件广播播放进度")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "palySite", value = "需要修改的文件广播的播放时间节点,单位为毫秒,范围为歌曲的duration长度之内,如果超过此长度，则默认为下一曲", required = true, dataType = "long", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/controlFileSite")
+    @Log(title = "控制文件广播播放进度", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult controlFileSite(Long taskId,Long palySite) {
+    	return workCastTaskService.controlFileCast(taskId, palySite);
+    }
+    
+    @ApiOperation("控制文件广播播放模式")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "type", value = "需要修改的文件广播播放模式的命令如下：ORDER(顺序播放),LIST(列表循环),RANDOM(随机播放),SINGLE(单曲循环)", required = true, dataType = "String", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/controlFileType")
+    @Log(title = "控制文件广播播放模式", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult controlFileType(Long taskId,String type) {
+    	FileCastType castType = FileCastType.valueOf(type);
+    	return workCastTaskService.controlFileCast(taskId, castType);
+    }
+    
+    @ApiOperation("控制文件广播播放音量")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "vol", value = "需要修改的文件广播音量值，0-40之间，大于40则默认为40", required = true, dataType = "int", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/controlFileVol")
+    @Log(title = "控制文件广播播放音量", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult controlFileVol(Long taskId,Integer vol) {
+    	return workCastTaskService.controlFileCast(taskId, vol);
     }
 }
