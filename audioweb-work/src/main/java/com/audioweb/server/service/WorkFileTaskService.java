@@ -10,10 +10,12 @@ package com.audioweb.server.service;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.Random;
 
 import com.audioweb.common.utils.StringUtils;
+import com.audioweb.server.protocol.InterCMDProcess;
 import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.RunningFile;
 
@@ -41,7 +43,7 @@ public class WorkFileTaskService {
 								//下一曲并继续播放
 								int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
 								step += 1;
-								FileRead(task,step);
+								fileRead(task,step);
 							}
 						}
 						break;
@@ -53,13 +55,19 @@ public class WorkFileTaskService {
 							if(step >= task.findSongDataList().size()-1) {
 								step = 0;
 							}
-							FileRead(task,step);
+							fileRead(task,step);
 						}
 						break;
 					case SINGLE://单曲循环
 						//重复一曲
-						synchronized (task.getRunFile()) {
+						task.lock.lock();
+						try {
 							task.getRunFile().resetIn();
+							task.getRunFile().setPlaySite(0);
+						} catch (Exception e) {
+							throw e;
+						}finally {
+							task.lock.unlock();
 						}
 						break;
 					case RANDOM://随机播放
@@ -68,24 +76,27 @@ public class WorkFileTaskService {
 							if(task.getPlayHistorySite() < task.getPlayHistory().size()) {
 								/**播放历史记录*/
 								String fileId = task.getPlayHistory().get(task.nextPlayHistorySite());
+								if(fileId.equals(task.getRunFile().getFileId())) {
+									/**重新遍历调取**/
+									return nextFile(task,true);
+								}
 								int step = task.findSongDataList().indexOf(fileId);
 								if(step > 0) {
-									FileRead(task,step);
+									fileRead(task,step);
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
-									NextFile(task,true);
+									nextFile(task,true);
 								}
 							}else {
 								/**随机播放*/
-								Random random = new Random();
 								int size = task.findSongDataList().size();
 								int step = 0;
 								if(size > 1) {//列表文件数大于1，才有随机的必要
 									int location = task.findSongDataList().indexOf(task.getRunFile().getFileId());
-									step = random.nextInt(task.findSongDataList().size());
+									step = task.getRandom().nextInt(task.findSongDataList().size());
 									while(location == step) {//去除重复播放
-										step = random.nextInt(task.findSongDataList().size());
+										step = task.getRandom().nextInt(task.findSongDataList().size());
 									}
 								}
 								/**保存历史记录*/
@@ -93,7 +104,7 @@ public class WorkFileTaskService {
 								if(task.getPlayHistorySite() < 100) {
 									task.nextPlayHistorySite();
 								}
-								FileRead(task,step);
+								fileRead(task,step);
 							}
 						}
 						break;
@@ -125,7 +136,7 @@ public class WorkFileTaskService {
      * @author 10155 
      * @date 2020年4月20日 上午12:01:30
      */
-    public static boolean NextFile(FileCastTask task,boolean isNext) {
+    public static boolean nextFile(FileCastTask task,boolean isNext) {
     	try {
 	    	/**先判断播放类型*/
 			switch (task.getFileCastType()) {
@@ -137,10 +148,10 @@ public class WorkFileTaskService {
 						synchronized (task.findSongDataList()) {
 							int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
 							step += 1;
-							if(step >= task.findSongDataList().size()-1) {
+							if(step > task.findSongDataList().size()-1) {
 								step = 0;
 							}
-							FileRead(task,step);
+							fileRead(task,step);
 						}
 					}else {
 						//上一曲并继续播放
@@ -150,7 +161,7 @@ public class WorkFileTaskService {
 							if(step < 0) {
 								step = task.findSongDataList().size()-1;
 							}
-							FileRead(task,step);
+							fileRead(task,step);
 						}
 					}
 					break;
@@ -161,24 +172,27 @@ public class WorkFileTaskService {
 							if(task.getPlayHistorySite() < task.getPlayHistory().size()) {
 								/**播放历史记录*/
 								String fileId = task.getPlayHistory().get(task.nextPlayHistorySite());
+								if(fileId.equals(task.getRunFile().getFileId())) {
+									/**重新遍历调取**/
+									return nextFile(task,isNext);
+								}
 								int step = task.findSongDataList().indexOf(fileId);
-								if(step > 0) {
-									FileRead(task,step);
+								if(step >= 0) {
+									fileRead(task,step);
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
-									NextFile(task,isNext);
+									nextFile(task,isNext);
 								}
 							}else {
 								/**随机播放*/
-								Random random = new Random();
 								int size = task.findSongDataList().size();
 								int step = 0;
 								if(size > 1) {//列表文件数大于1，才有随机的必要
 									int location = task.findSongDataList().indexOf(task.getRunFile().getFileId());
-									step = random.nextInt(task.findSongDataList().size());
+									step = task.getRandom().nextInt(task.findSongDataList().size());
 									while(location == step) {//去除重复播放
-										step = random.nextInt(task.findSongDataList().size());
+										step = task.getRandom().nextInt(task.findSongDataList().size());
 									}
 								}
 								/**保存历史记录*/
@@ -186,12 +200,19 @@ public class WorkFileTaskService {
 								if(task.getPlayHistorySite() < 100) {
 									task.nextPlayHistorySite();
 								}
-								FileRead(task,step);
+								fileRead(task,step);
 							}
 						}
 					}else {
 						//上一曲并继续播放
 						synchronized (task.findSongDataList()) {
+							if(task.getPlayHistorySite() == task.getPlayHistory().size()) {
+								/**为边际的上一曲*/
+								task.putPlayHistory(task.getRunFile().getFileId());
+								if(task.getPlayHistorySite() >= 100) {
+									task.prevPlayHistorySite();
+								}
+							}
 							task.prevPlayHistorySite();
 							if(task.getPlayHistorySite() < 0) {
 								/**随机播放*/
@@ -206,19 +227,25 @@ public class WorkFileTaskService {
 									}
 								}
 								/**保存历史记录*/
-								task.putPrevPlayHistory(task.getRunFile().getFileId());
+								if(!task.findSongDataList().get(step).equals(task.getRunFile().getFileId())) {
+									task.putPrevPlayHistory(task.getRunFile().getFileId());
+								}
 								task.setPlayHistorySite(0);
-								FileRead(task,step);
+								fileRead(task,step);
 							}else {
 								/**播放历史记录*/
 								String fileId = task.getPlayHistory().get(task.getPlayHistorySite());
+								if(fileId.equals(task.getRunFile().getFileId())) {
+									/**重新遍历调取**/
+									return nextFile(task,isNext);
+								}
 								int step = task.findSongDataList().indexOf(fileId);
-								if(step > 0) {
-									FileRead(task,step);
+								if(step >= 0) {
+									fileRead(task,step);
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
-									NextFile(task,isNext);
+									nextFile(task,isNext);
 								}
 							}
 						}
@@ -238,12 +265,71 @@ public class WorkFileTaskService {
     
 	/**文件初始化读取
 	 * @throws IOException */
-	private static void FileRead(FileCastTask task,int step) throws IOException {
-		synchronized (task.getRunFile()) {
+	private static void fileRead(FileCastTask task,int step) throws IOException {
+		try {
+			task.lock.lock();
 			task.getRunFile().destory();//关闭原文件读取信息
 			RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step));
 			task.setRunFile(file);
 			task.getTimer().reloadTimer();//重置定时器
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			task.lock.unlock();
 		}
 	}
+	/***
+	 * 设置广播的节点
+	 * @Title: fileplaySite 
+	 * @Description: 设置广播的节点
+	 * @param task
+	 * @param playSite
+	 * @return boolean 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月20日 下午10:20:10
+	 */
+	public static boolean filePlaySite(FileCastTask task,Long playSite) {
+		try {
+			task.lock.lock();
+			if(playSite >= task.getRunFile().getPlaySite()) {
+				/**向后调节音频*/
+				long length = playSite -task.getRunFile().getPlaySite();//时间差
+				long byteSizes = length * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
+				task.getRunFile().loadPlaySite(byteSizes);
+				task.getRunFile().setPlaySite(playSite);
+			}else {
+				/**向前调节音频*/
+				long byteSizes = playSite * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
+				task.getRunFile().resetIn();
+				task.getRunFile().loadPlaySite(byteSizes);
+				task.getRunFile().setPlaySite(playSite);
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			task.lock.unlock();
+		}
+		return false;
+	}
+	
+	 
+    public static boolean castTaskVolChange(FileCastTask task,Integer vol) {
+    	try {
+    		task.setVol(vol);
+    		
+    		/**发送音量指令*/
+    		ByteBuffer endbs = InterCMDProcess.sendVolSet(vol,false);
+    		try {
+    			task.getServer().sendData(endbs);
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    		return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+    }
 }

@@ -208,7 +208,7 @@
             	var data = $("#form-songlist-add").serializeArray();
 	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
 	        	data.status = status;
-                $.operate.save(prefix + "/add", data);
+                $.operate.saveTab(prefix + "/add", data);
             }
         }
         /**展示选择音频*/

@@ -142,11 +142,16 @@ public class TimeFileCast extends TimerTask{
 	/**读取音频信息**/
 	private int read(byte[] data) throws IOException {
 		int read = -1;
-		synchronized (task.getRunFile()) {
+		task.lock.lock();
+		try {
 			if(task.getRunFile().isNotDestory()) {
 				read = task.getRunFile().getIn().read(data,ClientCommand.CMD_HEADER_SIZE.getCmd(),task.getRunFile().getBitsize());
 				task.getRunFile().runStep();//将文件发送时长推进一步
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			task.lock.unlock();
 		}
 		return read;
 	}

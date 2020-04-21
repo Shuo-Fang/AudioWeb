@@ -45,7 +45,7 @@ public class RunningFile extends WorkFile{
 	private final BufferedInputStream in;
 	
 	/**正在播放文件时间节点*/
-	private AtomicLong palySite = new AtomicLong(0);
+	private AtomicLong playSite = new AtomicLong(0);
 	
 	/**初始化继承父类信息
 	 * @throws IOException */
@@ -87,7 +87,7 @@ public class RunningFile extends WorkFile{
 
 	/**正在播放文件发送一次*/
 	public final long runStep() {
-		return palySite.addAndGet(timesize);
+		return playSite.addAndGet(timesize);
 	}
 
 	/**获取新的正在广播音频文件信息
@@ -123,11 +123,16 @@ public class RunningFile extends WorkFile{
 		return isNotDestory;
 	}
 
-	public final long getPalySite() {
-		return palySite.get();
+	public final long getPlaySite() {
+		return playSite.get();
 	}
 
-	public final void setPalySite(long palySite) {
-		this.palySite.set(palySite);
+	public final void setPlaySite(long playSite) {
+		this.playSite.set(playSite);
+	}
+	/**加载跳过文件进度
+	 * @throws IOException */
+	public final void loadPlaySite(long playSite) throws IOException {
+		in.skip(playSite);
 	}
 }

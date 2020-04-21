@@ -185,9 +185,25 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @return 结果
      */
     @Override
-    public AjaxResult controlFileCast(Long taskId,Long palySite)
+    public AjaxResult controlFileCast(Long taskId,Long playSite)
     {
-    	return null;
+    	WorkCastTask task = WorkCastTask.find(taskId);
+    	if(StringUtils.isNotNull(task) && task instanceof FileCastTask && StringUtils.isNotNull(playSite)) {
+    		FileCastTask tCastTask = (FileCastTask) task;
+    		if(playSite >= tCastTask.getRunFile().getDuration()) {
+    			/**进度条大于或等于最大值,等于下一曲*/
+    			return fileCastCommand(tCastTask, FileCastCommand.NEXT);
+    		} else {
+				if(WorkFileTaskService.filePlaySite(tCastTask, playSite)) {
+					AjaxResult result = AjaxResult.success();
+					result.put(AjaxResult.DATA_TAG, tCastTask);
+					return result;
+				}else {
+					return AjaxResult.error("修改出错,请刷新重试！");
+				}
+			}
+    	}
+    	return AjaxResult.error("修改出错或任务已结束！");
     }
     /**
      * 修改广播任务播放模式
@@ -216,7 +232,23 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     @Override
     public AjaxResult controlFileCast(Long taskId,Integer vol)
     {
-    	return null;
+    	WorkCastTask task = WorkCastTask.find(taskId);
+    	if(StringUtils.isNotNull(task) && task instanceof FileCastTask) {
+    		FileCastTask tCastTask = (FileCastTask) task;
+    		if(StringUtils.isNotNull(vol)) {
+    			if(vol < 0) {
+    				vol = 0;
+    			}else if (vol > 40) {
+					vol = 40;
+				}
+    			if(WorkFileTaskService.castTaskVolChange(tCastTask,vol)) {
+    				return AjaxResult.success();
+    			}else {
+    				return AjaxResult.error("修改出错！请刷新页面重试");
+    			}
+    		}
+    	}
+		return AjaxResult.error("修改出错或任务已结束！");
     }
     
     /**
@@ -326,7 +358,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	AjaxResult result = AjaxResult.success(); 
     	switch (command) {
 		case PREV:
-			if(WorkFileTaskService.NextFile(task,false)) {
+			if(WorkFileTaskService.nextFile(task,false)) {
 				result.put(AjaxResult.DATA_TAG, task);
 				return result;
 			}else {
@@ -342,7 +374,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
 			result.put(AjaxResult.DATA_TAG, task);
 			return result;
 		case NEXT:
-			if(WorkFileTaskService.NextFile(task,true)) {
+			if(WorkFileTaskService.nextFile(task,true)) {
 				result.put(AjaxResult.DATA_TAG, task);
 				return result;
 			}else {

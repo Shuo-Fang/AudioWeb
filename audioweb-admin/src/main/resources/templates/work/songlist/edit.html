@@ -231,7 +231,7 @@
             	var data = $("#form-songlist-edit").serializeArray();
 	        	var status = $("input[id='status']").is(':checked') == true ? 0 : 1;
 	        	data.status = status;
-                $.operate.save(prefix + "/edit", data);
+                $.operate.saveTab(prefix + "/edit", data);
             }
         }
         /**展示选择音频*/

@@ -64,15 +64,6 @@ public class FileCastController extends BaseController
     private IWorkTerminalService workTerminalService;
 
     @Autowired
-    private IWorkFileService workFileService;
-    
-    @Autowired
-    private ISysDomainService domainService;
-    
-	@Autowired
-    private ISysConfigService configService;
-
-    @Autowired
     private IWorkCastTaskService workCastTaskService;
 	
     @RequiresPermissions("work:filecast:view")
@@ -96,6 +87,16 @@ public class FileCastController extends BaseController
     }
     
     /**
+     * 空回调方法
+     */
+    @PostMapping("/noData")
+    @ResponseBody
+    public AjaxResult noData()
+    {
+    	return success("任务已完成");
+    }
+    
+    /**
      * 查询音频任务中所有音频的存储序列信息列表
      */
     @RequiresPermissions("work:filecast:view")
@@ -108,7 +109,7 @@ public class FileCastController extends BaseController
     	FileCastTask task = null;
     	if(StringUtils.isNotNull(taskId)) {
     		WorkCastTask castTask = WorkCastTask.find(taskId);
-    		if(castTask.getCastType() == CastWorkType.FILE && StringUtils.isNotNull(castTask)) {
+    		if( StringUtils.isNotNull(castTask) && castTask.getCastType() == CastWorkType.FILE) {
     			try {
         			task = (FileCastTask) castTask;
 				} catch (Exception e) {
@@ -144,25 +145,46 @@ public class FileCastController extends BaseController
     })
     @Log(title = "文件广播任务", businessType = BusinessType.INSERT, operatorType = OperatorType.MOBILE)
     public AjaxResult startFileTask(String songData,String fileCastType,Integer vol,Integer castLevel,String domainidlist,String teridlist,String taskName) {
-    	FileCastTask task = new FileCastTask();
-    	task.setSongData(songData);
-    	task.setFileCastType(FileCastType.valueOf(fileCastType));
-    	task.setVol(vol);
-    	if(StringUtils.isNull(castLevel)) {
-    		castLevel = 5;
-    	}
-    	task.setCastLevel(castLevel);
-    	task.setDomainidlist(domainidlist);
-    	task.setTeridlist(StringUtils.isNotEmpty(teridlist)?teridlist:"");
-    	if(StringUtils.isNotEmpty(taskName)) {
-    		task.setTaskName(taskName);
-    	}else {
-    		task.setTaskName(ShiroUtils.getSysUser().getUserName()+"_文件广播");
-    	}
-    	task.setCreateBy(ShiroUtils.getLoginName());
-    	task.setCastType(CastWorkType.FILE);
-    	task.setSessionId(ShiroUtils.getSessionId());
-    	return workCastTaskService.insertWorkCastTask(task);
+    	try {
+        	FileCastTask task = new FileCastTask();
+        	if(StringUtils.isNotEmpty(songData)) {
+        		task.setSongData(songData);
+        	}
+        	task.setFileCastType(FileCastType.valueOf(fileCastType));
+        	if(StringUtils.isNotNull(vol)) {
+        		if(vol < 0) {
+        			vol = 0;
+        		}else if(vol > 40) {
+        			vol = 40;
+        		}
+        		task.setVol(vol);
+        	}else {
+        		error("音量传值为空！");
+        	}
+        	if(StringUtils.isNull(castLevel)) {
+        		castLevel = 5;
+        	}
+        	if(castLevel < 0) {
+        		castLevel = 1;
+        	}else if (castLevel > 5) {
+        		castLevel = 5;
+        	}
+        	task.setCastLevel(castLevel);
+        	task.setDomainidlist(domainidlist);
+        	task.setTeridlist(StringUtils.isNotEmpty(teridlist)?teridlist:"");
+        	if(StringUtils.isNotEmpty(taskName)) {
+        		task.setTaskName(taskName);
+        	}else {
+        		task.setTaskName(ShiroUtils.getSysUser().getUserName()+"_文件广播");
+        	}
+        	task.setCreateBy(ShiroUtils.getLoginName());
+        	task.setCastType(CastWorkType.FILE);
+        	task.setSessionId(ShiroUtils.getSessionId());
+        	return workCastTaskService.insertWorkCastTask(task);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return error("创建任务失败!");
     }
 
     
@@ -197,14 +219,14 @@ public class FileCastController extends BaseController
     @ApiOperation("控制文件广播播放进度")
     @ApiImplicitParams ({
     	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
-    	@ApiImplicitParam(name = "palySite", value = "需要修改的文件广播的播放时间节点,单位为毫秒,范围为歌曲的duration长度之内,如果超过此长度，则默认为下一曲", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "playSite", value = "需要修改的文件广播的播放时间节点,单位为毫秒,范围为歌曲的duration长度之内,如果超过此长度，则默认为下一曲", required = true, dataType = "long", paramType = "query"),
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileSite")
     @Log(title = "控制文件广播播放进度", businessType = BusinessType.UPDATE)
     @ResponseBody
-    public AjaxResult controlFileSite(Long taskId,Long palySite) {
-    	return workCastTaskService.controlFileCast(taskId, palySite);
+    public AjaxResult controlFileSite(Long taskId,Long playSite) {
+    	return workCastTaskService.controlFileCast(taskId, playSite);
     }
     
     @ApiOperation("控制文件广播播放模式")
@@ -223,7 +245,7 @@ public class FileCastController extends BaseController
     
     @ApiOperation("控制文件广播播放音量")
     @ApiImplicitParams ({
-    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "long", paramType = "query"),
     	@ApiImplicitParam(name = "vol", value = "需要修改的文件广播音量值，0-40之间，大于40则默认为40", required = true, dataType = "int", paramType = "query"),
     })
     @RequiresPermissions("work:filecast:edit")
@@ -232,5 +254,17 @@ public class FileCastController extends BaseController
     @ResponseBody
     public AjaxResult controlFileVol(Long taskId,Integer vol) {
     	return workCastTaskService.controlFileCast(taskId, vol);
+    }
+    
+    @ApiOperation("停止文件广播")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要停止的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "long", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/stopFileCast")
+    @Log(title = "停止文件广播", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult controlFileVol(String taskId) {
+    	return toAjax(workCastTaskService.deleteWorkCastTaskByIds(taskId));
     }
 }

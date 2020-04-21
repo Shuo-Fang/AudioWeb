@@ -1211,7 +1211,7 @@ var table = {
             	$.modal.closeLoading();
             },
             // 成功回调执行事件（父窗体静默更新）
-            successCallback: function(result) {
+            successCallback: function(result) {debugger
                 if (result.code == web_status.SUCCESS) {
                 	var parent = window.parent;
                     if (parent.table.options.type == table_type.bootstrapTable) {
@@ -1234,7 +1234,7 @@ var table = {
                 $.modal.enable();
             },
             // 选项卡成功回调执行事件（父窗体静默更新）
-            successTabCallback: function(result) {
+            successTabCallback: function(result) {debugger
                 if (result.code == web_status.SUCCESS) {
                 	var topWindow = $(window.parent.document);
     	            var currentId = $('.page-tabs-content', topWindow).find('.active').attr('data-panel');

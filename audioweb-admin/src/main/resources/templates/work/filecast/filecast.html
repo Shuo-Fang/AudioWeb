@@ -107,7 +107,7 @@
 					</div>
                     <div class="row" >
 	                    <div class="col-xs-11" style = "text-align:center; margin-top: 0px;">
-	                    	<h3 id= "showTitle">已选音频</h3>
+	                    	<h3 id= "showTitle">音频名称</h3>
 	                    </div>
                     	<div class="col-xs-1">
 				        </div>
@@ -145,8 +145,8 @@
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
-        var isFileCast = false,isDestroy = false,isMove = false,oldSite = false;
-        var startTime,timeSite = 0,isComplete = 0;
+        var isFileCast = false,isDestroy = false,isMove = false,isComplete = false;
+        var startTime,timeSite = 0;
         var fileCastType = "ORDER";
         var castInfo;//广播信息
         var fileLength,filePlaySite,fileLengthText;//广播节点信息
@@ -309,6 +309,7 @@
                 }]
             };
             $.table.init(options);
+			putData(data);
         }
 		$('#btnExpand').click(function() {
 			$._tree.expandAll(true);
@@ -430,7 +431,6 @@
 			});
 			data = uniqueFn(data);
 			queryFileList(data);
-			putData(data);
 		}
 		function uniqueFn(arr) {
 			  var ret = [];
@@ -540,32 +540,6 @@
 			if(isFileCast){
 				AjaxFileCastType();
 			}
-		}
-		/**发送文件广播任务类型改变命令**/
-		function AjaxFileCastType(){
-			var url = prefix + "/controlFileType";
-			var data = {"taskId":castInfo.taskId,"type":fileCastType};
-			var callback = function(res){
-				if (res.code == web_status.SUCCESS) {
-					$.modal.tipInfo('#'+fileCastType,"修改成功");
-				}else if (res.code == web_status.WARNING) {
-					$.modal.alertWarning(res.msg)
-				}  else {
-					$.modal.alertError(res.msg);
-				}
-			};
-			var config = {
-				url: url,
-				type: "post",
-				dataType: "json",
-				data: data,
-				success: function(result) {
-					if (typeof callback == "function") {
-						callback(result);
-					}
-				}
-			};
-			$.ajax(config)
 		}
 		/**设置图片**/
 		function showImg(src){
@@ -700,7 +674,7 @@
 				}); 
 		}
 		/**初始化文件广播  isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新*/
-		function initFileCast(isStart){debugger
+		function initFileCast(isStart){
 			/**信息上同步**/
 			showTitle(castInfo.runFile.fileName);
 			//1、图标
@@ -726,14 +700,16 @@
 			$.common.toHide("castLevelGroup");
 			//4、初始化进度条
 			fileLength = parseInt(castInfo.runFile.duration/1000);
-			filePlaySite = parseInt(castInfo.runFile.palySite/1000);
+			filePlaySite = parseInt(castInfo.runFile.playSite/1000);
 			fileLengthText = parseInt(fileLength/60)+':'+(parseInt(fileLength%60)>9?parseInt(fileLength%60):('0'+parseInt(fileLength%60)));
+			$('.slider-normal').empty();
+			$('.slider-small').empty();
 			$('.slider-normal').RangeSlider({ min: 0,   max: fileLength,  step: 1, callback: castchange, finishedCallback: castfinished});
 			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1,  callback: volchange, finishedCallback: volfinished});
 			$('.slider-normal').attr("disabled",false);
 			setValue(castInfo.vol);
 			setCastValue(filePlaySite);
-			isMove = false;
+			isComplete = false;
 			initTimeCast();
 			//5、隐藏树
 			hideLeft();
@@ -749,7 +725,13 @@
 			//$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: change, finishedCallback:finished});
 		}
 		function initNoFileCast(){
+			if($.common.isNotEmpty($("#taskId").val())){
+				/**taskId不为空则表示页签打开*/
+				submitHandler();
+				return;
+			}
 			/**无任务初始化*/
+			isFileCast = false;
 			queryFileList();
 		    queryTerminalTree();
 		    showImg(defaultPath);
@@ -758,16 +740,27 @@
 			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
 			$('.slider-normal').attr("disabled",true);
 		    setValue();
+		    $("#toDuration").text("0:00/0:00");
+		    $("#showTitle").text("");
+		  	//2、显示广播状态
+			$.common.toHide("PREV");
+			$.common.toHide("NEXT");
+			$.common.toHide("STOP");
+			$.common.toHide("PAUSE");
+			$.common.toShow("RESUME");
+			//3/显示广播级别
+			$.common.toShow("castLevelGroup");
 		}
 		function castfinished(value){
 			isMove = true;
+			AjaxFileSite(value*1000);
 		}
 		function castchange($input){
 			isMove = true;
 			setCastValue($input.value);
 		}
 		function volfinished(value){
-			console.log("vol:"+value);
+			AjaxFileCastVol(value,".slider-small");
 		}
 		function volchange($input){
 			$("#volNum").text($input.value);
@@ -843,21 +836,22 @@
 			$.ajax(config)
 		}
 		
-		function progressBar() {
-			if(!isMove && !oldSite){
+		function progressBar(isTrue) {
+			if(isTrue){
+				isMove = false;
+			}
+			if(!isMove){
 				timeSite++;
 				var offset = new Date().getTime() - (startTime + timeSite * 1000);
 				var nextTime = 1000 - offset;
 				if (nextTime < 0){
 					nextTime = 0;
-					isComplete++;
+					isComplete = true;
 				}
-				if(isComplete < 2){
+				if(!isComplete){
 					setTimeout(progressBar, nextTime);
-					parsec();
 				}
-			}else{
-				oldSite = false;
+				parsec();
 			}
 		}
 		function parsec(){
@@ -865,19 +859,18 @@
 				if(filePlaySite < fileLength){
 					filePlaySite++;
 					setCastValue(filePlaySite);
-				}else if(isComplete == 1){
+				}else if(isComplete){
 					loadFileCast(true);
-					isComplete++;
 				}else{
-					isComplete++;
+					isComplete = true;
 				}
 			}
 		}
 		function initTimeCast(){
 			startTime = new Date().getTime();
 			timeSite = 0;
-			if(castInfo.isCast && !castInfo.isStop && !isMove){
-				setTimeout(progressBar, 1000);
+			if(castInfo.isCast && !castInfo.isStop){
+				setTimeout(function(){progressBar(true);}, 1000);
 			}
 		}
 		/**控制广播任务**/
@@ -890,24 +883,52 @@
 				}
 			}
 		}
+		/**发送文件广播任务类型改变命令**/
+		function AjaxFileCastVol(value,tip){
+			var url = prefix + "/controlFileVol";
+			var data = {"taskId":castInfo.taskId,"vol":value};
+			AjaxFileCast(url,data,tip,true);
+		}
+		/**发送文件广播任务类型改变命令**/
+		function AjaxFileCastType(){
+			var url = prefix + "/controlFileType";
+			var data = {"taskId":castInfo.taskId,"type":fileCastType};
+			var tip = "#"+fileCastType;
+			AjaxFileCast(url,data,tip,true);
+		}
 		/**发送文件广播控制命令**/
 		function AjaxFileCastControl(value){
-			isMove = true;
-			oldSite = true;
 			var url = prefix + "/controlFileCast";
 			var data = {"taskId":castInfo.taskId,"command":value};
+			var tip = '#'+value;
+			AjaxFileCast(url,data,tip);
+		}
+		/**发送文件广播节点调节命令**/
+		function AjaxFileSite(value){
+			var url = prefix + "/controlFileSite";
+			var data = {"taskId":castInfo.taskId,"playSite":value};
+			var tip = '.slider-normal';
+			AjaxFileCast(url,data,tip);
+		}
+		/**发送文件广播调节命令**/
+		function AjaxFileCast(url,data,tip,noStop){
+			if(!noStop){
+				isMove = true;
+			}
 			var callback = function(res){
-				if (res.code == web_status.SUCCESS) {debugger
-					$.modal.tipPrimary('#'+value,"修改成功");
+				if (res.code == web_status.SUCCESS) {
+					if($.common.isNotEmpty(tip)){
+						$.modal.tipPrimary(tip,"修改成功");
+					}
 					if($.common.isNotEmpty(res.data)){
 						castInfo = res.data;
 						isFileCast = castInfo.isCast;
 						if(isFileCast){
 							initFileCast(true);//初始化文件广播
 						}else{
-							$.modal.alertWarning("任务已创建但未开始广播，请前往任务管理查看");
+							$.modal.alertWarning("任务已存在但未开始广播，请前往任务管理查看");
 						}
-					}else{
+					}else if(!(data.type || data.vol)){
 						$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
 					}
 				}else if (res.code == web_status.WARNING) {
@@ -929,6 +950,10 @@
 			};
 			$.ajax(config)
 		}
+		/**页签打开回调方法*/
+	 	function submitHandler() {
+            $.operate.saveTab(prefix + "/noData");
+        }
     </script>
 </body>
 </html>

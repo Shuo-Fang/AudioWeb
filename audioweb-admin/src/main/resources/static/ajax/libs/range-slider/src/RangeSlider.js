@@ -46,7 +46,7 @@
 		event = "input";
 	}
 	
-	$input.bind(event, function(e){
+	$input.unbind(event).bind(event, function(e){
 		$input.attr('value', this.value);
 		
 		if (isWebkit) {
@@ -56,12 +56,14 @@
 			callback(this);
 		}
 	});
-	$input.bind("mouseup", function(e){
+	$input.unbind("click").bind("click", function(e){
+		e.stopPropagation();
 		if ($.isFunction(callback)) {
 			finishedCallback(this.value);
 		}
 	});	
-	$input.bind("mousedowm", function(e){
+	
+	$input.unbind("mousedowm").bind("mousedowm", function(e){
 		console.log("dowm");
 	});
 }

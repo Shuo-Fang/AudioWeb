@@ -10,7 +10,11 @@ package com.audioweb.work.domain;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.enums.CastWorkType;
@@ -37,6 +41,10 @@ import io.swagger.annotations.ApiModelProperty;
 public class FileCastTask extends WorkCastTask{
 
 	private static final long serialVersionUID = 1L;
+	
+	/**文件广播执行锁*/
+	@JsonIgnore
+	public Lock lock = new ReentrantLock();
 	
 	/**文件广播发起者sessionId*/
 	private String sessionId;
@@ -66,7 +74,7 @@ public class FileCastTask extends WorkCastTask{
 	/** 广播文件播放历史节点,随机播放用到的 */
 	@ApiModelProperty("广播文件历史节点")
 	@JsonIgnore
-	private AtomicInteger playHistorySite = new AtomicInteger(0);;
+	private AtomicInteger playHistorySite = new AtomicInteger(0);
 	
 	/** 文件广播类型 */
 	@ApiModelProperty("广播的文件类型：0,顺序播放;1,列表循环;2,随机播放")
@@ -87,6 +95,10 @@ public class FileCastTask extends WorkCastTask{
 	/**组播对象*/
 	@JsonIgnore
 	private GroupNettyServer server;
+	
+	/**随机生成器*/
+	@JsonIgnore
+	private Random random = new Random();
 	
 	public RunningFile getRunFile() {
 		return runFile;
@@ -197,9 +209,12 @@ public class FileCastTask extends WorkCastTask{
 	}
 	
 	public void putPrevPlayHistory(String playHistory) {
-		this.playHistory.add(0,playHistory);
-		if(this.playHistory.size() > 100) {
-			this.playHistory.remove(this.playHistory.size()-1);
+		String hiString = this.playHistory.size() > 0 ? this.playHistory.get(0):null;
+		if(!Objects.equals(playHistory, hiString)) {
+			this.playHistory.add(0,playHistory);
+			if(this.playHistory.size() > 100) {
+				this.playHistory.remove(this.playHistory.size()-1);
+			}
 		}
 	}
 
@@ -218,6 +233,10 @@ public class FileCastTask extends WorkCastTask{
 		return this.playHistorySite.getAndIncrement();
 	}
 	
+	public final Random getRandom() {
+		return random;
+	}
+
 	public static FileCastTask findRunningTask(String sessionId) {
 		List<WorkCastTask> wCastTasks = new WorkCastTask().export();
 		for(WorkCastTask task:wCastTasks) {
