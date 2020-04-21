@@ -258,13 +258,13 @@ public class FileCastController extends BaseController
     
     @ApiOperation("停止文件广播")
     @ApiImplicitParams ({
-    	@ApiImplicitParam(name = "taskId", value = "需要停止的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "taskId", value = "需要停止的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "string", paramType = "query"),
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/stopFileCast")
     @Log(title = "停止文件广播", businessType = BusinessType.UPDATE)
     @ResponseBody
-    public AjaxResult controlFileVol(String taskId) {
+    public AjaxResult stopFileCast(String taskId) {
     	return toAjax(workCastTaskService.deleteWorkCastTaskByIds(taskId));
     }
 }

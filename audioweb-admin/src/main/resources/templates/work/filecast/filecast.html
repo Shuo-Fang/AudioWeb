@@ -78,7 +78,7 @@
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
-					            <a class="icon iconfont icon-music_stop_button" id = "STOP" onclick="showSongList()" title = "停止" style="display:none;">
+					            <a class="icon iconfont icon-music_stop_button" id = "STOP" onclick="AjaxStopFileCast()" title = "停止" style="display:none;">
 					            </a>
 				            </div>
 		        			<div class="col-sm-1">
@@ -145,7 +145,7 @@
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returndata;
-        var isFileCast = false,isDestroy = false,isMove = false,isComplete = false;
+        var isFileCast = false,isDestroy = false,isMove = true,isComplete = false;
         var startTime,timeSite = 0;
         var fileCastType = "ORDER";
         var castInfo;//广播信息
@@ -750,34 +750,35 @@
 			$.common.toShow("RESUME");
 			//3/显示广播级别
 			$.common.toShow("castLevelGroup");
+			
 		}
 		function castfinished(value){
 			isMove = true;
 			AjaxFileSite(value*1000);
 		}
-		function castchange($input){
+		function castchange(value){
 			isMove = true;
-			setCastValue($input.value);
+			setCastValue(value);
 		}
 		function volfinished(value){
 			AjaxFileCastVol(value,".slider-small");
 		}
-		function volchange($input){
-			$("#volNum").text($input.value);
-			$input.title = $input.value;
-			if($input.valueAsNumber > 20){
+		function volchange(value){
+			$("#volNum").text(value);
+			$(".slider-small").attr("title",value);
+			if(value > 20){
 				if($("#VOLUP").is(':hidden')){
 					$.common.toHide("VOLMUTE");
 					$.common.toHide("VOLDOWN");
 					$.common.toShow("VOLUP");
 				}
-			}else if($input.valueAsNumber == 0){
+			}else if(value == 0){
 				if($("#VOLMUTE").is(':hidden')){
 					$.common.toHide("VOLUP");
 					$.common.toHide("VOLDOWN");
 					$.common.toShow("VOLMUTE");
 				}
-			}else if($input.valueAsNumber >0 && $input.valueAsNumber <= 20){
+			}else if(value >0 && value <= 20){
 				if($("#VOLDOWN").is(':hidden')){
 					$.common.toHide("VOLUP");
 					$.common.toHide("VOLMUTE");
@@ -786,7 +787,7 @@
 			}
 		}
 		/**设置音量进度条位置*/
-		function setValue(value){
+		function setValue(value){debugger
 			if($.common.isEmpty(value)){
 				value = 30;
 			}
@@ -796,6 +797,7 @@
 			if((userAgent.indexOf("edge") <0) && (userAgent.indexOf( "webkit" )> 0 )){
 				data.css( 'background-size', value/40*100 + '% 100%' ); 
 			}
+			volchange(value);
 		}
 		/**设置音频进度条位置*/
 		function setCastValue(value){
@@ -883,6 +885,14 @@
 				}
 			}
 		}
+		/**发送文件广播停止命令**/
+		function AjaxStopFileCast(){
+			$.modal.confirm("确认要停止此任务么?", function() {
+				var url = prefix + "/stopFileCast";
+				var data = {"taskId":castInfo.taskId};
+				AjaxFileCast(url,data,'',true);
+        	});
+		}
 		/**发送文件广播任务类型改变命令**/
 		function AjaxFileCastVol(value,tip){
 			var url = prefix + "/controlFileVol";
@@ -928,8 +938,17 @@
 						}else{
 							$.modal.alertWarning("任务已存在但未开始广播，请前往任务管理查看");
 						}
-					}else if(!(data.type || data.vol)){
+					}else if(!noStop){
 						$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
+					}else if(tip == ''){
+						$.modal.msgSuccess("停止成功");
+						if($.common.isNotEmpty($("#taskId").val())){
+							/**taskId不为空则表示页签打开*/
+							submitHandler();
+							return;
+						}else{
+							setTimeout(function(){history.go(0);},1000)//初始化页面
+						}
 					}
 				}else if (res.code == web_status.WARNING) {
 					$.modal.alertWarning(res.msg)

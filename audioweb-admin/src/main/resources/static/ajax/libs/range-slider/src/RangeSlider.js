@@ -53,7 +53,7 @@
 			$input.css( 'background-size', this.value/max*100 + '% 100%' ); 
 		}
 		if ($.isFunction(callback)) {
-			callback(this);
+			callback(this.value);
 		}
 	});
 	$input.unbind("click").bind("click", function(e){
