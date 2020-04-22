@@ -163,6 +163,64 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     }
 
     /**
+     * 文件广播删除指定文件
+     * 
+     * @param workCastTask 广播任务
+     * @return 结果
+     */
+    @Override
+    public AjaxResult removeFileInFileCast(Long taskId,String fileIds)
+    {
+    	WorkCastTask task = WorkCastTask.find(taskId);
+    	if(StringUtils.isNotNull(task) && task instanceof FileCastTask) {
+    		FileCastTask tCastTask = (FileCastTask) task;
+    		List<String> fStrings = Convert.strToList(fileIds);
+    		if(fStrings.size() == 0) { 
+    			return AjaxResult.error("指定的音频信息为空!");
+    		}else if(fStrings.size() == 1) {
+        		if(!tCastTask.findSongDataList().contains(fStrings.get(0))) {
+        			return AjaxResult.error("指定的音频未在广播列表中!");
+        		}
+    			if(tCastTask.getRunFile().getFileId().equals(fStrings.get(0))) {
+    				return AjaxResult.error("无法删除正在播放的音频!");
+    			}
+        		if(WorkFileTaskService.removeFile(tCastTask,fStrings.get(0))) {
+        			return AjaxResult.success("删除成功！");
+        		}else {
+        			return AjaxResult.error("删除出错或找不到指定音频！");
+        		}
+    		}else {
+    			return removeFileList(tCastTask,fStrings);
+    		}
+    	}
+    	return AjaxResult.error("删除出错或任务已结束！");
+    }
+    /**
+     * 文件广播播放指定文件
+     * 
+     * @param workCastTask 广播任务
+     * @return 结果
+     */
+    @Override
+    public AjaxResult controlFileCast(Long taskId,String fileId)
+    {
+    	WorkCastTask task = WorkCastTask.find(taskId);
+    	if(StringUtils.isNotNull(task) && task instanceof FileCastTask) {
+    		FileCastTask tCastTask = (FileCastTask) task;
+    		if(!tCastTask.findSongDataList().contains(fileId)) {
+    			return AjaxResult.error("指定的音频未在广播列表中!");
+    		}
+    		if(WorkFileTaskService.castTaskPlayFile(tCastTask, fileId)) {
+    			AjaxResult result = AjaxResult.success();
+    			result.put(AjaxResult.DATA_TAG, tCastTask);
+    			return result;
+    		}else {
+    			return AjaxResult.error("修改出错或找不到指定音频！");
+    		}
+    	}
+    	return AjaxResult.error("修改出错或任务已结束！");
+    }
+    /**
      * 修改广播任务暂停启动，上下一曲
      * 
      * @param workCastTask 广播任务
@@ -387,4 +445,17 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
 		}
     	return AjaxResult.error("命令格式有误！");
     }
+    
+    private AjaxResult removeFileList(FileCastTask task,List<String> fIds) {
+    	AjaxResult result;
+    	if(fIds.remove(task.getRunFile().getFileId())) {
+    		result = AjaxResult.warn("所选音频中无法删除正在广播文件！");
+    	}else {
+    		result = AjaxResult.success("批量删除成功");
+    	}
+    	for(String id:fIds) {
+    		WorkFileTaskService.removeFile(task,id);
+    	}
+		return result;
+	}
 }

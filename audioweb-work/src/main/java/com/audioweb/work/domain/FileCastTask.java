@@ -237,6 +237,31 @@ public class FileCastTask extends WorkCastTask{
 		return random;
 	}
 
+	/**
+	 * 移除播放列表中的指定音频信息
+	 * @Title: removeWorkFile 
+	 * @Description: TODO(这里用一句话描述这个方法的作用) 
+	 * @param step void 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月22日 下午10:37:48
+	 */
+	public void removeWorkFile(int step) {
+		if(step < songData.size()) {
+			synchronized (castFileList) {
+				songData.remove(step);
+				castFileList.remove(step);
+			}
+		}
+	}
+	public void removeWorkFile(String fileId) {
+		if(!runFile.getFileId().equals(fileId)) {
+			int step = songData.indexOf(fileId);
+			if(step >= 0) {
+				removeWorkFile(step);
+			}
+		}
+	}
 	public static FileCastTask findRunningTask(String sessionId) {
 		List<WorkCastTask> wCastTasks = new WorkCastTask().export();
 		for(WorkCastTask task:wCastTasks) {

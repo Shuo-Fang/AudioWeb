@@ -149,6 +149,11 @@ public class RunningTerminalController extends BaseController
     		if(StringUtils.isNull(list)) {
     			list = new ArrayList<SysDomain>();
     		}
+    		for(int i = list.size()-1; i >= 0; i--) {
+    			if(WorkConstants.DESTOY.equals(list.get(i).getStatus())) {
+    				list.remove(i);
+    			}
+    		}
     		AjaxResult result = success();
     		result.put(AjaxResult.DATA_TAG, list);
     		return result;

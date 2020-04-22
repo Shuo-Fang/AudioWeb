@@ -139,9 +139,6 @@
     		            width: '5%',
                         align: "left",
                         formatter: function(value, row, index) {
-                        	if(value == '2'){
-                        		value = '1';
-                        	}
                            	return $.table.selectDictLabel(workSongDatas, value);
                         },
                     },
@@ -179,7 +176,7 @@
     		            width: '15%',
                         formatter: function(value, row, index) {
                              var actions = [];
-                             if(row.delFlag == '0'){
+                             if(row.delFlag == 0){
 	                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
 	                             actions.push('<a class="icon-view-small " download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
                              }

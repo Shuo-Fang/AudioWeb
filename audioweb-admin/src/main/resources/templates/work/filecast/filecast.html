@@ -107,7 +107,7 @@
 					</div>
                     <div class="row" >
 	                    <div class="col-xs-11" style = "text-align:center; margin-top: 0px;">
-	                    	<h3 id= "showTitle">音频名称</h3>
+	                    	<h3 id= "showTitle"></h3>
 	                    </div>
                     	<div class="col-xs-1">
 				        </div>
@@ -144,7 +144,7 @@
         var prefix = ctx + "work/filecast";
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
-        var returndata;
+        var returnData,historyData;
         var isFileCast = false,isDestroy = false,isMove = true,isComplete = false;
         var startTime,timeSite = 0;
         var fileCastType = "ORDER";
@@ -220,6 +220,7 @@
         	if($.common.isEmpty(data)){
         		data = [];
         	}
+			putData(data);
             var options = {
                 //url: prefix + "/list",
 		        showSearch: false,
@@ -260,9 +261,6 @@
 		            width: '5%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	if(value == '2'){
-                    		value = '1';
-                    	}
                        	return $.table.selectDictLabel(workSongDatas, value);
                     },
                 },
@@ -303,13 +301,15 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                     	 var actions = [];
+                         if(isFileCast){
+                    		actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="playTheFile(\'' + row.fileId + '\')"><i class="icon iconfont icon-zanting" title = "播放"></i></a>');
+                         }
                          actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
                          return actions.join('');
                     }
                 }]
             };
             $.table.init(options);
-			putData(data);
         }
 		$('#btnExpand').click(function() {
 			$._tree.expandAll(true);
@@ -450,24 +450,18 @@
 			table.set();
         	var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.affectedRowIds() : $.table.selectColumns(table.options.uniqueId);
         	if (rows.length == 0) {
-        		$.modal.alertWarning("请至少选择一条记录");
+        		$.modal.msgWarning("请至少选择一条记录");
         		return;
         	}
         	$.modal.confirm("确认要删除选中的" + rows.length + "条音频吗?", function() {
-    			var selectedRows = $("#" + table.options.id).bootstrapTable('getAllSelections');
-	        	var size = selectedRows.length;
-	    		for(var i = 0;i<size;i++){
-	    			$.table.remove(selectedRows[i].fileId);
-	    		}
-	    		putData();
+				AjaxRemoveFileCast(rows.join(),true);
         	});
 		}
         /*删除*/
         function remove(fileId){
         	if(isFileCast){
             	$.modal.confirm("确认要删除选中的1条音频吗?", function() {
-    	    		$.table.remove(fileId);
-    	    		putData();
+					AjaxRemoveFileCast(fileId,false);
             	});
         	}else{
 	    		$.table.remove(fileId);
@@ -476,15 +470,18 @@
 		}
 		/**存放数据*/
 		function putData(data){
+			var prompt = '以下音频已无效，导入失败:'+ "<br>";
 			isDestroy = false;
 			if($.common.isEmpty(data)){
 				data = $.table.getData();
 			}
 			var len = "";
 			if($.common.isNotEmpty(data)){
-				for(var i=0,size = data.length;i<size;i++){
+				for(var i= data.length-1;i >= 0;i--){
 					if(data[i].delFlag != 0){
 						isDestroy = true;
+						prompt += data[i].fileName+'<br>';
+						data.splice(i,1);
 					}
 					len += data[i].fileId+",";
 				}
@@ -495,6 +492,10 @@
 			}else{
 				$("#songData").val("");
 			}
+			if(isDestroy){
+				$.modal.alertWarning(prompt);
+			}
+			historyData = JSON.parse(JSON.stringify(data));
 		}
 		/**给子页面调用返回方法*/
 		function putReturn(res){
@@ -713,10 +714,10 @@
 			initTimeCast();
 			//5、隐藏树
 			hideLeft();
+			//6、初始化已选音频
+			$("#songData").val(castInfo.songData);
+			getFileData();
 			if(!isStart){
-				/**初始化已选音频*/
-				$("#songData").val(castInfo.songData);
-				getFileData();
 				/**初始化分区树*/
 				$("#terIds").val(castInfo.teridlist);
 				$("#domainIds").val(castInfo.domainidlist);
@@ -725,32 +726,31 @@
 			//$('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: change, finishedCallback:finished});
 		}
 		function initNoFileCast(){
+			/**之前有任务初始化*/
 			if($.common.isNotEmpty($("#taskId").val())){
 				/**taskId不为空则表示页签打开*/
 				submitHandler();
 				return;
 			}
+			if($.common.isNotEmpty(castInfo))
+			{
+				$.modal.msgSuccess("播放完成");
+				setTimeout(function(){history.go(0);},1000)//初始化页面
+				return;
+			}
+
 			/**无任务初始化*/
 			isFileCast = false;
 			queryFileList();
+			/**初始化分区树*/
 		    queryTerminalTree();
+			/**显示默认图标**/
 		    showImg(defaultPath);
 		    /**进度条初始化*/
 		    $('.slider-normal').RangeSlider({ min: 0,   max: 100,  step: 1, callback: castchange, finishedCallback: castfinished});
 			$('.slider-small').RangeSlider({ min: 0,   max: 40,  step: 1, callback: volchange, finishedCallback: volfinished});
 			$('.slider-normal').attr("disabled",true);
 		    setValue();
-		    $("#toDuration").text("0:00/0:00");
-		    $("#showTitle").text("");
-		  	//2、显示广播状态
-			$.common.toHide("PREV");
-			$.common.toHide("NEXT");
-			$.common.toHide("STOP");
-			$.common.toHide("PAUSE");
-			$.common.toShow("RESUME");
-			//3/显示广播级别
-			$.common.toShow("castLevelGroup");
-			
 		}
 		function castfinished(value){
 			isMove = true;
@@ -787,7 +787,7 @@
 			}
 		}
 		/**设置音量进度条位置*/
-		function setValue(value){debugger
+		function setValue(value){
 			if($.common.isEmpty(value)){
 				value = 30;
 			}
@@ -876,6 +876,15 @@
 			}
 		}
 		/**控制广播任务**/
+		function playTheFile(fileId){
+			$.modal.confirm("确认要播放此音频么?", function() {
+				var url = prefix + "/controlFilePlay";
+				var data = {"taskId":castInfo.taskId,"fileId":fileId};
+				var tip = null;
+				AjaxFileCast(url,data,tip);
+			});
+		}
+		/**控制广播任务**/
 		function fileCastControl(data){
 			if(isFileCast){
 				AjaxFileCastControl(data.id);
@@ -884,6 +893,55 @@
 					return startCast();
 				}
 			}
+		}
+		/**发送删除文件命令**/
+		function AjaxRemoveFileCast(fileId,isAll){
+			var url = prefix + "/removeFile";
+			var data = {"taskId":castInfo.taskId,'fileId':fileId};
+			var callback = function(res){
+				if (res.code == web_status.SUCCESS) {
+					$.modal.alertSuccess(res.msg);
+					if(isAll){
+						var selectedRows = $("#" + table.options.id).bootstrapTable('getAllSelections');
+						var size = selectedRows.length;
+						for(var i = 0;i<size;i++){
+							$.table.remove(selectedRows[i].fileId);
+						}
+					}else{
+						$.table.remove(fileId);
+					}
+					putData();
+				}else if (res.code == web_status.WARNING) {
+					layer.confirm(res.msg, {
+						icon: 4,
+						title: "警告",
+						btn: ['确认']
+					}, function (index) {
+						layer.close(index);
+						history.go(0);
+					});
+				}  else {
+					layer.confirm(res.msg, {
+						icon: 2,
+						title: "警告",
+						btn: ['确认']
+					}, function (index) {
+						layer.close(index);
+					});
+				}
+			};
+			var config = {
+				url: url,
+				type: "post",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (typeof callback == "function") {
+						callback(result);
+					}
+				}
+			};
+			$.ajax(config)
 		}
 		/**发送文件广播停止命令**/
 		function AjaxStopFileCast(){
@@ -926,32 +984,37 @@
 				isMove = true;
 			}
 			var callback = function(res){
-				if (res.code == web_status.SUCCESS) {
-					if($.common.isNotEmpty(tip)){
-						$.modal.tipPrimary(tip,"修改成功");
+				if($.common.isNotEmpty(res.data)){
+					castInfo = res.data;
+					isFileCast = castInfo.isCast;
+					if(isFileCast){
+						initFileCast(true);//初始化文件广播
+					}else{
+						$.modal.alertWarning("任务已存在但未开始广播，请前往任务管理查看");
+						return;
 					}
-					if($.common.isNotEmpty(res.data)){
-						castInfo = res.data;
-						isFileCast = castInfo.isCast;
-						if(isFileCast){
-							initFileCast(true);//初始化文件广播
-						}else{
-							$.modal.alertWarning("任务已存在但未开始广播，请前往任务管理查看");
-						}
-					}else if(!noStop){
-						$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
-					}else if(tip == ''){
-						$.modal.msgSuccess("停止成功");
-						if($.common.isNotEmpty($("#taskId").val())){
-							/**taskId不为空则表示页签打开*/
-							submitHandler();
-							return;
-						}else{
-							setTimeout(function(){history.go(0);},1000)//初始化页面
-						}
+				}else if(!noStop){
+					$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
+					return;
+				}
+				if($.common.isNotEmpty(tip)){
+					$.modal.tipPrimary(tip,"修改成功");
+				}else if(tip == ''){
+					$.modal.msgSuccess("停止成功");
+					if($.common.isNotEmpty($("#taskId").val())){
+						/**taskId不为空则表示页签打开*/
+						submitHandler();
+						return;
+					}else{
+						setTimeout(function(){history.go(0);},1000)//初始化页面
 					}
-				}else if (res.code == web_status.WARNING) {
-					$.modal.alertWarning(res.msg)
+				}else if(tip == null){
+					$.modal.msgSuccess("播放成功");
+				}
+				/*if (res.code == web_status.SUCCESS && res.msg != "操作成功") {
+					$.modal.alertSuccess(res.msg);
+				}else */if (res.code == web_status.WARNING) {
+					$.modal.alertWarning(res.msg);
 				}  else {
 					$.modal.alertError(res.msg);
 				}

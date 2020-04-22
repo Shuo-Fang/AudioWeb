@@ -202,6 +202,19 @@ public class FileCastController extends BaseController
     	return workCastTaskService.insertWorkCastTask(task);
     }
 
+    @ApiOperation("文件广播播放指定文件")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "fileId", value = "需要修改播放的文件Id", required = true, dataType = "String", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/controlFilePlay")
+    @Log(title = "文件广播播放指定文件", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult controlFilePlay(Long taskId,String fileId) {
+    	return workCastTaskService.controlFileCast(taskId, fileId);
+    }
+    
     @ApiOperation("控制文件广播任务")
     @ApiImplicitParams ({
     	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回任务全部信息", required = true, dataType = "long", paramType = "query"),
@@ -266,5 +279,13 @@ public class FileCastController extends BaseController
     @ResponseBody
     public AjaxResult stopFileCast(String taskId) {
     	return toAjax(workCastTaskService.deleteWorkCastTaskByIds(taskId));
+    }
+    
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/removeFile")
+    @Log(title = "删除文件广播中指定文件", businessType = BusinessType.UPDATE)
+    @ResponseBody
+    public AjaxResult removeFile(Long taskId,String fileId) {
+    	return workCastTaskService.removeFileInFileCast(taskId, fileId);
     }
 }

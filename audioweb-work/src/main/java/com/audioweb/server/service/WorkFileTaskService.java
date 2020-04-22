@@ -8,7 +8,6 @@
  */ 
 package com.audioweb.server.service;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Objects;
@@ -31,6 +30,12 @@ public class WorkFileTaskService {
 		try {
 			/**若正在播放文件不为空*/
 			if(StringUtils.isNotNull(task.getRunFile())) {
+				if(task.findSongDataList().size() <= 0) {
+					/**音频列表为空*/
+					//停止广播
+					WorkServerService.closeTask(task);
+					return false;
+				}
 				/**表示为自动播放完成后结束调用，先判断播放类型*/
 				switch (task.getFileCastType()) {
 					case ORDER://顺序播放
@@ -43,7 +48,11 @@ public class WorkFileTaskService {
 								//下一曲并继续播放
 								int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
 								step += 1;
-								fileRead(task,step);
+								if(!fileRead(task,step)) {
+									/**文件读取有误**/
+									task.removeWorkFile(step);
+									return initFileRead(task);
+								}
 							}
 						}
 						break;
@@ -55,7 +64,11 @@ public class WorkFileTaskService {
 							if(step >= task.findSongDataList().size()-1) {
 								step = 0;
 							}
-							fileRead(task,step);
+							if(!fileRead(task,step)) {
+								/**文件读取有误**/
+								task.removeWorkFile(step);
+								return initFileRead(task);
+							}
 						}
 						break;
 					case SINGLE://单曲循环
@@ -82,7 +95,11 @@ public class WorkFileTaskService {
 								}
 								int step = task.findSongDataList().indexOf(fileId);
 								if(step > 0) {
-									fileRead(task,step);
+									if(!fileRead(task,step)) {
+										/**文件读取有误**/
+										task.removeWorkFile(step);
+										return initFileRead(task);
+									}
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
@@ -104,7 +121,11 @@ public class WorkFileTaskService {
 								if(task.getPlayHistorySite() < 100) {
 									task.nextPlayHistorySite();
 								}
-								fileRead(task,step);
+								if(!fileRead(task,step)) {
+									/**文件读取有误**/
+									task.removeWorkFile(step);
+									return initFileRead(task);
+								}
 							}
 						}
 						break;
@@ -138,6 +159,12 @@ public class WorkFileTaskService {
      */
     public static boolean nextFile(FileCastTask task,boolean isNext) {
     	try {
+    		if(task.findSongDataList().size() <= 0) {
+				/**音频列表为空*/
+				//停止广播
+				WorkServerService.closeTask(task);
+				return false;
+			}
 	    	/**先判断播放类型*/
 			switch (task.getFileCastType()) {
 				case ORDER://顺序播放
@@ -151,7 +178,11 @@ public class WorkFileTaskService {
 							if(step > task.findSongDataList().size()-1) {
 								step = 0;
 							}
-							fileRead(task,step);
+							if(!fileRead(task,step)) {
+								/**文件读取有误**/
+								task.removeWorkFile(step);
+								return nextFile(task,isNext);
+							}
 						}
 					}else {
 						//上一曲并继续播放
@@ -161,7 +192,11 @@ public class WorkFileTaskService {
 							if(step < 0) {
 								step = task.findSongDataList().size()-1;
 							}
-							fileRead(task,step);
+							if(!fileRead(task,step)) {
+								/**文件读取有误**/
+								task.removeWorkFile(step);
+								return nextFile(task,isNext);
+							}
 						}
 					}
 					break;
@@ -178,7 +213,11 @@ public class WorkFileTaskService {
 								}
 								int step = task.findSongDataList().indexOf(fileId);
 								if(step >= 0) {
-									fileRead(task,step);
+									if(!fileRead(task,step)) {
+										/**文件读取有误**/
+										task.removeWorkFile(step);
+										return nextFile(task,isNext);
+									}
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
@@ -200,7 +239,11 @@ public class WorkFileTaskService {
 								if(task.getPlayHistorySite() < 100) {
 									task.nextPlayHistorySite();
 								}
-								fileRead(task,step);
+								if(!fileRead(task,step)) {
+									/**文件读取有误**/
+									task.removeWorkFile(step);
+									return nextFile(task,isNext);
+								}
 							}
 						}
 					}else {
@@ -231,7 +274,11 @@ public class WorkFileTaskService {
 									task.putPrevPlayHistory(task.getRunFile().getFileId());
 								}
 								task.setPlayHistorySite(0);
-								fileRead(task,step);
+								if(!fileRead(task,step)) {
+									/**文件读取有误**/
+									task.removeWorkFile(step);
+									return nextFile(task,isNext);
+								}
 							}else {
 								/**播放历史记录*/
 								String fileId = task.getPlayHistory().get(task.getPlayHistorySite());
@@ -241,7 +288,11 @@ public class WorkFileTaskService {
 								}
 								int step = task.findSongDataList().indexOf(fileId);
 								if(step >= 0) {
-									fileRead(task,step);
+									if(!fileRead(task,step)) {
+										/**文件读取有误**/
+										task.removeWorkFile(step);
+										return nextFile(task,isNext);
+									}
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
@@ -265,18 +316,20 @@ public class WorkFileTaskService {
     
 	/**文件初始化读取
 	 * @throws IOException */
-	private static void fileRead(FileCastTask task,int step) throws IOException {
+	private static boolean fileRead(FileCastTask task,int step) throws IOException {
 		try {
 			task.lock.lock();
 			task.getRunFile().destory();//关闭原文件读取信息
 			RunningFile file = RunningFile.getRunningFile(task.getCastFileList().get(step));
 			task.setRunFile(file);
 			task.getTimer().reloadTimer();//重置定时器
+			return true;
 		} catch (Exception e) {
-			throw e;
+			e.printStackTrace();
 		}finally {
 			task.lock.unlock();
 		}
+		return false;
 	}
 	/***
 	 * 设置广播的节点
@@ -314,7 +367,7 @@ public class WorkFileTaskService {
 		return false;
 	}
 	
-	 
+	/**修改广播音量**/
     public static boolean castTaskVolChange(FileCastTask task,Integer vol) {
     	try {
     		task.setVol(vol);
@@ -331,5 +384,59 @@ public class WorkFileTaskService {
 			e.printStackTrace();
 		}
 		return false;
+    }
+    
+    /**
+     * 选择音频播放
+     * @Title: castTaskPlayFile 
+     * @Description: 选择音频播放
+     * @param task
+     * @param fileId
+     * @return boolean 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年4月22日 下午9:47:15
+     */
+    public static boolean castTaskPlayFile(FileCastTask task,String fileId) {
+    	try {
+			synchronized (task.findSongDataList()) {
+				int oldStep = task.findSongDataList().indexOf(task.getRunFile().getFileId());
+				int step = task.findSongDataList().indexOf(fileId);
+				if(step >= 0) {
+					if(!fileRead(task,step)) {
+						fileRead(task,oldStep);
+						task.removeWorkFile(step);
+						return false;
+					}
+				}else {
+					return false;
+				}
+			}
+    		return true;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return false;
+    }
+    
+    /**
+     * 删除列表中指定音频
+     * @Title: removeFile 
+     * @Description: 删除列表中指定音频
+     * @param task
+     * @param fileId
+     * @return boolean 返回类型 
+     * @throws 抛出错误
+     * @author 10155 
+     * @date 2020年4月22日 下午9:47:15
+     */
+    public static boolean removeFile(FileCastTask task,String fileId) {
+    	try {
+    		task.removeWorkFile(fileId);
+    		return true;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	return false;
     }
 }

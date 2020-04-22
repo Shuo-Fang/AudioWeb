@@ -75,6 +75,18 @@ public interface IWorkCastTaskService
      */
 	public AjaxResult controlFileCast(Long taskId, FileCastCommand command);
 	/**
+	 * 文件广播播放指定文件
+	 * @Title: controlFileCastTask 
+	 * @Description: 文件广播播放指定文件
+	 * @param taskId 任务ID
+	 * @param fileId 文件Id
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月19日 下午9:12:13
+	 */
+	public AjaxResult controlFileCast(Long taskId, String fileId);
+	/**
 	 * 控制广播任务播放进度
 	 * @Title: controlFileCastTask 
 	 * @Description: 控制广播任务 
@@ -110,4 +122,16 @@ public interface IWorkCastTaskService
 	 * @date 2020年4月19日 下午9:12:13
 	 */
 	public AjaxResult controlFileCast(Long taskId, Integer vol);
+	/**
+	 * 删除文件广播中指定文件
+	 * @Title: removeFileInFileCast 
+	 * @Description: 删除文件广播中指定文件
+	 * @param taskId
+	 * @param fileId
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月23日 上午12:14:39
+	 */
+	public AjaxResult removeFileInFileCast(Long taskId, String fileId);
 }
