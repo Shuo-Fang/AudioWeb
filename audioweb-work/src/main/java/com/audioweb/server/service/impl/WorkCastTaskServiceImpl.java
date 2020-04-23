@@ -161,7 +161,56 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	}
         return result;
     }
+    
+    /**
+     * 重置文件广播中文件列表
+     * 
+     * @param workCastTask 广播任务
+     * @return 结果
+     */
+    @Override
+    public AjaxResult sortFileInFileCast(Long taskId,String fileId, Integer site)
+    {
+    	WorkCastTask task = WorkCastTask.find(taskId);
+    	if(StringUtils.isNotNull(task) && task instanceof FileCastTask) {
+    		FileCastTask tCastTask = (FileCastTask) task;
+    		if(tCastTask.findSongDataList().contains(fileId)) {
+    			if(StringUtils.isNotNull(site) && site >= 0 && site < tCastTask.findSongDataList().size()) {
+    				if(tCastTask.sortWorkFile(fileId,site)) {
+    					return AjaxResult.success();
+    				}else {
+    					return AjaxResult.error("修改出错，请刷新页面重试！");
+    				}
+    			}else {
+    				return AjaxResult.error("指定节点有误，请刷新页面重试！");
+    			}
+    		}else {
+    			return AjaxResult.error("所选音频不在音频列表中，请刷新页面重试！");
+    		}
+    	}
+    	return AjaxResult.error("操作出错或任务已结束！");
+    }
 
+    /**
+     * 重置文件广播中文件列表
+     * 
+     * @param workCastTask 广播任务
+     * @return 结果
+     */
+    @Override
+    public AjaxResult reloadFileInFileCast(Long taskId,String songData)
+    {
+    	WorkCastTask task = WorkCastTask.find(taskId);
+    	if(StringUtils.isNotNull(task) && task instanceof FileCastTask) {
+    		FileCastTask tCastTask = (FileCastTask) task;
+    		if(reloadFile(tCastTask,songData)) {
+    			return AjaxResult.success();
+    		}else {
+    			return AjaxResult.error("操作失败或所选音频信息为空！");
+    		}
+    	}
+    	return AjaxResult.error("操作出错或任务已结束！");
+    }
     /**
      * 文件广播删除指定文件
      * 
@@ -396,6 +445,29 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	}
     	castTask.setCastFileList(taskFiles);
     	if(taskFiles.size() > 0) {
+    		return true;
+    	}else {
+    		return false;
+    	}
+    }
+    /**
+     * 重置任务广播文件列表
+     * @Title: initFile 
+     * @Description: 初始化任务广播文件列表
+     * @param castTask void 返回类型 
+     * @throws 抛出错误
+     * @author ShuoFang 
+     * @date 2020年4月13日 下午1:53:32
+     */
+    private boolean reloadFile(FileCastTask castTask,String songData) {
+    	List<WorkFile> taskFiles = new LinkedList<>();
+    	if(StringUtils.isNotEmpty(songData)) {
+    		taskFiles = workFileService.selectWorkFileByIds(songData);
+    	}if(taskFiles.size() > 0 && songData.contains(castTask.getRunFile().getFileId())) {
+    		synchronized (castTask.getCastFileList()) {
+	        	castTask.setCastFileList(taskFiles);
+	        	castTask.setSongData(songData);
+    		}
     		return true;
     	}else {
     		return false;

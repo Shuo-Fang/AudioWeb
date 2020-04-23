@@ -40,7 +40,7 @@ public class Global
     private static boolean addressEnabled;
     
     /** 删除或丢失音频文件保存记录天数 */
-    private static Integer lostFile;
+    private static Long lostFile;
    
     public static String getName()
     {
@@ -159,11 +159,11 @@ public class Global
 		Global.wordPath = wordPath;
 	}
 
-	public static Integer getLostFile() {
+	public static Long getLostFile() {
 		return lostFile;
 	}
 
-	public void setLostFile(Integer lostFile) {
+	public void setLostFile(Long lostFile) {
 		Global.lostFile = lostFile;
 	}
 }

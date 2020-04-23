@@ -39,7 +39,7 @@ public class WorkConstants {
     public final static String AUDIOFILEDESTOY = "2";
     
     /** 丢失文件的最长存留信息 默认为30天 */
-    public final static Long AUDIOFILENOTFONDDATE = (long) (Global.getLostFile()*24*60*60*1000);
+    public final static Long AUDIOFILENOTFONDDATE = Global.getLostFile()*24*60*60*1000;
     
     /** 音频文件所属类型的状态码 0为文件广播,1为终端点播,2为文字转语音*/
     public final static String AUDIOFILETYPE = "0";

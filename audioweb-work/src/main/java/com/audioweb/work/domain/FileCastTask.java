@@ -192,7 +192,7 @@ public class FileCastTask extends WorkCastTask{
 		this.server = server;
 	}
 	
-	public void clearPlayHistory() {
+	public final void clearPlayHistory() {
 		playHistory.clear();
 		playHistorySite = new AtomicInteger(0);
 	}
@@ -225,11 +225,11 @@ public class FileCastTask extends WorkCastTask{
 		this.playHistorySite.set(playHistorySite);
 	}
 
-	public int prevPlayHistorySite() {
+	public final int prevPlayHistorySite() {
 		return this.playHistorySite.decrementAndGet();
 	}
 	
-	public int nextPlayHistorySite() {
+	public final int nextPlayHistorySite() {
 		return this.playHistorySite.getAndIncrement();
 	}
 	
@@ -246,7 +246,7 @@ public class FileCastTask extends WorkCastTask{
 	 * @author 10155 
 	 * @date 2020年4月22日 下午10:37:48
 	 */
-	public void removeWorkFile(int step) {
+	public final void removeWorkFile(int step) {
 		if(step < songData.size()) {
 			synchronized (castFileList) {
 				songData.remove(step);
@@ -254,13 +254,26 @@ public class FileCastTask extends WorkCastTask{
 			}
 		}
 	}
-	public void removeWorkFile(String fileId) {
+	public final void removeWorkFile(String fileId) {
 		if(!runFile.getFileId().equals(fileId)) {
 			int step = songData.indexOf(fileId);
 			if(step >= 0) {
 				removeWorkFile(step);
 			}
 		}
+	}
+	public final boolean sortWorkFile(String fileId,Integer site) {
+		int step = songData.indexOf(fileId);
+		if(step >= 0 && step < songData.size() && site < castFileList.size()) {
+			synchronized (castFileList) {
+				songData.remove(step);
+				WorkFile file = castFileList.remove(step);
+				songData.add(site, fileId);
+				castFileList.add(site,file);
+			}
+			return true;
+		}
+		return false;
 	}
 	public static FileCastTask findRunningTask(String sessionId) {
 		List<WorkCastTask> wCastTasks = new WorkCastTask().export();

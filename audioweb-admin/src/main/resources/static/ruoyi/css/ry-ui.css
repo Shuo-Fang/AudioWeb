@@ -1096,11 +1096,16 @@ label {
 .icon-view-small{
   height : 24px;
 }
+.icon-view-small .icon-view-small-red{
+  color:#ee2104;
+}
+.icon-view-small .icon-view-small-block{
+  color:#333;
+}
 .icon-view-small .icon{
   font-size: 20px;
   line-height: 20px;
   margin: 10px 0;
-  color:#333;
   -webkit-transition: font-size 0.25s ease-out 0s;
   -moz-transition: font-size 0.25s ease-out 0s;
   transition: font-size 0.25s ease-out 0s;
@@ -1110,19 +1115,24 @@ label {
   font-weight:bold;
 }
 .icon-view{
-  height : 32px;
+  height : 30px;
+}
+.icon-view .icon-view-red{
+  color:#ee2104;
+}
+.icon-view .icon-view-block{
+  color:#333;
 }
 .icon-view .icon{
-  font-size: 26px;
-  line-height: 26px;
+  font-size: 24px;
+  line-height: 24px;
   margin: 10px 0;
-  color:#333;
   -webkit-transition: font-size 0.25s ease-out 0s;
   -moz-transition: font-size 0.25s ease-out 0s;
   transition: font-size 0.25s ease-out 0s;
 }
 .icon-view .icon:hover{
-  font-size: 32px;
+  font-size: 30px;
   font-weight:bold;
 }
 .icon-view-plus{

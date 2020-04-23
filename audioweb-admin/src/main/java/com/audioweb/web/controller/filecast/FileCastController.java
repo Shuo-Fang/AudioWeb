@@ -236,7 +236,6 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileSite")
-    @Log(title = "控制文件广播播放进度", businessType = BusinessType.UPDATE)
     @ResponseBody
     public AjaxResult controlFileSite(Long taskId,Long playSite) {
     	return workCastTaskService.controlFileCast(taskId, playSite);
@@ -249,7 +248,6 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileType")
-    @Log(title = "控制文件广播播放模式", businessType = BusinessType.UPDATE)
     @ResponseBody
     public AjaxResult controlFileType(Long taskId,String type) {
     	FileCastType castType = FileCastType.valueOf(type);
@@ -263,7 +261,6 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileVol")
-    @Log(title = "控制文件广播播放音量", businessType = BusinessType.UPDATE)
     @ResponseBody
     public AjaxResult controlFileVol(Long taskId,Integer vol) {
     	return workCastTaskService.controlFileCast(taskId, vol);
@@ -281,11 +278,40 @@ public class FileCastController extends BaseController
     	return toAjax(workCastTaskService.deleteWorkCastTaskByIds(taskId));
     }
     
+    @ApiOperation("删除文件广播中指定文件")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回是否成功信息，若单独删除正在广播文件则会返回失败，若批量删除中包括正在广播文件，则会返回警告(301)", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "fileId", value = "需要删除的文件id或文件id组，以逗号隔开：如1,2,3；或者单独一个1", required = true, dataType = "string", paramType = "query"),
+    })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/removeFile")
-    @Log(title = "删除文件广播中指定文件", businessType = BusinessType.UPDATE)
     @ResponseBody
     public AjaxResult removeFile(Long taskId,String fileId) {
     	return workCastTaskService.removeFileInFileCast(taskId, fileId);
+    }
+    
+    @ApiOperation("重置文件广播中文件列表")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "songData", value = "文件id组信息，逗号分隔，其中一定需要包括正在广播文件，否则重置失败", required = true, dataType = "string", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/reloadFile")
+    @ResponseBody
+    public AjaxResult reloadFile(Long taskId,String fileId) {
+    	return workCastTaskService.reloadFileInFileCast(taskId, fileId);
+    }
+    
+    @ApiOperation("文件广播中文件排序修改")
+    @ApiImplicitParams ({
+    	@ApiImplicitParam(name = "taskId", value = "需要修改的文件广播的taskId,接口返回是否成功信息", required = true, dataType = "long", paramType = "query"),
+    	@ApiImplicitParam(name = "fileId", value = "更新排序的文件id", required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "site", value = "更新后的排序位置，0为开始", required = true, dataType = "int", paramType = "query"),
+    })
+    @RequiresPermissions("work:filecast:edit")
+    @PostMapping("/sortFile")
+    @ResponseBody
+    public AjaxResult sortFile(Long taskId,String fileId,Integer site) {
+    	return workCastTaskService.sortFileInFileCast(taskId, fileId, site);
     }
 }

@@ -145,7 +145,7 @@
 		            width: '25%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value);
+                    	return $.table.tooltip(value, 40, "");
                    	}
                 },
                 {
@@ -154,7 +154,7 @@
 		            width: '20%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value);
+                    	return $.table.tooltip(value, 30, "");
                    	}
                 },
                 {
@@ -172,7 +172,7 @@
 		            width: '15%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "");
+                    	return $.table.tooltip(value, 25, "");
                    	}
                 },
                 {
@@ -181,7 +181,7 @@
 		            width: '15%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 15, "");
+                    	return $.table.tooltip(value, 25, "");
                    	}
                 },
                 {
@@ -201,9 +201,11 @@
                     formatter: function(value, row, index) {
                         var actions = [];
                         if(row.delFlag == 0){
-	                         actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
+                        	actions.push('<div class="icon-view" role="group">');
+	                         actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1 icon-view-block" title = "试听"></i></a>');
 	                         actions.push('<a class="icon-view '+ exportFlag +'" download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
-	                         actions.push('<a class="icon-view ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+	                         actions.push('<a class="icon-view ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="icon iconfont icon-shanchu1 icon-view-red" title = "删除"></i></a>');
+                        	actions.push('</div>');
                         }
                         return actions.join('');
                     }

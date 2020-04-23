@@ -134,4 +134,29 @@ public interface IWorkCastTaskService
 	 * @date 2020年4月23日 上午12:14:39
 	 */
 	public AjaxResult removeFileInFileCast(Long taskId, String fileId);
+	/**
+	 * 重置文件广播中文件列表
+	 * @Title: removeFileInFileCast 
+	 * @Description: 重置文件广播中文件列表
+	 * @param taskId
+	 * @param fileId
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月23日 上午12:14:39
+	 */
+	public AjaxResult reloadFileInFileCast(Long taskId, String fileId);
+	/**
+	 * 文件广播中文件排序修改
+	 * @Title: removeFileInFileCast 
+	 * @Description: 文件广播中文件排序修改
+	 * @param taskId
+	 * @param fileId
+	 * @param site
+	 * @return AjaxResult 返回类型 
+	 * @throws 抛出错误
+	 * @author 10155 
+	 * @date 2020年4月23日 上午12:14:39
+	 */
+	public AjaxResult sortFileInFileCast(Long taskId, String fileId, Integer site);
 }

@@ -176,11 +176,13 @@
     		            width: '15%',
                         formatter: function(value, row, index) {
                              var actions = [];
+                             actions.push('<div class="icon-view-small" role="group">');
                              if(row.delFlag == 0){
-	                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1" title = "试听"></i></a>');
+	                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1 icon-view-small-block" title = "试听"></i></a>');
 	                             actions.push('<a class="icon-view-small " download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
                              }
-                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+                             actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1 icon-view-small-red" title = "删除"></i></a>');
+                             actions.push('</div>');
                              return actions.join('');
                         }
                     }]

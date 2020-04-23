@@ -145,7 +145,7 @@
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
         var returnData,historyData;
-        var isFileCast = false,isDestroy = false,isMove = true,isComplete = false;
+        var isFileCast = false,isMove = true,isComplete = false;
         var startTime,timeSite = 0;
         var fileCastType = "ORDER";
         var castInfo;//广播信息
@@ -160,7 +160,7 @@
 			$("#"+table.options.id).bootstrapTable('resetView');
 		}
 		//isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新
-		function loadFileCast(isStart){
+		function loadFileCast(isStart,refresh){
 			/**广播列表,终端列表以及广播任务初始化**/
 			var url = prefix + "/findFileCast";
 			var data = {taskId : $('#taskId').val()};
@@ -171,7 +171,7 @@
 							castInfo = res.data;
 							isFileCast = castInfo.isCast;
 							if(isFileCast){
-								initFileCast(isStart);//初始化文件广播
+								initFileCast(isStart,refresh);//初始化文件广播
 							}else{
 								$.modal.alertWarning("任务已创建但未开始广播,请前往任务管理检查！");
 								initNoFileCast();
@@ -213,7 +213,7 @@
 		    		refreshTable();
 		    	},
 		    });
-			loadFileCast(false);
+			loadFileCast(false,true);
 		});
         function queryFileList(data){
         	$.table.destroy();
@@ -233,7 +233,11 @@
                 pageSize:10000,
                 pageList:[10000],
 		        onReorderRow:function(data){
-		        	putData(data);
+		        	if(isFileCast){
+		        		sortData(data);
+		        	}else{
+		        		putData(data);
+		        	}
 		        },
 		        uniqueId : "fileId",
 		        data : data,
@@ -250,6 +254,7 @@
                 {
                     align: 'center',
                     field : 'fileName', 
+		            width: '30%',
                     title : '音频名称',
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value);
@@ -267,6 +272,7 @@
                 {
                     align: 'center',
                     field : 'songName', 
+		            width: '20%',
                     title : '歌曲名称',
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 15, "");
@@ -275,6 +281,7 @@
                 {
                     align: 'center',
                     field : 'artist', 
+		            width: '15%',
                     title : '歌手名称',
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 10, "");
@@ -282,6 +289,7 @@
                 },
                 {
                     field : 'album', 
+		            width: '15%',
                     title : '歌曲专辑',
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 10, "");
@@ -290,6 +298,7 @@
                 {
                     field : 'duration', 
                     title : '音频时长',
+		            width: '5%',
                     align: 'center',
                    	formatter: function(value, row, index) {
                    		var num = Math.floor(value/1000);
@@ -299,12 +308,15 @@
                 {
                     title: '操作',
                     align: 'center',
+		            width: '10%',
                     formatter: function(value, row, index) {
                     	 var actions = [];
+                    	 actions.push('<div class="icon-view-small" role="group">');
                          if(isFileCast){
                     		actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="playTheFile(\'' + row.fileId + '\')"><i class="icon iconfont icon-zanting" title = "播放"></i></a>');
                          }
-                         actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1" title = "删除"></i></a>');
+                         actions.push('<a class="icon-view-small" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\')"><i class="icon iconfont icon-shanchu1 icon-view-small-red" title = "删除"></i></a>');
+                    	 actions.push('</div>');
                          return actions.join('');
                     }
                 }]
@@ -471,13 +483,13 @@
 		/**存放数据*/
 		function putData(data){
 			var prompt = '以下音频已无效，导入失败:'+ "<br>";
-			isDestroy = false;
+			var isDestroy = false;
 			if($.common.isEmpty(data)){
 				data = $.table.getData();
 			}
 			var len = "";
 			if($.common.isNotEmpty(data)){
-				for(var i= data.length-1;i >= 0;i--){
+				for(var i= 0;i < data.length;i++){
 					if(data[i].delFlag != 0){
 						isDestroy = true;
 						prompt += data[i].fileName+'<br>';
@@ -559,10 +571,10 @@
 				$.modal.tipWarning('#tree',"请选择分区或终端");
 				return;
 			}
-			if(isDestroy){
+			/* if(isDestroy){
 				$.modal.tipWarning('#bootstrap-table',"请移除已无效的音频");
 				return;
-			}
+			} */
 			if($.common.isEmpty($("#songData").val())){
 				$.modal.tipWarning('#bootstrap-table',"请选择播放的音频",3);
 				return;
@@ -584,7 +596,7 @@
 						castInfo = result.data;
 						isFileCast = castInfo.isCast;
 						if(isFileCast){
-							initFileCast(true);//初始化文件广播
+							initFileCast(true,true);//初始化文件广播
 						}else{
 							$.modal.alertWarning("任务已创建但未开始广播，请前往任务管理查看");
 						}
@@ -674,8 +686,8 @@
 				  ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
 				}); 
 		}
-		/**初始化文件广播  isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新*/
-		function initFileCast(isStart){
+		/**初始化文件广播  isStart 是否为页面主动发起的，如果是则部分页面信息无需刷新,refresh 是则需要刷新*/
+		function initFileCast(isStart,refresh){
 			/**信息上同步**/
 			showTitle(castInfo.runFile.fileName);
 			//1、图标
@@ -715,8 +727,10 @@
 			//5、隐藏树
 			hideLeft();
 			//6、初始化已选音频
-			$("#songData").val(castInfo.songData);
-			getFileData();
+			if(refresh){
+				$("#songData").val(castInfo.songData);
+				getFileData();
+			}
 			if(!isStart){
 				/**初始化分区树*/
 				$("#terIds").val(castInfo.teridlist);
@@ -887,12 +901,52 @@
 		/**控制广播任务**/
 		function fileCastControl(data){
 			if(isFileCast){
-				AjaxFileCastControl(data.id);
+				if($.common.equals(data.id,"RESUME")){
+					AjaxFileCastControl(data.id,"#PAUSE");
+				}else if($.common.equals(data.id,"PAUSE")){
+					AjaxFileCastControl(data.id,"#RESUME");
+				}else{
+					AjaxFileCastControl(data.id);
+				}
 			}else{
 				if($.common.equals(data.id,"RESUME")){
 					return startCast();
 				}
 			}
+		}
+		/**发送文件排序命令**/
+		function AjaxSortFileCast(data,fileId,site){
+			var url = prefix + "/sortFile";
+			var data = {"taskId":castInfo.taskId,'fileId':fileId,'site':site};
+			var callback = function(res){
+				if (res.code == web_status.SUCCESS) {
+					$.modal.msgSuccess(res.msg);
+					putData(data);
+				}else if (res.code == web_status.WARNING) {
+					$.modal.alertWarning(res.msg);
+				}  else {
+					layer.confirm(res.msg, {
+						icon: 2,
+						title: "警告",
+						btn: ['确认']
+					}, function (index) {
+						layer.close(index);
+						history.go(0);
+					});
+				}
+			};
+			var config = {
+				url: url,
+				type: "post",
+				dataType: "json",
+				data: data,
+				success: function(result) {
+					if (typeof callback == "function") {
+						callback(result);
+					}
+				}
+			};
+			$.ajax(config)
 		}
 		/**发送删除文件命令**/
 		function AjaxRemoveFileCast(fileId,isAll){
@@ -927,6 +981,7 @@
 						btn: ['确认']
 					}, function (index) {
 						layer.close(index);
+						history.go(0);
 					});
 				}
 			};
@@ -965,10 +1020,12 @@
 			AjaxFileCast(url,data,tip,true);
 		}
 		/**发送文件广播控制命令**/
-		function AjaxFileCastControl(value){
+		function AjaxFileCastControl(value,tip){debugger
 			var url = prefix + "/controlFileCast";
 			var data = {"taskId":castInfo.taskId,"command":value};
-			var tip = '#'+value;
+			if($.common.isEmpty(tip)){
+				tip = '#'+value;
+			}
 			AjaxFileCast(url,data,tip);
 		}
 		/**发送文件广播节点调节命令**/
@@ -984,39 +1041,45 @@
 				isMove = true;
 			}
 			var callback = function(res){
-				if($.common.isNotEmpty(res.data)){
-					castInfo = res.data;
-					isFileCast = castInfo.isCast;
-					if(isFileCast){
-						initFileCast(true);//初始化文件广播
-					}else{
-						$.modal.alertWarning("任务已存在但未开始广播，请前往任务管理查看");
+				if (res.code == web_status.SUCCESS) {
+					if($.common.isNotEmpty(res.data)){
+						castInfo = res.data;
+						isFileCast = castInfo.isCast;
+						if(isFileCast){
+							initFileCast(true);//初始化文件广播
+						}else{
+							$.modal.alertWarning("任务已存在但未开始广播，请前往任务管理查看");
+							return;
+						}
+					}else if(!noStop){
+						$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
 						return;
 					}
-				}else if(!noStop){
-					$.modal.alertWarning("任务已修改成功但无信息返回，请前往任务管理查看");
-					return;
-				}
-				if($.common.isNotEmpty(tip)){
-					$.modal.tipPrimary(tip,"修改成功");
-				}else if(tip == ''){
-					$.modal.msgSuccess("停止成功");
-					if($.common.isNotEmpty($("#taskId").val())){
-						/**taskId不为空则表示页签打开*/
-						submitHandler();
-						return;
-					}else{
-						setTimeout(function(){history.go(0);},1000)//初始化页面
+					if($.common.isNotEmpty(tip)){
+						$.modal.tipPrimary(tip,"修改成功");
+					}else if(tip == ''){
+						$.modal.msgSuccess("停止成功");
+						if($.common.isNotEmpty($("#taskId").val())){
+							/**taskId不为空则表示页签打开*/
+							submitHandler();
+							return;
+						}else{
+							setTimeout(function(){history.go(0);},1000)//初始化页面
+						}
+					}else if(tip == null){
+						$.modal.msgSuccess("播放成功");
 					}
-				}else if(tip == null){
-					$.modal.msgSuccess("播放成功");
-				}
-				/*if (res.code == web_status.SUCCESS && res.msg != "操作成功") {
-					$.modal.alertSuccess(res.msg);
-				}else */if (res.code == web_status.WARNING) {
+				}else if (res.code == web_status.WARNING) {
 					$.modal.alertWarning(res.msg);
 				}  else {
-					$.modal.alertError(res.msg);
+					layer.confirm(res.msg, {
+						icon: 2,
+						title: "警告",
+						btn: ['确认']
+					}, function (index) {
+						layer.close(index);
+						history.go(0);
+					});
 				}
 			};
 			var config = {
@@ -1036,6 +1099,28 @@
 	 	function submitHandler() {
             $.operate.saveTab(prefix + "/noData");
         }
+		/**音频排序*/
+		function sortData(data){debugger
+			var fileIds = $("#songData").val().split(',');
+			var size = data.length;
+			var buffer = 0;
+			for(var i = 0 ; i < size ; i++){
+				/**不相等，有2种情况，一种是此点文件后排，另一种是此点为后排新来的文件*/
+				if(data[i].fileId != fileIds[i+buffer]){
+					if(buffer != 0){
+						AjaxSortFileCast(data,data[i].fileId,i);
+						return;
+					}
+					if(data[i+1].fileId ==  fileIds[i]){
+						//直接定位
+						AjaxSortFileCast(data,data[i].fileId,i);
+						return;
+					}else{
+						buffer++;
+					}
+				}
+			}
+		}
     </script>
 </body>
 </html>
