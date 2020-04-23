@@ -494,8 +494,10 @@
 						isDestroy = true;
 						prompt += data[i].fileName+'<br>';
 						data.splice(i,1);
+						i--;
+					}else{
+						len += data[i].fileId+",";
 					}
-					len += data[i].fileId+",";
 				}
 				if($.common.isNotEmpty(len)){
 					len = $.common.removeLast(len);
