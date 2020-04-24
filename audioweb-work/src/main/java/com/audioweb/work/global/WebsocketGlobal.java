@@ -1,34 +1,34 @@
-/**   
- * @Title: WebsocketGlobal.java 
- * @Package com.audioweb.common.global 
+/**
+ * @Title: WebsocketGlobal.java
+ * @Package com.audioweb.common.global
  * @Description:  websocket 全局信息管理
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
- * @date 2020年2月27日 下午12:03:28 
- * @version V1.0   
- */ 
+ * @date 2020年2月27日 下午12:03:28
+ * @version V1.0
+ */
 package com.audioweb.work.global;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-/** 
- * @ClassName: WebsocketGlobal 
+/**
+ * @ClassName: WebsocketGlobal
  * @Description: websocket 全局信息管理
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
- * @date 2020年2月27日 下午12:03:28  
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @date 2020年2月27日 下午12:03:28
  */
 public class WebsocketGlobal {
 	private static Set<String> messageSessionIds = new HashSet<String>();
 	private static Set<String> BlobSessionIds = new HashSet<String>();
 	/**
 	 * 存储会话sessionID
-	 * @Title: putMessageId 
+	 * @Title: putMessageId
 	 * @Description: 存储会话sessionID
 	 * @param sessionId
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
+	 * @return boolean 返回类型
+	 * @throws
+	 * @author ShuoFang
 	 * @date 2020年2月27日 下午1:15:41
 	 */
 	public static boolean putMessageId(String sessionId) {
@@ -38,12 +38,12 @@ public class WebsocketGlobal {
 	}
 	/**
 	 * 存储会话sessionID
-	 * @Title: putBlobId 
+	 * @Title: putBlobId
 	 * @Description: 存储会话sessionID
 	 * @param sessionId
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
+	 * @return boolean 返回类型
+	 * @throws
+	 * @author ShuoFang
 	 * @date 2020年2月27日 下午1:15:47
 	 */
 	public static boolean putBlobId(String sessionId) {
@@ -53,12 +53,12 @@ public class WebsocketGlobal {
 	}
 	/**
 	 * 移除会话sessionID
-	 * @Title: removeMessageId 
+	 * @Title: removeMessageId
 	 * @Description: 移除会话sessionID
 	 * @param sessionId
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
+	 * @return boolean 返回类型
+	 * @throws
+	 * @author ShuoFang
 	 * @date 2020年2月27日 下午1:16:07
 	 */
 	public static boolean removeMessageId(String sessionId) {
@@ -68,12 +68,12 @@ public class WebsocketGlobal {
 	}
 	/**
 	 * 移除会话sessionID
-	 * @Title: removeBlobId 
+	 * @Title: removeBlobId
 	 * @Description: 移除会话sessionID
 	 * @param sessionId
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
+	 * @return boolean 返回类型
+	 * @throws
+	 * @author ShuoFang
 	 * @date 2020年2月27日 下午1:16:13
 	 */
 	public static boolean removeBlobId(String sessionId) {
@@ -83,11 +83,11 @@ public class WebsocketGlobal {
 	}
 	/**
 	 * 获取全部连接WebSocket的sessionID
-	 * @Title: getAllIds 
+	 * @Title: getAllIds
 	 * @Description: 获取全部连接WebSocket的sessionID
-	 * @return ArrayList<String> 返回类型 
-	 * @throws 抛出错误
-	 * @author ShuoFang 
+	 * @return ArrayList<String> 返回类型
+	 * @throws
+	 * @author ShuoFang
 	 * @date 2020年2月27日 下午1:46:59
 	 */
 	public static ArrayList<String> getAllIds() {

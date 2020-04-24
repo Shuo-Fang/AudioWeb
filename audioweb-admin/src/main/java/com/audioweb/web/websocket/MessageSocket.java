@@ -22,14 +22,14 @@ import com.audioweb.work.global.WebsocketGlobal;
 
 /**
  * 总信息管理的socket处理
- * @ClassName: MessageSocket 
- * @Description: TODO(总信息管理的socket处理) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @ClassName: MessageSocket
+ * @Description: TODO(总信息管理的socket处理)
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
  * @date 2019年12月9日 上午11:22:41
  */
 @ServerEndpoint(value = "/websocket/message", configurator = WebSocketConfig.class)
 @Component
-//war部署时此注解@Component需要注释掉
+/**war部署时此注解@Component需要注释掉*/
 public class MessageSocket {
 	private static final Logger  log = LoggerFactory.getLogger(MessageSocket.class);
 	private static int onlineCount = 0;
@@ -37,17 +37,18 @@ public class MessageSocket {
 	private Session session;
 	private String onlineSessionId;
 	private SysUserServiceImpl userService;
-	// todo 这里需要一个变量来接收shiro中登录的人信息
+	/**这里需要一个变量来接收shiro中登录的人信息*/
 	private SysUser shiroUser;
-	
-	
+
+
 	@OnOpen
 	public void onOpen(Session session) {
 		this.session = session;
 		// 注入userService
 		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
 		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
-		WebsocketGlobal.putMessageId(onlineSessionId);//存入全局信息中
+		//存入全局信息中
+		WebsocketGlobal.putMessageId(onlineSessionId);
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -58,19 +59,20 @@ public class MessageSocket {
 	@OnClose
 	public void onClose() {
 		webSocketSet.remove(this);
-		WebsocketGlobal.removeMessageId(onlineSessionId);//从全局信息中移除
+		//从全局信息中移除
+		WebsocketGlobal.removeMessageId(onlineSessionId);
 		subOnlineCount();
 		System.out.println("有一链接关闭!当前在线人数为" + getOnlineCount());
 	}
 	/**
-	 * 
-	 * @Title: onMessage 
-	 * @Description: TODO(接送客户端发送的字符串信息) 
+	 *
+	 * @Title: onMessage
+	 * @Description: TODO(接送客户端发送的字符串信息)
 	 * @param @param message
 	 * @param @param session
-	 * @param @throws IOException   
-	 * @return void 返回类型 
-	 * @author ShuoFang 
+	 * @param @throws IOException
+	 * @return void 返回类型
+	 * @author ShuoFang
 	 * @date 2019年12月9日 下午1:14:40
 	 * @throws IOException
 	 */
@@ -90,19 +92,19 @@ public class MessageSocket {
 			//sendInfo(jsonObject.toCompactString());
 		}
 	}
-	
+
 	@OnError
     public void onError(Throwable t) throws Throwable {
 		log.error("MessageSocket Error: ",t);
     }
 	/**
-	 * 
-	 * @Title: onMessage 
-	 * @Description: TODO(接收客户端发送的字节流信息) 
+	 *
+	 * @Title: onMessage
+	 * @Description: TODO(接收客户端发送的字节流信息)
 	 * @param @param messages
-	 * @param @param session   
-	 * @return void 返回类型 
-	 * @author ShuoFang 
+	 * @param @param session
+	 * @return void 返回类型
+	 * @author ShuoFang
 	 * @date 2019年12月9日 下午1:15:07
 	 * @throws
 	 */
@@ -129,7 +131,7 @@ public class MessageSocket {
 		//SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		sendMessage("blob测试");
 	}*/
-	
+
 	public void sendMessage(String message) throws IOException {
 		this.session.getBasicRemote().sendText(message);
 	}

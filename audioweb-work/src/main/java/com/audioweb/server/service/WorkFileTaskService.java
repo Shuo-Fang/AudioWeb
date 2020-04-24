@@ -1,11 +1,11 @@
-/**   
- * @Title: WorkFileTaskService.java 
- * @Package com.audioweb.server.service 
- * @Description: TODO(用一句话描述该文件做什么) 
+/**
+ * @Title: WorkFileTaskService.java
+ * @Package com.audioweb.server.service
+ * @Description: 广播中文件管理静态方法
  * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
- * @date 2020年4月13日 下午1:50:18 
- * @version V1.0   
- */ 
+ * @date 2020年4月13日 下午1:50:18
+ * @version V1.0
+ */
 package com.audioweb.server.service;
 
 import java.io.IOException;
@@ -14,15 +14,15 @@ import java.util.Objects;
 import java.util.Random;
 
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.server.protocol.InterCMDProcess;
+import com.audioweb.server.protocol.InterCmdProcess;
 import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.RunningFile;
 
 /** 广播中文件管理静态方法
- * @ClassName: WorkFileTaskService 
+ * @ClassName: WorkFileTaskService
  * @Description: 广播中文件管理静态方法
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
- * @date 2020年4月13日 下午1:50:18  
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @date 2020年4月13日 下午1:50:18
  */
 public class WorkFileTaskService {
 	/**初始化正在播放文件信息*/
@@ -38,7 +38,8 @@ public class WorkFileTaskService {
 				}
 				/**表示为自动播放完成后结束调用，先判断播放类型*/
 				switch (task.getFileCastType()) {
-					case ORDER://顺序播放
+					//顺序播放
+					case ORDER:
 						//判断正在播放音频是否为最后一个音频
 						synchronized (task.findSongDataList()) {
 							if(Objects.equals(task.getRunFile().getFileId(), task.findSongDataList().get(task.findSongDataList().size()-1))) {
@@ -56,7 +57,8 @@ public class WorkFileTaskService {
 							}
 						}
 						break;
-					case LIST://列表循环
+					//列表循环
+					case LIST:
 						//下一曲并继续播放
 						synchronized (task.findSongDataList()) {
 							int step = task.findSongDataList().indexOf(task.getRunFile().getFileId());
@@ -71,7 +73,8 @@ public class WorkFileTaskService {
 							}
 						}
 						break;
-					case SINGLE://单曲循环
+					//单曲循环
+					case SINGLE:
 						//重复一曲
 						task.lock.lock();
 						try {
@@ -83,7 +86,8 @@ public class WorkFileTaskService {
 							task.lock.unlock();
 						}
 						break;
-					case RANDOM://随机播放
+					//随机播放
+					case RANDOM:
 						//下一曲并继续播放
 						synchronized (task.findSongDataList()) {
 							if(task.getPlayHistorySite() < task.getPlayHistory().size()) {
@@ -107,12 +111,13 @@ public class WorkFileTaskService {
 								}
 							}else {
 								/**随机播放*/
-								int size = task.findSongDataList().size();
 								int step = 0;
-								if(size > 1) {//列表文件数大于1，才有随机的必要
+								//列表文件数大于1，才有随机的必要
+								if(task.findSongDataList().size() > 1) {
 									int location = task.findSongDataList().indexOf(task.getRunFile().getFileId());
 									step = task.getRandom().nextInt(task.findSongDataList().size());
-									while(location == step) {//去除重复播放
+									//去除重复播放
+									while(location == step) {
 										step = task.getRandom().nextInt(task.findSongDataList().size());
 									}
 								}
@@ -145,16 +150,16 @@ public class WorkFileTaskService {
 		task.setIsCast(false);
 		return false;
 	}
-	
+
     /***
      * 是否调节下一曲
-     * @Title: NextFile 
+     * @Title: NextFile
      * @Description: 是否调节下一曲
      * @param task 广播任务
      * @param isNext 是则下一曲，否则上一曲
-     * @return boolean 返回类型 
-     * @throws 抛出错误
-     * @author 10155 
+     * @return boolean 返回类型
+     * @throws
+     * @author 10155
      * @date 2020年4月20日 上午12:01:30
      */
     public static boolean nextFile(FileCastTask task,boolean isNext) {
@@ -167,9 +172,10 @@ public class WorkFileTaskService {
 			}
 	    	/**先判断播放类型*/
 			switch (task.getFileCastType()) {
-				case ORDER://顺序播放
-				case SINGLE://单曲循环
-				case LIST://列表循环
+				/**顺序播放 单曲循环 列表循环**/
+				case ORDER:
+				case SINGLE:
+				case LIST:
 					if(isNext) {
 						//下一曲并继续播放
 						synchronized (task.findSongDataList()) {
@@ -181,7 +187,7 @@ public class WorkFileTaskService {
 							if(!fileRead(task,step)) {
 								/**文件读取有误**/
 								task.removeWorkFile(step);
-								return nextFile(task,isNext);
+								return nextFile(task, true);
 							}
 						}
 					}else {
@@ -195,12 +201,13 @@ public class WorkFileTaskService {
 							if(!fileRead(task,step)) {
 								/**文件读取有误**/
 								task.removeWorkFile(step);
-								return nextFile(task,isNext);
+								return nextFile(task, false);
 							}
 						}
 					}
 					break;
-				case RANDOM://随机播放
+				//随机播放
+				case RANDOM:
 					if(isNext) {
 						//下一曲并继续播放
 						synchronized (task.findSongDataList()) {
@@ -209,28 +216,30 @@ public class WorkFileTaskService {
 								String fileId = task.getPlayHistory().get(task.nextPlayHistorySite());
 								if(fileId.equals(task.getRunFile().getFileId())) {
 									/**重新遍历调取**/
-									return nextFile(task,isNext);
+									return nextFile(task, true);
 								}
 								int step = task.findSongDataList().indexOf(fileId);
 								if(step >= 0) {
 									if(!fileRead(task,step)) {
 										/**文件读取有误**/
 										task.removeWorkFile(step);
-										return nextFile(task,isNext);
+										return nextFile(task, true);
 									}
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
-									nextFile(task,isNext);
+									nextFile(task, true);
 								}
 							}else {
 								/**随机播放*/
 								int size = task.findSongDataList().size();
 								int step = 0;
-								if(size > 1) {//列表文件数大于1，才有随机的必要
+								//列表文件数大于1，才有随机的必要
+								if(size > 1) {
 									int location = task.findSongDataList().indexOf(task.getRunFile().getFileId());
 									step = task.getRandom().nextInt(task.findSongDataList().size());
-									while(location == step) {//去除重复播放
+									//去除重复播放
+									while(location == step) {
 										step = task.getRandom().nextInt(task.findSongDataList().size());
 									}
 								}
@@ -242,7 +251,7 @@ public class WorkFileTaskService {
 								if(!fileRead(task,step)) {
 									/**文件读取有误**/
 									task.removeWorkFile(step);
-									return nextFile(task,isNext);
+									return nextFile(task, true);
 								}
 							}
 						}
@@ -262,10 +271,12 @@ public class WorkFileTaskService {
 								Random random = new Random();
 								int size = task.findSongDataList().size();
 								int step = 0;
-								if(size > 1) {//列表文件数大于1，才有随机的必要
+								//列表文件数大于1，才有随机的必要
+								if(size > 1) {
 									int location = task.findSongDataList().indexOf(task.getRunFile().getFileId());
 									step = random.nextInt(task.findSongDataList().size());
-									while(location == step) {//去除重复播放
+									//去除重复播放
+									while(location == step) {
 										step = random.nextInt(task.findSongDataList().size());
 									}
 								}
@@ -277,26 +288,26 @@ public class WorkFileTaskService {
 								if(!fileRead(task,step)) {
 									/**文件读取有误**/
 									task.removeWorkFile(step);
-									return nextFile(task,isNext);
+									return nextFile(task, false);
 								}
 							}else {
 								/**播放历史记录*/
 								String fileId = task.getPlayHistory().get(task.getPlayHistorySite());
 								if(fileId.equals(task.getRunFile().getFileId())) {
 									/**重新遍历调取**/
-									return nextFile(task,isNext);
+									return nextFile(task, false);
 								}
 								int step = task.findSongDataList().indexOf(fileId);
 								if(step >= 0) {
 									if(!fileRead(task,step)) {
 										/**文件读取有误**/
 										task.removeWorkFile(step);
-										return nextFile(task,isNext);
+										return nextFile(task, false);
 									}
 								}else {
 									/**文件已从列表删除*/
 									/**重新遍历调取**/
-									nextFile(task,isNext);
+									nextFile(task, false);
 								}
 							}
 						}
@@ -313,7 +324,7 @@ public class WorkFileTaskService {
 		}
 		return false;
     }
-    
+
 	/**文件初始化读取
 	 * @throws IOException */
 	private static boolean fileRead(FileCastTask task,int step) throws IOException {
@@ -333,13 +344,13 @@ public class WorkFileTaskService {
 	}
 	/***
 	 * 设置广播的节点
-	 * @Title: fileplaySite 
+	 * @Title: fileplaySite
 	 * @Description: 设置广播的节点
 	 * @param task
 	 * @param playSite
-	 * @return boolean 返回类型 
-	 * @throws 抛出错误
-	 * @author 10155 
+	 * @return boolean 返回类型
+	 * @throws
+	 * @author 10155
 	 * @date 2020年4月20日 下午10:20:10
 	 */
 	public static boolean filePlaySite(FileCastTask task,Long playSite) {
@@ -347,7 +358,8 @@ public class WorkFileTaskService {
 			task.lock.lock();
 			if(playSite >= task.getRunFile().getPlaySite()) {
 				/**向后调节音频*/
-				long length = playSite -task.getRunFile().getPlaySite();//时间差
+				//时间差
+				long length = playSite -task.getRunFile().getPlaySite();
 				long byteSizes = length * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
 				task.getRunFile().loadPlaySite(byteSizes);
 				task.getRunFile().setPlaySite(playSite);
@@ -366,14 +378,14 @@ public class WorkFileTaskService {
 		}
 		return false;
 	}
-	
+
 	/**修改广播音量**/
     public static boolean castTaskVolChange(FileCastTask task,Integer vol) {
     	try {
     		task.setVol(vol);
-    		
+
     		/**发送音量指令*/
-    		ByteBuffer endbs = InterCMDProcess.sendVolSet(vol,false);
+    		ByteBuffer endbs = InterCmdProcess.sendVolSet(vol,false);
     		try {
     			task.getServer().sendData(endbs);
     		} catch (Exception e) {
@@ -385,16 +397,16 @@ public class WorkFileTaskService {
 		}
 		return false;
     }
-    
+
     /**
      * 选择音频播放
-     * @Title: castTaskPlayFile 
+     * @Title: castTaskPlayFile
      * @Description: 选择音频播放
      * @param task
      * @param fileId
-     * @return boolean 返回类型 
-     * @throws 抛出错误
-     * @author 10155 
+     * @return boolean 返回类型
+     * @throws
+     * @author 10155
      * @date 2020年4月22日 下午9:47:15
      */
     public static boolean castTaskPlayFile(FileCastTask task,String fileId) {
@@ -418,16 +430,16 @@ public class WorkFileTaskService {
     	}
     	return false;
     }
-    
+
     /**
      * 删除列表中指定音频
-     * @Title: removeFile 
+     * @Title: removeFile
      * @Description: 删除列表中指定音频
      * @param task
      * @param fileId
-     * @return boolean 返回类型 
-     * @throws 抛出错误
-     * @author 10155 
+     * @return boolean 返回类型
+     * @throws
+     * @author 10155
      * @date 2020年4月22日 下午9:47:15
      */
     public static boolean removeFile(FileCastTask task,String fileId) {

@@ -15,13 +15,13 @@ import com.audioweb.common.utils.StringUtils;
  * 终端服务器交互指令解析与打包
  * @author HTT
  */
-public class InterCMDProcess {
+public class InterCmdProcess {
 	/** 心跳检测接收端口默认6970 */
 	@Value("${netty.serverPort}")
 	private static int netHeartRecPort;
 	/** ByteBuffer默认指定大小 */
 	private static final Integer NORMALSIZE = 50;
-	
+
 	//private static final SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd  HHmmss");
 	/*******************解析接收到的数据*************************/
 	/**
@@ -34,7 +34,7 @@ public class InterCMDProcess {
 		System.arraycopy(content, 6, ids, 0, ids.length);
 		return Convert.str(ids, CharsetKit.GB2312);
 	}
-	
+
 	/*******************编码需要发送或者返回到终端的数据***************************/
 	/**
 	 * 终端登录响应返回数据
@@ -48,7 +48,7 @@ public class InterCMDProcess {
 		encoded.put(ClientCommand.CMD_NONE.getCmd());
 		encoded.put(ClientCommand.CMD_HAVE.getCmd());
 		encoded.put(ClientCommand.CMD_NONE.getCmd());
-		String dateString = netHeartRecPort+DateUtils.dateTimeNow(DateUtils.YYMMDD__HHMMSS);//formatter.format(new Date());
+		String dateString = netHeartRecPort+DateUtils.dateTimeNow(DateUtils.YYMMDD__HHMMSS);
 		return sendStringToBytes(encoded,dateString,null);
 	}
 	/**
@@ -118,7 +118,8 @@ public class InterCMDProcess {
 		ByteBuffer encoded = ByteBuffer.allocate(ClientCommand.CMD_NORMAL.getCmd());
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_CMICREPLY.getCmd());
-		encoded.put(ClientCommand.CMD_NORMAL.getCmd());//音频包长度
+		//音频包长度
+		encoded.put(ClientCommand.CMD_NORMAL.getCmd());
 		encoded.put(ClientCommand.CMD_NONE.getCmd());
 		encoded.put(ClientCommand.CMD_HAVE.getCmd());
 		encoded.put(ClientCommand.CMD_NONE.getCmd());
@@ -140,22 +141,23 @@ public class InterCMDProcess {
 		return sendStringToBytes(encoded,groupPort,null);
 	}
 	/**
-	 * 
-	 * @Title: vodFileCast 
-	 * @Description: TODO(这里用一句话描述这个方法的作用) 
+	 *
+	 * @Title: vodFileCast
+	 * @Description: TODO(这里用一句话描述这个方法的作用)
 	 * @param type 命令类型
 	 * @param imot	是否为文件播放完成停止 1为完成，0为未完成
-	 * @return ByteBuffer 返回类型 
-	 * @throws 抛出错误
-	 * @author 10155 
+	 * @return ByteBuffer 返回类型
+	 * @throws
+	 * @author 10155
 	 * @date 2020年3月18日 下午9:42:51
 	 */
 	public static ByteBuffer vodFileCast(ClientCommand type,String imot){
 		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_SERVERRETURN.getCmd());
-		if(type == ClientCommand.CMD_STOPVOD && imot.equals("1")){//点播停止
+		//点播停止
+		if(type == ClientCommand.CMD_STOPVOD && "1".equals(imot)){
 			encoded.put(0, ClientCommand.CMDTYPE_TERCONTROL.getCmd());
-			
+
 		}
 		encoded.put(type.getCmd());
 		encoded.put(ClientCommand.CMD_HAVE.getCmd());
@@ -191,15 +193,16 @@ public class InterCMDProcess {
 		case PAGING:
 			encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 			break;
-		default: 
+		default:
 			encoded.put(ClientCommand.CMD_FILECAST.getCmd());
 			break;
 		}
-		
+
 		for(int i=2;i<6;i++){
 			encoded.put(ClientCommand.CMD_NONE.getCmd());
 		}
-		if(isstart){//开始
+		//开始
+		if(isstart){
 			String str = "1";
 			/*if(types.get(0).equals("3")) {
 				if(types.size()>4) {
@@ -212,13 +215,16 @@ public class InterCMDProcess {
 			}*/
 			//终端采播
 			if(type == CastWorkType.CLIENT) {
-				str = str+"0";//第8位为0
+				//第8位为0
+				str = str+"0";
 			}
 			//寻呼话筒
 			if(type == CastWorkType.PAGING) {
-				str = str+"0"+netHeartRecPort+""+targetPort;//第7位为1
+				//第7位为1
+				str = str+"0"+netHeartRecPort+""+targetPort;
 			}else {
-				str = str+netHeartRecPort+""+targetPort;//第7位为1
+				//第7位为1
+				str = str+netHeartRecPort+""+targetPort;
 			}
 			byte[] ips = IpUtils.textToNumericFormatV4(multiCastIp);
 			if(StringUtils.isNotNull(ips)){
@@ -228,7 +234,8 @@ public class InterCMDProcess {
 				}
 				if(type == CastWorkType.FILE||type == CastWorkType.TIME) {
 					bs[4] = ClientCommand.CMD_NONE.getCmd();
-					bs[5] = (byte)vol;//音量
+					//音量
+					bs[5] = (byte)vol;
 				}
 				return sendStringToBytes(encoded,str,bs);
 			}else{
@@ -238,19 +245,18 @@ public class InterCMDProcess {
 			String str = "0";//第7位不为1
 			return sendStringToBytes(encoded,str,null);
 		}
-		
+
 	}
-	
+
 	/**
 	 * 发送源终端广播命令
-	 * @param isstart 是开始还是结束，true开始，false结束
+	 * @param isStart 是开始还是结束，true开始，false结束
 	 * @param ipOrCmd 组播IP地址或者为终端采播的类型，isstart为true时必须
 	 * @param targetPort 终端接收组播端口号，isstart为true时必须，必须为5位数
-	 * @param vol 音量0-40
-	 * @param types 命令类型以及对应指令
+	 * @param type 命令类型以及对应指令
 	 * @return 需要发送的ByteBuffer
 	 */
-	public static ByteBuffer sendMainTermCast(Boolean isstart,String ipOrCmd, int targetPort,CastWorkType type){
+	public static ByteBuffer sendMainTermCast(Boolean isStart,String ipOrCmd, int targetPort,CastWorkType type){
 		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
@@ -261,34 +267,39 @@ public class InterCMDProcess {
 			case PAGING:
 				encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 				break;
-			default: 
+			default:
 				encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 				break;
 		}*/
 		for(int i=2;i<6;i++){
 			encoded.put(ClientCommand.CMD_NONE.getCmd());
 		}
-		if(isstart){//开始
+		//开始
+		if(isStart){
 			String str = "1";
-			if(type == CastWorkType.CLIENT) {//终端采播
+			//终端采播
+			if(type == CastWorkType.CLIENT) {
 				str += ipOrCmd+targetPort;
 				return sendStringToBytes(encoded,str,null);
 			}
 			//寻呼话筒
-			if(type == CastWorkType.PAGING) {//寻呼话筒
-				str += "0"+netHeartRecPort+""+targetPort;//第7位为1
+			if(type == CastWorkType.PAGING) {
+				//第7位为1
+				str += "0"+netHeartRecPort+""+targetPort;
 			}else {
-				str += netHeartRecPort+""+targetPort;//第7位为1
+				//第7位为1
+				str += netHeartRecPort+""+targetPort;
 			}
 			return sendStringToBytes(encoded,str,IpUtils.textToNumericFormatV4(ipOrCmd));
 		}else{//结束
-			String str = "0";//第7位不为1
+			//第7位不为1
+			String str = "0";
 			return sendStringToBytes(encoded,str,null);
 		}
-		
+
 	}
 	/**
-	 * 网络调终端命令 --test 
+	 * 网络调终端命令 --test
 	 * @param terminals 终端信息
 	 * @return
 	 */
@@ -361,13 +372,16 @@ public class InterCMDProcess {
 		}
 		encoded.put((byte)vol);
 		String str = "";
-		if(issave){//保存音量
-			str = "1";//第8位为1
+		//保存音量
+		if(issave){
+			//第8位为1
+			str = "1";
 		}else{//不保存
-			str = "0";//第8位 为0
+			//第8位 为0
+			str = "0";
 		}
 		return sendStringToBytes(encoded,str,null);
-		
+
 	}
 	/**
 	 * 终端重启命令
@@ -382,7 +396,7 @@ public class InterCMDProcess {
 		}
 		String str = "1";
 		return sendStringToBytes(encoded,str,null);
-		
+
 	}
 	/**
 	 * 将要发送的音频数据包加上头标志.点播
@@ -419,15 +433,15 @@ public class InterCMDProcess {
 	 * 将content编码放入ByteBuffer中并转化成byte[]返回
 	 * @param bb
 	 * @param content 没有则设置为""
-	 * @param lastbytes 在ByteBuffer放入content后在放入lastbytes，没有则设置为null
+	 * @param lastBytes 在ByteBuffer放入content后在放入lastbytes，没有则设置为null
 	 * @return byte[]
 	 */
-	private static ByteBuffer sendStringToBytes(ByteBuffer bb,String content,byte[] lastbytes){
+	private static ByteBuffer sendStringToBytes(ByteBuffer bb,String content,byte[] lastBytes){
 		if(StringUtils.isNotEmpty(content)) {
 			bb.put(content.getBytes(CharsetKit.CHARSET_GB2312));
 		}
-		if(StringUtils.isNotNull(lastbytes)) {
-			bb.put(lastbytes);
+		if(StringUtils.isNotNull(lastBytes)) {
+			bb.put(lastBytes);
 		}
 		bb.flip();
 		return bb;

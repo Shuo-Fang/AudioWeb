@@ -24,14 +24,14 @@ import com.audioweb.work.global.WebsocketGlobal;
 
 /**
  * 实时广播中的socket连接
- * @ClassName: MessageSocket 
- * @Description: TODO(实时广播中的socket连接) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @ClassName: MessageSocket
+ * @Description: TODO(实时广播中的socket连接)
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
  * @date 2019年12月9日 下午13:32:41
  */
 @ServerEndpoint(value = "/websocket/realtime", configurator = WebSocketConfig.class)
 @Component
-//war部署时此注解@Component需要注释掉
+/**war部署时此注解@Component需要注释掉*/
 public class BlobSocket {
 	private static final Logger  log = LoggerFactory.getLogger(BlobSocket.class);
 	private static int onlineCount = 0;
@@ -39,7 +39,7 @@ public class BlobSocket {
 	private Session session;
 	private String onlineSessionId;
 	private SysUserServiceImpl userService;
-	// todo 这里需要一个变量来接收shiro中登录的人信息
+	/**这里需要一个变量来接收shiro中登录的人信息*/
 	private SysUser shiroUser;
 
 	@OnOpen
@@ -48,7 +48,8 @@ public class BlobSocket {
 		// 注入userService
 		this.userService = SpringUtils.getBean(SysUserServiceImpl.class);
 		this.onlineSessionId = session.getUserProperties().get("sessionId").toString();
-		WebsocketGlobal.putBlobId(onlineSessionId);//存入全局信息中
+		//存入全局信息中
+		WebsocketGlobal.putBlobId(onlineSessionId);
 		// 设置用户
 		this.shiroUser = (SysUser) session.getUserProperties().get("user");
 		webSocketSet.add(this);
@@ -59,19 +60,20 @@ public class BlobSocket {
 	@OnClose
 	public void onClose() {
 		webSocketSet.remove(this);
-		WebsocketGlobal.removeBlobId(onlineSessionId);//从全局信息中移除
+		//从全局信息中移除
+		WebsocketGlobal.removeBlobId(onlineSessionId);
 		subOnlineCount();
 		System.out.println("有一链接关闭!当前广播人数为" + getOnlineCount());
 	}
 	/**
-	 * 
-	 * @Title: onMessage 
-	 * @Description: TODO(接送客户端发送的字符串信息) 
+	 *
+	 * @Title: onMessage
+	 * @Description: TODO(接送客户端发送的字符串信息)
 	 * @param @param message
 	 * @param @param session
-	 * @param @throws IOException   
-	 * @return void 返回类型 
-	 * @author ShuoFang 
+	 * @param @throws IOException
+	 * @return void 返回类型
+	 * @author ShuoFang
 	 * @date 2019年12月9日 下午1:14:40
 	 */
 	@OnMessage
@@ -81,13 +83,13 @@ public class BlobSocket {
 		sendMessage(df.format(new Date()));
 	}
 	/**
-	 * 
-	 * @Title: onMessage 
-	 * @Description: TODO(接收客户端发送的字节流信息) 
+	 *
+	 * @Title: onMessage
+	 * @Description: TODO(接收客户端发送的字节流信息)
 	 * @param @param messages
-	 * @param @param session   
-	 * @return void 返回类型 
-	 * @author ShuoFang 
+	 * @param @param session
+	 * @return void 返回类型
+	 * @author ShuoFang
 	 * @date 2019年12月9日 下午1:15:07
 	 */
 	@OnMessage
@@ -100,23 +102,22 @@ public class BlobSocket {
             ByteBuffer bf=ByteBuffer.wrap(resultStr.getBytes("utf-8"));
             session.getBasicRemote().sendBinary(bf);*/
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
-	
+
 
 	@OnError
     public void onError(Throwable t) throws Throwable {
 		log.error("BlobSocket Error: ",t);
     }
-	
+
 	public void sendMessage(String message) throws IOException {
 		// String m = "1,2,3,4,5";
 		this.session.getBasicRemote().sendText(message);
 	}
-	
+
 	public void sendMessage(byte[] message) throws IOException {
 		// String m = "1,2,3,4,5";
 		ByteBuffer buffer = ByteBuffer.wrap(message);

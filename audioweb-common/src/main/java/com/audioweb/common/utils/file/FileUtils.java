@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 文件处理工具类
- * 
+ *
  * @author ruoyi
  */
 public class FileUtils
@@ -25,7 +25,7 @@ public class FileUtils
 
     /**
      * 输出指定文件的byte数组
-     * 
+     *
      * @param filePath 文件路径
      * @param os 输出流
      * @return
@@ -81,7 +81,7 @@ public class FileUtils
 
     /**
      * 删除文件
-     * 
+     *
      * @param filePath 文件
      * @return
      */
@@ -100,7 +100,7 @@ public class FileUtils
 
     /**
      * 文件名称验证
-     * 
+     *
      * @param filename 文件名称
      * @param type 校验正则
      * @return true 正常 false 非法
@@ -112,7 +112,7 @@ public class FileUtils
 
     /**
      * 下载文件名重新编码
-     * 
+     *
      * @param request 请求对象
      * @param fileName 文件名
      * @return 编码后的文件名
@@ -145,39 +145,42 @@ public class FileUtils
         }
         return filename;
     }
-    
+
     /**
 	 * 创建目录
-	 * @param destDirName目标目录名
-	 * @return 
+	 * @param destDirName 目标目录名
+	 * @return
 	 */
 	public static Boolean createDir(String destDirName) {
 		File dir = new File(destDirName);
-		if(!dir.exists()){				//判断文件整个路径是否存在
+        //判断文件整个路径是否存在
+        if(!dir.exists()){
 			System.out.println("创建路径");
-			return dir.mkdirs();		//不存在就全部创建
+            //不存在就全部创建
+            return dir.mkdirs();
 		}
 		return false;
 	}
 	/**
 	 * 判断目录是否存在
-	 * @param destDirName目标目录名
-	 * @return 
+	 * @param destDirName 目标目录名
+	 * @return
 	 */
 	public static Boolean findDir(String destDirName) {
 		File dir = new File(destDirName);
-		if(dir.exists() && dir.isDirectory()){				//判断是否为目录
+        //判断是否为目录
+        if(dir.exists() && dir.isDirectory()){
 			return true;		//存在
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 读取路径下所有文件，包括子文件夹下文件
-	 * 
+	 *
 	 * @param filePath
 	 * @return listFiles
-	 * @throws 
+	 * @throws
 	 */
 	public static List<String> getCurFilesList(String filePath) {
 		List<String> files = new ArrayList<String>();
@@ -202,12 +205,12 @@ public class FileUtils
 	}
 	/**
 	 * 将路径分隔符改为适应linux系统下路径(或为http虚拟路径)(因为win系统能兼容此路径,将不再转化回win路径分隔符)
-	 * @Title: formatToWin 
+	 * @Title: formatToWin
 	 * @Description: 将路径分隔符改为适应linux系统下路径(或为http虚拟路径)(因为win系统能兼容此路径,将不再转化回win路径分隔符)
 	 * @param path
-	 * @return String 返回类型 
-	 * @throws 抛出错误
-	 * @author 10155 
+	 * @return String 返回类型
+	 * @throws
+	 * @author 10155
 	 * @date 2020年3月15日 下午2:42:07
 	 */
 	public static String formatToLin(String path) {
@@ -215,16 +218,16 @@ public class FileUtils
 	}
 	/**
 	 * 将路径分隔符改为自动适应系统下路径
-	 * @Title: formatToSys 
+	 * @Title: formatToSys
 	 * @Description: 将路径分隔符改为自动适应系统下路径
 	 * @param path
-	 * @return String 返回类型 
-	 * @throws 抛出错误
-	 * @author 10155 
+	 * @return String 返回类型
+	 * @throws
+	 * @author 10155
 	 * @date 2020年3月15日 下午2:43:58
 	 */
 	public static String formatToSys(String path) {
-		if(File.pathSeparator.equals("\\")) {
+		if("\\".equals(File.pathSeparator)) {
 			path = path.replaceAll("/", "\\\\");
 		}else {
 			path = path.replaceAll("\\\\", "/");
@@ -233,12 +236,12 @@ public class FileUtils
 	}
 	/**
 	 * 检查路径最后一个字符是否为分隔符，是则去掉返回
-	 * @Title: formatPath 
+	 * @Title: formatPath
 	 * @Description: 检查路径最后一个字符是否为分隔符，是则去掉返回
 	 * @param path
-	 * @return String 返回类型 
-	 * @throws 抛出错误
-	 * @author 10155 
+	 * @return String 返回类型
+	 * @throws
+	 * @author 10155
 	 * @date 2020年3月15日 下午3:08:20
 	 */
 	public static String formatPath(String path) {
