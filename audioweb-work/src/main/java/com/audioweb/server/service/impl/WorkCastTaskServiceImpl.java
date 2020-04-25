@@ -20,6 +20,7 @@ import com.audioweb.work.domain.WorkTerminal;
 import com.audioweb.work.mapper.WorkFileMapper;
 import com.audioweb.work.service.IWorkFileService;
 import com.github.pagehelper.PageInfo;
+import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.enums.FileCastCommand;
@@ -143,7 +144,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
         			}
     			}else {
     				/**没有文件**/
-    				result = AjaxResult.error("播放列表为空！");
+    				result = AjaxResult.error("播放列表为空或有列表音频有误！");
     			}
     			break;
     		case TIME://定时广播 需要组播、文件管理、分区终端树、定时控制
@@ -442,6 +443,13 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     	List<WorkFile> taskFiles = new LinkedList<>();
     	if(StringUtils.isNotEmpty(castTask.getSongData())) {
     		taskFiles = workFileService.selectWorkFileByIds(castTask.getSongData());
+    	}
+    	/**去除非正常的音频信息**/
+    	for(int size = taskFiles.size()-1; size >= 0; size--) {
+    		if(!taskFiles.get(size).getDelFlag().equals(WorkConstants.NORMAL)) {
+    			taskFiles.remove(size);
+    			castTask.findSongDataList().remove(size);
+    		}
     	}
     	castTask.setCastFileList(taskFiles);
     	if(taskFiles.size() > 0) {

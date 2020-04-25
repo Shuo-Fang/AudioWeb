@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.server.protocol.InterCMDProcess;
+import com.audioweb.server.protocol.InterCmdProcess;
 import com.audioweb.work.domain.FileCastTask;
 
 /** 
@@ -101,7 +101,7 @@ public class TimeFileCast extends TimerTask{
 	 */
 	private void destory() {
 		/**广播结束**/
-		ByteBuffer endbs = InterCMDProcess.sendCast(false,"", 0,0,task.getCastType());
+		ByteBuffer endbs = InterCmdProcess.sendCast(false,"", 0,0,task.getCastType());
 		try {
 			task.getServer().sendData(endbs);
 		} catch (Exception e) {
@@ -127,7 +127,7 @@ public class TimeFileCast extends TimerTask{
 			castCard.cancel(false);
 		}
 		/**广播结束**/
-		ByteBuffer endbs = InterCMDProcess.sendCast(false,"", 0,0,task.getCastType());
+		ByteBuffer endbs = InterCmdProcess.sendCast(false,"", 0,0,task.getCastType());
 		try {
 			task.getServer().sendData(endbs);
 		} catch (Exception e) {
@@ -136,7 +136,7 @@ public class TimeFileCast extends TimerTask{
 	}
 	/**发送音频信息*/
 	private void send(byte[] data) {
-		InterCMDProcess.sendDataPackt(data);
+		InterCmdProcess.sendDataPackt(data);
 		task.getServer().sendData(data);
 	}
 	/**读取音频信息**/

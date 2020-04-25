@@ -411,19 +411,33 @@ public class WorkFileTaskService {
      */
     public static boolean castTaskPlayFile(FileCastTask task,String fileId) {
     	try {
-			synchronized (task.findSongDataList()) {
-				int oldStep = task.findSongDataList().indexOf(task.getRunFile().getFileId());
-				int step = task.findSongDataList().indexOf(fileId);
-				if(step >= 0) {
-					if(!fileRead(task,step)) {
-						fileRead(task,oldStep);
-						task.removeWorkFile(step);
+    		if(task.getRunFile().getFileId().equals(fileId)) {
+    			/**同一文件*/
+    			//重复一曲
+				task.lock.lock();
+				try {
+					task.getRunFile().resetIn();
+					task.getRunFile().setPlaySite(0);
+				} catch (Exception e) {
+					throw e;
+				}finally {
+					task.lock.unlock();
+				}
+    		}else {
+				synchronized (task.findSongDataList()) {
+					int oldStep = task.findSongDataList().indexOf(task.getRunFile().getFileId());
+					int step = task.findSongDataList().indexOf(fileId);
+					if(step >= 0) {
+						if(!fileRead(task,step)) {
+							fileRead(task,oldStep);
+							task.removeWorkFile(step);
+							return false;
+						}
+					}else {
 						return false;
 					}
-				}else {
-					return false;
 				}
-			}
+    		}
     		return true;
     	} catch (Exception e) {
     		e.printStackTrace();

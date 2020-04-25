@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.audioweb.common.enums.ClientCommand;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.server.protocol.InterCMDProcess;
+import com.audioweb.server.protocol.InterCmdProcess;
 import com.audioweb.server.service.impl.SpringBeanServiceImpl;
 import com.audioweb.work.domain.WorkTerminal;
 
@@ -68,7 +68,7 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 				/**判断是否为登录命令*/
 				if(ClientCommand.CMD_LOGIN.getCmd().equals(req[1]) && req.length > 9) {
 					/**获取登录的ID号以及对应的校验IP地址*/
-					String terid = InterCMDProcess.getTeridFromLogin(req);
+					String terid = InterCmdProcess.getTeridFromLogin(req);
 					/**进行登录校验*/
 					WorkTerminal terminal = WorkTerminal.getTerByIp(ip);
 					if(StringUtils.isNotNull(terminal)) {
@@ -78,7 +78,7 @@ public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPack
 							terminal.setIsOnline(0);//存储登录信息
 							log.info("终端登录成功："+terid);
 							ByteBuf buf = ctx.alloc().directBuffer();
-							buf.writeBytes(InterCMDProcess.returnLoginBytes());
+							buf.writeBytes(InterCmdProcess.returnLoginBytes());
 							ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
 							//WorkServerService.sendCommand(msg.sender(),0, buf);
 							SpringBeanServiceImpl.loginTerminal(terminal);

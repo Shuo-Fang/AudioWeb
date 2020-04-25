@@ -261,6 +261,7 @@
                    	}
                 },
                 {
+                    align: 'center',
                     field : 'delFlag', 
                     title : '状态',
 		            width: '5%',
@@ -288,8 +289,9 @@
                    	}
                 },
                 {
+                    align: 'center',
                     field : 'album', 
-		            width: '15%',
+		            width: '20%',
                     title : '歌曲专辑',
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 10, "");
@@ -308,7 +310,7 @@
                 {
                     title: '操作',
                     align: 'center',
-		            width: '10%',
+		            width: '5%',
                     formatter: function(value, row, index) {
                     	 var actions = [];
                     	 actions.push('<div class="icon-view-small" role="group">');
@@ -443,6 +445,9 @@
 			});
 			data = uniqueFn(data);
 			queryFileList(data);
+			if(isFileCast){
+				AjaxReloadFileCast();
+			}
 		}
 		function uniqueFn(arr) {
 			  var ret = [];
@@ -466,7 +471,16 @@
         		return;
         	}
         	$.modal.confirm("确认要删除选中的" + rows.length + "条音频吗?", function() {
-				AjaxRemoveFileCast(rows.join(),true);
+        		if(isFileCast){
+					AjaxRemoveFileCast(rows.join(),true);
+				}else{
+					var selectedRows = $("#" + table.options.id).bootstrapTable('getAllSelections');
+					var size = selectedRows.length;
+					for(var i = 0;i<size;i++){
+						$.table.remove(selectedRows[i].fileId);
+					}
+					putData();
+				}
         	});
 		}
         /*删除*/
@@ -916,14 +930,26 @@
 				}
 			}
 		}
-		/**发送文件排序命令**/
-		function AjaxSortFileCast(data,fileId,site){
+		/**排序命令**/
+		function AjaxSortFileCast(data,fileId,site) {
 			var url = prefix + "/sortFile";
-			var data = {"taskId":castInfo.taskId,'fileId':fileId,'site':site};
+			var ajaxData = {"taskId":castInfo.taskId,'fileId':fileId,'site':site};
+			AjaxFileListCast(url,ajaxData,data);
+		}
+		/**重置列表命令**/
+		function AjaxReloadFileCast() {
+			var url = prefix + "/reloadFile";
+			var ajaxData = {"taskId":castInfo.taskId,'songData': $("#songData").val()};
+			AjaxFileListCast(url,ajaxData,null);
+		}
+		/**发送文件排序命令或重置文件列表命令**/
+		function AjaxFileListCast(url,ajaxData,data){
 			var callback = function(res){
 				if (res.code == web_status.SUCCESS) {
-					$.modal.msgSuccess(res.msg);
-					putData(data);
+					if($.common.isNotEmpty(data)){
+						$.modal.msgSuccess(res.msg);
+						putData(data);
+					}
 				}else if (res.code == web_status.WARNING) {
 					$.modal.alertWarning(res.msg);
 				}  else {
@@ -941,7 +967,7 @@
 				url: url,
 				type: "post",
 				dataType: "json",
-				data: data,
+				data: ajaxData,
 				success: function(result) {
 					if (typeof callback == "function") {
 						callback(result);

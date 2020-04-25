@@ -298,8 +298,8 @@ public class FileCastController extends BaseController
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/reloadFile")
     @ResponseBody
-    public AjaxResult reloadFile(Long taskId,String fileId) {
-    	return workCastTaskService.reloadFileInFileCast(taskId, fileId);
+    public AjaxResult reloadFile(Long taskId,String songData) {
+    	return workCastTaskService.reloadFileInFileCast(taskId, songData);
     }
     
     @ApiOperation("文件广播中文件排序修改")
