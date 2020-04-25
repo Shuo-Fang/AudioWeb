@@ -295,7 +295,7 @@
                 {
                     align: 'center',
                     field : 'album', 
-		            width: '20%',
+		            width: '18%',
                     title : '歌曲专辑',
                     formatter: function(value, row, index) {
                     	return $.table.tooltip(value, 10, "");
@@ -314,10 +314,22 @@
                 {
                     title: '操作',
                     align: 'center',
-		            width: '5%',
+		            width: '7%',
                     formatter: function(value, row, index) {
                     	 var actions = [];
                     	 actions.push('<div class="icon-view-small" role="group">');
+                    	 if(row.fileType.indexOf('2') >= 0){
+                         	string = row.remark;
+                         	if($.common.isEmpty(string)){
+                         		string = "无";
+                         	}
+                         	//替换所有的换行符
+                         	string = string.replace(/\r\n/g,"<br>")
+                         	string = string.replace(/\n/g,"<br>");
+                         	//替换所有的空格（中文空格、英文空格都会被替换）
+                         	string = string.replace(/\s/g,"&nbsp;");
+                             actions.push('<a class="icon-view-small" href="javascript:void(0)" onclick="$.common.toViewInfo(\'' + string + '\',\'备注\')"><i class="icon iconfont icon-pinglun icon-view-yellow" title = "备注"></i></a>');
+                         }
                          if(isFileCast){
                     		actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="playTheFile(\'' + row.fileId + '\')"><i class="icon iconfont icon-zanting" title = "播放"></i></a>');
                          }

@@ -200,13 +200,25 @@
 		            width: '15%',
                     formatter: function(value, row, index) {
                         var actions = [];
-                        if(row.delFlag == 0){
-                        	actions.push('<div class="icon-view" role="group">');
-	                         actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1 icon-view-block" title = "试听"></i></a>');
-	                         actions.push('<a class="icon-view '+ exportFlag +'" download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
-	                         actions.push('<a class="icon-view ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="icon iconfont icon-shanchu1 icon-view-red" title = "删除"></i></a>');
-                        	actions.push('</div>');
+                        actions.push('<div class="icon-view" role="group">');
+                        if(row.fileType.indexOf('2') >= 0){
+                        	string = row.remark;
+                        	if($.common.isEmpty(string)){
+                        		string = "无";
+                        	}
+                        	//替换所有的换行符
+                        	string = string.replace(/\r\n/g,"<br>")
+                        	string = string.replace(/\n/g,"<br>");
+                        	//替换所有的空格（中文空格、英文空格都会被替换）
+                        	string = string.replace(/\s/g,"&nbsp;");
+                            actions.push('<a class="icon-view" href="javascript:void(0)" onclick="$.common.toViewInfo(\'' + string + '\',\'备注\')"><i class="icon iconfont icon-pinglun icon-view-yellow" title = "备注"></i></a>');
                         }
+                        if(row.delFlag == 0){
+                            actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1 icon-view-block" title = "试听"></i></a>');
+                            actions.push('<a class="icon-view '+ exportFlag +'" download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
+                            actions.push('<a class="icon-view ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="icon iconfont icon-shanchu1 icon-view-red" title = "删除"></i></a>');
+                        }
+                        actions.push('</div>');
                         return actions.join('');
                     }
                 }]
@@ -339,6 +351,9 @@
 		function reloadAll(){
 		    var url = prefix + '/reloadAll';
             $.operate.post(url);
+		}
+		function toViewRemark(remark){
+			
 		}
     </script>
 </body>

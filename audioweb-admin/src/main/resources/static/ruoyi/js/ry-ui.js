@@ -1600,6 +1600,18 @@ var table = {
             // 组件显示
             toShow: function (id) {
             	$("#"+id).show();
+            },
+            // 弹窗显示内容
+            toViewInfo: function (content,title) {debugger
+				layer.open({
+					type: 1,
+					skin: 'layui-layer-lan', //样式类名
+					closeBtn: 0, //不显示关闭按钮
+					shadeClose: true, //开启遮罩关闭
+					area: '350px',
+					content: '<div style="padding:20px;text-align: center;" >'+ content + '</div>',
+					title: title
+				});
             }
         }
     });
