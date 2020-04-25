@@ -41,7 +41,7 @@
 	        	<div class = "col-sm-11">
 	        		<div calss = "row">
 		        		<div class="icon-view-play" role="group">
-		        			<div class="col-sm-1">
+		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-liebiao" id = "ORDER" onclick="fileCastTypeChange(this)" title = "顺序播放">
 					            </a>
 					            <a class="icon iconfont icon-music_repeat_button" id = "LIST" onclick="fileCastTypeChange(this)" title = "列表循环" style="display:none;">
@@ -51,7 +51,11 @@
 					            <a class="icon iconfont icon-danquxunhuan" id = "SINGLE" onclick="fileCastTypeChange(this)" title = "单曲循环" style="display:none;">
 					            </a>
 				            </div>
-				            <div class="col-sm-3">
+				            <div class="col-xs-3">
+					             <div id = "controllerGroup" class="icon-view-play"  role="group" style="display:none;">
+						             <div class="col-xs-4">
+									 </div>
+					             </div>
 					             <div id = "castLevelGroup">
 						             <div class="col-sm-5">
 										<h4 align ="right" style = "margin-top: 8px; margin-bottom: 0px;">广播级别:</h4>
@@ -63,25 +67,25 @@
 						             </div>
 					             </div>
 				            </div>
-		        			<div class="col-sm-1">
+		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-music_rewind_button" id = "PREV" onclick="fileCastControl(this)" title = "上一曲" style="display:none;">
 					            </a>
 				            </div>
-		        			<div class="col-sm-1">
+		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-music_pause_button" id = "PAUSE" onclick="fileCastControl(this)" title = "暂停" style="display:none;">
 					            </a>
 					            <a class="icon iconfont icon-music_play_button" id = "RESUME" onclick="fileCastControl(this)" title = "播放" >
 					            </a>
 				            </div>
-		        			<div class="col-sm-1">
+		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-music_fastforward_button" id = "NEXT" onclick="fileCastControl(this)" title = "下一曲" style="display:none;">
 					            </a>
 				            </div>
-		        			<div class="col-sm-1">
+		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-music_stop_button" id = "STOP" onclick="AjaxStopFileCast()" title = "停止" style="display:none;">
 					            </a>
 				            </div>
-		        			<div class="col-sm-1">
+		        			<div class="col-xs-1">
 					            <a class="icon iconfont icon-music_mute" id = "VOLMUTE" onclick="volTypeChange(this)" title = "切换静音" style="display:none;">
 					            </a>
 					            <a class="icon iconfont icon-music_volume_down" id = "VOLDOWN"  onclick="volTypeChange(this)" title = "切换静音" style="display:none;">
@@ -89,7 +93,7 @@
 					            <a class="icon iconfont icon-music_volume_up" id = "VOLUP" onclick="volTypeChange(this)" title = "切换静音" >
 					            </a>
 				            </div>
-				            <div class="col-sm-3" style = "margin-top: 5px;">
+				            <div class="col-xs-3" style = "margin-top: 5px;">
 								<input type="range" class = "slider-small" title = "30">
 								<h5 align ="center" id = "volNum" style = "margin-top: 0px; margin-bottom: 0px;">30</h5>
 							</div>
@@ -144,7 +148,7 @@
         var prefix = ctx + "work/filecast";
         var defaultPath = "/img/default.jpg";
         var workSongDatas = [[${@dict.getType('work_song_status')}]];
-        var returnData,historyData;
+        var returnData,historyData,oldVol;
         var isFileCast = false,isMove = true,isComplete = false;
         var startTime,timeSite = 0;
         var fileCastType = "ORDER";
@@ -531,8 +535,21 @@
 		}
 		/**音量类型改变方法*/
 		function volTypeChange(data){
-			if($.common.equals(data.id,"VOLMUTE")){//
-				$.common.toHide(data.id);
+			if($.common.equals(data.id,"VOLMUTE")){//原本为静音
+				if(!oldVol){
+					oldVol = 30;
+				}
+				var tip = "#VOLUP";
+				if(oldVol < 20){
+					tip = "#VOLDOWN";
+				}
+				setValue(oldVol);
+				AjaxFileCastVol(oldVol,tip);
+			} else {//原本不为静音
+				oldVol = $(".slider-small").val();
+				var tip = "#VOLMUTE";
+				setValue(0);
+				AjaxFileCastVol(0,tip);
 			}
 		}
 		function initFileCastType(value){
@@ -727,6 +744,7 @@
 			}
 			//3/隐藏广播级别
 			$.common.toHide("castLevelGroup");
+			$.common.toShow("controllerGroup");
 			//4、初始化进度条
 			fileLength = parseInt(castInfo.runFile.duration/1000);
 			filePlaySite = parseInt(castInfo.runFile.playSite/1000);
@@ -796,7 +814,7 @@
 		function volchange(value){
 			$("#volNum").text(value);
 			$(".slider-small").attr("title",value);
-			if(value > 20){
+			if(value >= 20){
 				if($("#VOLUP").is(':hidden')){
 					$.common.toHide("VOLMUTE");
 					$.common.toHide("VOLDOWN");
@@ -808,7 +826,7 @@
 					$.common.toHide("VOLDOWN");
 					$.common.toShow("VOLMUTE");
 				}
-			}else if(value >0 && value <= 20){
+			}else if(value >0 && value < 20){
 				if($("#VOLDOWN").is(':hidden')){
 					$.common.toHide("VOLUP");
 					$.common.toHide("VOLMUTE");
@@ -1034,7 +1052,7 @@
 				AjaxFileCast(url,data,'',true);
         	});
 		}
-		/**发送文件广播任务类型改变命令**/
+		/**发送文件广播音量改变命令**/
 		function AjaxFileCastVol(value,tip){
 			var url = prefix + "/controlFileVol";
 			var data = {"taskId":castInfo.taskId,"vol":value};
@@ -1048,7 +1066,7 @@
 			AjaxFileCast(url,data,tip,true);
 		}
 		/**发送文件广播控制命令**/
-		function AjaxFileCastControl(value,tip){debugger
+		function AjaxFileCastControl(value,tip){
 			var url = prefix + "/controlFileCast";
 			var data = {"taskId":castInfo.taskId,"command":value};
 			if($.common.isEmpty(tip)){

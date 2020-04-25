@@ -1168,6 +1168,24 @@ label {
 .icon-view-play .icon:hover{
   font-weight:bold;
 }
+
+.fa-view-play .fa{
+  height : 32px;
+}
+.fa-view-play .fa {
+  padding : 10px;
+  font-size: 32px;
+  line-height: 26px;
+  margin: 30px 0;
+  color:#ee2104;
+  -webkit-transition: font-size 0.25s ease-out 0s;
+  -moz-transition: font-size 0.25s ease-out 0s;
+  transition: font-size 0.25s ease-out 0s;
+}
+.fa-view-play .fa:hover{
+  font-weight:bold;
+}
+
 .fa-view .fa{
   height : 26px;"
   font-size: 22px;
