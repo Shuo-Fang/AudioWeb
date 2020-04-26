@@ -48,7 +48,7 @@ public class Mp3Utils {
     /**
      * 通过歌曲文件地址, 获取歌曲信息
      *
-     * @param filePath 歌曲文件地址
+     * @param path 歌曲文件地址
      * @return 歌曲信息
      * @throws Exception 可能抛出空指针异常
      */
@@ -67,7 +67,7 @@ public class Mp3Utils {
             String album = getInfoFromFrameMap(mp3File, ALBUM_KEY);
             music.put("album", StringUtils.isNotNull(album)?album:"");
             // 播放时长
-            Long duration = new Double(audioHeader.getPreciseTrackLength()*1000).longValue();
+            Long duration =  Math.round(audioHeader.getPreciseTrackLength()*1000);
             music.put("duration", StringUtils.isNotNull(duration)?duration:null);
             // 采样率
             Integer sampleRate = StringUtils.isNotNull(audioHeader.getSampleRate())?Integer.parseInt(audioHeader.getSampleRate()):null;
