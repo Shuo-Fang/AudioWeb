@@ -14,6 +14,10 @@ ruoyi:
   addressEnabled: true
   # 删除或丢失音频文件保存记录天数
   lostFile: 30
+  # 语音合成key
+  appKey: DIM7ejlHN0hR1pPsK4bH7wTZ
+  # 语音合成secret
+  secretKey: imtneWjdVVW703Sr1kURb95hxEguVNbi
 # 通信线程池配置
 netty:
   #绑定IP地址 已经给予数据库进行配置

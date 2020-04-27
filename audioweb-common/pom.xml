@@ -102,7 +102,12 @@
             <artifactId>jaudiotagger</artifactId>
             <version>2.0.3</version>
         </dependency>
-		
+        <!-- 音频转码相关jar包 -->
+		<dependency>
+            <groupId>it.sauronsoftware</groupId>
+		    <artifactId>jave</artifactId>
+		    <version>1.0.2</version>
+        </dependency>
     </dependencies>
   
 </project>
