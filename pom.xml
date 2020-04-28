@@ -216,7 +216,6 @@
 	    <module>audioweb-admin</module>
 		<module>audioweb-framework</module>
 		<module>audioweb-system</module>
-		<module>audioweb-quartz</module>
 		<module>audioweb-generator</module>
         <module>audioweb-common</module>
         <module>audioweb-work</module>

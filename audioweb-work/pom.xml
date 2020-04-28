@@ -29,11 +29,17 @@
             <artifactId>audioweb-common</artifactId>
         </dependency>
         
-        <!-- 定时任务-->
-        <dependency>
-            <groupId>com.audioweb</groupId>
-            <artifactId>audioweb-quartz</artifactId>
-        </dependency>
+		<!-- 定时任务 -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.mchange</groupId>
+					<artifactId>c3p0</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
         
         <!-- 系统管理-->
         <dependency>

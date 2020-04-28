@@ -1,4 +1,4 @@
-package com.audioweb.quartz.controller;
+package com.audioweb.web.controller.quartz;
 
 import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
