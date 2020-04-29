@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.audioweb.common.utils.audio.Wav2Mp3;
+
 import it.sauronsoftware.jave.EncoderException;
 
 public class TtsMain {
@@ -23,37 +25,9 @@ public class TtsMain {
 
     // text 的内容为"欢迎使用百度语音合成"的urlencode,utf-8 编码
     // 可以百度搜索"urlencode"
-    private final String text = "自行车向前转动着时光," + 
-    		"在后座遗落了谁目光," + 
-    		"不曾想你穿着校服模样," + 
-    		"也从我生活离场," + 
-    		"风吹过吹旧了那条小巷," + 
-    		"到尽头追不到你余光," + 
-    		"我的梦只有你懂得欣赏," + 
-    		"那是最美的时光," + 
-    		"都是我还来不及学会勇敢," + 
-    		"让你一个人孤单," + 
-    		"我害怕青春就此离散," + 
-    		"让遗憾成遗憾," + 
-    		"你我从此无关," + 
-    		"遗憾是片青春的书签," + 
-    		"夹在了最痛的那一页," + 
-    		"那个夏天像秋天的落叶," + 
-    		"假装灿烂不害怕离别," + 
-    		"一场大雨湿透整个世界," + 
-    		"流逝我们的一切," + 
-    		"都是我还来不及学会勇敢," + 
-    		"让你一个人走散," + 
-    		"我多想能像昨天一样," + 
-    		"任凭青春荒唐," + 
-    		"你不要再悲伤," + 
-    		"都是我还来不及学会勇敢," + 
-    		"恨这一生太短暂," + 
-    		"我愿意用所有去交换," + 
-    		"换为时还不晚," + 
-    		"换余生不孤单," + 
-    		"啦啦啦啦啦啦啦啦啦," + 
-    		"啦啦啦啦啦啦啦啦啦";
+    private final String text = "营销号怎么生成是怎么回事呢？营销号相信大家都很熟悉，但是营销号怎么生成是怎么回事呢，下面就让小编带大家一起了解吧。\r\n" + 
+    		"　　营销号怎么生成，其实就是使用营销号生成器生成，大家可能会很惊讶营销号怎么会怎么生成呢？但事实就是这样，小编也感到非常惊讶。\r\n" + 
+    		"　　这就是关于营销号怎么生成的事情了，大家有什么想法呢，欢迎在评论区告诉小编一起讨论哦！";
 
     // 发音人选择, 基础音库：0为度小美，1为度小宇，3为度逍遥，4为度丫丫，
     // 精品音库：5为度小娇，103为度米朵，106为度博文，110为度小童，111为度小萌，默认为度小美
@@ -110,6 +84,8 @@ public class TtsMain {
 			} catch (EncoderException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}finally {
+				file.delete();
 			}
         } else {
             System.err.println("ERROR: content-type= " + contentType);

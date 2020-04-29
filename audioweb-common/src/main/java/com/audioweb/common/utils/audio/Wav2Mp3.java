@@ -1,14 +1,16 @@
-package com.audioweb.common.utils.tts;
+package com.audioweb.common.utils.audio;
 import java.io.File;
 
 import it.sauronsoftware.jave.AudioAttributes;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.EncoderException;
 import it.sauronsoftware.jave.EncodingAttributes;
-
-
 /**
- * Created by Administrator on 2016.6.23.
+ * wav或pcm音频转码MP3
+ * @ClassName: Wav2Mp3 
+ * @Description: wav或pcm音频转码MP3
+ * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @date 2020年4月28日 下午1:55:52
  */
 public class Wav2Mp3 {
 	/**
