@@ -40,7 +40,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.1.1.RELEASE</version>
+                <version>2.1.12.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -124,7 +124,15 @@
 				    </exclusion>
 				</exclusions>
 			</dependency>
-			
+
+			<!-- mybatis -->
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>3.5.4</version>
+				<optional>true</optional>
+			</dependency>
+
 			<!-- swagger2-UI-->
 			<dependency>
 				<groupId>io.springfox</groupId>
