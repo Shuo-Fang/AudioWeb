@@ -12,9 +12,6 @@ public class WorkSchemeTask extends SysJob{
 	/** 定时任务ID */
     private Long scheTaskId;
 
-    /** 任务对应sys_job的ID */
-    private Long jobId;
-
     /** 广播任务方案ID */
     private Long schemeId;
 
@@ -51,15 +48,6 @@ public class WorkSchemeTask extends SysJob{
     public Long getScheTaskId() 
     {
         return scheTaskId;
-    }
-    public void setJobId(Long jobId) 
-    {
-        this.jobId = jobId;
-    }
-
-    public Long getJobId() 
-    {
-        return jobId;
     }
     public void setSchemeId(Long schemeId) 
     {
@@ -138,7 +126,6 @@ public class WorkSchemeTask extends SysJob{
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("scheTaskId", getScheTaskId())
-            .append("jobId", getJobId())
             .append("schemeId", getSchemeId())
             .append("taskName", getTaskName())
             .append("taskTiming", getTaskTiming())

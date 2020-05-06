@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND job_group = #{jobGroup}
 			</if>
 			<if test="jobGroup == null or jobGroup == ''">
-				AND job_group not like '\_%'
+				AND job_group REGEXP '[^0-9]'
 			</if>
 			<if test="status != null and status != ''">
 				AND status = #{status}
