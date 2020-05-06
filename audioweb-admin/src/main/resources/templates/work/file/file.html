@@ -171,7 +171,7 @@
 		            width: '15%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 25, "");
+                    	return $.table.tooltip(value, 15, "");
                    	}
                 },
                 {
@@ -180,7 +180,7 @@
 		            width: '15%',
                     align: "left",
                     formatter: function(value, row, index) {
-                    	return $.table.tooltip(value, 25, "");
+                    	return $.table.tooltip(value, 15, "");
                    	}
                 },
                 {
@@ -201,20 +201,11 @@
                         var actions = [];
                         actions.push('<div class="icon-view" role="group">');
                         if(row.fileType.indexOf('2') >= 0){
-                        	string = row.remark;
-                        	if($.common.isEmpty(string)){
-                        		string = "无";
-                        	}
-                        	//替换所有的换行符
-                        	string = string.replace(/\r\n/g,"<br>")
-                        	string = string.replace(/\n/g,"<br>");
-                        	//替换所有的空格（中文空格、英文空格都会被替换）
-                        	string = string.replace(/\s/g,"&nbsp;");
-                            actions.push('<a class="icon-view" href="javascript:void(0)" onclick="$.common.toViewInfo(\'' + string + '\',\'备注\')"><i class="icon iconfont icon-pinglun icon-view-yellow" title = "备注"></i></a>');
+                            actions.push('<a class="icon-view" href="javascript:void(0)" onclick="$.common.toViewInfo(\'' + $.common.transform(row.remark) + '\',\'备注\')"><i class="icon iconfont icon-pinglun icon-view-yellow" title = "备注"></i></a>');
                         }
                         if(row.delFlag == 0){
-                            actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + row.virPath + '\')"><i class="icon iconfont icon-erji1 icon-view-block" title = "试听"></i></a>');
-                            actions.push('<a class="icon-view '+ exportFlag +'" download  href="' + row.virPath + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
+                            actions.push('<a class="icon-view '+ exportFlag +'" href="javascript:void(0)" onclick="toAudio(\'' + encodeURI(row.virPath) + '\')"><i class="icon iconfont icon-erji1 icon-view-block" title = "试听"></i></a>');
+                            actions.push('<a class="icon-view '+ exportFlag +'" download  href="' + encodeURI(row.virPath) + '"><i class="icon iconfont icon-xiazai" title = "下载"></i></a>');
                             actions.push('<a class="icon-view ' + removeFlag + '" href="javascript:void(0)" onclick="remove(\'' + row.fileId + '\',\'' + row.filePath + '\',\'' + row.imagePath + '\')"><i class="icon iconfont icon-shanchu1 icon-view-red" title = "删除"></i></a>');
                         }
                         actions.push('</div>');
@@ -308,7 +299,7 @@
 	                  a.dispatchEvent(e); //给指定的元素，执行事件click事件
 	              	};
         		for(var i = 0,limit = selectedRows.length;i<limit;i++){
-        			download(selectedRows[i].virPath);
+        			download(encodeURI(selectedRows[i].virPath));
         		}
         	});
 		}
@@ -319,7 +310,7 @@
         		$.modal.alertWarning("请至少选择一条记录");
         		return;
         	}
-        	$.modal.confirm("确认要删除选中的" + rows.length + "条音频吗?", function() {debugger
+        	$.modal.confirm("确认要删除选中的" + rows.length + "条音频吗?", function() {
     			var selectedRows = table.rememberSelecteds[table.options.id];
     			var url = table.options.removeUrl;
     			var data = { "ids": rows.join() };
@@ -333,7 +324,7 @@
     			$.operate.submit(url, "post", "json", data);
         	});
 		}
-		function remove(id,path,imagePath){debugger
+		function remove(id,path,imagePath){
 			table.set();
         	$.modal.confirm("确定删除该条" + table.options.modalName + "信息吗？", function() {
                 var url = $.common.isEmpty(id) ? table.options.removeUrl : table.options.removeUrl.replace("{id}", id);
@@ -350,9 +341,6 @@
 		function reloadAll(){
 		    var url = prefix + '/reloadAll';
             $.operate.post(url);
-		}
-		function toViewRemark(remark){
-			
 		}
     </script>
 </body>

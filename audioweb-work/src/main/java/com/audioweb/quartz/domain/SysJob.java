@@ -9,6 +9,7 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.ColumnType;
 import com.audioweb.common.constant.ScheduleConstants;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.quartz.util.CronUtils;
 
@@ -42,13 +43,21 @@ public class SysJob extends BaseEntity implements Serializable
     private String cronExpression;
 
     /** cron计划策略 */
-    @Excel(name = "计划策略 ", readConverterExp = "0=默认,1=立即触发执行,2=触发一次执行,3=不触发立即执行")
+    //@Excel(name = "计划策略 ", readConverterExp = "0=默认,1=立即触发执行,2=触发一次执行,3=不触发立即执行")
     private String misfirePolicy = ScheduleConstants.MISFIRE_DEFAULT;
 
     /** 是否并发执行（0允许 1禁止） */
     @Excel(name = "并发执行", readConverterExp = "0=允许,1=禁止")
     private String concurrent;
-
+    
+    /** 是否并发执行（0允许 1禁止） */
+    @Excel(name = "开始时间", dateFormat = DateUtils.YYYY_MM_DD_HH_MM_SS)
+    private String startTime;
+    
+    /** 是否并发执行（0允许 1禁止） */
+    @Excel(name = "结束时间", dateFormat = DateUtils.YYYY_MM_DD_HH_MM_SS)
+    private String endTime;
+    
     /** 任务状态（0正常 1暂停） */
     @Excel(name = "任务状态", readConverterExp = "0=正常,1=暂停")
     private String status;
@@ -148,7 +157,23 @@ public class SysJob extends BaseEntity implements Serializable
         this.status = status;
     }
 
-    @Override
+    public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("jobId", getJobId())
@@ -163,6 +188,8 @@ public class SysJob extends BaseEntity implements Serializable
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
+            .append("startTime", getStartTime())
+            .append("endTime", getEndTime())
             .append("remark", getRemark())
             .toString();
     }

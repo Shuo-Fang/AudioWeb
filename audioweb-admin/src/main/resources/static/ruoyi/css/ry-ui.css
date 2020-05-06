@@ -1102,6 +1102,9 @@ label {
 .icon-view-small .icon-view-small-block{
   color:#333;
 }
+.icon-view-small .icon-view-small-yellow{
+	color:#f8ac59;
+}
 .icon-view-small .icon{
   font-size: 20px;
   line-height: 20px;
@@ -1115,7 +1118,7 @@ label {
   font-weight:bold;
 }
 .icon-view{
-  height : 30px;
+  height : 28px;
 }
 .icon-view .icon-view-red{
   color:#ee2104;
@@ -1128,14 +1131,14 @@ label {
 }
 .icon-view .icon{
   font-size: 24px;
-  line-height: 24px;
+  line-height: 28px;
   margin: 10px 0;
   -webkit-transition: font-size 0.25s ease-out 0s;
   -moz-transition: font-size 0.25s ease-out 0s;
   transition: font-size 0.25s ease-out 0s;
 }
 .icon-view .icon:hover{
-  font-size: 30px;
+  font-size: 28px;
   font-weight:bold;
 }
 .icon-view-plus{

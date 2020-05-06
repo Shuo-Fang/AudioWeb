@@ -1601,6 +1601,21 @@ var table = {
             toShow: function (id) {
             	$("#"+id).show();
             },
+            // 字符显示格式转换
+            transform: function (data) {
+            	if($.common.isEmpty(data)){
+            		data = "无";
+            	}else{
+	            	//替换所有的换行符
+            		data = data.replace(/\r\n/g,"<br>")
+	            	data = data.replace(/\n/g,"<br>");
+	            	//替换所有的空格（中文空格、英文空格都会被替换）
+	            	data = data.replace(/\s/g,"&nbsp;");
+	            	//句号添加换行
+	            	data = data.replace(/。/g,"。<br>");
+            	}
+            	return data;
+            },
             // 弹窗显示内容
             toViewInfo: function (content,title) {debugger
 				layer.open({

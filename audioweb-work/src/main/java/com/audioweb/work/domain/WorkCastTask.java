@@ -102,7 +102,7 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	/**	正在广播终端列表 */
 /*	@ApiModelProperty("正在广播终端列表")
 	@JsonIgnore
-	private List<WorkTerminal> castlist;*/
+	private List<WorkTerminal> castList;*/
 	
 	@Override
 	public boolean put() {

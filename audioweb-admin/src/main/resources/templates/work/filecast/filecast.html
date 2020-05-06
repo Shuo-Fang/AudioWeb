@@ -316,16 +316,7 @@
                     	 var actions = [];
                     	 actions.push('<div class="icon-view-small" role="group">');
                     	 if(row.fileType.indexOf('2') >= 0){
-                         	var string = row.remark;
-                         	if($.common.isEmpty(string)){
-                         		string = "无";
-                         	}
-                         	//替换所有的换行符
-                         	string = string.replace(/\r\n/g,"<br>")
-                         	string = string.replace(/\n/g,"<br>");
-                         	//替换所有的空格（中文空格、英文空格都会被替换）
-                         	string = string.replace(/\s/g,"&nbsp;");
-                             actions.push('<a class="icon-view-small" href="javascript:void(0)" onclick="$.common.toViewInfo(\'' + string + '\',\'备注\')"><i class="icon iconfont icon-pinglun icon-view-yellow" title = "备注"></i></a>');
+                             actions.push('<a class="icon-view-small" href="javascript:void(0)" onclick="$.common.toViewInfo(\'' + $.common.transform(row.remark) + '\',\'备注\')"><i class="icon iconfont icon-pinglun icon-view-small-yellow" title = "备注"></i></a>');
                          }
                          if(isFileCast){
                     		actions.push('<a class="icon-view-small " href="javascript:void(0)" onclick="playTheFile(\'' + row.fileId + '\')"><i class="icon iconfont icon-zanting" title = "播放"></i></a>');
