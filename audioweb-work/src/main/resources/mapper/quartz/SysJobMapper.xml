@@ -28,11 +28,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectJobList" parameterType="SysJob" resultMap="SysJobResult">
 		<include refid="selectJobVo"/>
 		<where>
+			del_flag = '0'
 			<if test="jobName != null and jobName != ''">
 				AND job_name like concat('%', #{jobName}, '%')
 			</if>
 			<if test="jobGroup != null and jobGroup != ''">
 				AND job_group = #{jobGroup}
+			</if>
+			<if test="jobGroup == null or jobGroup == ''">
+				AND job_group not like '\_%'
 			</if>
 			<if test="status != null and status != ''">
 				AND status = #{status}
@@ -44,20 +48,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectJobAll" resultMap="SysJobResult">
-		<include refid="selectJobVo"/>
+		<include refid="selectJobVo"/> WHERE del_flag = '0'
 	</select>
 	
 	<select id="selectJobById" parameterType="Long" resultMap="SysJobResult">
 		<include refid="selectJobVo"/>
-		where job_id = #{jobId}
+		where del_flag = '0' AND job_id = #{jobId}
 	</select>
 	
 	<delete id="deleteJobById" parameterType="Long">
- 		delete from sys_job where job_id = #{jobId}
+ 		update sys_job set del_flag = '2' where job_id = #{jobId}
  	</delete>
  	
  	<delete id="deleteJobByIds" parameterType="Long">
- 		delete from sys_job where job_id in
+		update sys_job set del_flag = '2'  where job_id in
  		<foreach collection="array" item="jobId" open="(" separator="," close=")">
  			#{jobId}
         </foreach> 

@@ -144,7 +144,7 @@
     <script th:inline="javascript">
         var prefix = ctx + "work/filecast";
         var defaultPath = "/img/default.jpg";
-        var workSongDatas = [[${@dict.getType('work_song_status')}]];
+        var workSongData = [[${@dict.getType('work_song_status')}]];
         var returnData,historyData,oldVol;
         var isFileCast = false,isMove = true,isComplete = false;
         var startTime,timeSite = 0;
@@ -268,7 +268,7 @@
 		            width: '5%',
                     align: "left",
                     formatter: function(value, row, index) {
-                       	return $.table.selectDictLabel(workSongDatas, value);
+                       	return $.table.selectDictLabel(workSongData, value);
                     },
                 },
                 {
@@ -316,7 +316,7 @@
                     	 var actions = [];
                     	 actions.push('<div class="icon-view-small" role="group">');
                     	 if(row.fileType.indexOf('2') >= 0){
-                         	string = row.remark;
+                         	var string = row.remark;
                          	if($.common.isEmpty(string)){
                          		string = "无";
                          	}
@@ -628,8 +628,8 @@
 					'fileCastType': fileCastType,
 					'vol': $(".slider-small").val(),
 					'castLevel': $("#castLevel").val(),
-					'domainidlist': $("#domainIds").val(),
-					'teridlist': $("#terIds").val()
+					'domainIdList': $("#domainIds").val(),
+					'terIdList': $("#terIds").val()
 			}
 			var callback = function(result){//回调方法
 				if (result.code == web_status.SUCCESS) {

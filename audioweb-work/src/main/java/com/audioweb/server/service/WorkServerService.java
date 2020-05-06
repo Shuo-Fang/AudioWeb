@@ -278,7 +278,7 @@ public class WorkServerService {
 	 * @param workCastTask
 	 */
 	private static void startEndTerCastTask(WorkCastTask workCastTask) {
-		for (WorkTerminal ter:workCastTask.getCastTeridlist()) {
+		for (WorkTerminal ter:workCastTask.getCastTeridList()) {
 			try {
 				if(StringUtils.isNotNull(ter.getCastTask())) {
 					/**若该终端有任务*/
@@ -303,7 +303,7 @@ public class WorkServerService {
      *  结束任务时批量结束并更新指定广播任务所管辖的终端任务信息
      */
 	private static void endTerCastTask(WorkCastTask workCastTask) {
-		for (WorkTerminal tInfo:workCastTask.getCastTeridlist()) {
+		for (WorkTerminal tInfo:workCastTask.getCastTeridList()) {
 			try {
 				//正在广播此任务的终端
 				if(workCastTask.equals(tInfo.getCastTask())) {
@@ -330,7 +330,7 @@ public class WorkServerService {
 	 * 新增任务时开启分组终端广播
 	 */
 	private static void startTerCastTask(WorkCastTask workCastTask) {
-		for (WorkTerminal ter:workCastTask.getCastTeridlist()) {
+		for (WorkTerminal ter:workCastTask.getCastTeridList()) {
 			startCast(ter,workCastTask);
 		}
 	}
@@ -338,7 +338,7 @@ public class WorkServerService {
 	 * 结束任务时开启分组终端广播
 	 */
 	private static void endStartTerCastTask(WorkCastTask workCastTask) {
-		for (WorkTerminal ter:workCastTask.getCastTeridlist()) {
+		for (WorkTerminal ter:workCastTask.getCastTeridList()) {
 			if(StringUtils.isNotNull(ter.getCastTask())) {
 				startCast(ter);
 			}
@@ -358,7 +358,7 @@ public class WorkServerService {
 				//开始组播命令批量发送
 				startTerCastTask(taskInfo);
 				//定时检测终端入组情况
-				new TimeReloady(taskInfo.getCastTeridlist());
+				new TimeReloady(taskInfo.getCastTeridList());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}finally {
@@ -379,7 +379,7 @@ public class WorkServerService {
 				try {
 					endTerCastTask(taskInfo);//停止对应终端现在的任务
 					endStartTerCastTask(taskInfo);//开始组播命令批量发送
-					new TimeReloady(taskInfo.getCastTeridlist());//定时检测终端入组情况
+					new TimeReloady(taskInfo.getCastTeridList());//定时检测终端入组情况
 				} catch (Exception e) {
 					e.printStackTrace();
 				}finally {

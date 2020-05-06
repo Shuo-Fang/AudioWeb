@@ -88,16 +88,16 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 
     /**	广播初始化分区列表 */
 	@ApiModelProperty("广播初始化分区列表，逗号分隔，未全选分区id前带_")
-	private String domainidlist;
+	private String domainIdList;
 	
 	/**	广播初始化分区列表 */
 	@ApiModelProperty("广播初始化终端列表，id为realId，逗号分隔")
-	private String teridlist;
+	private String terIdList;
 	
 	/**	广播初始化终端列表 */
 	@ApiModelProperty("广播初始化终端列表")
 	@JsonIgnore
-	private List<WorkTerminal> castTeridlist;
+	private List<WorkTerminal> castTeridList;
 
 	/**	正在广播终端列表 */
 /*	@ApiModelProperty("正在广播终端列表")
@@ -171,9 +171,6 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
     public Long getTaskId() {
 		return taskId;
 	}
-	public void setTaskId(Long taskId) {
-		this.taskId = taskId;
-	}
 	public String getTaskName() {
 		return taskName;
 	}
@@ -219,13 +216,27 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 		this.remark = remark;
 	}
 	
-	public List<WorkTerminal> getCastTeridlist() {
-		return castTeridlist;
+	public List<WorkTerminal> getCastTeridList() {
+		return castTeridList;
 	}
-	public void setCastTeridlist(List<WorkTerminal> castTeridlist) {
-		this.castTeridlist = castTeridlist;
+	public void setCastTeridList(List<WorkTerminal> castTeridList) {
+		this.castTeridList = castTeridList;
 	}
-	
+	public String getDomainIdList() {
+		return domainIdList;
+	}
+
+	public void setDomainIdList(String domainIdList) {
+		this.domainIdList = domainIdList;
+	}
+	public String getTerIdList() {
+		return terIdList;
+	}
+
+	public void setTerIdList(String terIdList) {
+		this.terIdList = terIdList;
+	}
+
 	public boolean getIsCast() {
 		return isCast;
 	}
@@ -237,18 +248,6 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	}
 	public void setIsStop(boolean isStop) {
 		this.isStop = isStop;
-	}
-	public String getDomainidlist() {
-		return domainidlist;
-	}
-	public void setDomainidlist(String domainidlist) {
-		this.domainidlist = domainidlist;
-	}
-	public String getTeridlist() {
-		return teridlist;
-	}
-	public void setTeridlist(String teridlist) {
-		this.teridlist = teridlist;
 	}
 	@Override
 	public int hashCode() {

@@ -12,7 +12,7 @@ public interface SysJobMapper
 {
     /**
      * 查询调度任务日志集合
-     * 
+     *
      * @param job 调度信息
      * @return 操作日志集合
      */

@@ -34,7 +34,18 @@ public class WorkScheme extends BaseEntity
     @Excel(name = "方案优先级")
     private String schemePriority;
 
-    public void setSchemeId(Long schemeId) 
+    /** 方案任务数 */
+    private int taskCount;
+
+    public int getTaskCount() {
+        return taskCount;
+    }
+
+    public void setTaskCount(int taskCount) {
+        this.taskCount = taskCount;
+    }
+
+    public void setSchemeId(Long schemeId)
     {
         this.schemeId = schemeId;
     }

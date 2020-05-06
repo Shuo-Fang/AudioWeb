@@ -16,13 +16,17 @@
                             </li>
                             <li>
                                 <label>方案状态：</label>
-                                <select name="status">
+                                <select name="status" th:with="type=${@dict.getType('work_status')}">
                                     <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
                             </li>
                             <li>
-                                <label>方案优先级：</label>
-                                <input type="text" name="schemePriority"/>
+                                <label>方案级别：</label>
+                                <select name="schemePriority" th:with="type=${@dict.getType('work_priority')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
                             </li>
                             <li>
                                 <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -56,6 +60,8 @@
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('work:scheme:edit')}]];
         var removeFlag = [[${@permission.hasPermi('work:scheme:remove')}]];
+        var workPriority = [[${@dict.getType('work_priority')}]];
+        var workStatus = [[${@dict.getType('work_status')}]];
         var prefix = ctx + "work/scheme";
 
         $(function() {
@@ -80,7 +86,11 @@
                 },
                 {
                     field: 'status', 
-                    title: '方案状态'
+                    title: '方案状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(workStatus, value);
+                    }
+
                 },
                 {
                     field: 'remark', 
@@ -88,7 +98,10 @@
                 },
                 {
                     field: 'schemePriority', 
-                    title: '方案优先级'
+                    title: '方案级别',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(workPriority, value);
+                    }
                 },
                 {
                     title: '操作',

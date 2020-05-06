@@ -2,22 +2,16 @@ package com.audioweb.server.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.audioweb.work.domain.FileCastTask;
-import com.audioweb.work.domain.RunningFile;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.work.domain.WorkFile;
 import com.audioweb.work.domain.WorkTerminal;
-import com.audioweb.work.mapper.WorkFileMapper;
 import com.audioweb.work.service.IWorkFileService;
 import com.github.pagehelper.PageInfo;
 import com.audioweb.common.constant.WorkConstants;
@@ -126,7 +120,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			FileCastTask fileCastTask = (FileCastTask) workCastTask;
     			if(initFile(fileCastTask)) {
         			initTerTree(fileCastTask);//初始化分区终端树
-        			if(fileCastTask.getCastTeridlist().size() > 0) {
+        			if(fileCastTask.getCastTeridList().size() > 0) {
 	        			fileCastTask.setServer(new GroupNettyServer(fileCastTask));//开启组播
 	        			/**初始化正在广播文件**/
 	    				if(WorkFileTaskService.initFileRead(fileCastTask)) {
@@ -164,9 +158,11 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     }
     
     /**
-     * 重置文件广播中文件列表
+     * 调节广播中文件列表顺序
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+     * @param fileId 广播文件Id
+     * @param site 广播文件排序号
      * @return 结果
      */
     @Override
@@ -195,7 +191,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 重置文件广播中文件列表
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+     * @param songData 广播文件Id组
      * @return 结果
      */
     @Override
@@ -215,7 +212,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 文件广播删除指定文件
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+     * @param fileIds 广播文件Id组
      * @return 结果
      */
     @Override
@@ -248,7 +246,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 文件广播播放指定文件
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+     * @param fileId 广播文件Id
      * @return 结果
      */
     @Override
@@ -273,7 +272,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 修改广播任务暂停启动，上下一曲
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+     * @param command 广播任务命令
      * @return 结果
      */
     @Override
@@ -289,7 +289,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 修改广播任务播放进度
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+     * @param playSite 广播节点
      * @return 结果
      */
     @Override
@@ -316,7 +317,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 修改广播任务播放模式
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务
+     * @param type 广播模式
      * @return 结果
      */
     @Override
@@ -334,7 +336,8 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     /**
      * 修改广播任务播放音量
      * 
-     * @param workCastTask 广播任务
+     * @param taskId 广播任务Id
+	 * @param vol 音量
      * @return 结果
      */
     @Override
@@ -405,14 +408,14 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @Title: initTerTree 
      * @Description: 初始化任务分区终端树
      * @param castTask void 返回类型 
-     * @throws 抛出错误
+     * @throws
      * @author ShuoFang 
      * @date 2020年4月9日 下午3:42:50
      */
     private void initTerTree(WorkCastTask castTask) {
     	ArrayList<WorkTerminal> taskTers = new ArrayList<>();
-    	if(StringUtils.isNotEmpty(castTask.getDomainidlist())) {
-    		List<String> doms = Convert.strToList(castTask.getDomainidlist());
+    	if(StringUtils.isNotEmpty(castTask.getDomainIdList())) {
+    		List<String> doms = Convert.strToList(castTask.getDomainIdList());
     		for(String dom:doms) {
     			if(StringUtils.isNotEmpty(dom)) {
     				try {
@@ -425,17 +428,17 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
     			}
     		}
     	}
-    	if(StringUtils.isNotEmpty(castTask.getTeridlist())) {
-    		taskTers.addAll(WorkTerminal.getTerByIds(castTask.getTeridlist()));
+    	if(StringUtils.isNotEmpty(castTask.getTerIdList())) {
+    		taskTers.addAll(WorkTerminal.getTerByIds(castTask.getTerIdList()));
     	}
-    	castTask.setCastTeridlist(taskTers);
+    	castTask.setCastTeridList(taskTers);
     }
     /**
      * 初始化任务广播文件列表
      * @Title: initFile 
      * @Description: 初始化任务广播文件列表
      * @param castTask void 返回类型 
-     * @throws 抛出错误
+     * @throws
      * @author ShuoFang 
      * @date 2020年4月13日 下午1:53:32
      */
@@ -463,7 +466,7 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
      * @Title: initFile 
      * @Description: 初始化任务广播文件列表
      * @param castTask void 返回类型 
-     * @throws 抛出错误
+     * @throws
      * @author ShuoFang 
      * @date 2020年4月13日 下午1:53:32
      */
@@ -485,10 +488,10 @@ public class WorkCastTaskServiceImpl implements IWorkCastTaskService
 	 * 控制文件广播上下一曲、暂停启动命令
 	 * @Title: fileCastCommand 
 	 * @Description: 控制文件广播上下一曲、暂停启动命令
-	 * @param task
-	 * @param command
+	 * @param task 广播任务
+	 * @param command 广播命令
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws
 	 * @author 10155 
 	 * @date 2020年4月19日 下午11:55:26
 	 */
