@@ -24,18 +24,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<resultMap id="workSchemeResult" type="WorkScheme">
 		<id     property="schemeId"   column="scheme_id"     />
+		<id     property="schemeName"   column="scheme_name"     />
+		<id     property="status"   column="scheme_status"     />
+		<id     property="schemePriority"   column="scheme_priority"     />
 	</resultMap>
 
 	<sql id="selectWorkSchemeTaskVo">
         select j.job_id, j.job_name, j.job_group, j.invoke_target, j.cron_expression, j.misfire_policy, j.concurrent, j.status, j.create_by, j.create_time,j.start_time, j.end_time, j.remark ,
-         w.scheme_task_id, w.song_data, w.task_cast_type, w.task_domain_ids, w.task_ter_ids, w.task_timing, w.task_vol
-		from sys_job j left join work_scheme_task w on j.job_id = w.job_id
+         t.scheme_task_id, t.song_data, t.task_cast_type, t.task_domain_ids, t.task_ter_ids, t.task_timing, t.task_vol,
+         s.scheme_id, s.scheme_name, s.status as scheme_status, s.scheme_priority
+		from sys_job j left join work_scheme_task t on j.job_id = w.job_id and j.del_flag = '0' left join work_scheme s on j.job_group = s.scheme_id and s.del_flag = '0'
     </sql>
 
 	<select id="selectWorkSchemeTaskList" parameterType="WorkSchemeTask" resultMap="WorkSchemeTaskResult">
 		<include refid="selectWorkSchemeTaskVo"/>
 		<where>
-			j.del_flag = '0'
 			<if test="jobName != null and jobName != ''">
 				AND job_name like concat('%', #{jobName}, '%')
 			</if>

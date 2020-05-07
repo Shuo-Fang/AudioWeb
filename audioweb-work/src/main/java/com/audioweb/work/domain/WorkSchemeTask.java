@@ -6,7 +6,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.quartz.domain.SysJob;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+@JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL) 
 public class WorkSchemeTask extends SysJob{
 	private static final long serialVersionUID = 1L;
 	
@@ -33,6 +35,9 @@ public class WorkSchemeTask extends SysJob{
 
     /** ORDER("顺序播放"),LIST("列表循环"),RANDOM("随机播放"),SINGLE("单曲循环") */
     private FileCastType taskCastType;
+    
+    /** 所属广播方案 */
+    private WorkScheme workScheme;
 
     public void setSchemeTaskId(Long schemeTaskId)
     {
@@ -98,7 +103,15 @@ public class WorkSchemeTask extends SysJob{
         return taskCastType;
     }
 
-    @Override
+    public WorkScheme getWorkScheme() {
+		return workScheme;
+	}
+
+	public void setWorkScheme(WorkScheme workScheme) {
+		this.workScheme = workScheme;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("scheTaskId", getSchemeTaskId())
