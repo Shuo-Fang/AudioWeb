@@ -1,5 +1,6 @@
 package com.audioweb.work.domain;
 
+import com.audioweb.common.enums.FileCastType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -10,14 +11,7 @@ public class WorkSchemeTask extends SysJob{
 	private static final long serialVersionUID = 1L;
 	
 	/** 定时任务ID */
-    private Long scheTaskId;
-
-    /** 广播任务方案ID */
-    private Long schemeId;
-
-    /** 广播事件的名字 */
-    @Excel(name = "广播事件的名字")
-    private String taskName;
+    private Long schemeTaskId;
 
     /** 任务定时时长 */
     @Excel(name = "任务定时时长(单位：秒)")
@@ -38,36 +32,18 @@ public class WorkSchemeTask extends SysJob{
     private String taskTerIds;
 
     /** ORDER("顺序播放"),LIST("列表循环"),RANDOM("随机播放"),SINGLE("单曲循环") */
-    private String taskCastType;
+    private FileCastType taskCastType;
 
-    public void setScheTaskId(Long scheTaskId) 
+    public void setSchemeTaskId(Long schemeTaskId)
     {
-        this.scheTaskId = scheTaskId;
-    }
-
-    public Long getScheTaskId() 
-    {
-        return scheTaskId;
-    }
-    public void setSchemeId(Long schemeId) 
-    {
-        this.schemeId = schemeId;
+        this.schemeTaskId = schemeTaskId;
     }
 
-    public Long getSchemeId() 
+    public Long getSchemeTaskId()
     {
-        return schemeId;
+        return schemeTaskId;
     }
-    public void setTaskName(String taskName) 
-    {
-        this.taskName = taskName;
-    }
-
-    public String getTaskName() 
-    {
-        return taskName;
-    }
-    public void setTaskTiming(Long taskTiming) 
+    public void setTaskTiming(Long taskTiming)
     {
         this.taskTiming = taskTiming;
     }
@@ -114,10 +90,10 @@ public class WorkSchemeTask extends SysJob{
     }
     public void setTaskCastType(String taskCastType) 
     {
-        this.taskCastType = taskCastType;
+        this.taskCastType = FileCastType.valueOf(taskCastType);
     }
 
-    public String getTaskCastType() 
+    public FileCastType getTaskCastType()
     {
         return taskCastType;
     }
@@ -125,9 +101,7 @@ public class WorkSchemeTask extends SysJob{
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("scheTaskId", getScheTaskId())
-            .append("schemeId", getSchemeId())
-            .append("taskName", getTaskName())
+            .append("scheTaskId", getSchemeTaskId())
             .append("taskTiming", getTaskTiming())
             .append("songData", getSongData())
             .append("taskVol", getTaskVol())

@@ -4,8 +4,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.audioweb.quartz.mapper.SysJobMapper">
 
-	<resultMap type="SysJob" id="SysJobResult">
-		<id     property="jobId"          column="job_id"          />
+	<resultMap type="WorkSchemeTask" id="WorkSchemeTaskResult">
+		<id     property="schemeTaskId"   column="scheme_task_id"  />
+		<result property="jobId"          column="job_id"          />
 		<result property="jobName"        column="job_name"        />
 		<result property="jobGroup"       column="job_group"       />
 		<result property="invokeTarget"   column="invoke_target"   />
@@ -17,16 +18,103 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="createTime"     column="create_time"     />
 		<result property="updateBy"       column="update_by"       />
 		<result property="updateTime"     column="update_time"     />
-		<result property="startTime"     column="start_time"     />
-		<result property="endTime"     column="end_time"     />
 		<result property="remark"         column="remark"          />
+		<association property="workScheme"    column="scheme_id" javaType="WorkScheme" resultMap="workSchemeResult" />
 	</resultMap>
-	
-	<sql id="selectJobVo">
-        select job_id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, create_by, create_time, start_time, end_time, remark
-		from sys_job
+
+	<resultMap id="workSchemeResult" type="WorkScheme">
+		<id     property="schemeId"   column="scheme_id"     />
+	</resultMap>
+
+	<sql id="selectWorkSchemeTaskVo">
+        select j.job_id, j.job_name, j.job_group, j.invoke_target, j.cron_expression, j.misfire_policy, j.concurrent, j.status, j.create_by, j.create_time,j.start_time, j.end_time, j.remark ,
+         w.scheme_task_id, w.song_data, w.task_cast_type, w.task_domain_ids, w.task_ter_ids, w.task_timing, w.task_vol
+		from sys_job j left join work_scheme_task w on j.job_id = w.job_id
     </sql>
-	
+
+	<select id="selectWorkSchemeTaskList" parameterType="WorkSchemeTask" resultMap="WorkSchemeTaskResult">
+		<include refid="selectWorkSchemeTaskVo"/>
+		<where>
+			j.del_flag = '0'
+			<if test="jobName != null and jobName != ''">
+				AND job_name like concat('%', #{jobName}, '%')
+			</if>
+			<if test="jobGroup != null and jobGroup != ''">
+				AND job_group = #{jobGroup}
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+			<if test="invokeTarget != null and invokeTarget != ''">
+				AND invoke_target like concat('%', #{invokeTarget}, '%')
+			</if>
+			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+				AND date_format(start_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+				AND date_format(end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+			</if>
+		</where>
+	</select>
+
+	<select id="selectWorkSchemeTaskById" parameterType="Long" resultMap="WorkSchemeTaskResult">
+		<include refid="selectWorkSchemeTaskVo"/>
+		where scheme_task_id = #{schemeTaskId}
+	</select>
+
+	<insert id="insertWorkSchemeTask" parameterType="WorkSchemeTask" useGeneratedKeys="true" keyProperty="schemeTaskId">
+		insert into work_scheme_task
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="jobId != null ">job_id,</if>
+			<if test="schemeId != null ">scheme_id,</if>
+			<if test="taskName != null  and taskName != ''">task_name,</if>
+			<if test="taskTiming != null ">task_timing,</if>
+			<if test="songData != null  and songData != ''">song_data,</if>
+			<if test="taskVol != null ">task_vol,</if>
+			<if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids,</if>
+			<if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids,</if>
+			<if test="taskCastType != null  and taskCastType != ''">task_cast_type,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="jobId != null ">#{jobId},</if>
+			<if test="schemeId != null ">#{schemeId},</if>
+			<if test="taskName != null  and taskName != ''">#{taskName},</if>
+			<if test="taskTiming != null ">#{taskTiming},</if>
+			<if test="songData != null  and songData != ''">#{songData},</if>
+			<if test="taskVol != null ">#{taskVol},</if>
+			<if test="taskDomainIds != null  and taskDomainIds != ''">#{taskDomainIds},</if>
+			<if test="taskTerIds != null  and taskTerIds != ''">#{taskTerIds},</if>
+			<if test="taskCastType != null  and taskCastType != ''">#{taskCastType},</if>
+		</trim>
+	</insert>
+
+	<update id="updateWorkSchemeTask" parameterType="WorkSchemeTask">
+		update work_scheme_task
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="jobId != null ">job_id = #{jobId},</if>
+			<if test="schemeId != null ">scheme_id = #{schemeId},</if>
+			<if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
+			<if test="taskTiming != null ">task_timing = #{taskTiming},</if>
+			<if test="songData != null  and songData != ''">song_data = #{songData},</if>
+			<if test="taskVol != null ">task_vol = #{taskVol},</if>
+			<if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids = #{taskDomainIds},</if>
+			<if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids = #{taskTerIds},</if>
+			<if test="taskCastType != null  and taskCastType != ''">task_cast_type = #{taskCastType},</if>
+		</trim>
+		where scheme_task_id = #{schemeTaskId}
+	</update>
+
+	<delete id="deleteWorkSchemeTaskById" parameterType="Long">
+        delete from work_scheme_task where scheme_task_id = #{schemeTaskId}
+    </delete>
+
+	<delete id="deleteWorkSchemeTaskByIds" parameterType="String">
+		delete from work_scheme_task where scheme_task_id in
+		<foreach item="schemeTaskId" collection="array" open="(" separator="," close=")">
+			#{schemeTaskId}
+		</foreach>
+	</delete>
+
 	<select id="selectJobList" parameterType="SysJob" resultMap="SysJobResult">
 		<include refid="selectJobVo"/>
 		<where>
@@ -45,12 +133,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 			<if test="invokeTarget != null and invokeTarget != ''">
 				AND invoke_target like concat('%', #{invokeTarget}, '%')
-			</if>
-			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				AND date_format(start_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
-			</if>
-			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				AND date_format(end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
 		</where>
 	</select>
