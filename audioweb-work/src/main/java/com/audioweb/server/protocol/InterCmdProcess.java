@@ -157,7 +157,6 @@ public class InterCmdProcess {
 		//点播停止
 		if(type == ClientCommand.CMD_STOPVOD && "1".equals(imot)){
 			encoded.put(0, ClientCommand.CMDTYPE_TERCONTROL.getCmd());
-
 		}
 		encoded.put(type.getCmd());
 		encoded.put(ClientCommand.CMD_HAVE.getCmd());
@@ -169,23 +168,18 @@ public class InterCmdProcess {
 
 	/**
 	 * 发送广播命令汇总处理->非源终端
-	 * @param isstart 是开始还是结束，true开始，false结束
+	 * @param isStart 是开始还是结束，true开始，false结束
 	 * @param multiCastIp 组播IP地址，isstart为true时必须
 	 * @param targetPort 终端接收组播端口号，isstart为true时必须，必须为5位数
 	 * @param vol 音量0-40
 	 * @param type 命令类型以及对应指令
 	 * @return 需要发送的ByteBuffer
 	 */
-	public static ByteBuffer sendCast(Boolean isstart,String multiCastIp, int targetPort,int vol,CastWorkType type){
+	public static ByteBuffer sendCast(Boolean isStart,String multiCastIp, int targetPort,int vol,CastWorkType type){
 		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
+		boolean isVol = false;
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		switch(type) {
-		case FILE:
-		case REAL:
-		case PLUG:
-		case WORD:
-			encoded.put(ClientCommand.CMD_FILECAST.getCmd());
-			break;
 		case TIME:
 			encoded.put(ClientCommand.CMD_TIMINGCAST.getCmd());
 			break;
@@ -193,8 +187,13 @@ public class InterCmdProcess {
 		case PAGING:
 			encoded.put(ClientCommand.CMD_TERMINAL.getCmd());
 			break;
+		case FILE:
+		case REAL:
+		case PLUG:
+		case WORD:
 		default:
 			encoded.put(ClientCommand.CMD_FILECAST.getCmd());
+			isVol = true;
 			break;
 		}
 
@@ -202,7 +201,8 @@ public class InterCmdProcess {
 			encoded.put(ClientCommand.CMD_NONE.getCmd());
 		}
 		//开始
-		if(isstart){
+		if(isStart){
+			//第7位为1
 			String str = "1";
 			/*if(types.get(0).equals("3")) {
 				if(types.size()>4) {
@@ -214,16 +214,11 @@ public class InterCmdProcess {
 				}
 			}*/
 			//终端采播
-			if(type == CastWorkType.CLIENT) {
-				//第8位为0
-				str = str+"0";
-			}
 			//寻呼话筒
-			if(type == CastWorkType.PAGING) {
-				//第7位为1
+			if(type == CastWorkType.PAGING || type == CastWorkType.CLIENT) {
+				//第8位为0
 				str = str+"0"+netHeartRecPort+""+targetPort;
 			}else {
-				//第7位为1
 				str = str+netHeartRecPort+""+targetPort;
 			}
 			byte[] ips = IpUtils.textToNumericFormatV4(multiCastIp);
@@ -232,7 +227,7 @@ public class InterCmdProcess {
 				for(int i=0;i<ips.length;i++) {
 					bs[i] = ips[i];
 				}
-				if(type == CastWorkType.FILE||type == CastWorkType.TIME) {
+				if(isVol) {
 					bs[4] = ClientCommand.CMD_NONE.getCmd();
 					//音量
 					bs[5] = (byte)vol;
@@ -281,9 +276,8 @@ public class InterCmdProcess {
 			if(type == CastWorkType.CLIENT) {
 				str += ipOrCmd+targetPort;
 				return sendStringToBytes(encoded,str,null);
-			}
-			//寻呼话筒
-			if(type == CastWorkType.PAGING) {
+			}else if(type == CastWorkType.PAGING) {
+				//寻呼话筒
 				//第7位为1
 				str += "0"+netHeartRecPort+""+targetPort;
 			}else {
@@ -360,10 +354,10 @@ public class InterCmdProcess {
 	/**
 	 * 终端调音命令
 	 * @param vol 音量0-40
-	 * @param issave 是否保存音量
+	 * @param isSave 是否保存音量
 	 * @return
 	 */
-	public static ByteBuffer sendVolSet(int vol,Boolean issave){
+	public static ByteBuffer sendVolSet(int vol,Boolean isSave){
 		ByteBuffer encoded = ByteBuffer.allocate(NORMALSIZE);
 		encoded.put(ClientCommand.CMDTYPE_TERCONTROL.getCmd());
 		encoded.put(ClientCommand.CMD_VOLSET.getCmd());
@@ -373,7 +367,7 @@ public class InterCmdProcess {
 		encoded.put((byte)vol);
 		String str = "";
 		//保存音量
-		if(issave){
+		if(isSave){
 			//第8位为1
 			str = "1";
 		}else{//不保存
