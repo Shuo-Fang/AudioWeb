@@ -89,7 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </select>
         
-    <insert id="insertWorkTerminal" parameterType="WorkTerminal" useGeneratedKeys="true">
+    <insert id="insertWorkTerminal" parameterType="WorkTerminal" useGeneratedKeys="true"  keyProperty="terRealId">
         insert into work_terminal
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="terminalId != null  and terminalId != ''">terminal_id,</if>
@@ -168,6 +168,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     	update work_terminal set del_flag = '2' where ter_real_id = #{terRealId}
     </delete>
     
+    <delete id="deleteWorkTerminalByIds" parameterType="String">
+		delete from work_terminal where ter_real_id in 
+		<foreach close=")" separator="," open="(" collection="array" item="terRealId">
+			#{terRealId} 
+		</foreach>
+	</delete>
+	
     <update id="updateTerminalDomainByIds" parameterType="Map">
         update work_terminal set domain_id = #{domainId} where ter_real_id in 
         <foreach item="terRealId" collection="ids" open="(" separator="," close=")">

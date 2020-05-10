@@ -18,6 +18,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="createTime"     column="create_time"     />
 		<result property="updateBy"       column="update_by"       />
 		<result property="updateTime"     column="update_time"     />
+		<result property="startTime"      column="start_time"     />
+		<result property="endTime"     	  column="end_time"     />
+		<result property="taskTiming"    column="task_timing"    />
+        <result property="songData"    column="song_data"    />
+        <result property="taskVol"    column="task_vol"    />
+        <result property="taskDomainIds"    column="task_domain_ids"    />
+        <result property="taskTerIds"    column="task_ter_ids"    />
+        <result property="taskCastType"    column="task_cast_type"    />
 		<result property="remark"         column="remark"          />
 		<association property="workScheme"    column="scheme_id" javaType="WorkScheme" resultMap="workSchemeResult" />
 	</resultMap>
@@ -62,147 +70,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="selectWorkSchemeTaskById" parameterType="Long" resultMap="WorkSchemeTaskResult">
 		<include refid="selectWorkSchemeTaskVo"/>
-		where scheme_task_id = #{schemeTaskId}
+		where t.scheme_task_id = #{schemeTaskId}
 	</select>
-
+	
 	<insert id="insertWorkSchemeTask" parameterType="WorkSchemeTask" useGeneratedKeys="true" keyProperty="schemeTaskId">
-		insert into work_scheme_task
-		<trim prefix="(" suffix=")" suffixOverrides=",">
-			<if test="jobId != null ">job_id,</if>
-			<if test="schemeId != null ">scheme_id,</if>
-			<if test="taskName != null  and taskName != ''">task_name,</if>
-			<if test="taskTiming != null ">task_timing,</if>
-			<if test="songData != null  and songData != ''">song_data,</if>
-			<if test="taskVol != null ">task_vol,</if>
-			<if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids,</if>
-			<if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids,</if>
-			<if test="taskCastType != null  and taskCastType != ''">task_cast_type,</if>
-		</trim>
-		<trim prefix="values (" suffix=")" suffixOverrides=",">
-			<if test="jobId != null ">#{jobId},</if>
-			<if test="schemeId != null ">#{schemeId},</if>
-			<if test="taskName != null  and taskName != ''">#{taskName},</if>
-			<if test="taskTiming != null ">#{taskTiming},</if>
-			<if test="songData != null  and songData != ''">#{songData},</if>
-			<if test="taskVol != null ">#{taskVol},</if>
-			<if test="taskDomainIds != null  and taskDomainIds != ''">#{taskDomainIds},</if>
-			<if test="taskTerIds != null  and taskTerIds != ''">#{taskTerIds},</if>
-			<if test="taskCastType != null  and taskCastType != ''">#{taskCastType},</if>
-		</trim>
-	</insert>
+        insert into work_scheme_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobId != null ">job_id,</if>
+            <if test="taskTiming != null ">task_timing,</if>
+            <if test="songData != null  and songData != ''">song_data,</if>
+            <if test="taskVol != null ">task_vol,</if>
+            <if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids,</if>
+            <if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids,</if>
+            <if test="taskCastType != null  and taskCastType != ''">task_cast_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobId != null ">#{jobId},</if>
+            <if test="taskTiming != null ">#{taskTiming},</if>
+            <if test="songData != null  and songData != ''">#{songData},</if>
+            <if test="taskVol != null ">#{taskVol},</if>
+            <if test="taskDomainIds != null  and taskDomainIds != ''">#{taskDomainIds},</if>
+            <if test="taskTerIds != null  and taskTerIds != ''">#{taskTerIds},</if>
+            <if test="taskCastType != null  and taskCastType != ''">#{taskCastType},</if>
+         </trim>
+    </insert>
 
-	<update id="updateWorkSchemeTask" parameterType="WorkSchemeTask">
-		update work_scheme_task
-		<trim prefix="SET" suffixOverrides=",">
-			<if test="jobId != null ">job_id = #{jobId},</if>
-			<if test="schemeId != null ">scheme_id = #{schemeId},</if>
-			<if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
-			<if test="taskTiming != null ">task_timing = #{taskTiming},</if>
-			<if test="songData != null  and songData != ''">song_data = #{songData},</if>
-			<if test="taskVol != null ">task_vol = #{taskVol},</if>
-			<if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids = #{taskDomainIds},</if>
-			<if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids = #{taskTerIds},</if>
-			<if test="taskCastType != null  and taskCastType != ''">task_cast_type = #{taskCastType},</if>
-		</trim>
-		where scheme_task_id = #{schemeTaskId}
-	</update>
+    <update id="updateWorkSchemeTask" parameterType="WorkSchemeTask">
+        update work_scheme_task
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="jobId != null ">job_id = #{jobId},</if>
+            <if test="taskTiming != null ">task_timing = #{taskTiming},</if>
+            <if test="songData != null  and songData != ''">song_data = #{songData},</if>
+            <if test="taskVol != null ">task_vol = #{taskVol},</if>
+            <if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids = #{taskDomainIds},</if>
+            <if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids = #{taskTerIds},</if>
+            <if test="taskCastType != null  and taskCastType != ''">task_cast_type = #{taskCastType},</if>
+        </trim>
+        where scheme_task_id = #{schemeTaskId}
+    </update>
 
-	<delete id="deleteWorkSchemeTaskById" parameterType="Long">
+    <delete id="deleteWorkSchemeTaskById" parameterType="Long">
         delete from work_scheme_task where scheme_task_id = #{schemeTaskId}
     </delete>
 
-	<delete id="deleteWorkSchemeTaskByIds" parameterType="String">
-		delete from work_scheme_task where scheme_task_id in
-		<foreach item="schemeTaskId" collection="array" open="(" separator="," close=")">
-			#{schemeTaskId}
-		</foreach>
-	</delete>
-
-	<select id="selectJobList" parameterType="SysJob" resultMap="SysJobResult">
-		<include refid="selectJobVo"/>
-		<where>
-			del_flag = '0'
-			<if test="jobName != null and jobName != ''">
-				AND job_name like concat('%', #{jobName}, '%')
-			</if>
-			<if test="jobGroup != null and jobGroup != ''">
-				AND job_group = #{jobGroup}
-			</if>
-			<if test="jobGroup == null or jobGroup == ''">
-				AND job_group REGEXP '[^0-9]'
-			</if>
-			<if test="status != null and status != ''">
-				AND status = #{status}
-			</if>
-			<if test="invokeTarget != null and invokeTarget != ''">
-				AND invoke_target like concat('%', #{invokeTarget}, '%')
-			</if>
-		</where>
-	</select>
-	
-	<select id="selectJobAll" resultMap="SysJobResult">
-		<include refid="selectJobVo"/> WHERE del_flag = '0'
-	</select>
-	
-	<select id="selectJobById" parameterType="Long" resultMap="SysJobResult">
-		<include refid="selectJobVo"/>
-		where del_flag = '0' AND job_id = #{jobId}
-	</select>
-	
-	<delete id="deleteJobById" parameterType="Long">
- 		update sys_job set del_flag = '2' where job_id = #{jobId}
- 	</delete>
- 	
- 	<delete id="deleteJobByIds" parameterType="Long">
-		update sys_job set del_flag = '2'  where job_id in
- 		<foreach collection="array" item="jobId" open="(" separator="," close=")">
- 			#{jobId}
-        </foreach> 
- 	</delete>
- 	
- 	<update id="updateJob" parameterType="SysJob">
- 		update sys_job
- 		<set>
- 			<if test="jobName != null and jobName != ''">job_name = #{jobName},</if>
- 			<if test="jobGroup != null and jobGroup != ''">job_group = #{jobGroup},</if>
- 			<if test="invokeTarget != null and invokeTarget != ''">invoke_target = #{invokeTarget},</if>
- 			<if test="cronExpression != null and cronExpression != ''">cron_expression = #{cronExpression},</if>
- 			<if test="misfirePolicy != null and misfirePolicy != ''">misfire_policy = #{misfirePolicy},</if>
- 			<if test="concurrent != null and concurrent != ''">concurrent = #{concurrent},</if>
- 			<if test="status !=null">status = #{status},</if>
- 			<if test="remark != null and remark != ''">remark = #{remark},</if>
- 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
- 			update_time = sysdate()
- 		</set>
- 		where job_id = #{jobId}
-	</update>
- 	
- 	<insert id="insertJob" parameterType="SysJob" useGeneratedKeys="true" keyProperty="jobId">
- 		insert into sys_job(
- 			<if test="jobId != null and jobId != 0">job_id,</if>
- 			<if test="jobName != null and jobName != ''">job_name,</if>
- 			<if test="jobGroup != null and jobGroup != ''">job_group,</if>
- 			<if test="invokeTarget != null and invokeTarget != ''">invoke_target,</if>
- 			<if test="cronExpression != null and cronExpression != ''">cron_expression,</if>
- 			<if test="misfirePolicy != null and misfirePolicy != ''">misfire_policy,</if>
- 			<if test="concurrent != null and concurrent != ''">concurrent,</if>
- 			<if test="status != null and status != ''">status,</if>
- 			<if test="remark != null and remark != ''">remark,</if>
- 			<if test="createBy != null and createBy != ''">create_by,</if>
- 			create_time
- 		)values(
- 			<if test="jobId != null and jobId != 0">#{jobId},</if>
- 			<if test="jobName != null and jobName != ''">#{jobName},</if>
- 			<if test="jobGroup != null and jobGroup != ''">#{jobGroup},</if>
- 			<if test="invokeTarget != null and invokeTarget != ''">#{invokeTarget},</if>
- 			<if test="cronExpression != null and cronExpression != ''">#{cronExpression},</if>
- 			<if test="misfirePolicy != null and misfirePolicy != ''">#{misfirePolicy},</if>
- 			<if test="concurrent != null and concurrent != ''">#{concurrent},</if>
- 			<if test="status != null and status != ''">#{status},</if>
- 			<if test="remark != null and remark != ''">#{remark},</if>
- 			<if test="createBy != null and createBy != ''">#{createBy},</if>
- 			sysdate()
- 		)
-	</insert>
-
+    <delete id="deleteWorkSchemeTaskByIds" parameterType="String">
+        delete from work_scheme_task where scheme_task_id in 
+        <foreach item="schemeTaskId" collection="array" open="(" separator="," close=")">
+            #{schemeTaskId}
+        </foreach>
+    </delete>
+    
 </mapper> 
