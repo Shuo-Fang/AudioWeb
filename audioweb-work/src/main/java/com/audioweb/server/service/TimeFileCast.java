@@ -35,8 +35,13 @@ public class TimeFileCast extends TimerTask{
 	
 	public TimeFileCast(FileCastTask task) {
 		this.task = task;
-		castCard = AsyncManager.me().scheduleExecute(this,task.getRunFile().getTimesize(),
-				task.getRunFile().getTimesize(),TimeUnit.MILLISECONDS);
+		if(task.getRunFile().isFrame()) {
+			castCard = AsyncManager.me().scheduleExecute(this,task.getRunFile().getNanoTimeSize(),
+					task.getRunFile().getNanoTimeSize(),TimeUnit.NANOSECONDS);
+		}else {
+			castCard = AsyncManager.me().scheduleExecute(this,task.getRunFile().getTimesize(),
+					task.getRunFile().getTimesize(),TimeUnit.MILLISECONDS);
+		}
 	}
 	
 	@Override
@@ -93,8 +98,13 @@ public class TimeFileCast extends TimerTask{
 		if (oldCastCard != null) {
 			oldCastCard.cancel(false);
 	    }
-		castCard = AsyncManager.me().scheduleExecute(this,task.getRunFile().getTimesize(),
-				task.getRunFile().getTimesize(),TimeUnit.MILLISECONDS);
+		if(task.getRunFile().isFrame()) {
+			castCard = AsyncManager.me().scheduleExecute(this,task.getRunFile().getNanoTimeSize(),
+					task.getRunFile().getNanoTimeSize(),TimeUnit.NANOSECONDS);
+		}else {
+			castCard = AsyncManager.me().scheduleExecute(this,task.getRunFile().getTimesize(),
+					task.getRunFile().getTimesize(),TimeUnit.MILLISECONDS);
+		}
 	}
 	/**
 	 * 结束广播

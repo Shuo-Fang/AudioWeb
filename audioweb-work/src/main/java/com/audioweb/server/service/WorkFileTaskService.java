@@ -356,6 +356,7 @@ public class WorkFileTaskService {
 	public static boolean filePlaySite(FileCastTask task,Long playSite) {
 		try {
 			task.lock.lock();
+			//TODO 按帧调节音频
 			if(playSite >= task.getRunFile().getPlaySite()) {
 				/**向后调节音频*/
 				//时间差

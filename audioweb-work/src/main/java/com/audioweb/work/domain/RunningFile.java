@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @date 2020年4月13日 下午2:38:38  
  */
 public class RunningFile extends WorkFile{
-	public static final short DATA_LENGTH = 800;//每次数据包发送文件最大长度
+	public static final short DATA_LENGTH = 880;//每次数据包发送文件最大长度
 	/**
 	 * 
 	 */
@@ -35,6 +35,14 @@ public class RunningFile extends WorkFile{
 	/**文件广播中每次广播的时间间隔*/
 	@JsonIgnore
 	private final int timesize;
+	
+	/**文件广播中每次广播的时间间隔-纳秒精度*/
+	@JsonIgnore
+	private final long nanoTimeSize;
+	
+	/**文件广播中是否按帧发送信息*/
+	@JsonIgnore
+	private final boolean isFrame;
 	
 	/**文件广播中文件是否销毁,*/
 	@JsonIgnore
@@ -67,8 +75,25 @@ public class RunningFile extends WorkFile{
 		songName = file.getSongName();
 		startByte = file.getStartByte();
 		virPath = file.getVirPath();
-		timesize = (DATA_LENGTH*8)/super.getBitRate();
-		bitsize = super.getBitRate()*timesize/8;
+		//初始化时序
+		long realTimeSize = 1152*1000000000/sampleRate;
+		int realBitSize = (int) (super.getBitRate()*realTimeSize/1000000000 >> 3);
+		if(realBitSize > DATA_LENGTH) {
+			timesize = (DATA_LENGTH << 3)/super.getBitRate();
+			bitsize = (int) (super.getBitRate()*timesize >> 3);
+			isFrame =  false;
+			nanoTimeSize = timesize * 1000000;
+		}else if(realBitSize <= DATA_LENGTH >> 1) {
+			nanoTimeSize = realTimeSize << 1;
+			bitsize = realBitSize << 1;
+			timesize = (int) (nanoTimeSize/1000000);
+			isFrame = true;
+		}else {
+			nanoTimeSize = realTimeSize;
+			bitsize = realBitSize;
+			timesize = (int) (nanoTimeSize/1000000);
+			isFrame = true;
+		}
 		//初始化文件读取信息
 		FileInputStream inputStream = new FileInputStream(super.getFilePath());
 		in  = new BufferedInputStream(inputStream,inputStream.available());
@@ -130,6 +155,15 @@ public class RunningFile extends WorkFile{
 	public final void setPlaySite(long playSite) {
 		this.playSite.set(playSite);
 	}
+	
+	public long getNanoTimeSize() {
+		return nanoTimeSize;
+	}
+
+	public boolean isFrame() {
+		return isFrame;
+	}
+
 	/**加载跳过文件进度
 	 * @throws IOException */
 	public final void loadPlaySite(long playSite) throws IOException {
