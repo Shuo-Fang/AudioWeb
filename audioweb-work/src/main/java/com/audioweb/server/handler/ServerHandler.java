@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
+import io.netty.util.ReferenceCountUtil;
 /**
  * 终端通信处理
  * @ClassName: ServerHandler 
@@ -62,13 +63,14 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 					/**后续补充测试*/
 				}else {
 					ClientCommand cmd = ClientCommand.valueOf(command);
+					WorkTerminal terminal = WorkTerminal.getTerByIp(ip);
 					byte[] req = new byte[msg.content().readableBytes()];
+					ByteBuf buf = ctx.alloc().buffer();
 					msg.content().readBytes(req);
 					/**为命令包，进行判断**/
 					switch(cmd){ 
 					/**终端心跳包*/
 					case CMD_NETHEART:
-						WorkTerminal terminal = WorkTerminal.getTerByIp(ip);
 						String terid = InterCmdProcess.getTeridFromLogin(req);
 						if(StringUtils.isNotNull(terminal) && terminal.getTerminalId().equals(terid)) {
 							if(StringUtils.isNotNull(terminal.getCastTask())){
@@ -76,18 +78,39 @@ public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 								
 							}else {
 								/**则正常入组刷新终端登录状态*/
-								ByteBuf buf = ctx.alloc().buffer();
+								terminal.setIsOnline(0);
 								buf.writeBytes(InterCmdProcess.returnNetHeart());
-								ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
 							}
 						}
 						break;
-						
+					case CMD_FILECAST://文件广播终端返回消息
+					case CMD_TIMINGCAST://定时广播终端返回消息
+					case CMD_PIC_SEND://声卡采播终端返回消息
+					case CMD_TERMINAL://实时采播、终端点播返回
+						if(req[req.length-1] == 49){
+							if(terminal != null) {
+								synchronized (terminal) {
+									terminal.resetRetry();
+								}
+								/**是否需要发送音量确认命令*/
+								if(StringUtils.isNotNull(terminal.getCastTask()) 
+										&& terminal.isOver() && StringUtils.isNotNull(terminal.getCastTask().getVol())) {
+									buf.writeBytes(InterCmdProcess.sendVolSet(terminal.getCastTask().getVol(),false));
+								}
+							}
+						}
+						break;
 					default:
 						
 						break;
 					}
+					if(buf.isReadable()) {
+						ctx.writeAndFlush(new DatagramPacket(buf, msg.sender()));
+					}else {
+						buf.release();
+					}
 				}
+				ReferenceCountUtil.release(content);
 			}
 			
 		});

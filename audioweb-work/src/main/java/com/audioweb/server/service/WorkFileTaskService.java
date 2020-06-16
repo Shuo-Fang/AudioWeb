@@ -357,21 +357,44 @@ public class WorkFileTaskService {
 		try {
 			task.lock.lock();
 			//TODO 按帧调节音频
-			if(playSite >= task.getRunFile().getPlaySite()) {
-				/**向后调节音频*/
-				//时间差
-				long length = playSite -task.getRunFile().getPlaySite();
-				long byteSizes = length * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
-				task.getRunFile().loadPlaySite(byteSizes);
-				task.getRunFile().setPlaySite(playSite);
+			if(task.getRunFile().isFrame()) {
+				if(playSite >= task.getRunFile().getPlaySite()) {
+					/**向后调节音频*/
+					//时间差
+					long length = playSite -task.getRunFile().getPlaySite();
+					//帧数差
+					long frameSizes = length/task.getRunFile().getTimesize();
+					task.getRunFile().getInStream().SkipFrame(frameSizes);
+					task.getRunFile().setPlaySite(playSite);
+					//安插一帧空白帧
+					task.getRunFile().setBlankFrame(true);
+				}else {
+					/**向前调节音频*/
+					long frameSizes = playSite/task.getRunFile().getTimesize();
+					task.getRunFile().resetIn();
+					task.getRunFile().getInStream().SkipFrame(frameSizes);
+					task.getRunFile().setPlaySite(playSite);
+					//安插一帧空白帧
+					task.getRunFile().setBlankFrame(true);
+				}
+				return true;
 			}else {
-				/**向前调节音频*/
-				long byteSizes = playSite * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
-				task.getRunFile().resetIn();
-				task.getRunFile().loadPlaySite(byteSizes);
-				task.getRunFile().setPlaySite(playSite);
+				if(playSite >= task.getRunFile().getPlaySite()) {
+					/**向后调节音频*/
+					//时间差
+					long length = playSite -task.getRunFile().getPlaySite();
+					long byteSizes = length * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
+					task.getRunFile().loadPlaySite(byteSizes);
+					task.getRunFile().setPlaySite(playSite);
+				}else {
+					/**向前调节音频*/
+					long byteSizes = playSite * task.getRunFile().getBitsize()/task.getRunFile().getTimesize();
+					task.getRunFile().resetIn();
+					task.getRunFile().loadPlaySite(byteSizes);
+					task.getRunFile().setPlaySite(playSite);
+				}
+				return true;
 			}
-			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {

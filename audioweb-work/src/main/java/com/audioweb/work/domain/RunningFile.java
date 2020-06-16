@@ -32,9 +32,18 @@ public class RunningFile extends WorkFile{
 	@JsonIgnore
 	private final int  bitsize;
 	
+	
 	/**文件广播中每次广播的时间间隔*/
 	@JsonIgnore
 	private final int timesize;
+	
+	/**文件广播中按帧读取一次读取多少帧*/
+	@JsonIgnore
+	private final int frameCount;
+	
+	/**文件广播中的是否安插空白帧*/
+	@JsonIgnore
+	private volatile boolean blankFrame;
 	
 	/**文件广播中每次广播的时间间隔-纳秒精度*/
 	@JsonIgnore
@@ -50,7 +59,11 @@ public class RunningFile extends WorkFile{
 	
 	/**文件读取信息流*/
 	@JsonIgnore
-	private final BufferedInputStream in;
+	private BufferedInputStream in;
+	
+	/**文件帧读取信息流*/
+	@JsonIgnore
+	private Mp3Stream inStream;
 	
 	/**正在播放文件时间节点*/
 	private AtomicLong playSite = new AtomicLong(0);
@@ -76,35 +89,45 @@ public class RunningFile extends WorkFile{
 		startByte = file.getStartByte();
 		virPath = file.getVirPath();
 		//初始化时序
-		long realTimeSize = 1152*1000000000/sampleRate;
-		int realBitSize = (int) (super.getBitRate()*realTimeSize/1000000000 >> 3);
+		long realTimeSize = 1152L*1000*1000*1000/sampleRate;
+		int realBitSize = (int) (super.getBitRate()*realTimeSize/1000/1000 >> 3);
 		if(realBitSize > DATA_LENGTH) {
 			timesize = (DATA_LENGTH << 3)/super.getBitRate();
 			bitsize = (int) (super.getBitRate()*timesize >> 3);
 			isFrame =  false;
-			nanoTimeSize = timesize * 1000000;
-		}else if(realBitSize <= DATA_LENGTH >> 1) {
+			nanoTimeSize = timesize * 1000 * 1000;
+			frameCount = 0;
+		}else if(realBitSize <= DATA_LENGTH-4 >> 1) {
 			nanoTimeSize = realTimeSize << 1;
 			bitsize = realBitSize << 1;
-			timesize = (int) (nanoTimeSize/1000000);
+			timesize = (int) (nanoTimeSize/1000/1000);
 			isFrame = true;
+			frameCount = 2;
 		}else {
 			nanoTimeSize = realTimeSize;
 			bitsize = realBitSize;
-			timesize = (int) (nanoTimeSize/1000000);
+			timesize = (int) (nanoTimeSize/1000/1000);
 			isFrame = true;
+			frameCount = 1;
 		}
 		//初始化文件读取信息
 		FileInputStream inputStream = new FileInputStream(super.getFilePath());
 		in  = new BufferedInputStream(inputStream,inputStream.available());
-		in.skip(super.getStartByte());
-		in.mark((int) (super.getMusicLength()-super.getStartByte()));//标记起始字节，用于回滚
+		if(isFrame) {
+			inStream = new Mp3Stream(in,super.getMusicLength());
+		}else {
+			in.skip(super.getStartByte());
+			in.mark((int) (super.getMusicLength()-super.getStartByte()));//标记起始字节，用于回滚
+		}
 	}
 
 	/**重置标记至起始**/
 	public final void resetIn() {
 		try {
 			in.reset();
+			if(isFrame) {
+				inStream.parserMp3Header();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -162,6 +185,22 @@ public class RunningFile extends WorkFile{
 
 	public boolean isFrame() {
 		return isFrame;
+	}
+
+	public Mp3Stream getInStream() {
+		return inStream;
+	}
+
+	public int getFrameCount() {
+		return frameCount;
+	}
+	
+	public boolean isBlankFrame() {
+		return blankFrame;
+	}
+
+	public void setBlankFrame(boolean blankFrame) {
+		this.blankFrame = blankFrame;
 	}
 
 	/**加载跳过文件进度

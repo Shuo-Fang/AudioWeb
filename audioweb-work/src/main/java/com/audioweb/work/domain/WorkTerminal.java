@@ -102,6 +102,10 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	
 	/** 终端通信回复确认,0为确认，1及以上为未确认*/
 	private volatile AtomicInteger retry = new AtomicInteger(0);
+	
+	/** 终端是否为覆盖任务再入组 */
+	@JsonIgnore
+	private volatile boolean over = false;
     
     /** 是否在线	0为在线(刚刚通信过),1为在线(即将离线),2为离线*/
     private Integer isOnline;
@@ -366,7 +370,12 @@ public class WorkTerminal extends BaseEntity implements BaseWork
 	public void resetRetry() {
 		this.retry.set(0);
 	}
-	
+	public boolean isOver() {
+		return over;
+	}
+	public void setOver(boolean over) {
+		this.over = over;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

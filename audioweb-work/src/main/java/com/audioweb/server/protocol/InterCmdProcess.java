@@ -3,6 +3,7 @@ package com.audioweb.server.protocol;
 import java.nio.ByteBuffer;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.audioweb.common.config.NettyConfig;
 import com.audioweb.common.core.text.CharsetKit;
 import com.audioweb.common.core.text.Convert;
 import com.audioweb.common.enums.CastWorkType;
@@ -17,8 +18,7 @@ import com.audioweb.common.utils.StringUtils;
  */
 public class InterCmdProcess {
 	/** 心跳检测接收端口默认6970 */
-	@Value("${netty.serverPort}")
-	private static int netHeartRecPort;
+	private static int netHeartRecPort = NettyConfig.getServerPort();
 	/** ByteBuffer默认指定大小 */
 	private static final Integer NORMALSIZE = 50;
 
@@ -31,7 +31,7 @@ public class InterCmdProcess {
 	 */
 	public static String getTeridFromLogin(byte[] content){
 		byte[] ids = new byte[4];
-		System.arraycopy(content, 6, ids, 0, ids.length);
+		System.arraycopy(content, content.length-4, ids, 0, ids.length);
 		return Convert.str(ids, CharsetKit.GB2312);
 	}
 
@@ -420,8 +420,20 @@ public class InterCmdProcess {
 		/**数据标识**/
 		audiodata[0] = (byte)11;
 		/**音频长度标识**/
-		System.arraycopy(Convert.intToBytes(audiodata.length-ClientCommand.CMD_HEADER_SIZE.getCmd(), 2), 0, audiodata, 7, 2);
+		System.arraycopy(Convert.intToBytes(audiodata.length-ClientCommand.CMD_HEADER_SIZE.getCmd(), 2), 0, audiodata, 6, 2);
 		return audiodata;
+	}
+	/**
+	 * 将要发送的音频数据包加上头标志.点播
+	 * @param audiodata
+	 * @return
+	 */
+	public static void sendDataPackt(ByteBuffer audiodata){
+		audiodata.put(0, (byte)11);
+		byte[] length = Convert.intToBytes(audiodata.position()-ClientCommand.CMD_HEADER_SIZE.getCmd(), 2);
+		audiodata.put(6, length[0]);
+		audiodata.put(7, length[1]);
+		audiodata.flip();
 	}
 	/**
 	 * 将content编码放入ByteBuffer中并转化成byte[]返回
