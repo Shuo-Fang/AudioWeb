@@ -48,7 +48,7 @@ public class TimeFileCast extends TimerTask{
 	@Override
 	public void run() {
 		if(task.getRunFile().isFrame()) {
-			ByteBuffer dataBuffer = ByteBuffer.allocate(ClientCommand.CMD_HEADER_SIZE.getCmd()+RunningFile.DATA_LENGTH);
+			ByteBuffer dataBuffer = ByteBuffer.allocate(1024);
 			try {
 				if(task.getIsCast()) {//是否在广播
 					if(!(task.getIsStop() || task.getRunFile().isBlankFrame())) {//是否在暂停或为为空白帧
