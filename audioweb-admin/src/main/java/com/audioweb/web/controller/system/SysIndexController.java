@@ -85,10 +85,8 @@ public class SysIndexController extends BaseController
     @ResponseBody
     public AjaxResult getUserInfo() {
     	AjaxResult result = success("获取成功");
-    	SysUser user = new SysUser();
-    	BeanUtils.copyBeanProp(user,ShiroUtils.getSysUser());
+    	SysUser user = ShiroUtils.getSysUser();
     	user.setPassword("");
-    	user.setSalt("");
     	result.put(AjaxResult.DATA_TAG, user);
     	return result;
 	}

@@ -1,16 +1,11 @@
 package com.audioweb.web.controller.filecast;
 
-import java.io.File;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.xslf.usermodel.XSLFTableStyle.TablePartStyle;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.audioweb.work.domain.FileCastTask;
 import com.audioweb.work.domain.WorkCastTask;
-import com.audioweb.work.domain.WorkFile;
-import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.work.service.IWorkTerminalService;
 
 import io.swagger.annotations.Api;
@@ -28,23 +21,17 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 
 import com.audioweb.common.annotation.Log;
-import com.audioweb.common.config.Global;
-import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.core.domain.Ztree;
-import com.audioweb.common.core.page.TableDataInfo;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastCommand;
 import com.audioweb.common.enums.FileCastType;
 import com.audioweb.common.enums.OperatorType;
 import com.audioweb.common.utils.StringUtils;
-import com.audioweb.common.utils.file.FileUtils;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.server.service.IWorkCastTaskService;
-import com.audioweb.system.service.ISysConfigService;
-import com.audioweb.system.service.ISysDomainService;
 
 /**
  * 文件广播页面相关Controller
@@ -117,10 +104,12 @@ public class FileCastController extends BaseController
 					task = null;
 				}
     		}
+    	}else if(StringUtils.isEmpty(ShiroUtils.getSysUser().getAppUuid())) {
+        	task = FileCastTask.findRunningTask(ShiroUtils.getSessionId());
     	}else {
-        	String sessionId = ShiroUtils.getSessionId();
-        	task = FileCastTask.findRunningTask(sessionId);
+    		task = FileCastTask.findRunningTask(ShiroUtils.getSysUser().getAppUuid());
     	}
+    	
     	if(StringUtils.isNotNull(task)) {
     		AjaxResult result = success("获取成功");
 	    	result.put(AjaxResult.DATA_TAG, task);
@@ -180,7 +169,11 @@ public class FileCastController extends BaseController
         	}
         	task.setCreateBy(ShiroUtils.getLoginName());
         	task.setCastType(CastWorkType.FILE);
-        	task.setSessionId(ShiroUtils.getSessionId());
+        	if(StringUtils.isEmpty(ShiroUtils.getSysUser().getAppUuid())) {
+        		task.setAppUuid(ShiroUtils.getSessionId());
+        	}else {
+        		task.setAppUuid(ShiroUtils.getSysUser().getAppUuid());
+        	}
         	return workCastTaskService.insertWorkCastTask(task);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,7 +192,11 @@ public class FileCastController extends BaseController
     	}
     	task.setCreateBy(ShiroUtils.getLoginName());
     	task.setCastType(CastWorkType.FILE);
-    	task.setSessionId(ShiroUtils.getSessionId());
+    	if(StringUtils.isEmpty(ShiroUtils.getSysUser().getAppUuid())) {
+    		task.setAppUuid(ShiroUtils.getSessionId());
+    	}else {
+    		task.setAppUuid(ShiroUtils.getSysUser().getAppUuid());
+    	}
     	return workCastTaskService.insertWorkCastTask(task);
     }
 

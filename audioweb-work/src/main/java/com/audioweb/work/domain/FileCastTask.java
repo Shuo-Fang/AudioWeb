@@ -46,8 +46,8 @@ public class FileCastTask extends WorkCastTask{
 	@JsonIgnore
 	public Lock lock = new ReentrantLock();
 	
-	/**文件广播发起者sessionId*/
-	private String sessionId;
+	/**文件广播发起者UUId*/
+	private String appUuid;
 	
 	/**文件广播的timer定时器*/
 	@JsonIgnore
@@ -156,14 +156,14 @@ public class FileCastTask extends WorkCastTask{
 		this.timer = timer;
 	}
 
-	public String getSessionId() {
-		return sessionId;
+	public String getAppUuid() {
+		return appUuid;
 	}
 
-	public void setSessionId(String sessionId) {
-		this.sessionId = sessionId;
+	public void setAppUuid(String appUuid) {
+		this.appUuid = appUuid;
 	}
-	
+
 	/**获取字符串格式的音频播放列表*/
 	@JsonGetter("songData")
 	public String getSongData() {
@@ -275,12 +275,12 @@ public class FileCastTask extends WorkCastTask{
 		}
 		return false;
 	}
-	public static FileCastTask findRunningTask(String sessionId) {
+	public static FileCastTask findRunningTask(String appUuid) {
 		List<WorkCastTask> wCastTasks = new WorkCastTask().export();
 		for(WorkCastTask task:wCastTasks) {
 			if(task.getCastType() == CastWorkType.FILE) {
 				FileCastTask fTask = (FileCastTask)task;
-				if(StringUtils.isNotEmpty(fTask.getSessionId()) && fTask.getSessionId().equals(sessionId)) {
+				if(StringUtils.isNotEmpty(fTask.getAppUuid()) && fTask.getAppUuid().equals(appUuid)) {
 					return fTask;
 				}
 			}

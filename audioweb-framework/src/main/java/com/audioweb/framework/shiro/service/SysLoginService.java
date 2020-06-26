@@ -15,6 +15,7 @@ import com.audioweb.common.exception.user.UserDeleteException;
 import com.audioweb.common.exception.user.UserInterfaceCheckException;
 import com.audioweb.common.exception.user.UserNotExistsException;
 import com.audioweb.common.exception.user.UserPasswordNotMatchException;
+import com.audioweb.common.exception.user.UserUuidCheckException;
 import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.MessageUtils;
@@ -112,6 +113,12 @@ public class SysLoginService
         		passwordService.appValidate(user, password,re.getHeader(ShiroConstants.AUTHORIZATION));
         	}else {
         		throw new UserInterfaceCheckException();
+        	}
+        	//APP-uuid获取
+        	if(!StringUtils.isEmpty(re.getHeader(ShiroConstants.USER_UUID))) {
+        		user.setAppUuid(re.getHeader(ShiroConstants.USER_UUID));
+        	}else {
+        		throw new UserUuidCheckException();
         	}
     	}else {
             passwordService.validate(user, password);

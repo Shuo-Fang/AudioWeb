@@ -11,6 +11,7 @@ package com.audioweb.work.domain;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,7 +44,7 @@ public class RunningFile extends WorkFile{
 	
 	/**文件广播中的是否安插空白帧*/
 	@JsonIgnore
-	private volatile boolean blankFrame;
+	private AtomicInteger blankFrame = new AtomicInteger(0);
 	
 	/**文件广播中每次广播的时间间隔-纳秒精度*/
 	@JsonIgnore
@@ -195,12 +196,15 @@ public class RunningFile extends WorkFile{
 		return frameCount;
 	}
 	
-	public boolean isBlankFrame() {
-		return blankFrame;
+	public int getBlankFrame() {
+		return blankFrame.get();
+	}
+	public int addBlankFrame() {
+		return blankFrame.incrementAndGet();
 	}
 
-	public void setBlankFrame(boolean blankFrame) {
-		this.blankFrame = blankFrame;
+	public void setBlankFrame(int blankFrame) {
+		this.blankFrame.set(blankFrame);
 	}
 
 	/**加载跳过文件进度

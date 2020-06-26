@@ -12,6 +12,10 @@ public interface ShiroConstants
      * App端登录凭证
      */
     public static final String AUTHORIZATION = "Authorization";
+    /**
+     * App端登录uuid
+     */
+    public static final String USER_UUID = "User-UUID";
     
     /**
      * 当前登录的用户

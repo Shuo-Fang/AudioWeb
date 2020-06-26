@@ -9,6 +9,7 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -93,6 +94,10 @@ public class SysUser extends BaseEntity
 
     /** 角色组 */
     private Long[] roleIds;
+    
+    /** app登录用户ID */
+    @JsonIgnore
+    private String appUuid;
 
     /** 岗位组 */
     //private Long[] postIds;
@@ -324,8 +329,16 @@ public class SysUser extends BaseEntity
     {
         this.roleIds = roleIds;
     }
+    
+    public String getAppUuid() {
+		return appUuid;
+	}
 
-    @Override
+	public void setAppUuid(String appUuid) {
+		this.appUuid = appUuid;
+	}
+
+	@Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("userId", getUserId())
@@ -349,6 +362,7 @@ public class SysUser extends BaseEntity
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
             .append("domain", getDomain())
+            .append("appUuid", getAppUuid())
             .toString();
     }
 }

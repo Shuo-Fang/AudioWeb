@@ -358,6 +358,8 @@ public class WorkFileTaskService {
 			task.lock.lock();
 			//TODO 按帧调节音频
 			if(task.getRunFile().isFrame()) {
+				//安插一帧空白帧
+				task.getRunFile().addBlankFrame();
 				if(playSite >= task.getRunFile().getPlaySite()) {
 					/**向后调节音频*/
 					//时间差
@@ -366,17 +368,14 @@ public class WorkFileTaskService {
 					long frameSizes = length/task.getRunFile().getTimesize();
 					task.getRunFile().getInStream().SkipFrame(frameSizes);
 					task.getRunFile().setPlaySite(playSite);
-					//安插一帧空白帧
-					task.getRunFile().setBlankFrame(true);
 				}else {
 					/**向前调节音频*/
 					long frameSizes = playSite/task.getRunFile().getTimesize();
 					task.getRunFile().resetIn();
 					task.getRunFile().getInStream().SkipFrame(frameSizes);
 					task.getRunFile().setPlaySite(playSite);
-					//安插一帧空白帧
-					task.getRunFile().setBlankFrame(true);
 				}
+				task.getRunFile().addBlankFrame();
 				return true;
 			}else {
 				if(playSite >= task.getRunFile().getPlaySite()) {

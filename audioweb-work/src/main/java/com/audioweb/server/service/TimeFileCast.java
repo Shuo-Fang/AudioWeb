@@ -51,7 +51,7 @@ public class TimeFileCast extends TimerTask{
 			ByteBuffer dataBuffer = ByteBuffer.allocate(1024);
 			try {
 				if(task.getIsCast()) {//是否在广播
-					if(!(task.getIsStop() || task.getRunFile().isBlankFrame())) {//是否在暂停或为为空白帧
+					if(!(task.getIsStop() || task.getRunFile().getBlankFrame() != 0)) {//是否在暂停或为为空白帧
 						if (StringUtils.isNull(task.getTiming())) {//无倒计时
 							if (StringUtils.isNotNull(task.getServer().getChannel()) && task.getServer().getChannel().isWritable()) {// 是否关闭
 								int read = read(dataBuffer);//读取音频数据
@@ -83,10 +83,12 @@ public class TimeFileCast extends TimerTask{
 						}
 					}else {
 						if (StringUtils.isNotNull(task.getServer().getChannel()) && task.getServer().getChannel().isWritable()) {
-							dataBuffer.put(new byte[task.getRunFile().getBitsize()*task.getRunFile().getFrameCount()]);
+							dataBuffer.put(new byte[task.getRunFile().getBitsize()]);
 							send(dataBuffer);// 发送空文件，保持终端播放状态
-							if(task.getRunFile().isBlankFrame()) {
-								task.getRunFile().setBlankFrame(false);
+							if(task.getRunFile().getBlankFrame() > 2) {
+								task.getRunFile().setBlankFrame(0);
+							}else {
+								task.getRunFile().addBlankFrame();
 							}
 						} else {
 							//停止广播
@@ -104,7 +106,7 @@ public class TimeFileCast extends TimerTask{
 			byte[] data = new byte[task.getRunFile().getBitsize()+ClientCommand.CMD_HEADER_SIZE.getCmd()];//加上16位数据用作数据头
 			try {
 				if(task.getIsCast()) {//是否在广播
-					if(!(task.getIsStop() || task.getRunFile().isBlankFrame())) {//是否在暂停或为为空白帧
+					if(!(task.getIsStop() || task.getRunFile().getBlankFrame() != 0)) {//是否在暂停或为为空白帧
 						if (StringUtils.isNull(task.getTiming())) {//无倒计时
 							if (StringUtils.isNotNull(task.getServer().getChannel()) && task.getServer().getChannel().isWritable()) {// 是否关闭
 								int read = read(data);//读取音频数据
@@ -137,8 +139,10 @@ public class TimeFileCast extends TimerTask{
 					}else {
 						if (StringUtils.isNotNull(task.getServer().getChannel()) && task.getServer().getChannel().isWritable()) {
 							send(data);// 发送空文件，保持终端播放状态
-							if(task.getRunFile().isBlankFrame()) {
-								task.getRunFile().setBlankFrame(false);
+							if(task.getRunFile().getBlankFrame() > 2) {
+								task.getRunFile().setBlankFrame(0);
+							}else {
+								task.getRunFile().addBlankFrame();
 							}
 						} else {
 							//停止广播
