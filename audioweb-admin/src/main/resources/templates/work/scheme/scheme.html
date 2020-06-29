@@ -16,7 +16,7 @@
                             </li>
                             <li>
                                 <label>方案状态：</label>
-                                <select name="status" th:with="type=${@dict.getType('work_status')}">
+                                <select name="status" th:with="type=${@dict.getType('sys_job_status')}">
                                     <option value="">所有</option>
                                     <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
                                 </select>
@@ -47,9 +47,6 @@
                 <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="work:scheme:remove">
                     <i class="fa fa-remove"></i> 删除
                 </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="work:scheme:export">
-                    <i class="fa fa-download"></i> 导出
-                </a>
             </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
@@ -61,7 +58,6 @@
         var editFlag = [[${@permission.hasPermi('work:scheme:edit')}]];
         var removeFlag = [[${@permission.hasPermi('work:scheme:remove')}]];
         var workPriority = [[${@dict.getType('work_priority')}]];
-        var workStatus = [[${@dict.getType('work_status')}]];
         var prefix = ctx + "work/scheme";
 
         $(function() {
@@ -70,7 +66,6 @@
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
-                exportUrl: prefix + "/export",
                 modalName: "广播方案",
                 columns: [{
                     checkbox: true
@@ -87,14 +82,9 @@
                 {
                     field: 'status', 
                     title: '方案状态',
-                    formatter: function(value, row, index) {
-                        return $.table.selectDictLabel(workStatus, value);
-                    }
-
-                },
-                {
-                    field: 'remark', 
-                    title: '方案备注'
+                    formatter: function (value, row, index) {
+   		        		return statusTools(row);
+   		        	}
                 },
                 {
                     field: 'schemePriority', 
@@ -102,6 +92,10 @@
                     formatter: function(value, row, index) {
                         return $.table.selectDictLabel(workPriority, value);
                     }
+                },
+                {
+                    field: 'remark', 
+                    title: '方案备注'
                 },
                 {
                     title: '操作',
@@ -116,6 +110,29 @@
             };
             $.table.init(options);
         });
+        
+        /* 方案状态显示 */
+		function statusTools(row) {
+		    if (row.status == 1) {
+    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.schemeId + '\')"></i> ';
+    		} else {
+    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.schemeId + '\')"></i> ';
+    		}
+		}
+        
+		/* 方案管理-停用 */
+		function disable(schemeId) {
+			$.modal.confirm("确认要停用此方案吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "schemeId": schemeId, "status": 1 });
+		    })
+		}
+
+		/* 方案管理-启用 */
+		function enable(schemeId) {
+			$.modal.confirm("确认要启用此方案吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "schemeId": schemeId, "status": 0 });
+		    })
+		}
     </script>
 </body>
 </html>

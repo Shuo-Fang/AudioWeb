@@ -16,7 +16,9 @@ import com.audioweb.work.domain.WorkScheme;
 import com.audioweb.work.service.IWorkSchemeService;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
+import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.common.core.page.TableDataInfo;
 
 /**
@@ -86,6 +88,10 @@ public class WorkSchemeController extends BaseController
     @ResponseBody
     public AjaxResult addSave(WorkScheme workScheme)
     {
+    	if(StringUtils.isEmpty(workScheme.getSchemeName())) {
+    		 return error("方案名称不能为空!");
+    	}
+    	workScheme.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(workSchemeService.insertWorkScheme(workScheme));
     }
 
@@ -123,4 +129,16 @@ public class WorkSchemeController extends BaseController
     {
         return toAjax(workSchemeService.deleteWorkSchemeByIds(ids));
     }
+    /**
+     * 终端状态修改
+     */
+    @Log(title = "广播方案", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("work:scheme:edit")
+    @PostMapping("/changeStatus")
+    @ResponseBody
+    public AjaxResult changeStatus(WorkScheme workScheme)
+    {
+        return toAjax(workSchemeService.updateWorkScheme(workScheme));
+    }
+    
 }

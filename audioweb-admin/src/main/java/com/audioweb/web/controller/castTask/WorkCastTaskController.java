@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.enums.BusinessType;
+import com.audioweb.common.utils.DateUtils;
+import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.work.domain.WorkCastTask;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
@@ -85,6 +87,8 @@ public class WorkCastTaskController extends BaseController
     @ResponseBody
     public AjaxResult addSave(WorkCastTask workCastTask)
     {
+    	workCastTask.setCreateBy(ShiroUtils.getLoginName());
+    	workCastTask.setCreateTime(DateUtils.getNowDate());
         return workCastTaskService.insertWorkCastTask(workCastTask);
     }
 

@@ -123,13 +123,15 @@ public class WorkTerminalController extends BaseController
     @ResponseBody
     public AjaxResult addSave(WorkTerminal workTerminal)
     {
-    	if (UserConstants.USER_NAME_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(workTerminal)))
+    	if(StringUtils.isEmpty(workTerminal.getTerminalName())) {
+     		return error("终端名称不能为空!");
+     	}else if (UserConstants.USER_NAME_NOT_UNIQUE.equals(workTerminalService.checkIdUnique(workTerminal)))
         {
-            return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端ID已存在");
+            return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端ID有误或已存在");
         }
-        else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(workTerminalService.checkIdUnique(workTerminal)))
+        else if (UserConstants.USER_PHONE_NOT_UNIQUE.equals(workTerminalService.checkIpUnique(workTerminal)))
         {
-            return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端IP已存在");
+            return error("新增终端'" + workTerminal.getTerminalName() + "'失败，终端IP有误或已存在");
         }
     	workTerminal.setCreateBy(ShiroUtils.getLoginName());
         return toAjax(workTerminalService.insertWorkTerminal(workTerminal));
