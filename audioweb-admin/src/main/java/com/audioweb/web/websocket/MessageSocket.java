@@ -24,7 +24,7 @@ import com.audioweb.work.global.WebsocketGlobal;
  * 总信息管理的socket处理
  * @ClassName: MessageSocket
  * @Description: TODO(总信息管理的socket处理)
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2019年12月9日 上午11:22:41
  */
 @ServerEndpoint(value = "/websocket/message", configurator = WebSocketConfig.class)

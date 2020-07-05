@@ -31,20 +31,27 @@ public class SysJobServiceImpl implements ISysJobService
 
     @Autowired
     private SysJobMapper jobMapper;
+    
 
     /**
      * 项目启动时，初始化定时器 
      * 主要是防止手动修改数据库导致未同步到定时任务处理（注：不能手动修改数据库ID和任务组名，否则会导致脏数据）
      */
     @PostConstruct
-    public void init() throws SchedulerException, TaskException
+    @Override
+    public int init() throws SchedulerException, TaskException
     {
         scheduler.clear();
         List<SysJob> jobList = jobMapper.selectJobAll();
         for (SysJob job : jobList)
         {
-            ScheduleUtils.createScheduleJob(scheduler, job);
+        	try {
+                ScheduleUtils.createScheduleJob(scheduler, job);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         }
+        return jobList.size();
     }
 
     /**
@@ -103,6 +110,7 @@ public class SysJobServiceImpl implements ISysJobService
         Long jobId = job.getJobId();
         String jobGroup = job.getJobGroup();
         job.setStatus(ScheduleConstants.Status.NORMAL.getValue());
+        job.setNextValidTime(scheduler.getTrigger(ScheduleUtils.getTriggerKey(jobId, jobGroup)).getNextFireTime());
         int rows = jobMapper.updateJob(job);
         if (rows > 0)
         {

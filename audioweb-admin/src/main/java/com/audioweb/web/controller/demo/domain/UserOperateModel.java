@@ -9,7 +9,7 @@ import com.audioweb.common.utils.DateUtils;
  * 用户数据
  * @ClassName: UserOperateModel 
  * @Description: 用户数据
- * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author 10155 1015510750@qq.com 
  * @date 2020年4月16日 下午7:26:17
  */
 public class UserOperateModel extends BaseEntity

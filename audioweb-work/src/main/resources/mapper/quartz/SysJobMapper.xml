@@ -19,11 +19,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateTime"     column="update_time"     />
 		<result property="startTime"     column="start_time"     />
 		<result property="endTime"     column="end_time"     />
+		<result property="nextValidTime"     column="next_valid_time"     />
 		<result property="remark"         column="remark"          />
 	</resultMap>
 	
 	<sql id="selectJobVo">
-        select job_id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, create_by, create_time, start_time, end_time, remark
+        select job_id, job_name, job_group, invoke_target, cron_expression, misfire_policy, concurrent, status, create_by, create_time, start_time, end_time, next_valid_time, remark
 		from sys_job
     </sql>
 	
@@ -47,10 +48,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				AND date_format(start_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+				AND date_format(next_valid_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
 			</if>
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				AND date_format(end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+				AND date_format(next_valid_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
 		</where>
 	</select>
@@ -84,6 +85,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="cronExpression != null and cronExpression != ''">cron_expression = #{cronExpression},</if>
  			<if test="misfirePolicy != null and misfirePolicy != ''">misfire_policy = #{misfirePolicy},</if>
  			<if test="concurrent != null and concurrent != ''">concurrent = #{concurrent},</if>
+ 			<if test="startTime != null">start_time = #{startTime},</if>
+ 			<if test="endTime != null">end_time = #{endTime},</if>
+ 			<if test="nextValidTime != null">next_valid_time = #{nextValidTime},</if>
  			<if test="status !=null">status = #{status},</if>
  			<if test="remark != null and remark != ''">remark = #{remark},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
@@ -101,6 +105,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="cronExpression != null and cronExpression != ''">cron_expression,</if>
  			<if test="misfirePolicy != null and misfirePolicy != ''">misfire_policy,</if>
  			<if test="concurrent != null and concurrent != ''">concurrent,</if>
+ 			<if test="startTime != null">start_time,</if>
+ 			<if test="endTime != null">end_time,</if>
+ 			<if test="nextValidTime != null">next_valid_time,</if>
  			<if test="status != null and status != ''">status,</if>
  			<if test="remark != null and remark != ''">remark,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
@@ -113,6 +120,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="cronExpression != null and cronExpression != ''">#{cronExpression},</if>
  			<if test="misfirePolicy != null and misfirePolicy != ''">#{misfirePolicy},</if>
  			<if test="concurrent != null and concurrent != ''">#{concurrent},</if>
+ 			<if test="startTime != null">#{startTime},</if>
+ 			<if test="endTime != null">#{endTime},</if>
+ 			<if test="nextValidTime != null">#{nextValidTime},</if>
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>

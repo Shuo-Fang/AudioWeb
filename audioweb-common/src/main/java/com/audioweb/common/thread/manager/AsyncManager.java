@@ -100,7 +100,7 @@ public class AsyncManager
      * @param period 循环周期
      * @param tUnit 定时单位
      * @return ScheduledFuture<?> 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年3月19日 下午10:35:00
      */

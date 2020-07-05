@@ -1,5 +1,7 @@
 package com.audioweb.quartz.util;
 
+import java.util.Date;
+
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
@@ -13,6 +15,7 @@ import org.quartz.TriggerKey;
 import com.audioweb.common.constant.ScheduleConstants;
 import com.audioweb.common.exception.job.TaskException;
 import com.audioweb.common.exception.job.TaskException.Code;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.quartz.domain.SysJob;
 
 /**
@@ -68,8 +71,10 @@ public class ScheduleUtils
 
         // 按新的cronExpression表达式构建一个新的trigger
         CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(getTriggerKey(jobId, jobGroup))
-                .withSchedule(cronScheduleBuilder).build();
-
+                .withSchedule(cronScheduleBuilder)
+                .startAt(StringUtils.isNull(job.getCreateTime())?new Date():job.getCreateTime())
+                .endAt(job.getEndTime())
+                .build();
         // 放入参数，运行时的方法可以获取
         jobDetail.getJobDataMap().put(ScheduleConstants.TASK_PROPERTIES, job);
 
@@ -86,6 +91,8 @@ public class ScheduleUtils
         if (job.getStatus().equals(ScheduleConstants.Status.PAUSE.getValue()))
         {
             scheduler.pauseJob(ScheduleUtils.getJobKey(jobId, jobGroup));
+        }else {
+        	job.setNextValidTime(trigger.getNextFireTime());
         }
     }
 

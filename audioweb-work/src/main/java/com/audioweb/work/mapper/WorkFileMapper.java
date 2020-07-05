@@ -61,7 +61,7 @@ public interface WorkFileMapper
     /**
      * 批量查找音频的存储序列信息
      * 
-     * @param fileIds 需要删除的数据ID
+     * @param fileIds 需要查询的数据ID
      * @return 结果
      */
     public List<WorkFile> selectWorkFileByIds(String[] fileIds);

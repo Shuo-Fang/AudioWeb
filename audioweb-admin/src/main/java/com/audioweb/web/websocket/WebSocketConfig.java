@@ -13,7 +13,7 @@ import com.audioweb.framework.util.ShiroUtils;
  * 初始化配置WebSocket功能
  * @ClassName: WebSocketConfig 
  * @Description: TODO(初始化配置WebSocket功能) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2019年12月9日 上午11:22:58
  */
 //war部署时此注解需要注释掉

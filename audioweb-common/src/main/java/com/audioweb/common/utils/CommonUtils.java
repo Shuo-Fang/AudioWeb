@@ -2,7 +2,7 @@
  * @Title: CommonUtils.java 
  * @Package com.audioweb.common.utils 
  * @Description: 通用工具类
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年3月11日 下午1:08:20 
  * @version V1.0   
  */ 
@@ -14,7 +14,7 @@ import java.util.List;
 /** 通用工具类
  * @ClassName: CommonUtils 
  * @Description: 通用工具类
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年3月11日 下午1:08:20  
  */
 public class CommonUtils {

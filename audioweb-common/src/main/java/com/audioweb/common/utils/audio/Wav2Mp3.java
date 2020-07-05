@@ -9,7 +9,7 @@ import it.sauronsoftware.jave.EncodingAttributes;
  * wav或pcm音频转码MP3
  * @ClassName: Wav2Mp3 
  * @Description: wav或pcm音频转码MP3
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年4月28日 下午1:55:52
  */
 public class Wav2Mp3 {

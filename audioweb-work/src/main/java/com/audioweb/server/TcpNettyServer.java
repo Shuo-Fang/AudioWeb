@@ -25,7 +25,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
  * TCP监听服务
  * @ClassName: TcpNettyServer 
  * @Description: TCP监听服务
- * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author 10155 1015510750@qq.com 
  * @date 2020年4月16日 下午7:37:03
  */
 public class TcpNettyServer extends BaseNetty{

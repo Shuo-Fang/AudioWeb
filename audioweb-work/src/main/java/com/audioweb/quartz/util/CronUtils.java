@@ -48,12 +48,12 @@ public class CronUtils
      * @param cronExpression Cron表达式
      * @return Date 下次Cron表达式执行时间
      */
-    public static Date getNextExecution(String cronExpression)
+    public static Date getNextExecution(String cronExpression,Date startTime)
     {
         try
         {
             CronExpression cron = new CronExpression(cronExpression);
-            return cron.getNextValidTimeAfter(new Date(System.currentTimeMillis()));
+            return cron.getNextValidTimeAfter(startTime);
         }
         catch (ParseException e)
         {

@@ -2,7 +2,7 @@
  * @Title: WebsocketGlobal.java
  * @Package com.audioweb.common.global
  * @Description:  websocket 全局信息管理
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月27日 下午12:03:28
  * @version V1.0
  */
@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * @ClassName: WebsocketGlobal
  * @Description: websocket 全局信息管理
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月27日 下午12:03:28
  */
 public class WebsocketGlobal {

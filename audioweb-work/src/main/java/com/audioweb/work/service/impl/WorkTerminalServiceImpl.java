@@ -392,7 +392,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	 * @param terIds
 	 * @param checked 0 为半选或未选,1为全选
 	 * @return List<Ztree> 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年3月25日 下午10:59:38
 	 */
@@ -458,7 +458,7 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 	 * @Title: removeBlockDomain 
 	 * @Description: 获取分区字段
 	 * @param list void 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月18日 下午7:08:13
 	 */

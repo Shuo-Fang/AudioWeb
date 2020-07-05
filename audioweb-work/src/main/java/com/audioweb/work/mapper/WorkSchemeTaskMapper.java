@@ -18,6 +18,14 @@ public interface WorkSchemeTaskMapper
      * @return 定时任务
      */
     public WorkSchemeTask selectWorkSchemeTaskById(Long schemeTaskId);
+    
+    /**
+     * 根据ID批量查询定时任务
+     * 
+     * @param schemeTaskId 定时任务ID
+     * @return 定时任务
+     */
+    public List<WorkSchemeTask> selectWorkSchemeTaskByIds(String[] schemeTaskIds);
 
     /**
      * 查询定时任务列表

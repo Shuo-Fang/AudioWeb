@@ -2,7 +2,7 @@
  * @Title: PoolConfig.java 
  * @Package com.audioweb.common.config.thread 
  * @Description: 通用线程池配置参数 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月28日 上午10:33:35 
  * @version V1.0   
  */ 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /** 
  * @ClassName: PoolConfig 
  * @Description: 通用线程池配置参数 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年2月28日 上午10:33:35  
  */
 public interface PoolConfig {

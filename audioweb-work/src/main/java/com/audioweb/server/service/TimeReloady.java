@@ -9,7 +9,7 @@ import com.audioweb.work.domain.WorkTerminal;
  * 定时延时执行判断终端是否入组
  * @ClassName: TimeReloady
  * @Description: 定时延时执行判断终端是否入组
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年4月16日 下午5:40:57
  */
 public class TimeReloady extends TimerTask{

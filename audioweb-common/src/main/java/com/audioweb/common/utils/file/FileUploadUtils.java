@@ -87,7 +87,7 @@ public class FileUploadUtils
      * @throws IOException
      * @throws FileNameLengthLimitExceededException
      * @throws InvalidExtensionException String 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年3月25日 下午8:28:10
      */

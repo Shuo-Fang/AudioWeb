@@ -2,7 +2,7 @@
  * @Title: NettyConfig.java 
  * @Package com.audioweb.common.config 
  * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年3月21日 下午2:16:00 
  * @version V1.0   
  */ 
@@ -20,7 +20,7 @@ import com.audioweb.common.utils.IpUtils;
 /** 
  * @ClassName: NettyConfig 
  * @Description: TODO(这里用一句话描述这个类的作用) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年3月21日 下午2:16:00  
  */
 @Component

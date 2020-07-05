@@ -9,6 +9,7 @@ import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.DateUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -80,7 +81,7 @@ public class SysUser extends BaseEntity
     private String loginIp;
 
     /** 最后登录时间 */
-    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
+    @Excel(name = "最后登录时间", width = 30, dateFormat = DateUtils.YYYY_MM_DD_HH_MM_SS, type = Type.EXPORT)
     private Date loginDate;
 
     /** 分区对象 */

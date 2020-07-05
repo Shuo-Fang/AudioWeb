@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
  * netty服务启动与调用类
  * @ClassName: ServerManager 
  * @Description: netty服务启动与调用类
- * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author 10155 1015510750@qq.com 
  * @date 2020年3月23日 下午10:40:22
  */
 @Component

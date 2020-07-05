@@ -7,6 +7,7 @@ import com.audioweb.common.annotation.Excels;
 import com.audioweb.common.annotation.Excel.Type;
 import com.audioweb.common.core.domain.BaseEntity;
 import com.audioweb.common.core.text.Convert;
+import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.IpUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.system.domain.SysDomain;
@@ -72,7 +73,7 @@ public class WorkTerminal extends BaseEntity implements BaseWork
     private String status;
 
     /** 终端最后登录时间 */
-    @Excel(name = "终端最后登录时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "终端最后登录时间", width = 30, dateFormat = DateUtils.YYYY_MM_DD_HH_MM_SS)
     private Date loginTime;
 
     /** 终端管理分区 */

@@ -2,7 +2,7 @@
  * @Title: IWorkServerService.java
  * @Package com.audioweb.server.service
  * @Description: TODO(用一句话描述该文件做什么)
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年4月10日 上午11:31:26
  * @version V1.0
  */
@@ -35,7 +35,7 @@ import io.netty.channel.socket.DatagramPacket;
 /** 业务层管理终端静态方法实现类
  * @ClassName: IWorkServerService
  * @Description: 业务层管理终端静态方法实现类
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年4月10日 上午11:31:26
  */
 public class WorkServerService {

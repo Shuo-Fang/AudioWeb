@@ -2,7 +2,7 @@
  * @Title: LoginServerHandler.java 
  * @Package com.audioweb.serverPool.service 
  * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年1月20日 下午3:36:20 
  * @version V1.0   
  */ 
@@ -27,7 +27,7 @@ import io.netty.channel.socket.DatagramPacket;
 /** 终端登录信息处理
  * @ClassName: LoginServerHandler 
  * @Description: 终端登录信息处理
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年1月20日 下午3:36:20  
  */
 public class LoginServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {

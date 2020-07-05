@@ -20,6 +20,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateTime"     column="update_time"     />
 		<result property="startTime"      column="start_time"     />
 		<result property="endTime"     	  column="end_time"     />
+		<result property="nextValidTime"  column="next_valid_time"     />
 		<result property="taskTiming"    column="task_timing"    />
         <result property="songData"    column="song_data"    />
         <result property="taskVol"    column="task_vol"    />
@@ -38,32 +39,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<sql id="selectWorkSchemeTaskVo">
-        select j.job_id, j.job_name, j.job_group, j.invoke_target, j.cron_expression, j.misfire_policy, j.concurrent, j.status, j.create_by, j.create_time,j.start_time, j.end_time, j.remark ,
+        select j.job_id, j.job_name, j.job_group, j.invoke_target, j.cron_expression, j.misfire_policy, j.concurrent, j.status, j.create_by, j.create_time,j.start_time, j.end_time, j.next_valid_time, j.remark ,
          t.scheme_task_id, t.song_data, t.task_cast_type, t.task_domain_ids, t.task_ter_ids, t.task_timing, t.task_vol,
          s.scheme_id, s.scheme_name, s.status as scheme_status, s.scheme_priority
-		from sys_job j left join work_scheme_task t on j.job_id = w.job_id and j.del_flag = '0' left join work_scheme s on j.job_group = s.scheme_id and s.del_flag = '0'
+		from work_scheme_task t left join sys_job j on t.job_id = j.job_id and j.del_flag = '0' inner join work_scheme s on j.job_group = 'schemeTask' + s.scheme_id and s.del_flag = '0'
     </sql>
 
 	<select id="selectWorkSchemeTaskList" parameterType="WorkSchemeTask" resultMap="WorkSchemeTaskResult">
 		<include refid="selectWorkSchemeTaskVo"/>
 		<where>
 			<if test="jobName != null and jobName != ''">
-				AND job_name like concat('%', #{jobName}, '%')
+				AND j.job_name like concat('%', #{jobName}, '%')
 			</if>
 			<if test="jobGroup != null and jobGroup != ''">
-				AND job_group = #{jobGroup}
+				AND j.job_group = #{jobGroup}
 			</if>
 			<if test="status != null and status != ''">
-				AND status = #{status}
+				AND j.status = #{status}
 			</if>
 			<if test="invokeTarget != null and invokeTarget != ''">
-				AND invoke_target like concat('%', #{invokeTarget}, '%')
+				AND j.invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				AND date_format(start_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+				AND date_format(j.start_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
 			</if>
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				AND date_format(end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+				AND date_format(j.end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
 		</where>
 	</select>
@@ -71,6 +72,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectWorkSchemeTaskById" parameterType="Long" resultMap="WorkSchemeTaskResult">
 		<include refid="selectWorkSchemeTaskVo"/>
 		where t.scheme_task_id = #{schemeTaskId}
+	</select>
+	
+	<select id="selectWorkSchemeTaskByIds" parameterType="String" resultMap="WorkSchemeTaskResult">
+		<include refid="selectWorkSchemeTaskVo"/>
+		where t.scheme_task_id in
+		<foreach item="schemeTaskId" collection="array" open="(" separator="," close=")">
+            #{schemeTaskId}
+        </foreach>
 	</select>
 	
 	<insert id="insertWorkSchemeTask" parameterType="WorkSchemeTask" useGeneratedKeys="true" keyProperty="schemeTaskId">

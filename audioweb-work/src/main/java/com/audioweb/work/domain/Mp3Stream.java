@@ -179,7 +179,7 @@ public class Mp3Stream {
 	 * @Description: 跳过指定数量的音频帧
 	 * @param frameSize
 	 * @return long 返回类型 跳过的字节数
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年6月17日 上午12:19:53
 	 */
@@ -212,7 +212,7 @@ public class Mp3Stream {
 	 * @param buffer 缓存buffer
 	 * @param frameCount 数据帧数
 	 * @return int 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年6月17日 上午12:21:18
 	 */

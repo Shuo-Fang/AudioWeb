@@ -28,7 +28,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
  * 终端登录监听服务
  * @ClassName: LoginNettyServer 
  * @Description: 终端登录监听服务
- * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author 10155 1015510750@qq.com 
  * @date 2020年4月16日 下午7:38:17
  */
 public class LoginNettyServer extends BaseNetty{

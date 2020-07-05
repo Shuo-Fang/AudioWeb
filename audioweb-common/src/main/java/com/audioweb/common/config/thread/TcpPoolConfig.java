@@ -2,7 +2,7 @@
  * @Title: TcpPoolConfig.java 
  * @Package com.audioweb.common.config.thread 
  * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月28日 上午10:24:38 
  * @version V1.0   
  */ 
@@ -20,7 +20,7 @@ import com.audioweb.common.utils.Threads;
 /** 
  * @ClassName: TcpPoolConfig 
  * @Description: tcp调用线程池
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年2月28日 上午10:24:38  
  */
 @Configuration
@@ -30,7 +30,7 @@ public class TcpPoolConfig implements PoolConfig{
 	 * @Title: tcpServiceExecutor 
 	 * @Description: tcp调用线程池
 	 * @return Executor 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author ShuoFang 
 	 * @date 2020年2月28日 上午10:13:32
 	 */

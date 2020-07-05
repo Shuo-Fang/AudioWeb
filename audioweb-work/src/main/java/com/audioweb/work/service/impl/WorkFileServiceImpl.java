@@ -167,7 +167,7 @@ public class WorkFileServiceImpl implements IWorkFileService
      * @Title: initWorkFiles 
      * @Description: 扫描本地音频文件信息
      * @param paths 路径 void 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author ShuoFang 
      * @date 2020年3月11日 下午2:45:09
      */

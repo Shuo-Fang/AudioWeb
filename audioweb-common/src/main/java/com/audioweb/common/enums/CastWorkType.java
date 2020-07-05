@@ -20,4 +20,15 @@ public enum CastWorkType{
 	public String getInfo() {
 		return info;
 	}
+	
+	public static CastWorkType invokeEnum(String name) {
+		CastWorkType[] types = CastWorkType.values();
+		//遍历查找
+	    for(CastWorkType s : types){
+           if(s.name().equals(name) || s.getInfo().equals(name)){
+               return s;
+           }
+	    }
+		return null;
+	}
 }

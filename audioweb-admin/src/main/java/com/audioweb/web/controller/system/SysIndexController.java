@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.config.Global;
 import com.audioweb.common.core.controller.BaseController;
 import com.audioweb.common.core.domain.AjaxResult;
-import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.framework.util.ShiroUtils;
 import com.audioweb.framework.web.domain.Server;
 import com.audioweb.system.domain.SysMenu;

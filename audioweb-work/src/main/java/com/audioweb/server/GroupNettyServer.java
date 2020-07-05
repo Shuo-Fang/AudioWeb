@@ -33,7 +33,7 @@ import io.netty.util.NetUtil;
  * 组播监听与发送器
  * @ClassName: GroupNettyServer 
  * @Description: 组播监听与发送器
- * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author 10155 1015510750@qq.com 
  * @date 2020年4月16日 下午7:33:22
  */
 public class GroupNettyServer extends BaseNetty{
@@ -172,7 +172,7 @@ public class GroupNettyServer extends BaseNetty{
 	 * @param localAddress
 	 * @param multicastport
 	 * @return boolean 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author ShuoFang 
 	 * @date 2020年4月10日 上午10:06:19
 	 */

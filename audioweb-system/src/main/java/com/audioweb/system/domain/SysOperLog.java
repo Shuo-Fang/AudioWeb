@@ -6,6 +6,7 @@ import java.util.Date;
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.ColumnType;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.DateUtils;
 
 /**
  * 操作日志记录表 oper_log
@@ -80,7 +81,7 @@ public class SysOperLog extends BaseEntity
     private String errorMsg;
 
     /** 操作时间 */
-    @Excel(name = "操作时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "操作时间", width = 30, dateFormat = DateUtils.YYYY_MM_DD_HH_MM_SS)
     private Date operTime;
 
     public Long getOperId()

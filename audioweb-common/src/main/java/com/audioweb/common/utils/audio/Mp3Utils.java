@@ -2,7 +2,7 @@
  * @Title: Mp3Utils.java 
  * @Package com.audioweb.common.utils.audio 
  * @Description: MP3音频信息处理获取类
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年3月10日 下午1:58:10 
  * @version V1.0   
  */ 
@@ -31,7 +31,7 @@ import com.audioweb.common.utils.security.Md5Utils;
 /** 
  * @ClassName: Mp3Utils 
  * @Description: MP3音频信息处理获取类
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年3月10日 下午1:58:10  
  */
 public class Mp3Utils {
@@ -147,7 +147,7 @@ public class Mp3Utils {
      * @Description:判断是否为MP3文件
      * @param path
      * @return boolean 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年3月10日 下午10:00:46
      */
@@ -166,7 +166,7 @@ public class Mp3Utils {
      * @Description: 判断是否为MP3文件
      * @param path
      * @return boolean 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年3月10日 下午10:06:11
      */
@@ -183,7 +183,7 @@ public class Mp3Utils {
      * @Description: 获取file的ID
      * @param path
      * @return String 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author ShuoFang 
      * @date 2020年3月11日 上午10:34:44
      */

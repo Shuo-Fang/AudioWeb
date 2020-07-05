@@ -6,6 +6,7 @@ import java.util.Date;
 import com.audioweb.common.annotation.Excel;
 import com.audioweb.common.annotation.Excel.ColumnType;
 import com.audioweb.common.core.domain.BaseEntity;
+import com.audioweb.common.utils.DateUtils;
 
 /**
  * 系统访问记录表 sys_logininfor
@@ -49,7 +50,7 @@ public class SysLogininfor extends BaseEntity
     private String msg;
 
     /** 访问时间 */
-    @Excel(name = "访问时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "访问时间", width = 30, dateFormat = DateUtils.YYYY_MM_DD_HH_MM_SS)
     private Date loginTime;
 
     public Long getInfoId()

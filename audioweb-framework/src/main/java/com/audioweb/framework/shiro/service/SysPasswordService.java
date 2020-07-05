@@ -44,7 +44,7 @@ public class SysPasswordService
      * @Description: 网页端验证密码
      * @param user
      * @param password void 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author ShuoFang 
      * @date 2020年2月26日 上午10:20:57
      */
@@ -83,7 +83,7 @@ public class SysPasswordService
      * @param user
      * @param password
      * @param authorization void 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author ShuoFang 
      * @date 2020年2月26日 上午10:25:48
      */

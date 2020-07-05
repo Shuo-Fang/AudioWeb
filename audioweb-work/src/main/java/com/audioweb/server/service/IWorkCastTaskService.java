@@ -69,7 +69,7 @@ public interface IWorkCastTaskService
      * @param taskId 任务ID
      * @param command 控制类型
      * @return AjaxResult 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年4月19日 下午9:12:13
      */
@@ -81,7 +81,7 @@ public interface IWorkCastTaskService
 	 * @param taskId 任务ID
 	 * @param fileId 文件Id
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月19日 下午9:12:13
 	 */
@@ -93,7 +93,7 @@ public interface IWorkCastTaskService
 	 * @param taskId 任务ID
 	 * @param playSite 控制进度
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月19日 下午9:12:13
 	 */
@@ -105,7 +105,7 @@ public interface IWorkCastTaskService
 	 * @param taskId 任务ID
 	 * @param type 
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月19日 下午9:12:13
 	 */
@@ -117,7 +117,7 @@ public interface IWorkCastTaskService
 	 * @param taskId 任务ID
 	 * @param vol 音量
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月19日 下午9:12:13
 	 */
@@ -129,7 +129,7 @@ public interface IWorkCastTaskService
 	 * @param taskId
 	 * @param fileId
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月23日 上午12:14:39
 	 */
@@ -141,7 +141,7 @@ public interface IWorkCastTaskService
 	 * @param taskId
 	 * @param fileId
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月23日 上午12:14:39
 	 */
@@ -154,7 +154,7 @@ public interface IWorkCastTaskService
 	 * @param fileId
 	 * @param site
 	 * @return AjaxResult 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月23日 上午12:14:39
 	 */

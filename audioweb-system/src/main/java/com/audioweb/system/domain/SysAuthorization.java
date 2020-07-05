@@ -2,7 +2,7 @@
  * @Title: SysAuthorization.java 
  * @Package com.audioweb.system.domain 
  * @Description: 接口登录身份证明
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月26日 下午1:52:19 
  * @version V1.0   
  */ 
@@ -14,7 +14,7 @@ import java.util.UUID;
 /** 
  * @ClassName: SysAuthorization 
  * @Description: 接口登录身份证明
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年2月26日 下午1:52:19  
  */
 public class SysAuthorization {

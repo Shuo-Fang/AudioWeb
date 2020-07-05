@@ -2,7 +2,7 @@
  * @Title: FileCastTask.java 
  * @Package com.audioweb.work.domain 
  * @Description: 文件-定时-文本广播广播对象
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年3月18日 下午4:00:17 
  * @version V1.0   
  */ 
@@ -33,7 +33,7 @@ import io.swagger.annotations.ApiModelProperty;
 /** 文件-定时-文本广播广播对象
  * @ClassName: FileCastTask 
  * @Description: 文件广播广播对象
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年3月18日 下午4:00:17  
  */
 @ApiModel("文件广播实体")
@@ -242,7 +242,7 @@ public class FileCastTask extends WorkCastTask{
 	 * @Title: removeWorkFile 
 	 * @Description: TODO(这里用一句话描述这个方法的作用) 
 	 * @param step void 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年4月22日 下午10:37:48
 	 */

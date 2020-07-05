@@ -2,7 +2,7 @@
  * @Title: TcpServerHandler.java 
  * @Package com.audioweb.server.service 
  * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月28日 下午3:21:18 
  * @version V1.0   
  */ 
@@ -27,7 +27,7 @@ import io.netty.util.CharsetUtil;
 /** 
  * @ClassName: TcpServerHandler 
  * @Description: TODO(这里用一句话描述这个类的作用) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年2月28日 下午3:36:20  
  */
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {

@@ -2,7 +2,7 @@
  * @Title: CastTask.java 
  * @Package com.audioweb.system.domain 
  * @Description: 广播任务信息
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年3月2日 下午1:27:26 
  * @version V1.0   
  */ 
@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiModelProperty;
 /** 
  * @ClassName: CastTask 
  * @Description: 广播任务信息
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年3月2日 下午1:27:26  
  */
 @ApiModel("广播任务实体")

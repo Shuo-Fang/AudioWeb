@@ -1053,7 +1053,7 @@ public class Convert
      * @param num	需要转化的数字
      * @param length 需要输出的byte数组长度 最多4位
      * @return byte[] 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年3月18日 下午8:57:07
      */
@@ -1070,7 +1070,7 @@ public class Convert
      * @Description: 英文字符转byte数组
      * @param str
      * @return byte[] 返回类型 
-     * @throws 抛出错误
+     * @throws Exception
      * @author 10155 
      * @date 2020年3月18日 下午9:19:09
      */

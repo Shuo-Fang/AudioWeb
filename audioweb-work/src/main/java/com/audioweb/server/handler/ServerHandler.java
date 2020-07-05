@@ -18,7 +18,7 @@ import io.netty.util.ReferenceCountUtil;
  * 终端通信处理
  * @ClassName: ServerHandler 
  * @Description: 终端通信处理
- * @author 10155 hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author 10155 1015510750@qq.com 
  * @date 2020年3月1日 下午2:13:57
  */
 public class ServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {

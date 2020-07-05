@@ -10,7 +10,7 @@ import java.util.Map;
  * @Title: TestMain.java 
  * @Package  
  * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年4月16日 上午11:41:08 
  * @version V1.0   
  */
@@ -18,7 +18,7 @@ import java.util.Map;
 /** 
  * @ClassName: TestMain 
  * @Description: TODO(这里用一句话描述这个类的作用) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年4月16日 上午11:41:08  
  */
 public class TestMain {

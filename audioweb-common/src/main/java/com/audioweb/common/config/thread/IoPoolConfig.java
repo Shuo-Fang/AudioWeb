@@ -2,7 +2,7 @@
  * @Title: IoPoolConfig.java 
  * @Package com.audioweb.common.config.thread 
  * @Description: 终端IO线程池
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年2月28日 上午10:39:46 
  * @version V1.0   
  */ 
@@ -23,7 +23,7 @@ import com.audioweb.common.utils.Threads;
 /** 
  * @ClassName: IoPoolConfig 
  * @Description: 终端IO线程池
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年2月28日 上午10:39:46  
  */
 @Configuration
@@ -33,7 +33,7 @@ public class IoPoolConfig implements PoolConfig {
 	 * @Title: ioServiceExecutor 
 	 * @Description: 终端IO线程池
 	 * @return Executor 返回类型 
-	 * @throws 抛出错误
+	 * @throws Exception
 	 * @author ShuoFang 
 	 * @date 2020年2月28日 上午10:40:34
 	 */

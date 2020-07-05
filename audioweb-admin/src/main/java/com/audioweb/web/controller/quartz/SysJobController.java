@@ -152,6 +152,19 @@ public class SysJobController extends BaseController
     {
         return toAjax(jobService.updateJob(job));
     }
+    
+    /**
+     * 重置定时任务
+     */
+    @Log(title = "定时任务", businessType = BusinessType.UPDATE)
+    @RequiresPermissions("monitor:job:edit")
+    @PostMapping("/reload")
+    @ResponseBody
+    public AjaxResult reload() throws SchedulerException, TaskException
+    {
+    	int size = jobService.init();
+    	return toAjax(size > 0 ? size : 1);
+    }
 
     /**
      * 校验cron表达式是否有效

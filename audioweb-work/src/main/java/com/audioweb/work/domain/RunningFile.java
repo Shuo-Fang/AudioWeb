@@ -2,7 +2,7 @@
  * @Title: RunningFile.java 
  * @Package com.audioweb.work.domain 
  * @Description: TODO(用一句话描述该文件做什么) 
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com
+ * @author ShuoFang 1015510750@qq.com
  * @date 2020年4月13日 下午2:38:38 
  * @version V1.0   
  */ 
@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 /** 正在广播音频文件信息
  * @ClassName: RunningFile
  * @Description: 正在广播音频文件信息
- * @author ShuoFang hengyu.zhu@chinacreator.com 1015510750@qq.com 
+ * @author ShuoFang 1015510750@qq.com 
  * @date 2020年4月13日 下午2:38:38  
  */
 public class RunningFile extends WorkFile{
