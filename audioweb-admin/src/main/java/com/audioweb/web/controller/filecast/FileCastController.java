@@ -207,7 +207,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFilePlay")
-    @Log(title = "文件广播播放指定文件", businessType = BusinessType.UPDATE)
+    @Log(title = "文件广播播放指定文件", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult controlFilePlay(Long taskId,String fileId) {
     	return workCastTaskService.controlFileCast(taskId, fileId);
@@ -220,7 +220,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileCast")
-    @Log(title = "控制文件广播任务", businessType = BusinessType.UPDATE)
+    @Log(title = "控制文件广播任务", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult controlFileCast(Long taskId,String command) {
     	FileCastCommand castCommand = FileCastCommand.valueOf(command);
@@ -234,6 +234,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileSite")
+    @Log(title = "控制文件广播播放进度", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult controlFileSite(Long taskId,Long playSite) {
     	return workCastTaskService.controlFileCast(taskId, playSite);
@@ -246,6 +247,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileType")
+    @Log(title = "控制文件广播播放模式", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult controlFileType(Long taskId,String type) {
     	FileCastType castType = FileCastType.valueOf(type);
@@ -259,6 +261,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/controlFileVol")
+    @Log(title = "控制文件广播播放音量", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult controlFileVol(Long taskId,Integer vol) {
     	return workCastTaskService.controlFileCast(taskId, vol);
@@ -270,7 +273,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/stopFileCast")
-    @Log(title = "停止文件广播", businessType = BusinessType.UPDATE)
+    @Log(title = "停止文件广播", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult stopFileCast(String taskId) {
     	return toAjax(workCastTaskService.deleteWorkCastTaskByIds(taskId));
@@ -283,6 +286,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/removeFile")
+    @Log(title = "文件广播音频广播列表修改", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult removeFile(Long taskId,String fileId) {
     	return workCastTaskService.removeFileInFileCast(taskId, fileId);
@@ -295,6 +299,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/reloadFile")
+    @Log(title = "文件广播音频广播列表修改", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult reloadFile(Long taskId,String songData) {
     	return workCastTaskService.reloadFileInFileCast(taskId, songData);
@@ -308,6 +313,7 @@ public class FileCastController extends BaseController
     })
     @RequiresPermissions("work:filecast:edit")
     @PostMapping("/sortFile")
+    @Log(title = "文件广播音频广播列表修改", businessType = BusinessType.OTHER)
     @ResponseBody
     public AjaxResult sortFile(Long taskId,String fileId,Integer site) {
     	return workCastTaskService.sortFileInFileCast(taskId, fileId, site);

@@ -77,7 +77,10 @@
                 },
                 {
                     field: 'schemeName', 
-                    title: '方案名称'
+                    title: '方案名称',
+                    formatter: function(value, row, index) {
+                   	 return '<a href="javascript:void(0)" onclick="openjob(\'' + row.schemeId + '\')">' + value + '</a>';
+                   }
                 },
                 {
                     field: 'status', 
@@ -132,6 +135,13 @@
 			$.modal.confirm("确认要启用此方案吗？", function() {
 				$.operate.post(prefix + "/changeStatus", { "schemeId": schemeId, "status": 0 });
 		    })
+		}
+		
+		/* 方案任务查询 */
+		function openjob(schemeId) {
+		    var url = ctx + "work/schemeTask";
+		    url += '?schemeId=' + schemeId;
+		    $.modal.openTab("定时任务", url);
 		}
     </script>
 </body>

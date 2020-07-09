@@ -1,4 +1,4 @@
-package com.audioweb.web.controller.quartz;
+package com.audioweb.web.controller.schemetask;
 
 import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.audioweb.common.annotation.Log;
 import com.audioweb.common.core.controller.BaseController;
@@ -18,6 +19,7 @@ import com.audioweb.common.core.domain.AjaxResult;
 import com.audioweb.common.core.page.TableDataInfo;
 import com.audioweb.common.enums.BusinessType;
 import com.audioweb.common.exception.job.TaskException;
+import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.quartz.domain.SysJob;
 import com.audioweb.quartz.service.ISysJobService;
@@ -28,18 +30,21 @@ import com.audioweb.quartz.service.ISysJobService;
  * @author ruoyi
  */
 @Controller
-@RequestMapping("/monitor/job")
-public class SysJobController extends BaseController
+@RequestMapping("/work/schemeTask")
+public class WorkSchemeTaskController extends BaseController
 {
-    private String prefix = "monitor/job";
+    private String prefix = "work/schemeTask";
 
     @Autowired
     private ISysJobService jobService;
 
     @RequiresPermissions("monitor:job:view")
     @GetMapping()
-    public String job()
+    public String job(@RequestParam(value = "schemeId", required = false) Long schemeId, ModelMap mmap)
     {
+    	if(StringUtils.isNotNull(schemeId)) {
+    		mmap.put("schemeId", schemeId);
+    	}
         return prefix + "/job";
     }
 

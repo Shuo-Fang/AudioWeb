@@ -9,6 +9,7 @@
 package com.audioweb.common.enums;
 
 import com.alibaba.fastjson.annotation.JSONType;
+import com.audioweb.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -36,4 +37,18 @@ public enum FileCastType{
     {
         return code;
     }
+    
+    public static FileCastType invokeEnum(String name) {
+    	if(StringUtils.isEmpty(name)) {
+    		return null;
+    	}
+    	FileCastType[] types = FileCastType.values();
+		//遍历查找
+	    for(FileCastType s : types){
+           if(s.name().equals(name) || s.getCode().equals(name)){
+               return s;
+           }
+	    }
+		return null;
+	}
 }

@@ -31,7 +31,7 @@ public class TimeCastTask {
 	 * @author 10155 
 	 * @date 2020年7月5日 下午3:01:22
 	 */
-	public static void run(SysJob task) {
+	public static void doTimeCastTask(SysJob task) {
 		log.info("开始执行定时任务  -- {}:{}",task.getInvokeTarget(),task.getJobName());
 		if(StringUtils.isNotNull(task) && task instanceof WorkSchemeTask) {
 			WorkSchemeTask schemeTask = (WorkSchemeTask) task;
@@ -56,6 +56,9 @@ public class TimeCastTask {
 			}else {
 				log.info("定时任务设置中已暂停,定时任务结束  -- {}:{}",task.getInvokeTarget(),task.getJobName());
 			}
+		}else {
+			log.warn("定时任务信息有误  -- {}:{}",task.getInvokeTarget(),task.getJobName());
 		}
+		log.info("结束执行定时任务  -- {}:{}",task.getInvokeTarget(),task.getJobName());
 	}
 }

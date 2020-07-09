@@ -56,4 +56,8 @@ public enum BusinessType
      * 清空
      */
     CLEAN,
+    /**
+     * 立即执行
+     */
+    RUN,
 }

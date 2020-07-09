@@ -1,6 +1,7 @@
 package com.audioweb.common.enums;
 
 import com.alibaba.fastjson.annotation.JSONType;
+import com.audioweb.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -22,6 +23,9 @@ public enum CastWorkType{
 	}
 	
 	public static CastWorkType invokeEnum(String name) {
+		if(StringUtils.isEmpty(name)) {
+    		return null;
+    	}
 		CastWorkType[] types = CastWorkType.values();
 		//遍历查找
 	    for(CastWorkType s : types){

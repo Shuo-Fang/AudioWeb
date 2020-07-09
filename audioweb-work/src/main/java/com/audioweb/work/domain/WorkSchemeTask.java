@@ -1,6 +1,9 @@
 package com.audioweb.work.domain;
 
+import com.audioweb.common.enums.CastWorkType;
 import com.audioweb.common.enums.FileCastType;
+import com.audioweb.common.enums.TaskTimeType;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -35,6 +38,16 @@ public class WorkSchemeTask extends SysJob{
 
     /** ORDER("顺序播放"),LIST("列表循环"),RANDOM("随机播放"),SINGLE("单曲循环") */
     private FileCastType taskCastType;
+    
+    /**任务类型  FILE("文件广播"),TIME("定时广播"),REAL("实时采播"),PLUG("控件广播"),
+	WORD("文本广播"),POINT("终端点播"),CLIENT("终端采播"),PAGING("寻呼话筒") */
+    private CastWorkType taskType;
+    
+    /**定时类型  DAILY("每日任务"),WEEKLY("每周任务"),MONTHLY("每月任务"),SINGLE("单次任务"),CUSTOM("自定任务")*/
+    private TaskTimeType taskTimeType;
+    
+    /** 是否使用定时时长task_timing */
+    private Boolean taskIsTiming;
     
     /** 所属广播方案 */
     private WorkScheme workScheme;
@@ -95,7 +108,7 @@ public class WorkSchemeTask extends SysJob{
     }
     public void setTaskCastType(String taskCastType) 
     {
-        this.taskCastType = FileCastType.valueOf(taskCastType);
+        this.taskCastType = FileCastType.invokeEnum(taskCastType);
     }
 
     public FileCastType getTaskCastType()
@@ -103,7 +116,31 @@ public class WorkSchemeTask extends SysJob{
         return taskCastType;
     }
 
-    public WorkScheme getWorkScheme() {
+    public CastWorkType getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(String taskType) {
+		this.taskType = CastWorkType.invokeEnum(taskType);
+	}
+	
+	public TaskTimeType getTaskTimeType() {
+		return taskTimeType;
+	}
+
+	public void setTaskTimeType(String taskTimeType) {
+		this.taskTimeType = TaskTimeType.invokeEnum(taskTimeType);
+	}
+
+	public Boolean getTaskIsTiming() {
+		return taskIsTiming;
+	}
+
+	public void setTaskIsTiming(Boolean taskIsTiming) {
+		this.taskIsTiming = taskIsTiming;
+	}
+
+	public WorkScheme getWorkScheme() {
 		return workScheme;
 	}
 

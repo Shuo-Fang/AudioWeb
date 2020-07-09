@@ -19,7 +19,6 @@ import com.audioweb.common.thread.manager.AsyncManager;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.server.protocol.InterCmdProcess;
 import com.audioweb.work.domain.FileCastTask;
-import com.audioweb.work.domain.RunningFile;
 
 /** 
  * @ClassName: TimeFileCast 

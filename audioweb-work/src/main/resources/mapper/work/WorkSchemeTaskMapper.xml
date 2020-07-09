@@ -27,6 +27,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskDomainIds"    column="task_domain_ids"    />
         <result property="taskTerIds"    column="task_ter_ids"    />
         <result property="taskCastType"    column="task_cast_type"    />
+        <result property="taskTimeType"    column="task_time_type"    />
+        <result property="taskIsTiming"    column="task_is_timing"    />
+        <result property="taskType"    column="task_type"    />
 		<result property="remark"         column="remark"          />
 		<association property="workScheme"    column="scheme_id" javaType="WorkScheme" resultMap="workSchemeResult" />
 	</resultMap>
@@ -40,9 +43,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<sql id="selectWorkSchemeTaskVo">
         select j.job_id, j.job_name, j.job_group, j.invoke_target, j.cron_expression, j.misfire_policy, j.concurrent, j.status, j.create_by, j.create_time,j.start_time, j.end_time, j.next_valid_time, j.remark ,
-         t.scheme_task_id, t.song_data, t.task_cast_type, t.task_domain_ids, t.task_ter_ids, t.task_timing, t.task_vol,
+         t.scheme_task_id, t.song_data, t.task_cast_type, t.task_domain_ids, t.task_ter_ids, t.task_timing, t.task_vol, t.task_time_type, t.task_is_timing, t.task_type
          s.scheme_id, s.scheme_name, s.status as scheme_status, s.scheme_priority
-		from work_scheme_task t left join sys_job j on t.job_id = j.job_id and j.del_flag = '0' inner join work_scheme s on j.job_group = 'schemeTask' + s.scheme_id and s.del_flag = '0'
+		from work_scheme_task t left join sys_job j on t.delflag = '0' and t.job_id = j.job_id and j.del_flag = '0' inner join work_scheme s on j.job_group = 'schemeTask' + s.scheme_id and s.del_flag = '0'
     </sql>
 
 	<select id="selectWorkSchemeTaskList" parameterType="WorkSchemeTask" resultMap="WorkSchemeTaskResult">
@@ -60,11 +63,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="invokeTarget != null and invokeTarget != ''">
 				AND j.invoke_target like concat('%', #{invokeTarget}, '%')
 			</if>
+			<if test="taskTimeType != null and taskTimeType != ''">
+				AND t.task_time_type = #{taskTimeType}
+			</if>
+			<if test="taskType != null and taskType != ''">
+				AND t.task_type = #{taskType}
+			</if>
 			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-				AND date_format(j.start_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+				AND date_format(j.next_valid_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
 			</if>
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-				AND date_format(j.end_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+				AND date_format(j.next_valid_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
 		</where>
 	</select>
@@ -92,6 +101,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids,</if>
             <if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids,</if>
             <if test="taskCastType != null  and taskCastType != ''">task_cast_type,</if>
+            <if test="taskTimeType != null  and taskTimeType != ''">task_time_type,</if>
+            <if test="taskIsTiming != null ">task_is_timing,</if>
+            <if test="taskType != null  and taskType != ''">task_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="jobId != null ">#{jobId},</if>
@@ -101,7 +113,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskDomainIds != null  and taskDomainIds != ''">#{taskDomainIds},</if>
             <if test="taskTerIds != null  and taskTerIds != ''">#{taskTerIds},</if>
             <if test="taskCastType != null  and taskCastType != ''">#{taskCastType},</if>
-         </trim>
+            <if test="taskTimeType != null  and taskTimeType != ''">#{taskTimeType},</if>
+            <if test="taskIsTiming != null ">#{taskIsTiming},</if>
+            <if test="taskType != null  and taskType != ''">#{taskType},</if>
+         </trim>taskType
     </insert>
 
     <update id="updateWorkSchemeTask" parameterType="WorkSchemeTask">
@@ -114,16 +129,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskDomainIds != null  and taskDomainIds != ''">task_domain_ids = #{taskDomainIds},</if>
             <if test="taskTerIds != null  and taskTerIds != ''">task_ter_ids = #{taskTerIds},</if>
             <if test="taskCastType != null  and taskCastType != ''">task_cast_type = #{taskCastType},</if>
+            <if test="taskTimeType != null  and taskTimeType != ''">task_time_type = #{taskTimeType},</if>
+            <if test="taskIsTiming != null ">task_is_timing = #{taskIsTiming},</if>
+            <if test="taskType != null  and taskType != ''">task_type = #{taskType},</if>
         </trim>
         where scheme_task_id = #{schemeTaskId}
     </update>
 
     <delete id="deleteWorkSchemeTaskById" parameterType="Long">
-        delete from work_scheme_task where scheme_task_id = #{schemeTaskId}
+        update work_scheme_task set del_flag = '2' where scheme_task_id = #{schemeTaskId}
     </delete>
 
     <delete id="deleteWorkSchemeTaskByIds" parameterType="String">
-        delete from work_scheme_task where scheme_task_id in 
+        update work_scheme_task set del_flag = '2' where scheme_task_id in 
         <foreach item="schemeTaskId" collection="array" open="(" separator="," close=")">
             #{schemeTaskId}
         </foreach>

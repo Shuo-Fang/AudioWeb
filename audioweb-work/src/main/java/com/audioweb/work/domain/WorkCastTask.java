@@ -189,6 +189,9 @@ public class WorkCastTask extends BaseEntity implements BaseWork,Comparable<Work
 	public void setCastType(CastWorkType castType) {
 		this.castType = castType;
 	}
+	public void setCastType(String castType) {
+		this.castType = CastWorkType.invokeEnum(castType);
+	}
 	public String getCastAddress() {
 		return castAddress;
 	}
