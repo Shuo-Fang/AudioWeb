@@ -3,6 +3,8 @@ package com.audioweb.work.service.impl;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
+
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -38,7 +40,16 @@ public class WorkSchemeTaskServiceImpl implements IWorkSchemeTaskService
     
     @Autowired
     private WorkSchemeTaskMapper workSchemeTaskMapper;
-
+    
+    /**
+     * 项目启动时，初始化播放次数
+     */
+    @PostConstruct
+    @Override
+    public int init()
+    {
+        return workSchemeTaskMapper.cleanSchemeTaskRunningTimes();
+    }
     /**
      * 查询定时任务
      * 

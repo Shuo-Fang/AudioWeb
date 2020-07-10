@@ -34,6 +34,14 @@ public interface WorkSchemeTaskMapper
      * @return 定时任务集合
      */
     public List<WorkSchemeTask> selectWorkSchemeTaskList(WorkSchemeTask workSchemeTask);
+    
+    /**
+     * 查询正在广播定时任务列表
+     * 
+     * @param workSchemeTask 定时任务
+     * @return 定时任务集合
+     */
+    public List<WorkSchemeTask> selectRunningWorkSchemeTask();
 
     /**
      * 新增定时任务
@@ -66,4 +74,26 @@ public interface WorkSchemeTaskMapper
      * @return 结果
      */
     public int deleteWorkSchemeTaskByIds(String[] schemeTaskIds);
+    /**
+     * 增加定时任务播放次数
+     * 
+     * @param schemeTaskId 定时任务ID
+     * @return 结果
+     */
+    public int increaseSchemeTaskRunningTimes(Long schemeTaskId);
+    
+    /**
+     * 减少定时任务播放次数
+     * 
+     * @param schemeTaskId 定时任务ID
+     * @return 结果
+     */
+    public int decreaseSchemeTaskRunningTimes(Long schemeTaskId);
+    
+    /**
+     * 置零定时任务播放次数
+     * 
+     * @return 结果
+     */
+    public int cleanSchemeTaskRunningTimes();
 }

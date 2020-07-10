@@ -15,6 +15,15 @@ import com.audioweb.work.domain.WorkSchemeTask;
  */
 public interface IWorkSchemeTaskService 
 {
+	/**
+	 * 初始化任务信息
+	 * @Title: init
+	 * @Description: 初始化任务信息
+	 * @throws Exception
+	 * @author 10155 
+	 * @date 2020年3月19日 下午11:28:14
+	 */
+	public int init();
     /**
      * 查询定时任务
      * 

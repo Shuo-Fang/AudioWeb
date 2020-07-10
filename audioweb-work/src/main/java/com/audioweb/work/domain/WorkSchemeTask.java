@@ -49,6 +49,9 @@ public class WorkSchemeTask extends SysJob{
     /** 是否使用定时时长task_timing */
     private Boolean taskIsTiming;
     
+    /** 任务正在执行次数 */
+    private Integer runningTimes;
+    
     /** 所属广播方案 */
     private WorkScheme workScheme;
 
@@ -138,6 +141,14 @@ public class WorkSchemeTask extends SysJob{
 
 	public void setTaskIsTiming(Boolean taskIsTiming) {
 		this.taskIsTiming = taskIsTiming;
+	}
+
+	public Integer getRunningTimes() {
+		return runningTimes;
+	}
+
+	public void setRunningTimes(Integer runningTimes) {
+		this.runningTimes = runningTimes;
 	}
 
 	public WorkScheme getWorkScheme() {

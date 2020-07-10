@@ -12,6 +12,15 @@ import java.util.Map;
  */
 public interface IWorkFileService 
 {
+	/**
+	 * 初始化文件信息
+	 * @Title: init
+	 * @Description: 初始化文件信息
+	 * @throws Exception
+	 * @author 10155 
+	 * @date 2020年3月19日 下午11:28:14
+	 */
+	public void init();
     /**
      * 查询音频任务中所有音频的存储序列信息
      * 

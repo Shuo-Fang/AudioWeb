@@ -129,13 +129,13 @@ public interface IWorkTerminalService
 	public int changeStatus(WorkTerminal workTerminal);
 	/**
 	 * 初始化终端缓存
-	 * @Title: initWorkTerminals 
+	 * @Title: init
 	 * @Description: TODO(这里用一句话描述这个方法的作用)  void 返回类型 
 	 * @throws Exception
 	 * @author 10155 
 	 * @date 2020年3月19日 下午11:28:14
 	 */
-	public void initWorkTerminals();
+	public void init();
 	/**
 	 * 初始化终端树
 	 * @Title: roleTerminalTreeData 

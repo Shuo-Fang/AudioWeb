@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.audioweb.quartz.mapper.SysJobMapper">
+<mapper namespace="com.audioweb.work.mapper.WorkSchemeTaskMapper">
 
 	<resultMap type="WorkSchemeTask" id="WorkSchemeTaskResult">
 		<id     property="schemeTaskId"   column="scheme_task_id"  />
@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="taskTimeType"    column="task_time_type"    />
         <result property="taskIsTiming"    column="task_is_timing"    />
         <result property="taskType"    column="task_type"    />
+        <result property="runningTimes"    column="running_times"    />
 		<result property="remark"         column="remark"          />
 		<association property="workScheme"    column="scheme_id" javaType="WorkScheme" resultMap="workSchemeResult" />
 	</resultMap>
@@ -43,7 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<sql id="selectWorkSchemeTaskVo">
         select j.job_id, j.job_name, j.job_group, j.invoke_target, j.cron_expression, j.misfire_policy, j.concurrent, j.status, j.create_by, j.create_time,j.start_time, j.end_time, j.next_valid_time, j.remark ,
-         t.scheme_task_id, t.song_data, t.task_cast_type, t.task_domain_ids, t.task_ter_ids, t.task_timing, t.task_vol, t.task_time_type, t.task_is_timing, t.task_type
+         t.scheme_task_id, t.song_data, t.task_cast_type, t.task_domain_ids, t.task_ter_ids, t.task_timing, t.task_vol, t.task_time_type, t.task_is_timing, t.task_type, t.running_times
          s.scheme_id, s.scheme_name, s.status as scheme_status, s.scheme_priority
 		from work_scheme_task t left join sys_job j on t.delflag = '0' and t.job_id = j.job_id and j.del_flag = '0' inner join work_scheme s on j.job_group = 'schemeTask' + s.scheme_id and s.del_flag = '0'
     </sql>
@@ -81,6 +82,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectWorkSchemeTaskById" parameterType="Long" resultMap="WorkSchemeTaskResult">
 		<include refid="selectWorkSchemeTaskVo"/>
 		where t.scheme_task_id = #{schemeTaskId}
+	</select>
+	
+	<select id="selectRunningWorkSchemeTask" resultMap="WorkSchemeTaskResult">
+		<include refid="selectWorkSchemeTaskVo"/>
+		where t.running_times > 0
 	</select>
 	
 	<select id="selectWorkSchemeTaskByIds" parameterType="String" resultMap="WorkSchemeTaskResult">
@@ -134,6 +140,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="taskType != null  and taskType != ''">task_type = #{taskType},</if>
         </trim>
         where scheme_task_id = #{schemeTaskId}
+    </update>
+    
+    <update id="increaseSchemeTaskRunningTimes" parameterType="Long">
+        update work_scheme_task set running_times = running_times+1
+        where scheme_task_id = #{schemeTaskId}
+    </update>
+    
+    <update id="decreaseSchemeTaskRunningTimes" parameterType="Long">
+        update work_scheme_task set running_times = running_times-1
+        where scheme_task_id = #{schemeTaskId}
+    </update>
+    
+    <update id="cleanSchemeTaskRunningTimes">
+        update work_scheme_task set running_times = 0
     </update>
 
     <delete id="deleteWorkSchemeTaskById" parameterType="Long">

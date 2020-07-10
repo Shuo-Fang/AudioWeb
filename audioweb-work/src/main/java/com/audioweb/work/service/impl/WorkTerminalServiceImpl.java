@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimerTask;
+
+import javax.annotation.PostConstruct;
 
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
@@ -21,6 +24,7 @@ import com.audioweb.common.constant.UserConstants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.domain.Ztree;
 import com.audioweb.common.core.text.Convert;
+import com.audioweb.common.thread.manager.AsyncManager;
 
 /**
  * 终端管理Service业务层处理
@@ -39,6 +43,30 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
     @Autowired
     private ISysDomainService domainService;
 
+    /**
+     * 项目启动时，初始化终端在线状态
+     */
+    @PostConstruct
+    @Override
+    public void init()
+    {
+    	workTerminalMapper.updateAllTerminalOnline();
+    	 /**终端初始化刷新管理*/
+        AsyncManager.me().execute(new TimerTask() {
+			@Override
+			public void run() {
+				/** 启动时初始化一次终端信息*/
+		        WorkTerminal terminal = new WorkTerminal();
+				terminal.getDomain().setStatus(UserConstants.DOMAIN_NORMAL);
+				terminal.setStatus(WorkConstants.NORMAL);
+				terminal.clear();
+				List<WorkTerminal> workTerminal  = workTerminalMapper.selectWorkTerminalList(terminal);
+				for(WorkTerminal wTerminal:workTerminal) {
+					wTerminal.put();
+				}
+			}
+		}, 10000);
+    }
     /**
      * 查询终端管理
      * 
@@ -324,18 +352,6 @@ public class WorkTerminalServiceImpl implements IWorkTerminalService
 		return result;
 	}
 
-	@Override
-	public void initWorkTerminals() {
-		workTerminalMapper.updateAllTerminalOnline();//重置所有终端为离线
-		WorkTerminal terminal = new WorkTerminal();
-		terminal.getDomain().setStatus(UserConstants.DOMAIN_NORMAL);
-		terminal.setStatus(WorkConstants.NORMAL);
-		terminal.clear();
-		List<WorkTerminal> workTerminal  = workTerminalMapper.selectWorkTerminalList(terminal);
-		for(WorkTerminal wTerminal:workTerminal) {
-			wTerminal.put();
-		}
-	}
 	/***
 	 * 初始化终端复选树
 	 */

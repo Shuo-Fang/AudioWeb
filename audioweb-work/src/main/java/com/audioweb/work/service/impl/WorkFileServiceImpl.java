@@ -4,12 +4,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.PostConstruct;
 
 import com.audioweb.common.utils.DateUtils;
 import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.audio.Mp3Utils;
 import com.audioweb.common.utils.bean.BeanUtils;
 import com.audioweb.common.utils.file.FileUtils;
+import com.audioweb.system.service.ISysConfigService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,7 @@ import com.audioweb.work.service.IWorkFileService;
 import com.audioweb.common.constant.Constants;
 import com.audioweb.common.constant.WorkConstants;
 import com.audioweb.common.core.text.Convert;
+import com.audioweb.common.thread.manager.AsyncManager;
 
 /**
  * 音频任务中所有音频的存储序列信息Service业务层处理
@@ -31,10 +38,50 @@ import com.audioweb.common.core.text.Convert;
 public class WorkFileServiceImpl implements IWorkFileService 
 {
 	private final Logger log = LoggerFactory.getLogger(WorkFileServiceImpl.class);
-
+	/**定时刷新指定时间*/
+	private static final String scheduleTime = "02:00:00";
+	
+    @Autowired
+    private ISysConfigService configService;
+    
 	@Autowired
     private WorkFileMapper workFileMapper;
 
+    /**
+     * 项目启动时，创建初始化文件定时任务
+     */
+    @PostConstruct
+    @Override
+    public void init()
+    {
+    	/**定时每天刷新一次*/
+        long oneDay = 24 * 60 * 60 * 1000;
+        long initDelay  = DateUtils.dateTime(DateUtils.YYYY_MM_DD_HH_MM_SS,DateUtils.getDate()+" "+scheduleTime).getTime();
+		final Map<String, String> paths = new HashMap<String, String>();
+		 /** 文件广播路径 */
+        String filePath = configService.selectConfigByKey(WorkConstants.FILECASTPATH);
+        /** 终端点播路径 */
+		String pointPath = configService.selectConfigByKey(WorkConstants.POINTCASTPATH);
+		/** 文字转音频路径 */
+		String wordPath = configService.selectConfigByKey(WorkConstants.WORDPATH);
+		paths.put(WorkConstants.AUDIOFILETYPE, filePath);
+		paths.put(WorkConstants.AUDIOPOINTTYPE, pointPath);
+		paths.put(WorkConstants.AUDIOWORDTYPE, wordPath);
+        AsyncManager.me().scheduleExecute(new TimerTask() {
+			@Override
+			public void run() {
+				initWorkFiles(paths);
+			}
+		},initDelay,oneDay,TimeUnit.MILLISECONDS);
+		 /**文件初始化刷新管理*/
+        AsyncManager.me().execute(new TimerTask() {
+			@Override
+			public void run() {
+				/** 启动时初始化一次文件信息*/
+				initWorkFiles(paths);
+			}
+		}, 10000);
+    }
     /**
      * 查询音频任务中所有音频的存储序列信息
      * 
@@ -266,14 +313,6 @@ public class WorkFileServiceImpl implements IWorkFileService
 			}
 		}
 		log.info("完成音频扫描");
-/*		WorkFile workFile = new WorkFile();
-		workFile.setDelFlag(WorkConstants.AUDIOFILENORMAL);
-		*//**数据库中存储的文件信息*//*
-		List<WorkFile> workFiles = selectWorkFileList(workFile);
-		*//**将文件存入缓存中维护*//*
-		for(WorkFile file:workFiles) {
-			file.put();
-		}*/
 	}
 	private String getVirPath(String type) {
 		String result = "";
