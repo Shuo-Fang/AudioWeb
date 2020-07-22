@@ -23,6 +23,8 @@ import com.audioweb.common.utils.StringUtils;
 import com.audioweb.common.utils.poi.ExcelUtil;
 import com.audioweb.quartz.domain.SysJob;
 import com.audioweb.quartz.service.ISysJobService;
+import com.audioweb.work.domain.WorkSchemeTask;
+import com.audioweb.work.service.IWorkSchemeTaskService;
 
 /**
  * 调度任务信息操作处理
@@ -37,8 +39,11 @@ public class WorkSchemeTaskController extends BaseController
 
     @Autowired
     private ISysJobService jobService;
+    
+    @Autowired
+    private IWorkSchemeTaskService workSchemeTaskService;
 
-    @RequiresPermissions("monitor:job:view")
+    @RequiresPermissions("work:schemetask:view")
     @GetMapping()
     public String job(@RequestParam(value = "schemeId", required = false) Long schemeId, ModelMap mmap)
     {
@@ -48,18 +53,18 @@ public class WorkSchemeTaskController extends BaseController
         return prefix + "/job";
     }
 
-    @RequiresPermissions("monitor:job:list")
+    @RequiresPermissions("work:schemetask:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(SysJob job)
+    public TableDataInfo list(WorkSchemeTask task)
     {
         startPage();
-        List<SysJob> list = jobService.selectJobList(job);
+        List<WorkSchemeTask> list = workSchemeTaskService.selectWorkSchemeTaskList(task);
         return getDataTable(list);
     }
 
     @Log(title = "定时任务", businessType = BusinessType.EXPORT)
-    @RequiresPermissions("monitor:job:export")
+    @RequiresPermissions("work:schemetask:export")
     @PostMapping("/export")
     @ResponseBody
     public AjaxResult export(SysJob job)
@@ -70,7 +75,7 @@ public class WorkSchemeTaskController extends BaseController
     }
 
     @Log(title = "定时任务", businessType = BusinessType.DELETE)
-    @RequiresPermissions("monitor:job:remove")
+    @RequiresPermissions("work:schemetask:remove")
     @PostMapping("/remove")
     @ResponseBody
     public AjaxResult remove(String ids) throws SchedulerException
@@ -79,7 +84,7 @@ public class WorkSchemeTaskController extends BaseController
         return success();
     }
 
-    @RequiresPermissions("monitor:job:detail")
+    @RequiresPermissions("work:schemetask:detail")
     @GetMapping("/detail/{jobId}")
     public String detail(@PathVariable("jobId") Long jobId, ModelMap mmap)
     {
@@ -92,7 +97,7 @@ public class WorkSchemeTaskController extends BaseController
      * 任务调度状态修改
      */
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
-    @RequiresPermissions("monitor:job:changeStatus")
+    @RequiresPermissions("work:schemetask:changeStatus")
     @PostMapping("/changeStatus")
     @ResponseBody
     public AjaxResult changeStatus(SysJob job) throws SchedulerException
@@ -106,7 +111,7 @@ public class WorkSchemeTaskController extends BaseController
      * 任务调度立即执行一次
      */
     @Log(title = "定时任务", businessType = BusinessType.RUN)
-    @RequiresPermissions("monitor:job:changeStatus")
+    @RequiresPermissions("work:schemetask:changeStatus")
     @PostMapping("/run")
     @ResponseBody
     public AjaxResult run(SysJob job) throws SchedulerException
@@ -128,7 +133,7 @@ public class WorkSchemeTaskController extends BaseController
      * 新增保存调度
      */
     @Log(title = "定时任务", businessType = BusinessType.INSERT)
-    @RequiresPermissions("monitor:job:add")
+    @RequiresPermissions("work:schemetask:add")
     @PostMapping("/add")
     @ResponseBody
     public AjaxResult addSave(@Validated SysJob job) throws SchedulerException, TaskException
@@ -150,7 +155,7 @@ public class WorkSchemeTaskController extends BaseController
      * 修改保存调度
      */
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
-    @RequiresPermissions("monitor:job:edit")
+    @RequiresPermissions("work:schemetask:edit")
     @PostMapping("/edit")
     @ResponseBody
     public AjaxResult editSave(@Validated SysJob job) throws SchedulerException, TaskException
@@ -162,7 +167,7 @@ public class WorkSchemeTaskController extends BaseController
      * 重置定时任务
      */
     @Log(title = "定时任务", businessType = BusinessType.UPDATE)
-    @RequiresPermissions("monitor:job:edit")
+    @RequiresPermissions("work:schemetask:edit")
     @PostMapping("/reload")
     @ResponseBody
     public AjaxResult reload() throws SchedulerException, TaskException

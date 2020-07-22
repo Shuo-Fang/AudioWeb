@@ -93,6 +93,10 @@ public class ShiroConfig
     @Value("${shiro.user.unauthorizedUrl}")
     private String unauthorizedUrl;
 
+    // 设置cipherKey密钥
+    @Value("${shiro.cookie.cipherKey}")
+    private String cipherKey;
+
     /**
      * 缓存管理器 使用Ehcache实现
      */
@@ -327,7 +331,7 @@ public class ShiroConfig
     {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
-        cookieRememberMeManager.setCipherKey(Base64.decode("fCq+/xW488hMTCD+cmJ3aQ=="));
+        cookieRememberMeManager.setCipherKey(Base64.decode(cipherKey));
         return cookieRememberMeManager;
     }
 

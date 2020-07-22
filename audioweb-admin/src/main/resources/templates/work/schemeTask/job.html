@@ -45,22 +45,22 @@
 			</div>
 			
 			<div class="btn-group-sm" id="toolbar" role="group">
-				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="monitor:job:add">
+				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="work:schemetask:add">
 	                <i class="fa fa-plus"></i> 新增
 	            </a>
-	            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="monitor:job:edit">
+	            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="work:schemetask:edit">
 		            <i class="fa fa-edit"></i> 修改
 		        </a>
-				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="monitor:job:remove">
+				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="work:schemetask:remove">
 		            <i class="fa fa-remove"></i> 删除
 		        </a>
-		         <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="monitor:job:export">
+		         <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="work:schemetask:export">
 		            <i class="fa fa-download"></i> 导出
 		        </a>
-		        <a class="btn btn-info" onclick="javascript:jobLog()" shiro:hasPermission="monitor:job:detail">
+		        <a class="btn btn-info" onclick="javascript:jobLog()" shiro:hasPermission="work:schemetask:detail">
 		            <i class="fa fa-list"></i> 日志
 		        </a>
-		        <a class="btn btn-danger" onclick="javascript:reloadJob()" shiro:hasPermission="monitor:job:edit">
+		        <a class="btn btn-danger" onclick="javascript:reloadJob()" shiro:hasPermission="work:schemetask:edit">
                     <i class="fa fa-refresh"></i> 重置任务
                 </a>
 	        </div>
@@ -73,12 +73,12 @@
 	<th:block th:include="include :: footer" />
     <th:block th:include="include :: select2-js" />
 	<script th:inline="javascript">
-        var detailFlag = [[${@permission.hasPermi('monitor:job:detail')}]];
-		var editFlag = [[${@permission.hasPermi('monitor:job:edit')}]];
-		var removeFlag = [[${@permission.hasPermi('monitor:job:remove')}]];
-		var statusFlag = [[${@permission.hasPermi('monitor:job:changeStatus')}]];
+        var detailFlag = [[${@permission.hasPermi('work:schemetask:detail')}]];
+		var editFlag = [[${@permission.hasPermi('work:schemetask:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('work:schemetask:remove')}]];
+		var statusFlag = [[${@permission.hasPermi('work:schemetask:changeStatus')}]];
 		var datas = [[${@dict.getType('sys_job_group')}]];
-		var prefix = ctx + "monitor/job";
+		var prefix = ctx + "work/schemeTask";
 		/* $(function(){
 			var schemeId =[[${schemeId}]];
 			if(schemeId != null){debugger
